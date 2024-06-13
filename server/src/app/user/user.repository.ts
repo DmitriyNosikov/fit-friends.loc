@@ -1,31 +1,69 @@
 import { Injectable } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
 
-import { BaseMongoDbRepository } from '../libs/data-access'
-
+import { BasePostgresRepository } from '../libs/data-access';
+import { UserInterface } from '../libs/interfaces';
+import { PrismaClientService } from '../prisma-client/prisma-client.service';
 import { UserEntity } from './user.entity';
 import { UserFactory } from './user.factory';
-import { UserModel } from './user.model';
 
 @Injectable()
-export class UserRepository extends BaseMongoDbRepository<UserEntity, UserModel> {
+export class UserRepository extends BasePostgresRepository<UserEntity, UserInterface> {
   constructor(
     entityFactory: UserFactory,
-    @InjectModel(UserModel.name) UserModel: Model<UserModel>
+    readonly dbClient: PrismaClientService
   ){
-    super(entityFactory, UserModel);
+    super(entityFactory, dbClient);
   }
 
   public async findByEmail(userEmail: string): Promise<UserEntity | null> {
-    const user = await this.model.findOne({ email: userEmail }).exec();
+    const user = await this.dbClient.user.findFirst({
+      where: { email: userEmail }
+    });
 
     if(!user) {
-      return Promise.resolve(null);
+      return null;
     }
 
     const userEntity = this.createEntityFromDocument(user);
 
-    return Promise.resolve(userEntity);
+    return userEntity;
+  }
+
+  public async findById(userId: string): Promise<UserEntity | null> {
+    const user = await this.dbClient.user.findFirst({
+      where: { id: userId }
+    });
+
+    if(!user) {
+      return null;
+    }
+
+    const userEntity = this.createEntityFromDocument(user);
+
+    return userEntity;
+  }
+
+  public async updateByIdById(
+    userId: string,
+    fieldsToUpdate: Partial<UserInterface>
+  ): Promise<UserEntity | null> {
+    const updatedUser = await this.dbClient.user.update({
+      where: { id: userId },
+      data: { ...fieldsToUpdate }
+    });
+
+    if(!updatedUser) {
+      return Promise.resolve(null);
+    }
+
+    const userEntity = this.createEntityFromDocument(updatedUser);
+
+    return userEntity;
+  }
+
+  public async deleteById(userId: string): Promise<void> {
+    await this.dbClient.user.delete({
+      where: { id: userId }
+    });
   }
 }

@@ -20,11 +20,27 @@ datasource db {
 }
 
 //////////////////// USERS ////////////////////
-
 model User {
-  id           String       @id @default(uuid())
-  createdAt    DateTime?    @default(now()) @map("created_at")
-  updatedAt    DateTime?    @updatedAt @map("updated_at")
+  id                String    @id @default(uuid())
+  createdAt         DateTime? @default(now()) @map("created_at")
+  updatedAt         DateTime? @updatedAt @map("updated_at")
+
+  name              String
+  email             String
+  avatar            String
+  gender            String
+  birthDate         DateTime @map("birth_date")
+  description       String
+  location          String 
+  pageBackground    String   @map("page_background")
+
+  role              String
+  level             String
+  trainingType      String[] @map("training_type")
+  trainingTime      String   @map("training_time")
+  loseCalories      Int      @map("lose_calories")
+  dayCalories       Int      @map("day_calories")
+  isReadyToTraining Boolean  @map("is_ready_to_training")
 
   @@map("users")
 }

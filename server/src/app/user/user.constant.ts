@@ -2,13 +2,29 @@ import { MessagesType } from '../libs/types/';
 
 export const UserValidation = {
   NAME: {
-    MIN_LENGTH: 3,
-    MAX_LENGTH: 50,
+    MIN_LENGTH: 1,
+    MAX_LENGTH: 15,
   },
   PASSWORD: {
     MIN_LENGTH: 6,
     MAX_LENGTH: 12,
   },
+  DESCRIPTION: {
+    MIN_LENGTH: 10,
+    MAX_LENGTH: 140,
+  },
+  LOSE_CALORIES: {
+    MIN: 1000,
+    MAX: 5000,
+  },
+  DAY_CALORIES: {
+    MIN: 1000,
+    MAX: 5000,
+  },
+  TRAINING_TYPE: {
+    MIN_COUNT: 1,
+    MAX_COUNT: 3
+  }
 } as const;
 
 export const UserMessage: MessagesType = {

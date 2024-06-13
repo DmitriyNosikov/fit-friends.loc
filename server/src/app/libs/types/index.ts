@@ -1,0 +1,1 @@
+export { MessagesType } from './messages.type';

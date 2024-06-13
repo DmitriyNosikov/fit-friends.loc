@@ -1,0 +1,20 @@
+{
+  "name": "fit-friends.loc",
+  "version": "1.0.0",
+  "main": "index.js",
+  "workspaces": [
+    "server/",
+    "client/",
+    "shared/"
+  ],
+  "scripts": {
+    "build": "npm run build --workspaces",
+    "start:server": "npm run start:dev --workspace server",
+    "build:server": "npm run build --workspace server",
+    "start:client": "npm run dev --workspace client",
+    "build:client": "npm run build --workspace client"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": ""
+}

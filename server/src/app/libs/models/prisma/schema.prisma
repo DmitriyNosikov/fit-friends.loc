@@ -26,22 +26,36 @@ model User {
   updatedAt         DateTime? @updatedAt @map("updated_at")
 
   name              String
-  email             String
+  email             String    @unique
   avatar            String
   gender            String
-  birthDate         DateTime @map("birth_date")
+  birthDate         DateTime  @map("birth_date")
   description       String
   location          String 
-  pageBackground    String   @map("page_background")
+  pageBackground    String    @map("page_background")
 
-  role              String
-  level             String
-  trainingType      String[] @map("training_type")
-  trainingTime      String   @map("training_time")
-  loseCalories      Int      @map("lose_calories")
-  dayCalories       Int      @map("day_calories")
-  isReadyToTraining Boolean  @map("is_ready_to_training")
+  role              String?
+  level             String?
+  trainingType      String[]  @map("training_type")
+  trainingTime      String?   @map("training_time")
+  loseCalories      Int?      @map("lose_calories")
+  dayCalories       Int?      @map("day_calories")
+  isReadyToTraining Boolean?  @map("is_ready_to_training")
+
+  refreshToken RefreshToken?
 
   @@map("users")
 }
 
+model RefreshToken {
+  id        String    @id @default(uuid())
+  createdAt DateTime? @default(now()) @map("created_at")
+  updatedAt DateTime? @updatedAt @map("updated_at")
+  expiresIn DateTime? @map("expires_in")
+  tokenId   String    @map("token_id")
+  userId    String    @unique @map("user_id")
+
+  user      User      @relation(fields: [userId], references: [id])
+
+  @@map("refresh_token")
+}

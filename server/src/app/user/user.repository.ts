@@ -19,7 +19,7 @@ export class UserRepository extends BasePostgresRepository<UserEntity, UserInter
     const user = await this.dbClient.user.findFirst({
       where: { email: userEmail }
     });
-
+    
     if(!user) {
       return null;
     }
@@ -45,7 +45,7 @@ export class UserRepository extends BasePostgresRepository<UserEntity, UserInter
 
   public async updateByIdById(
     userId: string,
-    fieldsToUpdate: Partial<UserInterface>
+    fieldsToUpdate: Partial<UserEntity>
   ): Promise<UserEntity | null> {
     const updatedUser = await this.dbClient.user.update({
       where: { id: userId },

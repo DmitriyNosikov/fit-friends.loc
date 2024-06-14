@@ -31,7 +31,8 @@
 
     /* Paths */
     "paths": {
-      "@server/*": ["server/*"],
+      "@server/libs/*": ["server/src/app/libs/*"],
+      "@server/user/*": ["server/src/app/user/*"],
       "@client/*": ["client/*"],
       "@shared/*": ["shared/*"],
     },

@@ -24,7 +24,7 @@ export class UserRepository extends BasePostgresRepository<UserEntity, UserInter
       return null;
     }
 
-    const userEntity = this.createEntityFromDocument(user);
+    const userEntity = this.createEntityFromDocument(user as unknown as UserInterface);
 
     return userEntity;
   }
@@ -38,7 +38,7 @@ export class UserRepository extends BasePostgresRepository<UserEntity, UserInter
       return null;
     }
 
-    const userEntity = this.createEntityFromDocument(user);
+    const userEntity = this.createEntityFromDocument(user as unknown as UserInterface);
 
     return userEntity;
   }
@@ -56,7 +56,7 @@ export class UserRepository extends BasePostgresRepository<UserEntity, UserInter
       return Promise.resolve(null);
     }
 
-    const userEntity = this.createEntityFromDocument(updatedUser);
+    const userEntity = this.createEntityFromDocument(updatedUser as unknown as UserInterface);
 
     return userEntity;
   }
@@ -65,5 +65,17 @@ export class UserRepository extends BasePostgresRepository<UserEntity, UserInter
     await this.dbClient.user.delete({
       where: { id: userId }
     });
+  }
+
+  public async exists(userId: string): Promise<boolean> {
+    const user = await this.dbClient.user.findFirst({
+      where: { id: userId }
+    });
+
+    if(!user) {
+      return false;
+    }
+
+    return true;
   }
 }

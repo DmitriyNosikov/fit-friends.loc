@@ -1,5 +1,5 @@
 export const TrainingTypeEnum = {
-    JOGA: 'joga',
+    YOGA: 'yoga',
     RUNNING: 'running',
     BOX: 'box',
     STRETCHING: 'stretching',

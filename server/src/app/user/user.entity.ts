@@ -19,9 +19,9 @@ export class UserEntity extends Entity implements StorableEntityInterface<AuthUs
   public location?: string;
   public pageBackground?: string;
 
-  public level?: string;
-  public trainingType?: string[];
-  public trainingTime?: string;
+  public level?: UserLevel;
+  public trainingType?: TrainingType[];
+  public trainingTime?: TrainingTime;
   public loseCalories?: number;
   public dayCalories?: number;
   public isReadyToTraining?: boolean;

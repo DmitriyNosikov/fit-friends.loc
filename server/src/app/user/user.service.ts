@@ -1,17 +1,24 @@
-import { ConflictException, HttpException, HttpStatus, Inject, Injectable, Logger, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import {
+  ConflictException,
+  HttpException,
+  HttpStatus,
+  Inject,
+  Injectable,
+  Logger,
+  NotFoundException,
+  UnauthorizedException
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 
-import { BCryptHasher, getJWTPayload, validateMongoID } from '../libs/helpers';
-import { UserInterface } from '../libs/interfaces';
-import { SendMailService } from '../send-mail/send-mail.service';
+import { BCryptHasher, getJWTPayload } from '../libs/helpers';
+import { AuthUserInterface, UserInterface } from '../libs/interfaces';
+import { CreateUserDTO, LoginUserDTO } from '../../../../shared/user/'; // TODO: Заменить путь на @shared как будет больше времени разобраться
 
 import { UserMessage } from './user.constant';
 import { UserEntity } from './user.entity';
 import { UserFactory } from './user.factory';
 import { UserRepository } from './user.repository';
 
-import { CreateUserDTO } from '@shared/user/dto/create-user.dto';
-import { LoginUserDTO } from '@shared/user/dto/login-user.dto';
 
 @Injectable()
 export class UserService {
@@ -25,32 +32,27 @@ export class UserService {
     private readonly hasher: BCryptHasher,
 
     private readonly jwtService: JwtService,
-    private readonly sendMailService: SendMailService
   ) {}
 
   public async register(dto: CreateUserDTO): Promise<UserEntity> {
-    const { name, email, password } = dto;
+    const { email, password } = dto;
     const user = await this.userRepository.findByEmail(email);
 
     if(user) { // Если пользователь уже есть в системе - не регистрируем
       throw new ConflictException(UserMessage.ERROR.ALREADY_EXISTS);
     }
 
-    const blogUser = {
-      name,
-      email,
+    const newUser = {
+      ...user,
       passwordHash: ''
-    };
+    } as unknown as AuthUserInterface;
 
-    const userEntity = this.userFactory.create(blogUser);
+    const userEntity = this.userFactory.create(newUser);
     const hashedPassword = await this.hasher.getHash(password);
 
     userEntity.setPassword(hashedPassword);
 
     await this.userRepository.create(userEntity);
-
-    // Отправляем пользователю Email об успешной регистрации
-    await this.sendMailService.sendNewUserEmail(userEntity.toPOJO());
 
     return userEntity;
   }
@@ -97,8 +99,6 @@ export class UserService {
   }
 
   public async getUserDetail(userId: string): Promise<UserEntity | null> {
-    await validateMongoID(userId);
-
     const user = await this.userRepository.findById(userId);
 
     if(!user) {
@@ -109,8 +109,6 @@ export class UserService {
   }
 
   public async deleteUser(userId: string): Promise<void> {
-    await validateMongoID(userId);
-
     const isUserExists = await this.userRepository.exists(userId);
 
     if(!isUserExists) {

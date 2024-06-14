@@ -7,6 +7,91 @@ paths:
       responses:
         "200":
           description: ""
+  /api/users/register:
+    post:
+      operationId: UserController_create
+      summary: Register new user
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateUserDTO"
+      responses:
+        "201":
+          description: User has been successfully created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserRDO"
+        "409":
+          description: User with passed email already exists
+      tags: &a1
+        - users
+  /api/users/login:
+    post:
+      operationId: UserController_login
+      summary: Login user by passed credentials
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginUserDTO"
+      responses:
+        "200":
+          description: User logged in
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserRDO"
+        "401":
+          description: Incorrect user email/password
+      tags: *a1
+  /api/users/check:
+    post:
+      operationId: UserController_checkToken
+      summary: Check user`s JWT-Token
+      parameters: []
+      responses:
+        "201":
+          description: ""
+      tags: *a1
+  /api/users/{userId}:
+    get:
+      operationId: UserController_show
+      summary: Get detail info about user
+      parameters:
+        - name: userId
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        "200":
+          description: User found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserRDO"
+        "404":
+          description: User not found
+      tags: *a1
+    delete:
+      operationId: UserController_deleteUser
+      summary: Delete user
+      parameters:
+        - name: userId
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        "200":
+          description: User has been successfully deleted
+      tags: *a1
 info:
   title: The "Fit-Friends" service
   description: '"FIt-Friends" service API'
@@ -15,4 +100,262 @@ info:
 tags: []
 servers: []
 components:
-  schemas: {}
+  schemas:
+    CreateUserDTO:
+      type: object
+      properties:
+        name:
+          type: string
+          description: User name
+          example: Tony
+          minimum: 1
+          maximum: 15
+        email:
+          type: string
+          description: User email
+          example: iron-man@starkindustries.it
+        avatar:
+          type: string
+          description: User avatar
+          example: some/interesting/avatar.jpg
+        password:
+          type: string
+          description: User password
+          example: jarvis-iron-hearth123
+          minimum: 12
+          maximum: 6
+        gender:
+          type: string
+          description: User gender
+          example: мужской
+          enum:
+            - мужской
+            - женский
+            - неважно
+        birthDate:
+          format: date-time
+          type: string
+          description: User birth date
+          example: 26.09.1993
+        description:
+          format: date-time
+          type: string
+          description: User profile description
+          example: Some interesting profile description
+        location:
+          type: string
+          description: User metro station
+          example: звездная
+          enum:
+            - пионерская
+            - петроградская
+            - удельная
+            - звездная
+            - спортивная
+        pageBackground:
+          type: string
+          description: User profile background. If not passed = User avatar
+          example: some/interesting/avatar.jpg
+        level:
+          type: string
+          description: User training level
+          example: новичок
+          enum:
+            - новичок
+            - любитель
+            - прфоессионал
+        trainingType:
+          type: string
+          description: User trainings type
+          example: '["box", "crossfit", "running"]'
+          enum:
+            - yoga
+            - running
+            - box
+            - stretching
+            - crossfit
+            - aerobics
+            - pilates
+        trainingTime:
+          type: string
+          description: User training time periods (in minutes)
+          example: 10-30
+          enum:
+            - 10-30
+            - 30-50
+            - 50-80
+            - 80-100
+        loseCalories:
+          type: number
+          description: User lose calories aim
+          example: "1000"
+          minimum: 1000
+          maximum: 5000
+        dayCalories:
+          type: number
+          description: User calories per day limit
+          example: "5000"
+          minimum: 1000
+          maximum: 5000
+        isReadyToTraining:
+          type: boolean
+          description: Is user ready to training
+          example: "true"
+      required:
+        - name
+        - email
+        - avatar
+        - password
+        - gender
+        - birthDate
+        - description
+        - location
+        - pageBackground
+        - level
+        - trainingType
+        - trainingTime
+        - loseCalories
+        - dayCalories
+        - isReadyToTraining
+    UserRDO:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Uniq user ID
+          example: g83h4y0943-nv934819843-jv934h8t-n923g48n9438
+        createdAt:
+          format: date-time
+          type: string
+          description: Created at date
+          example: 2024-04-26 13:02:24.847
+        updatedAt:
+          format: date-time
+          type: string
+          description: Updated at date
+          example: 2024-04-26 13:02:24.847
+        name:
+          type: string
+          description: User name
+          example: Tony
+          minimum: 1
+          maximum: 15
+        email:
+          type: string
+          description: User email
+          example: iron-man@starkindustries.it
+        avatar:
+          type: string
+          description: User avatar
+          example: some/interesting/avatar.jpg
+        gender:
+          type: string
+          description: User gender
+          example: мужской
+          enum:
+            - мужской
+            - женский
+            - неважно
+        birthDate:
+          format: date-time
+          type: string
+          description: User birth date
+          example: 26.09.1993
+        description:
+          format: date-time
+          type: string
+          description: User profile description
+          example: Some interesting profile description
+        location:
+          type: string
+          description: User metro station
+          example: звездная
+          enum:
+            - пионерская
+            - петроградская
+            - удельная
+            - звездная
+            - спортивная
+        pageBackground:
+          type: string
+          description: User profile background. If not passed = User avatar
+          example: some/interesting/avatar.jpg
+        level:
+          type: string
+          description: User training level
+          example: новичок
+          enum:
+            - новичок
+            - любитель
+            - прфоессионал
+        trainingType:
+          type: string
+          description: User trainings type
+          example: '["box", "crossfit", "running"]'
+          enum:
+            - yoga
+            - running
+            - box
+            - stretching
+            - crossfit
+            - aerobics
+            - pilates
+        trainingTime:
+          type: string
+          description: User training time periods (in minutes)
+          example: 10-30
+          enum:
+            - 10-30
+            - 30-50
+            - 50-80
+            - 80-100
+        loseCalories:
+          type: number
+          description: User lose calories aim
+          example: "1000"
+          minimum: 1000
+          maximum: 5000
+        dayCalories:
+          type: number
+          description: User calories per day limit
+          example: "5000"
+          minimum: 1000
+          maximum: 5000
+        isReadyToTraining:
+          type: boolean
+          description: Is user ready to training
+          example: "true"
+      required:
+        - id
+        - createdAt
+        - updatedAt
+        - name
+        - email
+        - avatar
+        - gender
+        - birthDate
+        - description
+        - location
+        - pageBackground
+        - level
+        - trainingType
+        - trainingTime
+        - loseCalories
+        - dayCalories
+        - isReadyToTraining
+    LoginUserDTO:
+      type: object
+      properties:
+        email:
+          type: string
+          description: User email
+          example: iron-man@starkindustries.it
+        password:
+          type: string
+          description: User password
+          example: jarvis-iron-hearth123
+          minimum: 12
+          maximum: 6
+      required:
+        - email
+        - password

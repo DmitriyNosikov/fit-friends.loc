@@ -15,29 +15,35 @@ export class RefreshTokenRepository extends BasePostgresRepository<RefreshTokenE
   }
 
   public async findByTokenId(tokenId: string): Promise<RefreshTokenEntity | null> {
-    const token = await this.model
-      .findOne({ tokenId })
-      .exec();
+    const token = await this.dbClient.refreshToken.findFirst({
+      where: { tokenId }
+    })
 
     return this.createEntityFromDocument(token);
   }
 
   public async findByUserId(userId: string): Promise<RefreshTokenEntity | null> {
-    const token = await this.model
-      .findOne({ userId })
-      .exec();
+    const token = await this.dbClient.refreshToken.findFirst({
+      where: { userId }
+    })
 
     return this.createEntityFromDocument(token);
   }
 
   public async deleteByTokenId(tokenId: string): Promise<void> {
-    await this.model
-      .deleteOne({ tokenId })
-      .exec();
+    await this.dbClient.refreshToken.deleteMany({ 
+      where: { tokenId }
+     });
   }
 
   public async deleteExpiredTokens(): Promise<void> {
-    this.model
-      .deleteMany({ expiresIn: { $lt: new Date()}})
+    await this.dbClient.refreshToken.deleteMany({ 
+      where: { 
+        expiresIn: {
+          lt: new Date()
+        }
+       }
+     });
+
   }
 }

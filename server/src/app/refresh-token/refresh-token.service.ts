@@ -2,10 +2,10 @@ import { Inject, Injectable } from '@nestjs/common';
 import { ConfigType } from '@nestjs/config';
 import dayjs from 'dayjs';
 
-import { parseTime } from '@project/shared/helpers';
-import { userJWTConfig } from '@project/user/user-config'
+import { parseTime } from '../libs/helpers/common';
+import { jwtConfig } from '../../config/'
 
-import { RefreshTokenPayloadInterface } from '@project/shared/core';
+import { RefreshTokenPayloadInterface } from '../libs/interfaces/token/refresh-token-payload.interface';
 import { RefreshTokenEntity } from './refresh-token.entity';
 import { RefreshTokenRepository } from './refresh-token.repository';
 
@@ -14,7 +14,7 @@ import { RefreshTokenRepository } from './refresh-token.repository';
 export class RefreshTokenService {
   constructor(
     private readonly refreshTokenRepository: RefreshTokenRepository,
-    @Inject (userJWTConfig.KEY) private readonly jwtOptions: ConfigType<typeof userJWTConfig>,
+    @Inject (jwtConfig.KEY) private readonly jwtOptions: ConfigType<typeof jwtConfig>,
   ) {}
 
   public async createRefreshSession(payload: RefreshTokenPayloadInterface) {

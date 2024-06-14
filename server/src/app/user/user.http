@@ -18,7 +18,9 @@ Content-Type: application/json
 {
   "email": "iron-man@starkindustries.it",
   "name": "Tony",
-  "password": "jarvis-123"
+  "password": "jarvis-123",
+  "gender": "мужской",
+  "location": "звездная"
 }
 
 ###

@@ -43,7 +43,7 @@ export class UserService {
     }
 
     const newUser = {
-      ...user,
+      ...dto,
       passwordHash: ''
     } as unknown as AuthUserInterface;
 
@@ -52,9 +52,9 @@ export class UserService {
 
     userEntity.setPassword(hashedPassword);
 
-    await this.userRepository.create(userEntity);
+    const registeredUser = await this.userRepository.create(userEntity);
 
-    return userEntity;
+    return registeredUser;
   }
 
   public async getUserByEmail(email: string): Promise<UserEntity | null> {

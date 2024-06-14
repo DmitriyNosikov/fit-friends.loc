@@ -13,10 +13,10 @@ export class UserEntity extends Entity implements StorableEntityInterface<AuthUs
   public passwordHash: string;
   public role?: string;
   public avatar?: string;
-  public gender?: string;
+  public gender: Gender;
   public birthDate?: Date;
   public description?: string;
-  public location?: string;
+  public location: Location;
   public pageBackground?: string;
 
   public level?: UserLevel;
@@ -36,7 +36,7 @@ export class UserEntity extends Entity implements StorableEntityInterface<AuthUs
       return;
     }
 
-    this.id = user.id ?? '';
+    this.id = user.id;
     this.createdAt = user.createdAt;
     this.updatedAt = user.updatedAt;
 
@@ -49,9 +49,9 @@ export class UserEntity extends Entity implements StorableEntityInterface<AuthUs
     this.birthDate = user.birthDate;
     this.description = user.description ?? '';
     this.location = user.location;
-    this.pageBackground = user.pageBackground ?? '';
+    this.pageBackground = user.pageBackground ?? this.avatar;
 
-    // TODO: Возможно, вынести в отдельнгую сущность "Опросник"
+    // TODO: Возможно, вынести в отдельную сущность "Опросник"
     this.level = user.level;
     this.trainingType = user.trainingType;
     this.trainingTime = user.trainingTime;
@@ -75,14 +75,14 @@ export class UserEntity extends Entity implements StorableEntityInterface<AuthUs
       email: this.email,
       passwordHash: this.passwordHash,
       avatar: this.avatar,
-      gender: this.gender as Gender,
+      gender: this.gender,
       birthDate: this.birthDate,
       description: this.description,
-      location: this.location as Location,
+      location: this.location,
 
-      level: this.level as UserLevel,
-      trainingType: this.trainingType as TrainingType[],
-      trainingTime: this.trainingTime as TrainingTime,
+      level: this.level,
+      trainingType: this.trainingType,
+      trainingTime: this.trainingTime,
       loseCalories: this.loseCalories,
       dayCalories: this.dayCalories,
       isReadyToTraining: this.isReadyToTraining,

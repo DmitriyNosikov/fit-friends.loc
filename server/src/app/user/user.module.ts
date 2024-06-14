@@ -1,33 +1,29 @@
 import { Module } from '@nestjs/common';
-import { MongooseModule } from '@nestjs/mongoose';
-import { JwtModule } from '@nestjs/jwt';
 
 import { ConfigEnvironment } from '../../config';
 import { BCryptHasher, getJWTOptions } from '../libs/helpers';
 import { JWTAccessStrategy } from './strategies/jwt-access.strategy';
 import { LocalStrategy } from './strategies/local.strategy';
 
-import { UserModel, UserSchema } from './user.model';
 import { UserFactory } from './user.factory';
 import { UserController } from './user.controller';
 import { UserService } from './user.service';
 import { UserRepository } from './user.repository';
-import { SendMailModule } from '../send-mail/send-mail.module';
-import { SendMailService } from '../send-mail/send-mail.service';
+import { JWTRefreshStrategy } from './strategies/jwt-refresh.strategy';
+import { PrismaClientModule } from '../prisma-client/prisma-client.module';
+import { RefreshTokenModule } from '../refresh-token/refresh-token.module';
+import { JwtModule } from '@nestjs/jwt';
 
 
 @Module({
   imports: [
-    MongooseModule.forFeature([
-      { name: UserModel.name, schema: UserSchema }
-    ]),
+    PrismaClientModule,
+    RefreshTokenModule,
 
     // Модуль для работы с JWT-токенами
     JwtModule.registerAsync(
       getJWTOptions(ConfigEnvironment.JWT)
     ),
-
-    SendMailModule,
   ],
   controllers: [UserController],
   // Провайдеры модуля (API)
@@ -38,14 +34,13 @@ import { SendMailService } from '../send-mail/send-mail.service';
 
     // Стратегии авторизации (PassportJS)
     JWTAccessStrategy,
+    JWTRefreshStrategy,
     LocalStrategy,
 
     {
       provide: 'Hasher',
       useClass: BCryptHasher,
     },
-
-    SendMailService
   ],
   //Провайдеры, доступные в других модулях при импорте данного модуля (внешнее API)
   exports: [UserFactory, UserService, UserRepository],

@@ -27,12 +27,13 @@ model User {
 
   name              String
   email             String    @unique
-  avatar            String
+  passwordHash      String    @map("password_hash")
+  avatar            String?
   gender            String
-  birthDate         DateTime  @map("birth_date")
-  description       String
+  birthDate         DateTime?  @map("birth_date")
+  description       String?
   location          String 
-  pageBackground    String    @map("page_background")
+  pageBackground    String?    @map("page_background")
 
   role              String?
   level             String?
@@ -55,7 +56,7 @@ model RefreshToken {
   tokenId   String    @map("token_id")
   userId    String    @unique @map("user_id")
 
-  user      User      @relation(fields: [userId], references: [id])
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("refresh_token")
 }

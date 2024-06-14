@@ -43,6 +43,20 @@ export class UserRepository extends BasePostgresRepository<UserEntity, UserInter
     return userEntity;
   }
 
+  public async create(entity: UserEntity): Promise<UserEntity | null> {
+    const user = await this.dbClient.user.create({
+      data: entity
+    });
+
+    if(!user) {
+      return null;
+    }
+
+    const newUser = this.createEntityFromDocument(user as unknown as UserInterface);
+
+    return newUser;
+  }
+
   public async updateByIdById(
     userId: string,
     fieldsToUpdate: Partial<UserEntity>

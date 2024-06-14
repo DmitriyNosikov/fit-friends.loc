@@ -2,7 +2,6 @@ import { Body, Controller, Delete, Get, HttpStatus, Param, Post, Req, UseGuards 
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 
 import { fillDTO } from '../libs/helpers';
-import { MongoIdValidationPipe } from '../libs/pipes';
 
 import { RequestWithUser } from './interfaces/request-with-user.interface';
 
@@ -12,10 +11,8 @@ import { UserService } from './user.service';
 import { JWTAuthGuard } from './guards/jwt-auth.guard';
 import { LocalAuthGuard } from './guards/local-auth.guard';
 
-import { CreateUserDTO } from '@shared/user/dto/create-user.dto';
-import { LoginUserDTO } from '@shared/user/dto/login-user.dto';
-import { LoggedUserRDO } from '@shared/user/rdo/logged-user.rdo';
-import { UserRDO } from '@shared/user/rdo/user.rdo';
+import { CreateUserDTO, LoginUserDTO, LoggedUserRDO, UserRDO } from '../../../../shared/user/';
+import { UserInterface } from '../libs/interfaces';
 @ApiTags('users')
 @Controller('users')
 export class UserController {
@@ -38,6 +35,8 @@ export class UserController {
   public async create(@Body() registerUserDto: CreateUserDTO) {
     const newUser = await this.userService.register(registerUserDto);
 
+    console.log('NEW USER: ', newUser);
+
     return fillDTO(UserRDO, newUser.toPOJO());
   }
 
@@ -57,7 +56,7 @@ export class UserController {
   // объект Request, в свойство user. Из него мы и возьмем информацию,
   // которую нам возвращает UserService.validate() через LocalAuthGuard
   public async login(@Body() dto: LoginUserDTO, @Req() { user: loggedUser }: RequestWithUser) {
-    const userToken = await this.userService.createToken(loggedUser);
+    const userToken = await this.userService.createToken(loggedUser as UserInterface);
 
     const loggedUserWithPayload = {
       ...loggedUser.toPOJO(),
@@ -99,7 +98,7 @@ export class UserController {
     status: HttpStatus.OK,
     description: UserMessage.SUCCESS.DELETED
   })
-  public async deleteUser(@Param('userId', MongoIdValidationPipe) userId: string): Promise<void> {
+  public async deleteUser(@Param('userId') userId: string): Promise<void> {
     await this.userService.deleteUser(userId);
   }
 }

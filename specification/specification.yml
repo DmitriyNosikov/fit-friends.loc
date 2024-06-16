@@ -169,13 +169,13 @@ components:
           description: User trainings type
           example: '["box", "crossfit", "running"]'
           enum:
-            - yoga
-            - running
-            - box
-            - stretching
-            - crossfit
-            - aerobics
-            - pilates
+            - йога
+            - бег
+            - бокс
+            - стрейчинг
+            - кроссфит
+            - аэробика
+            - пилатес
         trainingTime:
           type: string
           description: User training time periods (in minutes)
@@ -293,13 +293,13 @@ components:
           description: User trainings type
           example: '["box", "crossfit", "running"]'
           enum:
-            - yoga
-            - running
-            - box
-            - stretching
-            - crossfit
-            - aerobics
-            - pilates
+            - йога
+            - бег
+            - бокс
+            - стрейчинг
+            - кроссфит
+            - аэробика
+            - пилатес
         trainingTime:
           type: string
           description: User training time periods (in minutes)

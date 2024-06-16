@@ -11,7 +11,7 @@ import { UserService } from './user.service';
 import { JWTAuthGuard } from './guards/jwt-auth.guard';
 import { LocalAuthGuard } from './guards/local-auth.guard';
 
-import { CreateUserDTO, LoginUserDTO, LoggedUserRDO, UserRDO } from '../../../../shared/user/';
+import { CreateUserDTO, LoggedUserRDO, LoginUserDTO, UserRDO } from '../../../../shared/user/';
 import { UserInterface } from '../libs/interfaces';
 @ApiTags('users')
 @Controller('users')
@@ -32,10 +32,8 @@ export class UserController {
     status: HttpStatus.CONFLICT,
     description: UserMessage.ERROR.ALREADY_EXISTS
   })
-  public async create(@Body() registerUserDto: CreateUserDTO) {
-    const newUser = await this.userService.register(registerUserDto);
-
-    console.log('NEW USER: ', newUser);
+  public async create(@Body() dto: CreateUserDTO) {
+    const newUser = await this.userService.register(dto);
 
     return fillDTO(UserRDO, newUser.toPOJO());
   }

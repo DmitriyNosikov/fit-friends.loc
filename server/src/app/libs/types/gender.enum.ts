@@ -5,3 +5,4 @@ export const GenderEnum = {
 } as const;
 
 export type Gender = (typeof GenderEnum)[keyof typeof GenderEnum];
+export const genderTypeList: Gender[] = ['мужской', 'женский', 'неважно'];

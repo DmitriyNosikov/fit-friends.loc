@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Gender, TrainingType, UserLevel } from '@server/libs/types';
+import { TrainingType, UserLevel } from '@server/libs/types';
 import { GenderEnum } from '@server/libs/types/gender.enum';
 import { Location, LocationEnum } from '@server/libs/types/location.enum';
 import { TrainingTime, TrainingTimeEnum } from '@server/libs/types/training-time.enum';
@@ -57,7 +57,8 @@ export class UserRDO {
     example: 'мужской',
     enum: GenderEnum
   })
-  gender!: Gender;
+  @Expose()
+  gender!: number;
 
   @ApiProperty({
     description: 'User birth date',

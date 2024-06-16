@@ -6,8 +6,8 @@ GET https://jsonplaceholder.typicode.com/todos/1 HTTP/1.1
 Content-Type: application/json
 ###
 
-@userId = 665a2e4fc0772d685973c676
-@authorization = Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NjVhMmYxZDRhNzI4Y2UxZDMxYzRlZjciLCJlbWFpbCI6Imlyb24tbWFuQHN0YXJraW5kdXN0cmllcy5pdCIsIm5hbWUiOiJUb255IiwiaWF0IjoxNzE3MjQwNjYzLCJleHAiOjE3MTcyNDEyNjN9.rGQM_5oU-nlw7sv8P0dJQFt4XyyF_kMwNHL1ndnqQro
+@userId = d61ef04e-295a-41cb-a230-7e9e4570f14b
+@authorization = Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJkNjFlZjA0ZS0yOTVhLTQxY2ItYTIzMC03ZTllNDU3MGYxNGIiLCJlbWFpbCI6Imlyb24tbWFuQHN0YXJraW5kdXN0cmllcy5pdCIsIm5hbWUiOiJUb255IiwiaWF0IjoxNzE4NTQyNjAwLCJleHAiOjE3MTg1NDM1MDB9.oubkH6x1RZDWF3-WZqZxVWfS5HqZQAgPoXyUJ1drHA4
 
 # /////////////////////////////////// AUTNENTICATION ///////////////////////////////////
 
@@ -48,7 +48,7 @@ Content-Type: application/json
 {{authorization}}
 
 {
-  "userId": "6643e89dc0e4066e5ba3d7c2"
+  "userId": "817ddac9-08dd-4084-882c-f1d1381f1243"
 }
 ###
 

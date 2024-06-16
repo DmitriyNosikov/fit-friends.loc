@@ -1,11 +1,11 @@
-import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app/app.module';
+import { Logger, ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { NestFactory } from '@nestjs/core';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { AppModule } from './app/app.module';
+import { generateSpecYaml } from './app/libs/helpers';
 import { ConfigEnvironment } from './config';
 import { ConfigEnum } from './config/config.schema';
-import { Logger, ValidationPipe } from '@nestjs/common';
-import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import { generateSpecYaml } from './app/libs/helpers';
 
 const GLOBAL_PREFIX = 'api';
 

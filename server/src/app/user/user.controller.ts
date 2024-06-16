@@ -13,6 +13,7 @@ import { LocalAuthGuard } from './guards/local-auth.guard';
 
 import { CreateUserDTO, LoggedUserRDO, LoginUserDTO, UserRDO } from '../../../../shared/user/';
 import { UserInterface } from '../libs/interfaces';
+import { JWTRefreshGuard } from './guards/jwt-refresh.guard';
 @ApiTags('users')
 @Controller('users')
 export class UserController {
@@ -69,6 +70,29 @@ export class UserController {
   @UseGuards(JWTAuthGuard)
   public async checkToken(@Req() { user: tokenPayload }: RequestWithUser) {
     return tokenPayload;
+  }
+
+  @Post('refresh')
+  @UseGuards(JWTRefreshGuard)
+  @ApiResponse({
+    type: UserRDO,
+    status: HttpStatus.OK,
+    description: UserMessage.SUCCESS.NEW_TOKENS
+  })
+  @ApiResponse({
+    type: UserRDO,
+    status: HttpStatus.INTERNAL_SERVER_ERROR,
+    description: UserMessage.ERROR.CANT_CREATE_TOKENS
+  })
+  public async refreshToken(@Req() { user }: RequestWithUser) {
+    const userToken = await this.userService.createToken(user);
+
+    const loggedUserWithPayload = {
+      ...user.toPOJO(),
+      ...userToken
+    };
+
+    return fillDTO(LoggedUserRDO, loggedUserWithPayload);
   }
 
   @Get('/:userId')

@@ -43,7 +43,7 @@ model User {
   dayCalories       Int?      @map("day_calories")
   isReadyToTraining Boolean?  @map("is_ready_to_training")
 
-  refreshToken RefreshToken?
+  refreshToken RefreshToken[]
 
   @@map("users")
 }
@@ -54,7 +54,7 @@ model RefreshToken {
   updatedAt DateTime? @updatedAt @map("updated_at")
   expiresIn DateTime? @map("expires_in")
   tokenId   String    @map("token_id")
-  userId    String    @unique @map("user_id")
+  userId    String    @map("user_id")
 
   user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 

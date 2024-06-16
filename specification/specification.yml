@@ -59,6 +59,24 @@ paths:
         "201":
           description: ""
       tags: *a1
+  /api/users/refresh:
+    post:
+      operationId: UserController_refreshToken
+      parameters: []
+      responses:
+        "200":
+          description: Successfully get a new access/refresh tokens
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserRDO"
+        "500":
+          description: Can`t get get a new access/refresh tokens
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserRDO"
+      tags: *a1
   /api/users/{userId}:
     get:
       operationId: UserController_show
@@ -124,6 +142,14 @@ components:
           example: jarvis-iron-hearth123
           minimum: 12
           maximum: 6
+        role:
+          type: string
+          description: User role
+          example: admin
+          enum:
+            - admin
+            - client
+            - trainer
         gender:
           type: string
           description: User gender
@@ -206,6 +232,7 @@ components:
         - email
         - avatar
         - password
+        - role
         - gender
         - birthDate
         - description
@@ -248,6 +275,10 @@ components:
           type: string
           description: User avatar
           example: some/interesting/avatar.jpg
+        role:
+          type: string
+          description: User role
+          example: admin
         gender:
           type: string
           description: User gender
@@ -332,6 +363,7 @@ components:
         - name
         - email
         - avatar
+        - role
         - gender
         - birthDate
         - description

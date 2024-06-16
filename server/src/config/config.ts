@@ -13,8 +13,6 @@ async function getConfig(): Promise<ConfigInterface> {
     host: process.env.HOST,
   });
 
-  console.log('Config: ', config);
-
   await config.validate();
 
   return config;

@@ -30,6 +30,17 @@ export class RefreshTokenRepository extends BasePostgresRepository<RefreshTokenE
     return this.createEntityFromDocument(token);
   }
 
+  async create(entity: RefreshTokenEntity): Promise<RefreshTokenEntity> {
+    const entityPlainObject = entity.toPOJO();
+    const document = await this.dbClient.refreshToken.create({
+      data: entityPlainObject
+    });
+    
+    const refreshToken = this.createEntityFromDocument(document);
+
+    return refreshToken;
+  }
+
   public async deleteByTokenId(tokenId: string): Promise<void> {
     await this.dbClient.refreshToken.deleteMany({ 
       where: { tokenId }

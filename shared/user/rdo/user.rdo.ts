@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { TrainingType, UserLevel } from '@server/libs/types';
+import { TrainingType, UserLevel, UserRole } from '@server/libs/types';
 import { GenderEnum } from '@server/libs/types/gender.enum';
 import { Location, LocationEnum } from '@server/libs/types/location.enum';
 import { TrainingTime, TrainingTimeEnum } from '@server/libs/types/training-time.enum';
@@ -51,6 +51,13 @@ export class UserRDO {
   })
   @Expose()
   avatar!: string;
+
+  @ApiProperty({
+    description: 'User role',
+    example: 'admin',
+  })
+  @Expose()
+  role: UserRole;
 
   @ApiProperty({
     description: 'User gender',

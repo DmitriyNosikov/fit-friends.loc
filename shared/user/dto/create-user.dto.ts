@@ -1,11 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Location } from '@server/libs/types';
+import { Location, UserRole, UserRoleEnum, userRolesList } from '@server/libs/types';
 import { Gender, GenderEnum, genderTypeList } from '@server/libs/types/gender.enum';
 import { LocationEnum, locationList } from '@server/libs/types/location.enum';
 import { TrainingTime, TrainingTimeEnum, trainingTimeList } from '@server/libs/types/training-time.enum';
 import { TrainingType, TrainingTypeEnum, trainingTypeList } from '@server/libs/types/training-type.enum';
 import { UserLevel, UserLevelEnum, userLevelList } from '@server/libs/types/user-level.enum';
-import { UserValidation } from '@server/user/user.constant';
+import { DEFAULT_USER_ROLE, UserValidation } from '@server/user/user.constant';
 import {
   ArrayMaxSize,
   IsArray,
@@ -58,6 +58,16 @@ export class CreateUserDTO {
   @MinLength(UserValidation.PASSWORD.MIN_LENGTH)
   @IsString()
   password: string;
+
+  @ApiProperty({
+    description: 'User role',
+    example: 'admin',
+    enum: UserRoleEnum
+  })
+  @IsIn(userRolesList)
+  @IsString()
+  @IsOptional()
+  role: UserRole = DEFAULT_USER_ROLE;
 
   @ApiProperty({
     description: 'User gender',

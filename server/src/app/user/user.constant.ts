@@ -1,4 +1,6 @@
-import { MessagesType } from '../libs/types/';
+import { MessagesType, UserRoleEnum } from '../libs/types/';
+
+export const DEFAULT_USER_ROLE = UserRoleEnum.CLIENT;
 
 export const UserValidation = {
   NAME: {

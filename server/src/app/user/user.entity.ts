@@ -1,7 +1,7 @@
 
 import { Entity } from '../libs/entities';
 import { AuthUserInterface, StorableEntityInterface } from '../libs/interfaces';
-import { Gender, Location, TrainingTime, TrainingType, UserLevel } from '../libs/types';
+import { Gender, Location, TrainingTime, TrainingType, UserLevel, UserRole } from '../libs/types';
 
 
 export class UserEntity extends Entity implements StorableEntityInterface<AuthUserInterface> {
@@ -11,7 +11,7 @@ export class UserEntity extends Entity implements StorableEntityInterface<AuthUs
   public email: string;
   public name: string;
   public passwordHash: string;
-  public role?: string;
+  public role?: UserRole;
   public avatar?: string;
   public gender: Gender;
   public birthDate?: Date;
@@ -43,7 +43,7 @@ export class UserEntity extends Entity implements StorableEntityInterface<AuthUs
     this.email = user.email;
     this.name = user.name ?? '';
     this.passwordHash = user.passwordHash ?? '';
-    this.role = user.role ?? '';
+    this.role = user.role;
     this.avatar = user.avatar ?? '';
     this.gender = user.gender;
     this.birthDate = user.birthDate;

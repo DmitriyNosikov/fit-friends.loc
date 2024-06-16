@@ -18,6 +18,9 @@ import { UserMessage } from './user.constant';
 import { UserEntity } from './user.entity';
 import { UserFactory } from './user.factory';
 import { UserRepository } from './user.repository';
+import { jwtConfig } from 'server/src/config';
+import { ConfigType } from '@nestjs/config';
+import { RefreshTokenService } from '../refresh-token/refresh-token.service';
 
 
 @Injectable()
@@ -31,7 +34,11 @@ export class UserService {
     @Inject('Hasher')
     private readonly hasher: BCryptHasher,
 
+    @Inject(jwtConfig.KEY)
+    private readonly jwtOptions: ConfigType<typeof jwtConfig>,
     private readonly jwtService: JwtService,
+
+    private readonly refreshTokenService: RefreshTokenService
   ) {}
 
   public async register(dto: CreateUserDTO): Promise<UserEntity> {
@@ -86,11 +93,19 @@ export class UserService {
 
   public async createToken(user: UserInterface) {
     const accessTokenPayload = getJWTPayload(user);
+    const refreshTokenPayload = { ...accessTokenPayload, tokenId: crypto.randomUUID() };
 
     try {
       const accessToken = await this.jwtService.signAsync(accessTokenPayload);
+      const refreshToken = await this.jwtService.signAsync(refreshTokenPayload, {
+        secret: this.jwtOptions.refreshTokenSecret,
+        expiresIn: this.jwtOptions.accessTokenExpiresIn
+      });
 
-      return { accessToken };
+      // Сохраняем refresh-токен в БД
+      await this.refreshTokenService.createRefreshSession(refreshTokenPayload);
+
+      return { accessToken, refreshToken };
     } catch (error) {
       this.logger.error('[Token generation error]: ' + error.message);
 

@@ -7,7 +7,8 @@ Content-Type: application/json
 ###
 
 @userId = d61ef04e-295a-41cb-a230-7e9e4570f14b
-@authorization = Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJkNjFlZjA0ZS0yOTVhLTQxY2ItYTIzMC03ZTllNDU3MGYxNGIiLCJlbWFpbCI6Imlyb24tbWFuQHN0YXJraW5kdXN0cmllcy5pdCIsIm5hbWUiOiJUb255IiwiaWF0IjoxNzE4NTQyNjAwLCJleHAiOjE3MTg1NDM1MDB9.oubkH6x1RZDWF3-WZqZxVWfS5HqZQAgPoXyUJ1drHA4
+@authorization = Authorization: Bearer yJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJkNjFlZjA0ZS0yOTVhLTQxY2ItYTIzMC03ZTllNDU3MGYxNGIiLCJlbWFpbCI6Imlyb24tbWFuQHN0YXJraW5kdXN0cmllcy5pdCIsIm5hbWUiOiJUb255Iiwicm9sZSI6IiIsImlhdCI6MTcxODU0NzQwMywiZXhwIjoxNzE4NTQ4MzAzfQ.JLPrtuK8YGibm1wf_WWISE77ZXUtU7bkwKsd2J0DVV4
+@refresh = Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJkNjFlZjA0ZS0yOTVhLTQxY2ItYTIzMC03ZTllNDU3MGYxNGIiLCJlbWFpbCI6Imlyb24tbWFuQHN0YXJraW5kdXN0cmllcy5pdCIsIm5hbWUiOiJUb255Iiwicm9sZSI6IiIsInRva2VuSWQiOiI1MzQwYjI0Yi01ZDQxLTRmYTMtOTNjMC1jNWYwMmY5ZWJkODkiLCJpYXQiOjE3MTg1NDc0MDMsImV4cCI6MTcxODU0ODMwM30.CJJ2j0JsbpjcXdg-PYjZP2kCp37odwgkyQr3TUWbqkI
 
 # /////////////////////////////////// AUTNENTICATION ///////////////////////////////////
 
@@ -38,6 +39,11 @@ Content-Type: application/json
 # Check JWT Token & get token payload
 POST {{baseUrl}}/check/ HTTP/1.1
 {{authorization}}
+###
+
+# Get new JWT pair: Token + Refresh token
+POST {{baseUrl}}/refresh/ HTTP/1.1
+{{refresh}}
 ###
 
 # /////////////////////////////////// USER ///////////////////////////////////

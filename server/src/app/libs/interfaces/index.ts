@@ -10,8 +10,8 @@ export { TokenInterface } from './token/token.interface';
 export { TokenPayloadInterface } from './token/token-payload.interface';
 
 // USER
-export { UserInterface } from './user/user.interface';
-export { AuthUserInterface } from './user/auth-user.interface';
+export { UserInterface } from '../../user/interfaces/user.interface';
+export { AuthUserInterface } from '../../user/interfaces/auth-user.interface';
 
 // DB
 export { Repository } from './repository.interface'

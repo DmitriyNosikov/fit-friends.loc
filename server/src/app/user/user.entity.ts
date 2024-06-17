@@ -1,7 +1,8 @@
 
+import { TrainingDuration } from '@server/libs/types/training-time.enum';
 import { Entity } from '../libs/entities';
 import { AuthUserInterface, StorableEntityInterface } from '../libs/interfaces';
-import { Gender, Location, TrainingTime, TrainingType, UserLevel, UserRole } from '../libs/types';
+import { Gender, Location, TrainingType, UserLevel, UserRole } from '../libs/types';
 
 
 export class UserEntity extends Entity implements StorableEntityInterface<AuthUserInterface> {
@@ -21,9 +22,9 @@ export class UserEntity extends Entity implements StorableEntityInterface<AuthUs
 
   public level?: UserLevel;
   public trainingType?: TrainingType[];
-  public trainingTime?: TrainingTime;
-  public loseCalories?: number;
-  public dayCalories?: number;
+  public trainingDuration?: TrainingDuration;
+  public loseCaloriesLimit?: number;
+  public dayCaloriesLimit?: number;
   public isReadyToTraining?: boolean;
   
   constructor(user?: AuthUserInterface) {
@@ -54,9 +55,9 @@ export class UserEntity extends Entity implements StorableEntityInterface<AuthUs
     // TODO: Возможно, вынести в отдельную сущность "Опросник"
     this.level = user.level;
     this.trainingType = user.trainingType;
-    this.trainingTime = user.trainingTime;
-    this.loseCalories = user.loseCalories;
-    this.dayCalories = user.dayCalories;
+    this.trainingDuration = user.trainingDuration;
+    this.loseCaloriesLimit = user.loseCaloriesLimit;
+    this.dayCaloriesLimit = user.dayCaloriesLimit;
     this.isReadyToTraining = user.isReadyToTraining;
   }
 
@@ -83,9 +84,9 @@ export class UserEntity extends Entity implements StorableEntityInterface<AuthUs
 
       level: this.level,
       trainingType: this.trainingType,
-      trainingTime: this.trainingTime,
-      loseCalories: this.loseCalories,
-      dayCalories: this.dayCalories,
+      trainingDuration: this.trainingDuration,
+      loseCaloriesLimit: this.loseCaloriesLimit,
+      dayCaloriesLimit: this.dayCaloriesLimit,
       isReadyToTraining: this.isReadyToTraining,
     };
   }

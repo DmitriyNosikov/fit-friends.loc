@@ -11,7 +11,7 @@ import {
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 
-import { BCryptHasher, excludeKeys, fillDTO, getJWTPayload, omitUndefined } from '../libs/helpers';
+import { BCryptHasher, excludeKeys, getJWTPayload, omitUndefined } from '../libs/helpers';
 import { AuthUserInterface, UserInterface } from '../libs/interfaces';
 import { CreateUserDTO, LoginUserDTO, UpdateUserDTO } from '../../../../shared/user/'; // TODO: Заменить путь на @shared как будет больше времени разобраться
 

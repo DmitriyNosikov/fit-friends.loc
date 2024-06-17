@@ -38,9 +38,9 @@ model User {
   role              String?
   level             String?
   trainingType      String[]  @map("training_type")
-  trainingTime      String?   @map("training_time")
-  loseCalories      Int?      @map("lose_calories")
-  dayCalories       Int?      @map("day_calories")
+  trainingDuration  String?   @map("training_duration")
+  loseCaloriesLimit Int?      @map("lose_calories")
+  dayCaloriesLimit  Int?      @map("day_calories")
   isReadyToTraining Boolean?  @map("is_ready_to_training")
 
   refreshToken RefreshToken[]

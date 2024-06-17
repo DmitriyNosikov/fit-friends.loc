@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   ConflictException,
   HttpException,
   HttpStatus,
@@ -10,9 +11,9 @@ import {
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 
-import { BCryptHasher, getJWTPayload } from '../libs/helpers';
+import { BCryptHasher, excludeKeys, fillDTO, getJWTPayload, omitUndefined } from '../libs/helpers';
 import { AuthUserInterface, UserInterface } from '../libs/interfaces';
-import { CreateUserDTO, LoginUserDTO } from '../../../../shared/user/'; // TODO: Заменить путь на @shared как будет больше времени разобраться
+import { CreateUserDTO, LoginUserDTO, UpdateUserDTO } from '../../../../shared/user/'; // TODO: Заменить путь на @shared как будет больше времени разобраться
 
 import { UserMessage } from './user.constant';
 import { UserEntity } from './user.entity';
@@ -21,6 +22,7 @@ import { UserRepository } from './user.repository';
 import { jwtConfig } from 'server/src/config';
 import { ConfigType } from '@nestjs/config';
 import { RefreshTokenService } from '../refresh-token/refresh-token.service';
+import { RequestWithUserId } from '@server/libs/types';
 
 
 @Injectable()
@@ -40,6 +42,16 @@ export class UserService {
 
     private readonly refreshTokenService: RefreshTokenService
   ) {}
+
+  public async getUserByEmail(email: string): Promise<UserEntity | null> {
+    const existUser = await this.userRepository.findByEmail(email);
+
+    if(!existUser) {
+      throw new NotFoundException(`User with email ${email} not found`);
+    }
+
+    return existUser;
+  }
 
   public async register(dto: CreateUserDTO): Promise<UserEntity> {
     const { email, password } = dto;
@@ -63,15 +75,54 @@ export class UserService {
 
     return registeredUser;
   }
+  
+  public async updateUser(
+    userId: string,
+    dto: UpdateUserDTO & RequestWithUserId
+  ): Promise<UserEntity | null> {
+    const currentUserId = dto.userId;
 
-  public async getUserByEmail(email: string): Promise<UserEntity | null> {
-    const existUser = await this.userRepository.findByEmail(email);
-
-    if(!existUser) {
-      throw new NotFoundException(`User with email ${email} not found`);
+    if(userId !== currentUserId) {
+      throw new BadRequestException(UserMessage.ERROR.CANT_UPDATE_USER);
     }
 
-    return existUser;
+    const isUserExists = await this.userRepository.exists(userId);
+
+    if(!isUserExists) {
+      throw new NotFoundException(UserMessage.ERROR.NOT_FOUND);
+    }
+
+    const fieldsToUpdate = omitUndefined(dto as Record<string, unknown>);
+
+    if(Object.keys(fieldsToUpdate).length <= 0) {
+      throw new BadRequestException(UserMessage.ERROR.CANT_UPDATE);
+    }
+
+    const preparedFields = excludeKeys(fieldsToUpdate, ['userId']);
+    const updatedUser = await this.userRepository.updateById(userId, preparedFields);
+
+    return updatedUser;
+  }
+
+
+  public async getUserDetail(userId: string): Promise<UserEntity | null> {
+    const user = await this.userRepository.findById(userId);
+
+    if(!user) {
+      throw new NotFoundException(UserMessage.ERROR.NOT_FOUND);
+    }
+
+    return user;
+  }
+
+  public async deleteUser(userId: string): Promise<void> {
+    const isUserExists = await this.userRepository.exists(userId);
+
+    if(!isUserExists) {
+      return;
+    }
+
+    return await this.userRepository.deleteById(userId);
   }
 
   public async verify(dto: LoginUserDTO): Promise<UserEntity> {
@@ -111,25 +162,5 @@ export class UserService {
 
       throw new HttpException('Can`t create JWT Token.', HttpStatus.INTERNAL_SERVER_ERROR);
     }
-  }
-
-  public async getUserDetail(userId: string): Promise<UserEntity | null> {
-    const user = await this.userRepository.findById(userId);
-
-    if(!user) {
-      throw new NotFoundException(UserMessage.ERROR.NOT_FOUND);
-    }
-
-    return user;
-  }
-
-  public async deleteUser(userId: string): Promise<void> {
-    const isUserExists = await this.userRepository.exists(userId);
-
-    if(!isUserExists) {
-      return;
-    }
-
-    return await this.userRepository.deleteById(userId);
   }
 }

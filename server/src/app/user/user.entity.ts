@@ -74,6 +74,7 @@ export class UserEntity extends Entity implements StorableEntityInterface<AuthUs
       name: this.name,
       email: this.email,
       passwordHash: this.passwordHash,
+      role: this.role,
       avatar: this.avatar,
       gender: this.gender,
       birthDate: this.birthDate,

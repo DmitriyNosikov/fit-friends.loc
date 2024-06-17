@@ -57,7 +57,7 @@ export class UserRepository extends BasePostgresRepository<UserEntity, UserInter
     return newUser;
   }
 
-  public async updateByIdById(
+  public async updateById(
     userId: string,
     fieldsToUpdate: Partial<UserEntity>
   ): Promise<UserEntity | null> {
@@ -79,6 +79,21 @@ export class UserRepository extends BasePostgresRepository<UserEntity, UserInter
     await this.dbClient.user.delete({
       where: { id: userId }
     });
+  }
+
+  public async getUserRole(userId: string): Promise<string | null> {
+    const { role } = await this.dbClient.user.findFirst({
+      where: { id: userId },
+      select: {
+        role: true
+      }
+    });
+
+    if(!role) {
+      return null;
+    }
+
+    return role;
   }
 
   public async exists(userId: string): Promise<boolean> {

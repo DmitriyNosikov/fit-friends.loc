@@ -1,4 +1,16 @@
-import { Body, Controller, Delete, Get, HttpStatus, Param, Post, Req, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  HttpStatus,
+  Param,
+  Patch,
+  Post,
+  Req,
+  UseGuards,
+  UseInterceptors
+} from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 
 import { fillDTO } from '../libs/helpers';
@@ -11,9 +23,11 @@ import { UserService } from './user.service';
 import { JWTAuthGuard } from './guards/jwt-auth.guard';
 import { LocalAuthGuard } from './guards/local-auth.guard';
 
-import { CreateUserDTO, LoggedUserRDO, LoginUserDTO, UserRDO } from '../../../../shared/user/';
+import { CreateUserDTO, LoggedUserRDO, LoginUserDTO, UpdateUserDTO, UserRDO } from '../../../../shared/user/';
 import { UserInterface } from '../libs/interfaces';
 import { JWTRefreshGuard } from './guards/jwt-refresh.guard';
+import { InjectUserIdInterceptor } from '@server/libs/interceptors/inject-user-id.interceptor';
+
 @ApiTags('users')
 @Controller('users')
 export class UserController {
@@ -65,6 +79,57 @@ export class UserController {
     return fillDTO(LoggedUserRDO, loggedUserWithPayload);
   }
 
+  @Get('/:userId')
+  @UseGuards(JWTAuthGuard)
+  @ApiOperation({ summary: 'Get detail info about user' })
+  @ApiResponse({
+    type: UserRDO,
+    status: HttpStatus.OK,
+    description: UserMessage.SUCCESS.FOUND
+  })
+  @ApiResponse({
+    status: HttpStatus.NOT_FOUND,
+    description: UserMessage.ERROR.NOT_FOUND
+  })
+  public async show(@Param('userId') userId: string): Promise<LoggedUserRDO> {
+    const userDetail = await this.userService.getUserDetail(userId);
+
+    return fillDTO(LoggedUserRDO, userDetail.toPOJO());
+  }
+
+  @Patch(':userId')
+  @UseGuards(JWTAuthGuard)
+  @UseInterceptors(InjectUserIdInterceptor)
+  @ApiOperation({ summary: 'Update user info' })
+  @ApiResponse({
+    type: UserRDO,
+    status: HttpStatus.CREATED,
+    description: UserMessage.SUCCESS.UPDATED
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: UserMessage.ERROR.CANT_UPDATE
+  })
+  public async updateUser(
+    @Param('userId') userId: string,
+    @Body() dto: UpdateUserDTO
+  ): Promise<UserRDO | null> {
+    const updatedUser = await this.userService.updateUser(userId, dto);
+
+    return fillDTO(UserRDO, updatedUser.toPOJO());
+  }
+
+  @Delete(':userId')
+  @UseGuards(JWTAuthGuard)
+  @ApiOperation({ summary: 'Delete user' })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: UserMessage.SUCCESS.DELETED
+  })
+  public async deleteUser(@Param('userId') userId: string): Promise<void> {
+    await this.userService.deleteUser(userId);
+  }
+
   @Post('check')
   @ApiOperation({ summary: 'Check user`s JWT-Token' })
   @UseGuards(JWTAuthGuard)
@@ -74,6 +139,7 @@ export class UserController {
 
   @Post('refresh')
   @UseGuards(JWTRefreshGuard)
+  @ApiOperation({ summary: 'Refresh JWT-Tokens pair by refresh token' })
   @ApiResponse({
     type: UserRDO,
     status: HttpStatus.OK,
@@ -93,34 +159,5 @@ export class UserController {
     };
 
     return fillDTO(LoggedUserRDO, loggedUserWithPayload);
-  }
-
-  @Get('/:userId')
-  @UseGuards(JWTAuthGuard)
-  @ApiOperation({ summary: 'Get detail info about user' })
-  @ApiResponse({
-    type: UserRDO,
-    status: HttpStatus.OK,
-    description: UserMessage.SUCCESS.FOUND
-  })
-  @ApiResponse({
-    status: HttpStatus.NOT_FOUND,
-    description: UserMessage.ERROR.NOT_FOUND
-  })
-  public async show(@Param('userId') userId: string): Promise<LoggedUserRDO> {
-    const userDetail = await this.userService.getUserDetail(userId);
-
-    return fillDTO(LoggedUserRDO, userDetail.toPOJO());
-  }
-
-  @Delete(':userId')
-  @UseGuards(JWTAuthGuard)
-  @ApiOperation({ summary: 'Delete user' })
-  @ApiResponse({
-    status: HttpStatus.OK,
-    description: UserMessage.SUCCESS.DELETED
-  })
-  public async deleteUser(@Param('userId') userId: string): Promise<void> {
-    await this.userService.deleteUser(userId);
   }
 }

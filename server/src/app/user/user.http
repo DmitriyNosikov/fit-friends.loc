@@ -6,9 +6,9 @@ GET https://jsonplaceholder.typicode.com/todos/1 HTTP/1.1
 Content-Type: application/json
 ###
 
-@userId = d61ef04e-295a-41cb-a230-7e9e4570f14b
-@authorization = Authorization: Bearer yJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJkNjFlZjA0ZS0yOTVhLTQxY2ItYTIzMC03ZTllNDU3MGYxNGIiLCJlbWFpbCI6Imlyb24tbWFuQHN0YXJraW5kdXN0cmllcy5pdCIsIm5hbWUiOiJUb255Iiwicm9sZSI6IiIsImlhdCI6MTcxODU0NzQwMywiZXhwIjoxNzE4NTQ4MzAzfQ.JLPrtuK8YGibm1wf_WWISE77ZXUtU7bkwKsd2J0DVV4
-@refresh = Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJkNjFlZjA0ZS0yOTVhLTQxY2ItYTIzMC03ZTllNDU3MGYxNGIiLCJlbWFpbCI6Imlyb24tbWFuQHN0YXJraW5kdXN0cmllcy5pdCIsIm5hbWUiOiJUb255Iiwicm9sZSI6IiIsInRva2VuSWQiOiI1MzQwYjI0Yi01ZDQxLTRmYTMtOTNjMC1jNWYwMmY5ZWJkODkiLCJpYXQiOjE3MTg1NDc0MDMsImV4cCI6MTcxODU0ODMwM30.CJJ2j0JsbpjcXdg-PYjZP2kCp37odwgkyQr3TUWbqkI
+@userId = 5fcfd4be-4501-4bce-b54a-1568c782605b
+@authorization = Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI1ZmNmZDRiZS00NTAxLTRiY2UtYjU0YS0xNTY4Yzc4MjYwNWIiLCJlbWFpbCI6Imlyb24tbWFuQHN0YXJraW5kdXN0cmllcy5pdCIsIm5hbWUiOiJUb255Iiwicm9sZSI6ImNsaWVudCIsImlhdCI6MTcxODYyOTU4OSwiZXhwIjoxNzE4NjMwNDg5fQ.auI37_IbIFXgF1EVL8VPvb0JT3_YIiZNTWeXClZkbXk
+@refresh = Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI1ZmNmZDRiZS00NTAxLTRiY2UtYjU0YS0xNTY4Yzc4MjYwNWIiLCJlbWFpbCI6Imlyb24tbWFuQHN0YXJraW5kdXN0cmllcy5pdCIsIm5hbWUiOiJUb255Iiwicm9sZSI6ImNsaWVudCIsInRva2VuSWQiOiJmMDcwMWM5Mi1iODZjLTQ5OTUtODY1ZS03NDkyMDRjYWU2MDgiLCJpYXQiOjE3MTg2Mjk1ODksImV4cCI6MTcxODYzMDQ4OX0.217CBnSVmi9ljnhWKMGx5fMnTWmqaPAzBTr9PEKDmc8
 
 # /////////////////////////////////// AUTNENTICATION ///////////////////////////////////
 
@@ -49,12 +49,18 @@ POST {{baseUrl}}/refresh/ HTTP/1.1
 # /////////////////////////////////// USER ///////////////////////////////////
 
 # Get detail info about user
-GET  {{baseUrl}}/{{userId}} HTTP/1.1
+GET {{baseUrl}}/{{userId}} HTTP/1.1
 Content-Type: application/json
+{{authorization}}
+###
+
+# Update user
+PATCH {{baseUrl}}/{{userId}}
+Content-type: application/json
 {{authorization}}
 
 {
-  "userId": "817ddac9-08dd-4084-882c-f1d1381f1243"
+  "avatar": "updated/user/avatar.jpg"
 }
 ###
 

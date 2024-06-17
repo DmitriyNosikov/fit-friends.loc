@@ -34,6 +34,8 @@ export const UserMessage: MessagesType = {
     ALREADY_EXISTS: 'User with passed email already exists',
     NOT_FOUND: 'User not found',
     INCORRECT_CREDENTIALS: 'Incorrect user email/password',
+    CANT_UPDATE: 'Can`t update user. Possible reason: Object with fields to update are empty',
+    CANT_UPDATE_USER: 'Sorry, you can update only yourself.',
     CANT_CREATE_TOKENS: 'Can`t get get a new access/refresh tokens',
   },
   SUCCESS: {

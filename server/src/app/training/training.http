@@ -29,12 +29,19 @@ Content-Type: application/json
 }
 ###
 
+# Get trainings list
+GET {{baseUrl}}/?priceFrom=8000 HTTP/1.1
+Content-Type: application/json
+{{authorization}}
+###
+
+# Get detail info about training
 GET {{baseUrl}}/{{trainingId}} HTTP/1.1
 Content-Type: application/json
 {{authorization}}
 ###
 
-
+# Update training
 PATCH {{baseUrl}}/{{trainingId}} HTTP/1.1
 Content-Type: application/json
 {{authorization}}
@@ -45,6 +52,7 @@ Content-Type: application/json
 }
 ###
 
+# Delete training
 DELETE {{baseUrl}}/{{trainingId}} HTTP/1.1
 Content-Type: application/json
 {{authorization}}

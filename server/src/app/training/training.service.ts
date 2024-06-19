@@ -3,7 +3,8 @@ import { TrainingRepository } from './training.repository';
 import { TrainingFactory } from './training.factory';
 import { TrainingEntity } from './training.entity';
 import { TrainingMessage } from './training.constant';
-import { CreateTrainingDTO, UpdateTrainingDTO } from '@shared/training';
+import { CreateTrainingDTO, TrainingSearchQuery, UpdateTrainingDTO } from '@shared/training';
+import { fillDTO, omitUndefined } from '@server/libs/helpers';
 
 @Injectable()
 export class TrainingService {
@@ -21,6 +22,16 @@ export class TrainingService {
     }
 
     return training;
+  }
+
+  public async search(query?: TrainingSearchQuery) {
+    const trainings = await this.trainingRepository.search(query);
+
+    if(!trainings && query) {
+      throw new NotFoundException(`Can't find products by passed params " ${query}"`);
+    }
+
+    return trainings;
   }
 
   public async create(dto: CreateTrainingDTO) {
@@ -51,5 +62,12 @@ export class TrainingService {
     }
 
     return await this.trainingRepository.deleteById(trainingId);
+  }
+
+  public filterQuery(query: TrainingSearchQuery) {
+    const filteredQuery = fillDTO(TrainingSearchQuery, query);
+    const omitedQuery = omitUndefined(filteredQuery as Record<string, unknown>);
+
+    return omitedQuery;
   }
 }

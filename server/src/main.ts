@@ -6,6 +6,7 @@ import { AppModule } from './app/app.module';
 import { generateSpecYaml } from './app/libs/helpers';
 import { ConfigEnvironment } from './config';
 import { ConfigEnum } from './config/config.schema';
+import { RequestLoggerInterceptor } from '@server/libs/interceptors/request-logger.interceptor';
 
 const GLOBAL_PREFIX = 'api';
 
@@ -35,6 +36,9 @@ async function bootstrap() {
       transform: true, // + трансформация типов данных на основе DTO
     }),
   );
+
+  // Логирование входящих запросов
+  app.useGlobalInterceptors(new RequestLoggerInterceptor());
 
   // Включаем работу с CORS
   app.enableCors();

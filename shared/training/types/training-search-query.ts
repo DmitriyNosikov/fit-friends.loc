@@ -1,30 +1,45 @@
 import { BaseSearchQuery } from '@shared/types/search/base-search-query.type';
 import { IsNumber, Min, Max, IsString, IsIn, IsOptional } from 'class-validator';
-import { Expose } from 'class-transformer';
+import { Expose, Transform } from 'class-transformer';
 import { Gender, TrainingType, genderTypeList, trainingTypeList } from '@server/libs/types';
 import { TrainingValidation } from '@server/training/training.constant';
 
 export const DefaultTrainingSearchParam = {
-  PRISE_FROM: 0,
+  PRICE_FROM: 0,
 } as const ;
 
 export class TrainingSearchQuery extends BaseSearchQuery {
-  @IsIn(trainingTypeList)
+  @Expose()
   @IsString()
   @IsOptional()
-  trainingType?: TrainingType;
+  title?: string;
 
+  @Expose()
+  @Transform(({ value }) => {
+    if(value && !Array.isArray(value)) {
+      value = [value];
+    }
+
+    return value;
+  })
+  @IsIn(trainingTypeList, { each: true })
+  @IsString({ each: true })
+  @IsOptional()
+  trainingType?: TrainingType | TrainingType[];
+
+  @Expose()
   @IsIn(genderTypeList)
   @IsString()
+  @IsOptional()
   gender?: Gender;
 
   @Expose()
+  @Min(TrainingValidation.PRICE.MIN)
   @IsNumber()
   @IsOptional()
-  priceFrom?: number = DefaultTrainingSearchParam.PRISE_FROM;
+  priceFrom?: number = DefaultTrainingSearchParam.PRICE_FROM;
 
   @Expose()
-  @Min(TrainingValidation.PRICE.MIN)
   @IsNumber()
   @IsOptional()
   priceTo?: number;
@@ -39,9 +54,15 @@ export class TrainingSearchQuery extends BaseSearchQuery {
   @IsOptional()
   caloriesTo?: number;
 
+  @Expose()
   @Min(TrainingValidation.RATING.MIN)
+  @IsNumber()
+  @IsOptional()
+  ratingFrom?: number;
+
+  @Expose()
   @Max(TrainingValidation.RATING.MAX)
   @IsNumber()
   @IsOptional()
-  rating?: number;
+  ratingTo?: number;
 }

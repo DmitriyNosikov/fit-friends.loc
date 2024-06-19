@@ -157,6 +157,128 @@ paths:
                 $ref: "#/components/schemas/CreateTrainingDTO"
       tags: &a2
         - trainings
+    get:
+      operationId: TrainingController_index
+      summary: Get trainings list by passed params (or without it)
+      parameters:
+        - name: sortDirection
+          required: false
+          in: query
+          description: "Sorting direction. Default direction: desc"
+          example: " desc"
+          schema:
+            enum:
+              - asc
+              - desc
+            type: string
+        - name: sortType
+          required: false
+          in: query
+          description: "Sorting type. Default sort type: createdAt"
+          example: createdAt
+          schema:
+            enum:
+              - createdAt
+              - price
+              - type
+            type: string
+        - name: page
+          required: false
+          in: query
+          description: 'Current page in pagination (if items count more than "limit").
+            Default page: 1'
+          example: "1"
+          schema: {}
+        - name: limit
+          required: false
+          in: query
+          description: "Items per page (pagination). Max limit: 50"
+          example: "50"
+          schema: {}
+        - name: createdAt
+          required: false
+          in: query
+          description: Product creation date
+          example: 2024-05-29
+          schema: {}
+        - name: ratingTo
+          required: false
+          in: query
+          description: Rating end value
+          example: 5
+          schema: {}
+        - name: ratingFrom
+          required: false
+          in: query
+          description: Rating start value
+          example: 1
+          schema: {}
+        - name: caloriesTo
+          required: false
+          in: query
+          description: Calories end value
+          example: 2200
+          schema: {}
+        - name: caloriesFrom
+          required: false
+          in: query
+          description: Calories start value
+          example: 1000
+          schema: {}
+        - name: priceTo
+          required: false
+          in: query
+          description: Prisa end value
+          example: 5000
+          schema: {}
+        - name: priceForm
+          required: false
+          in: query
+          description: Prisa start value
+          example: 1000
+          schema: {}
+        - name: gender
+          required: false
+          in: query
+          description: Gender for who this training
+          example: мужской
+          schema:
+            enum:
+              - мужской
+              - женский
+              - неважно
+            type: string
+        - name: trainingType
+          required: false
+          in: query
+          description: Training type  (or types array)
+          example: кроссфит
+          schema:
+            enum:
+              - йога
+              - бег
+              - бокс
+              - стрейчинг
+              - кроссфит
+              - аэробика
+              - пилатес
+            type: string
+        - name: title
+          required: false
+          in: query
+          description: Training title
+          example: Run, Forest, run
+          schema: {}
+      responses:
+        "200":
+          description: Training found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TrainingsWithPaginationRDO"
+        "404":
+          description: Training not found
+      tags: *a2
   /api/trainings/{trainingId}:
     get:
       operationId: TrainingController_show
@@ -810,6 +932,35 @@ components:
         - rating
         - trainersName
         - isSpecial
+    TrainingsWithPaginationRDO:
+      type: object
+      properties:
+        entities:
+          description: Product entities array
+          allOf:
+            - $ref: "#/components/schemas/CreateTrainingRDO"
+        totalPages:
+          type: number
+          description: Paginated item pages count
+          example: 2
+        totalItems:
+          type: number
+          description: Total items count
+          example: 23
+        currentPage:
+          type: number
+          description: Current page number in pagination
+          example: 1
+        itemsPerPage:
+          type: number
+          description: items per page
+          example: 7
+      required:
+        - entities
+        - totalPages
+        - totalItems
+        - currentPage
+        - itemsPerPage
     UpdateTrainingDTO:
       type: object
       properties:

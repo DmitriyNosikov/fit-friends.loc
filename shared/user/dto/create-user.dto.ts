@@ -2,7 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { Location, UserRole, UserRoleEnum, userRolesList } from '@server/libs/types';
 import { Gender, GenderEnum, genderTypeList } from '@server/libs/types/gender.enum';
 import { LocationEnum, locationList } from '@server/libs/types/location.enum';
-import { TrainingTime, TrainingTimeEnum, trainingTimeList } from '@server/libs/types/training-time.enum';
+import { TrainingDuration, TrainingDurationEnum, trainingTimeList } from '@server/libs/types/training-time.enum';
 import { TrainingType, TrainingTypeEnum, trainingTypeList } from '@server/libs/types/training-type.enum';
 import { UserLevel, UserLevelEnum, userLevelList } from '@server/libs/types/user-level.enum';
 import { DEFAULT_USER_ROLE, UserValidation } from '@server/user/user.constant';
@@ -126,7 +126,7 @@ export class CreateUserDTO {
 
   @ApiProperty({
     description: 'User trainings type',
-    example: '["box", "crossfit", "running"]',
+    example: '["бокс", "кроссфит", "бег"]',
     enum: TrainingTypeEnum
   })
   @ArrayMaxSize(UserValidation.TRAINING_TYPE.MAX_COUNT)
@@ -137,18 +137,18 @@ export class CreateUserDTO {
   trainingType: TrainingType;
 
   @ApiProperty({
-    description: 'User training time periods (in minutes)',
+    description: 'User training time periods (duration in minutes)',
     example: '10-30',
-    enum: TrainingTimeEnum
+    enum: TrainingDurationEnum
   })
   @IsIn(trainingTimeList)
   @IsString()
   @IsOptional()
-  trainingTime: TrainingTime;
+  trainingDuration: TrainingDuration;
 
   @ApiProperty({
     description: 'User lose calories aim',
-    example: '1000',
+    example: 1000,
     minimum: UserValidation.LOSE_CALORIES.MIN,
     maximum: UserValidation.LOSE_CALORIES.MAX,
   })

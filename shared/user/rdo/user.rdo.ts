@@ -2,7 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { TrainingType, UserLevel, UserRole } from '@server/libs/types';
 import { GenderEnum } from '@server/libs/types/gender.enum';
 import { Location, LocationEnum } from '@server/libs/types/location.enum';
-import { TrainingTime, TrainingTimeEnum } from '@server/libs/types/training-time.enum';
+import { TrainingDuration, TrainingDurationEnum } from '@server/libs/types/training-time.enum';
 import { TrainingTypeEnum } from '@server/libs/types/training-type.enum';
 import { UserLevelEnum } from '@server/libs/types/user-level.enum';
 import { UserValidation } from '@server/user/user.constant';
@@ -116,10 +116,10 @@ export class UserRDO {
   @ApiProperty({
     description: 'User training time periods (in minutes)',
     example: '10-30',
-    enum: TrainingTimeEnum
+    enum: TrainingDurationEnum
   })
   @Expose()
-  trainingTime!: TrainingTime;
+  trainingTime!: TrainingDuration;
 
   @ApiProperty({
     description: 'User lose calories aim',

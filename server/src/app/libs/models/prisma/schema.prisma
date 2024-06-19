@@ -48,6 +48,27 @@ model User {
   @@map("users")
 }
 
+model Training {
+  id                String    @id @default(uuid())
+  createdAt         DateTime? @default(now()) @map("created_at")
+  updatedAt         DateTime? @updatedAt @map("updated_at")
+
+  title             String
+  background        String
+  trainingType      String    @map("training_type")
+  trainingDuration  String    @map("training_duration")
+  calories          Int
+  description       String
+  gender            String
+  video             String
+  rating            Int?
+  trainersName      String    @map("trainers_name")
+  isSpecial         Boolean?  @map("is_special")
+
+
+  @@map("trainings")
+}
+
 model RefreshToken {
   id        String    @id @default(uuid())
   createdAt DateTime? @default(now()) @map("created_at")

@@ -1,5 +1,5 @@
 
-import { TrainingDuration } from '@server/libs/types/training-time.enum';
+import { TrainingDuration } from '@server/libs/types/training-duration.enum';
 import { Entity } from '../libs/entities';
 import { AuthUserInterface, StorableEntityInterface } from '../libs/interfaces';
 import { Gender, Location, TrainingType, UserLevel, UserRole } from '../libs/types';

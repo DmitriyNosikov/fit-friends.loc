@@ -7,7 +7,7 @@ import { fillDTO } from '@server/libs/helpers';
 import { JWTAuthGuard } from '@server/user/guards/jwt-auth.guard';
 
 @ApiTags('trainings')
-@Controller('training')
+@Controller('trainings')
 export class TrainingController {
   constructor(
     private readonly trainingService: TrainingService
@@ -23,7 +23,7 @@ export class TrainingController {
 
   public async create(@Body() dto: CreateTrainingDTO) {
     const newTraining = await this.trainingService.create(dto);
-
+    
     return fillDTO(CreateTrainingRDO, newTraining.toPOJO());
   }
 
@@ -46,7 +46,9 @@ export class TrainingController {
   }
 
   // TODO: Реализовать с пагинацией
-  public async index(): Promise<void> { }
+  // public async index(): Promise<PaginationResult<TrainingEntity>> {
+
+  // }
 
   @Patch(':trainingId')
   @UseGuards(JWTAuthGuard)

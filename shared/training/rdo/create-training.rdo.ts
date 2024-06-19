@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Gender, GenderEnum, TrainingType, TrainingTypeEnum, UserLevel, UserLevelEnum, genderTypeList, trainingTypeList, userLevelList } from '@server/libs/types';
-import { TrainingDuration, TrainingDurationEnum, trainingTimeList } from '@server/libs/types/training-time.enum';
+import { TrainingDuration, TrainingDurationEnum, trainingTimeList } from '@server/libs/types/training-duration.enum';
 import { TrainingValidation } from '@server/training/training.constant';
 import { Expose } from 'class-transformer';
 
@@ -30,8 +30,8 @@ export class CreateTrainingRDO {
   @ApiProperty({
     description: 'Training title',
     example: 'Fat Burner',
-    minimum: TrainingValidation.NAME.MIN_LENGTH,
-    maximum: TrainingValidation.NAME.MAX_LENGTH,
+    minimum: TrainingValidation.TITLE.MIN_LENGTH,
+    maximum: TrainingValidation.TITLE.MAX_LENGTH,
   })
   @Expose()
   title: string;

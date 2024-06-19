@@ -5,14 +5,12 @@ import {
   GenderEnum,
   Location,
   LocationEnum,
-  TrainingTime,
-  TrainingTimeEnum,
+  TrainingDuration,
+  TrainingDurationEnum,
   TrainingType,
   TrainingTypeEnum,
   UserLevel,
   UserLevelEnum,
-  UserRole,
-  UserRoleEnum,
   genderTypeList,
   locationList,
   trainingTimeList,
@@ -138,12 +136,12 @@ export class UpdateUserDTO {
   @ApiProperty({
     description: 'User training time periods (in minutes)',
     example: '10-30',
-    enum: TrainingTimeEnum
+    enum: TrainingDurationEnum
   })
   @IsIn(trainingTimeList)
   @IsString()
   @IsOptional()
-  trainingTime?: TrainingTime;
+  trainingTime?: TrainingDuration;
 
   @ApiProperty({
     description: 'User lose calories aim',

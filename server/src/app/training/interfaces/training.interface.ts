@@ -1,6 +1,6 @@
 import { CreatedUpdatedDatesInterface } from '@server/libs/interfaces';
 import { Gender, TrainingType, UserLevel } from '@server/libs/types';
-import { TrainingDuration } from '@server/libs/types/training-time.enum';
+import { TrainingDuration } from '@server/libs/types/training-duration.enum';
 
 export interface TrainingInterface extends CreatedUpdatedDatesInterface {
   id?: string;

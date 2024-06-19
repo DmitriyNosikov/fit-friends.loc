@@ -4,6 +4,7 @@ import { appConfig, jwtConfig } from '../config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UserModule } from './user/user.module';
+import { TrainingModule } from './training/training.module';
 
 @Module({
   imports: [
@@ -14,7 +15,8 @@ import { UserModule } from './user/user.module';
       load: [appConfig, jwtConfig]
     }),
 
-    UserModule
+    UserModule,
+    TrainingModule
   ],
   controllers: [AppController],
   providers: [AppService],

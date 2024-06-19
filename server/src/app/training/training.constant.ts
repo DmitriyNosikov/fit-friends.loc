@@ -1,7 +1,7 @@
 import { MessagesType } from '@server/libs/types';
 
 export const TrainingValidation = {
-    NAME: {
+    TITLE: {
       MIN_LENGTH: 1,
       MAX_LENGTH: 15,
     },

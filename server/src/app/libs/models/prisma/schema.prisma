@@ -55,8 +55,10 @@ model Training {
 
   title             String
   background        String
+  userLevel         String
   trainingType      String    @map("training_type")
   trainingDuration  String    @map("training_duration")
+  price             Int
   calories          Int
   description       String
   gender            String

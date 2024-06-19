@@ -56,7 +56,7 @@ export class TrainingRepository extends BasePostgresRepository<TrainingEntity, T
   }
 
   public async deleteById(trainingId: string): Promise<void> {
-    await this.dbClient.user.delete({
+    await this.dbClient.training.delete({
       where: { id: trainingId }
     });
   }

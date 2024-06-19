@@ -6,16 +6,17 @@ GET https://jsonplaceholder.typicode.com/todos/1 HTTP/1.1
 Content-Type: application/json
 ###
 
-@authorization = Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI1ZmNmZDRiZS00NTAxLTRiY2UtYjU0YS0xNTY4Yzc4MjYwNWIiLCJlbWFpbCI6Imlyb24tbWFuQHN0YXJraW5kdXN0cmllcy5pdCIsIm5hbWUiOiJUb255Iiwicm9sZSI6ImNsaWVudCIsImlhdCI6MTcxODYzMjM1OCwiZXhwIjoxNzE4NjMzMjU4fQ.RcL9A7tTkYNyJ3bs03RpaKl0CKT6L8LZzgjeGr1Z6VY
+@trainingId = 612e8386-464e-406f-b1f3-f523aa4cca4b
+@authorization = Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI0ZDYwYjJkYS1lMzkzLTQ0NDktYmJjMy0xOWJmYzk0MDhhMGEiLCJlbWFpbCI6Imlyb24tbWFuQHN0YXJraW5kdXN0cmllcy5pdCIsIm5hbWUiOiJUb255Iiwicm9sZSI6ImNsaWVudCIsImlhdCI6MTcxODgwMDY5NiwiZXhwIjoxNzE4ODAxNTk2fQ.dI_oozY4XL3ZbxXXllh_PCdPBQ8OBcpOlAq7n4xZZpQ
 
 # Create new training
 POST {{baseUrl}}/ HTTP/1.1
 Content-Type: application/json
 
 {
-  "title": "Impossible crossfit",
+  "title": "Run, Forest",
   "background": "some/training/background.jpg",
-  "userLevel": "бывалый",
+  "userLevel": "профессионал",
   "trainingType": "кроссфит",
   "trainingDuration": "30-50",
   "price": 8800,
@@ -24,5 +25,29 @@ Content-Type: application/json
   "gender": "мужской",
   "video": "add/video/later.avi",
   "trainersName": "Evil",
-  "isSpecial": true,
+  "isSpecial": true
 }
+###
+
+GET {{baseUrl}}/{{trainingId}} HTTP/1.1
+Content-Type: application/json
+{{authorization}}
+###
+
+
+PATCH {{baseUrl}}/{{trainingId}} HTTP/1.1
+Content-Type: application/json
+{{authorization}}
+
+{
+  "title": "Run, Forest!",
+  "trainingType": "кроссфит"
+}
+###
+
+DELETE {{baseUrl}}/{{trainingId}} HTTP/1.1
+Content-Type: application/json
+{{authorization}}
+###
+
+

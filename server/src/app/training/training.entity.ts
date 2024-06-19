@@ -2,7 +2,7 @@ import { Entity } from '@server/libs/entities';
 import { StorableEntityInterface } from '@server/libs/interfaces';
 import { TrainingInterface } from './interfaces/training.interface';
 import { Gender, TrainingType, UserLevel } from '@server/libs/types';
-import { TrainingDuration } from '@server/libs/types/training-time.enum';
+import { TrainingDuration } from '@server/libs/types/training-duration.enum';
 
 export const TRAINING_DEFAULT = {
   RATING: 0,
@@ -38,6 +38,9 @@ export class TrainingEntity extends Entity implements StorableEntityInterface<Tr
     }
 
     this.id = training.id;
+    this.createdAt = training.createdAt;
+    this.updatedAt = training.updatedAt;
+
     this.title = training.title;
     this.background = training.background;
     this.userLevel = training.userLevel;
@@ -55,6 +58,10 @@ export class TrainingEntity extends Entity implements StorableEntityInterface<Tr
 
   toPOJO(): TrainingInterface {
     return {
+      id: this.id,
+      createdAt: this.createdAt,
+      updatedAt: this.updatedAt,
+
       title: this.title,
       background: this.background,
       userLevel: this.userLevel,

@@ -34,33 +34,63 @@ export class TrainingSearchQuery extends BaseSearchQuery {
   gender?: Gender;
 
   @Expose()
+  @Transform((field) => {
+    if(field.value) {
+      return Number(field.value);
+    }
+  })
   @Min(TrainingValidation.PRICE.MIN)
   @IsNumber()
   @IsOptional()
   priceFrom?: number = DefaultTrainingSearchParam.PRICE_FROM;
 
   @Expose()
+  @Transform((field) => {
+    if(field.value) {
+      return Number(field.value);
+    }
+  })
   @IsNumber()
   @IsOptional()
   priceTo?: number;
 
   @Expose()
+  @Transform((field) => {
+    if(field.value) {
+      return Number(field.value);
+    }
+  })
   @IsNumber()
   @IsOptional()
   caloriesFrom?: number;
 
   @Expose()
+  @Transform((field) => {
+    if(field.value) {
+      return Number(field.value);
+    }
+  })
   @IsNumber()
   @IsOptional()
   caloriesTo?: number;
 
   @Expose()
+  @Transform((field) => {
+    if(field.value) {
+      return Number(field.value);
+    }
+  })
   @Min(TrainingValidation.RATING.MIN)
   @IsNumber()
   @IsOptional()
   ratingFrom?: number;
 
   @Expose()
+  @Transform((field) => {
+    if(field.value) {
+      return Number(field.value);
+    }
+  })
   @Max(TrainingValidation.RATING.MAX)
   @IsNumber()
   @IsOptional()

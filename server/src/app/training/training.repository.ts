@@ -14,6 +14,7 @@ import { TrainingSearchFilters, TrainingSearchQuery } from '@shared/training';
 import { SortDirectionEnum, SortType, SortTypeEnum } from '@shared/types/sort/sort.enum';
 import { PaginationResult } from '@server/libs/interfaces';
 
+type AndFilters = [{ 'OR'?: Prisma.TrainingWhereInput[] }] | [];
 @Injectable()
 export class TrainingRepository extends BasePostgresRepository<TrainingEntity, TrainingInterface> {
   constructor(
@@ -115,118 +116,149 @@ export class TrainingRepository extends BasePostgresRepository<TrainingEntity, T
     return this.createEntityFromDocument(document as unknown as TrainingInterface);
   }
 
-    //////////////////// Вспомогательные методы поиска и пагинации ////////////////////
-    private getSearchFilters(query: TrainingSearchQuery): TrainingSearchFilters {
-      const where: Prisma.TrainingWhereInput = {};
-      const orderBy: Prisma.TrainingOrderByWithRelationInput = {};
+  //////////////////// Вспомогательные методы поиска и пагинации ////////////////////
+  private getSearchFilters(query: TrainingSearchQuery): TrainingSearchFilters {
+    const where: Prisma.TrainingWhereInput = {};
+    const orderBy: Prisma.TrainingOrderByWithRelationInput = {};
 
-      console.log('QUERY: ', query);
+    const andFilters: AndFilters = [];
+    where.AND = [];
 
-      where.AND = [];
-  
-      // Поиск по заголовку
-      if(query?.title) {
-        where.title = {
-          contains: query.title,
-          mode: 'insensitive'
-        }
-      }
-  
-      // Поиск по определенному типу
-      if(query?.trainingType) {
-        if(!Array.isArray(query.trainingType)) {
-          query.trainingType = [query.trainingType];
-        }
-  
-        where.trainingType = {
-          in: query.trainingType,
-        };
-      }
-
-      // Поиск по полу
-      if(query?.gender) {  
-        where.gender = query.gender;
-      }
-
-      // Поиск по цене/диапазону цен
-      const priceFilterFrom = [];
-      if(query?.priceFrom) {
-        priceFilterFrom.push({ price: { equals: query.priceFrom } })
-        priceFilterFrom.push({ price: { gt: query.priceFrom } })
-      }
-
-      const priceFilterTo = [];
-      if(query?.priceTo) {
-        where.OR.push({ price: { equals: query.priceTo } })
-        where.OR.push({ price: { lt: query.priceTo } })
-      }
-
-      if(priceFilterFrom.length > 0 || priceFilterTo.length > 0) {
-        where.AND.push({ OR: priceFilterFrom });
-        where.AND.push({ OR: priceFilterTo });
-      }
-
-      // Поиск по калориям/диапазону калорий
-      const caloriesFilterFrom = [];
-      if(query?.caloriesFrom) {
-        where.OR.push({ calories: { equals: query.caloriesFrom } })
-        where.OR.push({ calories: { gt: query.caloriesFrom } })
-      }
-
-      const caloriesFilterTo = [];
-      if(query?.caloriesTo) {
-        where.OR.push({ calories: { equals: query.caloriesTo } })
-        where.OR.push({ calories: { lt: query.caloriesTo } })
-      }
-
-      if(caloriesFilterFrom.length > 0 || caloriesFilterTo.length > 0) {
-        where.AND.push({ OR: caloriesFilterFrom });
-        where.AND.push({ OR: caloriesFilterTo });
-      }
-
-      // Поиск по рейтингу/диапазону рейтингов
-      const ratingFilterFrom = [];
-      if(query?.ratingFrom) {
-        where.OR.push({ rating: { equals: query.ratingFrom } })
-        where.OR.push({ rating: { gt: query.ratingFrom } })
-      }
-
-      const ratingFilterTo = [];
-      if(query?.ratingTo) {
-        where.OR.push({ rating: { equals: query.ratingTo } })
-        where.OR.push({ rating: { lt: query.ratingTo } })
-      }
-
-      if(ratingFilterFrom.length > 0 || ratingFilterTo.length > 0) {
-        where.AND.push({ OR: caloriesFilterFrom });
-        where.AND.push({ OR: caloriesFilterTo });
-      }
-
-      // Сортировка и направление сортировки
-      const { key, value } = this.getSortKeyValue(query.sortType, query.sortDirection);
-  
-      orderBy[key] = value;
-  
-      return { where, orderBy };
-    }
-
-    private getSortKeyValue(sortType: SortTypeEnum, sortDirection: SortDirectionEnum) {
-      switch(sortType) {
-        case(SortType.CREATED_AT): {
-          return { key: 'createdAt', value: sortDirection };
-        }
-        default: {
-          return { key: DefaultSearchParam.SORT.TYPE, value: DefaultSearchParam.SORT.DIRECTION };
-        }
+    // Поиск по заголовку
+    if(query?.title) {
+      where.title = {
+        contains: query.title,
+        mode: 'insensitive'
       }
     }
-  
-    private async getItemsCount(where: Prisma.TrainingWhereInput): Promise<number> {
-      return this.dbClient.training.count({ where });
+
+    // Поиск по определенному типу
+    if(query?.trainingType) {
+      if(!Array.isArray(query.trainingType)) {
+        query.trainingType = [query.trainingType];
+      }
+
+      where.trainingType = {
+        in: query.trainingType,
+      };
     }
-  
-    private calculateItemsPage(totalCount: number, limit: number): number {
-      const postsPages = Math.ceil(totalCount / limit);
-      return postsPages;
+
+    // Поиск по полу
+    if(query?.gender) {  
+      where.gender = query.gender;
     }
+
+    // Поиск по цене/диапазону цен
+    if(query?.priceFrom || query?.priceTo) {
+      this.setPriceFilter(query, andFilters);
+    }
+
+    // Поиск по калориям/диапазону калорий
+    if(query?.caloriesFrom || query?.caloriesTo) {
+      this.setCaloriesFilter(query, andFilters);
+    }
+
+    // Поиск по рейтингу/диапазону рейтингов
+    if(query?.ratingFrom || query?.ratingTo) {
+      this.setRatingFilter(query, andFilters);
+    }
+
+    // Добавление установелнных фильтров
+    if(andFilters.length > 0) {
+      where.AND.push(...andFilters);
+    }
+
+    // Сортировка и направление сортировки
+    const { key, value } = this.getSortKeyValue(query.sortType, query.sortDirection);
+
+    orderBy[key] = value;
+
+    return { where, orderBy };
+  }
+
+  private getSortKeyValue(sortType: SortTypeEnum, sortDirection: SortDirectionEnum) {
+    switch(sortType) {
+      case(SortType.CREATED_AT): {
+        return { key: 'createdAt', value: sortDirection };
+      }
+      case(SortType.PRICE): {
+        return { key: 'price', value: sortDirection };
+      }
+      case(SortType.CALORIES): {
+        return { key: 'calories', value: sortDirection };
+      }
+      case(SortType.RATING): {
+        return { key: 'rating', value: sortDirection };
+      }
+      default: {
+        return { key: DefaultSearchParam.SORT.TYPE, value: DefaultSearchParam.SORT.DIRECTION };
+      }
+    }
+  }
+
+  private setPriceFilter(query: TrainingSearchQuery, andFilters: AndFilters ) {
+    const priceFilterFrom = [];
+    if(query?.priceFrom) {
+      priceFilterFrom.push({ price: { equals: query.priceFrom } })
+      priceFilterFrom.push({ price: { gt: query.priceFrom } })
+    }
+
+    const priceFilterTo = [];
+    if(query?.priceTo) {
+      priceFilterTo.push({ price: { equals: query.priceTo } })
+      priceFilterTo.push({ price: { lt: query.priceTo } })
+    }
+
+    if(priceFilterFrom.length > 0 || priceFilterTo.length > 0) {
+      andFilters.push({ OR: priceFilterFrom } as never);
+      andFilters.push({ OR: priceFilterTo } as never);
+    }
+  }
+
+  private setCaloriesFilter(query: TrainingSearchQuery, andFilters: AndFilters ) {
+    const caloriesFilterFrom = [];
+    if(query?.caloriesFrom) {
+      caloriesFilterFrom.push({ calories: { equals: query.caloriesFrom } })
+      caloriesFilterFrom.push({ calories: { gt: query.caloriesFrom } })
+    }
+
+    const caloriesFilterTo = [];
+    if(query?.caloriesTo) {
+      caloriesFilterTo.push({ calories: { equals: query.caloriesTo } })
+      caloriesFilterTo.push({ calories: { lt: query.caloriesTo } })
+    }
+
+    if(caloriesFilterFrom.length > 0 || caloriesFilterTo.length > 0) {
+      andFilters.push({ OR: caloriesFilterFrom } as never);
+      andFilters.push({ OR: caloriesFilterTo } as never);
+    }
+  }
+
+  private setRatingFilter(query: TrainingSearchQuery, andFilters: AndFilters ) {
+    const ratingFilterFrom = [];
+    if(query?.ratingFrom) {
+      ratingFilterFrom.push({ rating: { equals: query.ratingFrom } })
+      ratingFilterFrom.push({ rating: { gt: query.ratingFrom } })
+    }
+
+    const ratingFilterTo = [];
+    if(query?.ratingTo) {
+      ratingFilterTo.push({ rating: { equals: query.ratingTo } })
+      ratingFilterTo.push({ rating: { lt: query.ratingTo } })
+    }
+
+    if(ratingFilterFrom.length > 0 || ratingFilterTo.length > 0) {
+      andFilters.push({ OR: ratingFilterFrom } as never);
+      andFilters.push({ OR: ratingFilterTo } as never);
+    }
+  }
+
+  private async getItemsCount(where: Prisma.TrainingWhereInput): Promise<number> {
+    return this.dbClient.training.count({ where });
+  }
+
+  private calculateItemsPage(totalCount: number, limit: number): number {
+    const postsPages = Math.ceil(totalCount / limit);
+    return postsPages;
+  }
 }

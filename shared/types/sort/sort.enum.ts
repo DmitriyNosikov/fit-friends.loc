@@ -1,6 +1,8 @@
 export const SortType = {
   CREATED_AT: 'createdAt',
   PRICE: 'price',
+  CALORIES: 'calories',
+  RATING: 'rating',
   TYPE: 'type',
 } as const;
 

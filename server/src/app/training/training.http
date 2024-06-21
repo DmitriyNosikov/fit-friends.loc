@@ -30,7 +30,25 @@ Content-Type: application/json
 ###
 
 # Get trainings list
-GET {{baseUrl}}/?priceFrom=8000 HTTP/1.1
+GET {{baseUrl}}/ HTTP/1.1
+Content-Type: application/json
+{{authorization}}
+###
+
+# Get trainings list (+ price filtering)
+GET {{baseUrl}}/?priceFrom=2000&priceTo=3000&sortType=price HTTP/1.1
+Content-Type: application/json
+{{authorization}}
+###
+
+# Get trainings list (+ calories filtering)
+GET {{baseUrl}}/?caloriesFrom=100&caloriesTo=200&sortType=calories HTTP/1.1
+Content-Type: application/json
+{{authorization}}
+###
+
+# Get trainings list (+ rating filtering)
+GET {{baseUrl}}/?ratingFrom=0&ratingTo=2&sortType=rating HTTP/1.1
 Content-Type: application/json
 {{authorization}}
 ###

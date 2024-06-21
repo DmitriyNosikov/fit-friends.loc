@@ -180,6 +180,8 @@ paths:
             enum:
               - createdAt
               - price
+              - calories
+              - rating
               - type
             type: string
         - name: page

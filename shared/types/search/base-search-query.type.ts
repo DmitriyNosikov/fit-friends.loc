@@ -1,6 +1,7 @@
 import { Expose, Transform } from 'class-transformer';
-import { IsDateString, IsIn, IsNumber, IsOptional, IsString, IsArray, Max } from 'class-validator';
-import { SortDirection, SortDirectionEnum, SortType, SortTypeEnum } from '../sort/sort.enum';
+import { IsDateString, IsIn, IsNumber, IsOptional, Max } from 'class-validator';
+import { SortType, SortTypeEnum } from '../sort/sort-type.enum';
+import { SortDirection, SortDirectionEnum } from '../sort/sort-direction.enum';
 
 export const DefaultSearchParam = {
   MAX_ITEMS_PER_PAGE: 50,

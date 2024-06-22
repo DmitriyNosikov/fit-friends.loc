@@ -60,5 +60,5 @@ export class CreateOrderRDO {
     example: 'd61ef04e-295a-41cb-a230-7e9e4570f14b',
   })
   @Expose()
-  userId: UserInterface['id'];
+  userId?: UserInterface['id'];
 }

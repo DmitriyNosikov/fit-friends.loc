@@ -11,7 +11,8 @@ import { TrainingFactory } from './training.factory';
 
 import { DefaultSearchParam } from '@shared/types/search/base-search-query.type';
 import { TrainingSearchFilters, TrainingSearchQuery } from '@shared/training';
-import { SortDirectionEnum, SortType, SortTypeEnum } from '@shared/types/sort/sort.enum';
+import { SortDirectionEnum} from '@shared/types/sort/sort-direction.enum';
+import { TrainingSortType, TrainingSortTypeEnum } from '@shared/training';
 import { PaginationResult } from '@server/libs/interfaces';
 
 type AndFilters = [{ 'OR'?: Prisma.TrainingWhereInput[] }] | [];
@@ -176,18 +177,18 @@ export class TrainingRepository extends BasePostgresRepository<TrainingEntity, T
     return { where, orderBy };
   }
 
-  private getSortKeyValue(sortType: SortTypeEnum, sortDirection: SortDirectionEnum) {
+  private getSortKeyValue(sortType: TrainingSortTypeEnum, sortDirection: SortDirectionEnum) {
     switch(sortType) {
-      case(SortType.CREATED_AT): {
+      case(TrainingSortType.CREATED_AT): {
         return { key: 'createdAt', value: sortDirection };
       }
-      case(SortType.PRICE): {
+      case(TrainingSortType.PRICE): {
         return { key: 'price', value: sortDirection };
       }
-      case(SortType.CALORIES): {
+      case(TrainingSortType.CALORIES): {
         return { key: 'calories', value: sortDirection };
       }
-      case(SortType.RATING): {
+      case(TrainingSortType.RATING): {
         return { key: 'rating', value: sortDirection };
       }
       default: {
@@ -255,10 +256,5 @@ export class TrainingRepository extends BasePostgresRepository<TrainingEntity, T
 
   private async getItemsCount(where: Prisma.TrainingWhereInput): Promise<number> {
     return this.dbClient.training.count({ where });
-  }
-
-  private calculateItemsPage(totalCount: number, limit: number): number {
-    const postsPages = Math.ceil(totalCount / limit);
-    return postsPages;
   }
 }

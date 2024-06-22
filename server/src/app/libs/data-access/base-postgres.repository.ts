@@ -2,6 +2,7 @@ import { PrismaClientService } from '../../prisma-client/prisma-client.service';
 import { Entity } from '../entities/';
 import { Repository } from '../interfaces/repository.interface';
 import { EntityFactoryInterface, StorableEntityInterface } from '../interfaces';
+import { fillDTO, omitUndefined } from '../helpers';
 
 export abstract class BasePostgresRepository<
   T extends Entity & StorableEntityInterface<ReturnType<T['toPOJO']>>,
@@ -35,5 +36,18 @@ export abstract class BasePostgresRepository<
 
   public async deleteById(id: T['id']): Promise<void> {
     throw new Error('Not implemented');
+  }
+
+  // Support methods
+  public filterQuery<Q>(query: Q) {
+    const filteredQuery = fillDTO(Q, query);
+    const omitedQuery = omitUndefined(filteredQuery as Record<string, unknown>);
+
+    return omitedQuery;
+  }
+
+  public calculateItemsPage(totalCount: number, limit: number): number {
+    const postsPages = Math.ceil(totalCount / limit);
+    return postsPages;
   }
 }

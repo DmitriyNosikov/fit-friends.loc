@@ -1,11 +1,18 @@
 import { Injectable } from '@nestjs/common';
 
+import { Prisma } from '@prisma/client';
 import { PrismaClientService } from '../prisma-client/prisma-client.service';
 import { BasePostgresRepository } from '@server/libs/data-access';
 
 import { OrderEntity } from './order.entity';
 import { OrderInterface } from './interfaces/order.interface';
 import { OrderFactory } from './order.factory';
+
+import { SortType, SortTypeEnum } from '@shared/types/sort/sort-type.enum';
+import { SortDirectionEnum } from '@shared/types/sort/sort-direction.enum';
+import { BaseSearchQuery, DefaultSearchParam } from '@shared/types/search/base-search-query.type';
+import { PaginationResult } from '@server/libs/interfaces';
+import { OrderSearchFilters } from '@shared/order';
 
 @Injectable()
 export class OrderRepository extends BasePostgresRepository<OrderEntity, OrderInterface> {
@@ -43,6 +50,34 @@ export class OrderRepository extends BasePostgresRepository<OrderEntity, OrderIn
     return result;
   }
 
+  public async search(query?: BaseSearchQuery): Promise<PaginationResult<OrderEntity>> {
+    const skip = query?.page && query?.limit ? (query.page - 1) * query.limit : undefined;
+    const take = (!query?.limit || query?.limit > DefaultSearchParam.MAX_ITEMS_PER_PAGE) ? DefaultSearchParam.MAX_ITEMS_PER_PAGE : query.limit;
+    const { where, orderBy } = this.getSearchFilters(query);
+
+    // Запрос на получение результата поиска
+    const [items, totalItemsCount] = await Promise.all([
+      this.dbClient.order.findMany({
+        where,
+
+        // Pagination
+        take,
+        skip,
+        orderBy
+      }),
+      this.getItemsCount(where)
+    ]);
+
+    const itemsEntities = items.map((item) => this.createEntityFromDocument(item as unknown as OrderInterface));
+
+    return {
+      entities: itemsEntities,
+      currentPage:  query?.page ?? 0,
+      totalPages: this.calculateItemsPage(totalItemsCount, take),
+      totalItems: totalItemsCount,
+      itemsPerPage: take ?? totalItemsCount,
+    }
+  }
 
   public async create(entity: OrderEntity): Promise<OrderEntity | null> {
     const order = await this.dbClient.order.create({
@@ -92,5 +127,33 @@ export class OrderRepository extends BasePostgresRepository<OrderEntity, OrderIn
 
   private getEntity(document): OrderEntity {
     return this.createEntityFromDocument(document as unknown as OrderInterface);
+  }
+
+  //////////////////// Вспомогательные методы поиска и пагинации ////////////////////
+  private getSearchFilters(query: BaseSearchQuery): OrderSearchFilters {
+    const where: Prisma.OrderWhereInput = {};
+    const orderBy: Prisma.OrderOrderByWithRelationInput = {};
+
+    // Сортировка и направление сортировки
+    const { key, value } = this.getSortKeyValue(query.sortType, query.sortDirection);
+
+    orderBy[key] = value;
+
+    return { where, orderBy };
+  }
+
+  private getSortKeyValue(sortType: SortTypeEnum, sortDirection: SortDirectionEnum) {
+    switch(sortType) {
+      case(SortType.CREATED_AT): {
+        return { key: 'createdAt', value: sortDirection };
+      }
+      default: {
+        return { key: DefaultSearchParam.SORT.TYPE, value: DefaultSearchParam.SORT.DIRECTION };
+      }
+    }
+  }
+
+  private async getItemsCount(where: Prisma.OrderWhereInput): Promise<number> {
+    return this.dbClient.order.count({ where });
   }
 }

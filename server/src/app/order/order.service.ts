@@ -7,6 +7,7 @@ import { CreateOrderDTO, UpdateOrderDTO } from '@shared/order';
 import { OrderMessage } from './order.constant';
 import { OrderEntity } from './order.entity';
 import { TrainingService } from '@server/training/training.service';
+import { BaseSearchQuery } from '@shared/types';
 
 @Injectable()
 export class OrderService {
@@ -27,11 +28,11 @@ export class OrderService {
     return order;
   }
 
-  public async search(userId: string): Promise<OrderEntity[] | null> {
-    const orders = await this.orderRepository.findByUserId(userId);
+  public async search(query?: BaseSearchQuery) {
+    const orders = await this.orderRepository.search(query);
 
-    if (!orders) {
-      throw new NotFoundException(OrderMessage.ERROR.NOT_FOUND);
+    if(!orders && query) {
+      throw new NotFoundException(`Can't find products by passed params " ${query}"`);
     }
 
     return orders;
@@ -73,5 +74,11 @@ export class OrderService {
     }
 
     return await this.orderRepository.deleteById(orderId);
+  }
+
+  public filterQuery(query: BaseSearchQuery) {
+    const filteredQuery = this.orderRepository.filterQuery<BaseSearchQuery>(query);
+    
+    return filteredQuery;
   }
 }

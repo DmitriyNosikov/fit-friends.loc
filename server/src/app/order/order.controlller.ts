@@ -1,12 +1,17 @@
 import { Body, Controller, Delete, Get, HttpStatus, Param, Patch, Post, Query, UseGuards } from '@nestjs/common';
 import { ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { CreateOrderDTO, UpdateOrderDTO, CreateOrderRDO } from '@shared/order';
+import { CreateOrderDTO, UpdateOrderDTO, CreateOrderRDO, OrdersWithPaginationRDO } from '@shared/order';
 
 import { fillDTO } from '@server/libs/helpers';
 import { JWTAuthGuard } from '@server/user/guards/jwt-auth.guard';
 
 import { OrderService } from './order.service';
 import { OrderMessage } from './order.constant';
+
+import { BaseSearchQuery, DefaultSearchParam } from '@shared/types/search/base-search-query.type';
+import { SortType } from '@shared/types/sort/sort-type.enum';
+import { SortDirection } from '@shared/types/sort/sort-direction.enum';
+
 
 @ApiTags('orders')
 @Controller('orders')
@@ -31,70 +36,99 @@ export class OrderController {
 
   @Get('/')
   @ApiOperation({ summary: 'Get orders list by passed params (or without it)' })
-  public async index(@Query() query?: TrainingSearchQuery): Promise<TrainingsWithPaginationRDO | null> {
-    const preparedQuery = this.trainingService.filterQuery(query);
-    const documents = await this.trainingService.search(preparedQuery);
+  @ApiQuery({
+    name: "createdAt",
+    description: `Item's creation date`,
+    example: "2024-05-29",
+    required: false
+  })
+  @ApiQuery({
+    name: "limit",
+    description: `Items per page (pagination). Max limit: ${DefaultSearchParam.MAX_ITEMS_PER_PAGE}`,
+    example: "50",
+    required: false
+  })
+  @ApiQuery({
+    name: "page",
+    description: `Current page in pagination (if items count more than "limit"). Default page: ${DefaultSearchParam.PAGE}`,
+    example: "1",
+    required: false
+  })
+  @ApiQuery({
+    name: "sortType",
+    description: `Sorting type. Default sort type: ${DefaultSearchParam.SORT.TYPE}`,
+    enum: SortType,
+    example: "createdAt",
+    required: false
+  })
+  @ApiQuery({
+    name: "sortDirection",
+    description: `Sorting direction. Default direction: ${DefaultSearchParam.SORT.DIRECTION}`,
+    enum: SortDirection,
+    example: " desc",
+    required: false
+  })
+  public async index(@Query() query?: BaseSearchQuery): Promise<OrdersWithPaginationRDO | null> {
+    const preparedQuery = this.orderService.filterQuery(query);
+    const documents = await this.orderService.search(preparedQuery);
 
     if(!documents.entities || documents.entities.length <= 0) {
       return;
     }
 
-    const trainings = {
+    const orders = {
       ...documents,
       entities: documents.entities.map((document) => document.toPOJO())
     }
 
-    return trainings;
+    return orders;
   }
 
-  @Get(':trainingId')
-  @UseGuards(JWTAuthGuard)
-  @ApiOperation({ summary: 'Get detail info about training' })
+  @Get(':orderId')
+  @ApiOperation({ summary: 'Get detail info about order' })
   @ApiResponse({
-    type: CreateTrainingRDO,
+    type: CreateOrderRDO,
     status: HttpStatus.OK,
-    description: TrainingMessage.SUCCESS.FOUND
+    description: OrderMessage.SUCCESS.FOUND
   })
   @ApiResponse({
     status: HttpStatus.NOT_FOUND,
-    description: TrainingMessage.ERROR.NOT_FOUND
+    description: OrderMessage.ERROR.NOT_FOUND
   })
-  public async show(@Param('trainingId') trainingId: string): Promise<CreateTrainingRDO> {
-    const trainingDetail = await this.trainingService.getTrainingDetail(trainingId);
+  public async show(@Param('orderId') orderId: string): Promise<CreateOrderRDO> {
+    const orderDetail = await this.orderService.getOrderDetail(orderId);
 
-    return fillDTO(CreateTrainingRDO, trainingDetail.toPOJO());
+    return fillDTO(CreateOrderRDO, orderDetail.toPOJO());
   }
 
-  @Patch(':trainingId')
-  @UseGuards(JWTAuthGuard)
-  @ApiOperation({ summary: 'Update training info' })
+  @Patch(':orderId')
+  @ApiOperation({ summary: 'Update order info' })
   @ApiResponse({
-    type: CreateTrainingRDO,
+    type: CreateOrderRDO,
     status: HttpStatus.CREATED,
-    description: TrainingMessage.SUCCESS.UPDATED
+    description: OrderMessage.SUCCESS.UPDATED
   })
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
-    description: TrainingMessage.ERROR.CANT_UPDATE
+    description: OrderMessage.ERROR.CANT_UPDATE
   })
   public async updateTraining(
-    @Param('trainingId') trainingId: string,
-    @Body() dto: UpdateTrainingDTO
-  ): Promise<CreateTrainingRDO | null> {
-    const updatedTraining = await this.trainingService.updateById(trainingId, dto);
+    @Param('orderId') orderId: string,
+    @Body() dto: UpdateOrderDTO
+  ): Promise<CreateOrderRDO | null> {
+    const updatedOrder = await this.orderService.updateById(orderId, dto);
 
-    return fillDTO(CreateTrainingRDO, updatedTraining.toPOJO());
+    return fillDTO(CreateOrderRDO, updatedOrder.toPOJO());
   }
 
   
-  @Delete(':trainingId')
-  @UseGuards(JWTAuthGuard)
-  @ApiOperation({ summary: 'Delete training' })
+  @Delete(':orderId')
+  @ApiOperation({ summary: 'Delete order' })
   @ApiResponse({
     status: HttpStatus.OK,
-    description: TrainingMessage.SUCCESS.DELETED
+    description: OrderMessage.SUCCESS.DELETED
   })
-  public async deleteTraining(@Param('trainingId') trainingId: string): Promise<void> {
-    await this.trainingService.deleteTraining(trainingId);
+  public async deleteTraining(@Param('orderId') orderId: string): Promise<void> {
+    await this.orderService.deleteOrder(orderId);
   }
 }

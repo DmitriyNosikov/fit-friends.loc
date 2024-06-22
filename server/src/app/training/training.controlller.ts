@@ -1,12 +1,19 @@
 import { Body, Controller, Delete, Get, HttpStatus, Param, Patch, Post, Query, UseGuards } from '@nestjs/common';
 import { ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { CreateTrainingDTO, CreateTrainingRDO, TrainingSearchQuery, TrainingsWithPaginationRDO, UpdateTrainingDTO } from '@shared/training';
+import {
+  CreateTrainingDTO,
+  CreateTrainingRDO,
+  UpdateTrainingDTO,
+  TrainingSearchQuery,
+  TrainingSortType,
+  TrainingsWithPaginationRDO
+} from '@shared/training';
 import { TrainingMessage } from './training.constant';
 import { TrainingService } from './training.service';
 import { fillDTO } from '@server/libs/helpers';
 import { JWTAuthGuard } from '@server/user/guards/jwt-auth.guard';
 import { DefaultSearchParam } from '@shared/types/search/base-search-query.type';
-import { SortDirection, SortType } from '@shared/types/sort/sort.enum';
+import { SortDirection } from '@shared/types/sort/sort-direction.enum';
 import { genderTypeList, trainingTypeList } from '@server/libs/types';
 
 @ApiTags('trainings')
@@ -90,7 +97,7 @@ export class TrainingController {
   })
   @ApiQuery({
     name: "createdAt",
-    description: `Product creation date`,
+    description: `Item's creation date`,
     example: "2024-05-29",
     required: false
   })
@@ -109,7 +116,7 @@ export class TrainingController {
   @ApiQuery({
     name: "sortType",
     description: `Sorting type. Default sort type: ${DefaultSearchParam.SORT.TYPE}`,
-    enum: SortType,
+    enum: TrainingSortType,
     example: "createdAt",
     required: false
   })

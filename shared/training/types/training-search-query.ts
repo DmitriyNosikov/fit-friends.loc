@@ -1,18 +1,20 @@
-import { BaseSearchQuery } from '@shared/types/search/base-search-query.type';
-import { IsNumber, Min, Max, IsString, IsIn, IsOptional } from 'class-validator';
+import { DefaultSearchParam } from '@shared/types/search/base-search-query.type';
+import { IsNumber, Min, Max, IsString, IsIn, IsOptional, IsDateString } from 'class-validator';
 import { Expose, Transform } from 'class-transformer';
 import { Gender, TrainingType, genderTypeList, trainingTypeList } from '@server/libs/types';
 import { TrainingValidation } from '@server/training/training.constant';
+import { TrainingSortType, TrainingSortTypeEnum } from './training-sort-type.enum';
+import { SortDirection, SortDirectionEnum } from '@shared/types';
 
 export const DefaultTrainingSearchParam = {
   PRICE_FROM: 0,
 } as const ;
 
-export class TrainingSearchQuery extends BaseSearchQuery {
+export class TrainingSearchQuery {
   @Expose()
   @IsString()
   @IsOptional()
-  title?: string;
+  public title?: string;
 
   @Expose()
   @Transform(({ value }) => {
@@ -25,13 +27,13 @@ export class TrainingSearchQuery extends BaseSearchQuery {
   @IsIn(trainingTypeList, { each: true })
   @IsString({ each: true })
   @IsOptional()
-  trainingType?: TrainingType | TrainingType[];
+  public trainingType?: TrainingType | TrainingType[];
 
   @Expose()
   @IsIn(genderTypeList)
   @IsString()
   @IsOptional()
-  gender?: Gender;
+  public gender?: Gender;
 
   @Expose()
   @Transform((field) => {
@@ -42,7 +44,7 @@ export class TrainingSearchQuery extends BaseSearchQuery {
   @Min(TrainingValidation.PRICE.MIN)
   @IsNumber()
   @IsOptional()
-  priceFrom?: number = DefaultTrainingSearchParam.PRICE_FROM;
+  public priceFrom?: number = DefaultTrainingSearchParam.PRICE_FROM;
 
   @Expose()
   @Transform((field) => {
@@ -52,7 +54,7 @@ export class TrainingSearchQuery extends BaseSearchQuery {
   })
   @IsNumber()
   @IsOptional()
-  priceTo?: number;
+  public priceTo?: number;
 
   @Expose()
   @Transform((field) => {
@@ -62,7 +64,7 @@ export class TrainingSearchQuery extends BaseSearchQuery {
   })
   @IsNumber()
   @IsOptional()
-  caloriesFrom?: number;
+  public caloriesFrom?: number;
 
   @Expose()
   @Transform((field) => {
@@ -72,7 +74,7 @@ export class TrainingSearchQuery extends BaseSearchQuery {
   })
   @IsNumber()
   @IsOptional()
-  caloriesTo?: number;
+  public  caloriesTo?: number;
 
   @Expose()
   @Transform((field) => {
@@ -83,7 +85,7 @@ export class TrainingSearchQuery extends BaseSearchQuery {
   @Min(TrainingValidation.RATING.MIN)
   @IsNumber()
   @IsOptional()
-  ratingFrom?: number;
+  public ratingFrom?: number;
 
   @Expose()
   @Transform((field) => {
@@ -94,5 +96,35 @@ export class TrainingSearchQuery extends BaseSearchQuery {
   @Max(TrainingValidation.RATING.MAX)
   @IsNumber()
   @IsOptional()
-  ratingTo?: number;
+  public ratingTo?: number;
+
+  // TODO: Если extends от BaseSearchQuery - возникают проблемы с полем
+  // SortType и несоответстием типов. По этой причине пока полностью переносим
+  // все свойства из BaseSearchQuery до разрешения данной проблемы
+  @Expose()
+  @IsDateString()
+  @IsOptional()
+  public createdAt?: Date;
+
+  @Expose()
+  @Transform(({ value }) => Number(value) || DefaultSearchParam.MAX_ITEMS_PER_PAGE)
+  @Max(DefaultSearchParam.MAX_ITEMS_PER_PAGE)
+  @IsNumber()
+  @IsOptional()
+  public limit?: number = DefaultSearchParam.MAX_ITEMS_PER_PAGE;
+
+  @Expose()
+  @IsIn(Object.values(TrainingSortType))
+  @IsOptional()
+  public sortType?: TrainingSortTypeEnum = DefaultSearchParam.SORT.TYPE;
+
+  @Expose()
+  @IsIn(Object.values(SortDirection))
+  @IsOptional()
+  public sortDirection?: SortDirectionEnum = DefaultSearchParam.SORT.DIRECTION;
+
+  @Expose()
+  @Transform(({ value }) => Number(value) || DefaultSearchParam.PAGE)
+  @IsOptional()
+  public page?: number = DefaultSearchParam.PAGE;
 }

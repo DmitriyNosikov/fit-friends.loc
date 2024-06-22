@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { OrderType, OrderTypeEnum, orderTypeList } from '@server/libs/types';
+import { OrderType, OrderTypeEnum } from '@server/libs/types';
 
 import { Expose } from 'class-transformer';
 
@@ -60,6 +60,15 @@ export class CreateOrderRDO {
   })
   @Expose()
   trainingsCount: number;
+
+  @ApiProperty({
+    description: 'Remaining trainings count on user balance',
+    example: 4,
+    minimum: OrderValidation.TRAININGS_COUNT.MIN,
+    maximum: OrderValidation.TRAININGS_COUNT.MAX
+  })
+  @Expose()
+  remainingTrainingsCount: number;
 
   @ApiProperty({
     description: 'Total order price (trainings count * price)',

@@ -406,6 +406,71 @@ paths:
         "200":
           description: ""
       tags: *a3
+  /api/orders/balance:
+    get:
+      operationId: OrderController_balance
+      summary: Get user`s training balance
+      parameters: []
+      responses:
+        "200":
+          description: Order found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreateOrderRDO"
+        "404":
+          description: Orders not found
+      tags: *a3
+  /api/orders/balance/decrease/{orderId}/{count}:
+    patch:
+      operationId: OrderController_decreaseBalance
+      summary: Decrease training balance
+      parameters:
+        - name: orderId
+          required: true
+          in: path
+          schema:
+            type: string
+        - name: count
+          required: true
+          in: path
+          schema:
+            type: number
+      responses:
+        "200":
+          description: Order found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreateOrderRDO"
+        "404":
+          description: Orders not found
+      tags: *a3
+  /api/orders/balance/increase/{orderId}/{count}:
+    patch:
+      operationId: OrderController_increaseBalance
+      summary: Decrease training balance
+      parameters:
+        - name: orderId
+          required: true
+          in: path
+          schema:
+            type: string
+        - name: count
+          required: true
+          in: path
+          schema:
+            type: number
+      responses:
+        "200":
+          description: Order found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreateOrderRDO"
+        "404":
+          description: Orders not found
+      tags: *a3
   /api/orders/{orderId}:
     get:
       operationId: OrderController_show
@@ -1257,6 +1322,12 @@ components:
           example: 15
           minimum: 1
           maximum: 50
+        remainingTrainingsCount:
+          type: number
+          description: Remaining trainings count on user balance
+          example: 4
+          minimum: 1
+          maximum: 50
         totalPrice:
           type: number
           description: Total order price (trainings count * price)
@@ -1281,6 +1352,7 @@ components:
         - serviceId
         - price
         - trainingsCount
+        - remainingTrainingsCount
         - totalPrice
         - paymentType
         - userId
@@ -1307,6 +1379,12 @@ components:
           example: 15
           minimum: 1
           maximum: 50
+        remainingTrainingsCount:
+          type: number
+          description: Remaining user` trainings count
+          example: 2
+          minimum: 1
+          maximum: 50
         totalPrice:
           type: number
           description: Total order price (trainings count * price)
@@ -1328,6 +1406,7 @@ components:
         - serviceId
         - price
         - trainingsCount
+        - remainingTrainingsCount
         - totalPrice
         - paymentType
         - userId

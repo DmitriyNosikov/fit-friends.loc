@@ -9,7 +9,6 @@ import {
   Max,
   Min
 } from 'class-validator';
-import { Transform } from 'class-transformer';
 
 import { OrderValidation } from '@server/order/order.constant';
 import { TrainingInterface } from '@server/training/interfaces/training.interface';
@@ -54,6 +53,17 @@ export class UpdateOrderDTO {
   @IsNumber()
   @IsOptional()
   trainingsCount?: number;
+
+  @ApiProperty({
+    description: 'Remaining user` trainings count',
+    example: 2,
+    minimum: OrderValidation.TRAININGS_COUNT.MIN,
+    maximum: OrderValidation.TRAININGS_COUNT.MAX
+  })
+  @Min(OrderValidation.TRAININGS_COUNT.MIN)
+  @Max(OrderValidation.TRAININGS_COUNT.MAX)
+  @IsNumber()
+  remainingTrainingsCount: number;
 
   @ApiProperty({
     description: 'Total order price (trainings count * price)',

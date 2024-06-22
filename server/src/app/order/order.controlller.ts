@@ -1,6 +1,6 @@
 import { Body, Controller, Delete, Get, HttpStatus, Param, Patch, Post, Query, UseGuards, UseInterceptors } from '@nestjs/common';
 import { ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { CreateOrderDTO, UpdateOrderDTO, CreateOrderRDO, OrdersWithPaginationRDO } from '@shared/order';
+import { CreateOrderDTO, UpdateOrderDTO, CreateOrderRDO, OrdersWithPaginationRDO, TrainingBalanceRDO } from '@shared/order';
 
 import { fillDTO } from '@server/libs/helpers';
 import { JWTAuthGuard } from '@server/user/guards/jwt-auth.guard';
@@ -33,6 +33,68 @@ export class OrderController {
     const newOrder = await this.orderService.create(dto);
 
     return fillDTO(CreateOrderRDO, newOrder.toPOJO());
+  }
+
+  // TODO: Возможно баланс стоит вынести в отдельную сущность
+  @Get('balance')
+  @ApiOperation({ summary: 'Get user`s training balance' })
+  @ApiResponse({
+    type: CreateOrderRDO,
+    status: HttpStatus.OK,
+    description: OrderMessage.SUCCESS.FOUND
+  })
+  @ApiResponse({
+    status: HttpStatus.NOT_FOUND,
+    description: OrderMessage.ERROR.NOT_FOUND
+  })
+  public async balance(@Body('userId') userId: string): Promise<TrainingBalanceRDO[]> {
+    const trainingBalance = await this.orderService.getUserTrainingBalance(userId);
+
+    const result = trainingBalance.map((training) => fillDTO(TrainingBalanceRDO, training.toPOJO()));
+
+    return result;
+  }
+
+  @Patch('balance/decrease/:orderId/:count')
+  @ApiOperation({ summary: 'Decrease training balance' })
+  @ApiResponse({
+    type: CreateOrderRDO,
+    status: HttpStatus.OK,
+    description: OrderMessage.SUCCESS.FOUND
+  })
+  @ApiResponse({
+    status: HttpStatus.NOT_FOUND,
+    description: OrderMessage.ERROR.NOT_FOUND
+  })
+  public async decreaseBalance(
+    @Param('orderId') orderId: string,
+    @Param('count') count: number,
+    @Body('userId') userId: string
+  ): Promise<TrainingBalanceRDO> {
+    const trainingBalance = await this.orderService.decreaseTrainingBalance(orderId, userId, count);
+
+    return fillDTO(TrainingBalanceRDO, trainingBalance.toPOJO());
+  }
+
+  @Patch('balance/increase/:orderId/:count')
+  @ApiOperation({ summary: 'Decrease training balance' })
+  @ApiResponse({
+    type: CreateOrderRDO,
+    status: HttpStatus.OK,
+    description: OrderMessage.SUCCESS.FOUND
+  })
+  @ApiResponse({
+    status: HttpStatus.NOT_FOUND,
+    description: OrderMessage.ERROR.NOT_FOUND
+  })
+  public async increaseBalance(
+    @Param('orderId') orderId: string,
+    @Param('count') count: number,
+    @Body('userId') userId: string
+  ): Promise<TrainingBalanceRDO> {
+    const trainingBalance = await this.orderService.increaseTrainingBalance(orderId, userId, count);
+
+    return fillDTO(TrainingBalanceRDO, trainingBalance.toPOJO());
   }
 
   @Get('/')

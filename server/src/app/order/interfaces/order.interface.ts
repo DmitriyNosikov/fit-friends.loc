@@ -9,6 +9,7 @@ export interface OrderInterface extends CreatedUpdatedDatesInterface {
   serviceId: TrainingInterface['id'];
   price: TrainingInterface['price'],
   trainingsCount: number;
+  remainingTrainingsCount: number;
   totalPrice: number;
   paymentType: PaymentType;
   userId?: UserInterface['id'];

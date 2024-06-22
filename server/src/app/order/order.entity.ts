@@ -7,7 +7,6 @@ import { PaymentType } from '@server/libs/types/payment-type.enum';
 
 export const TRAINING_DEFAULT = {
   RATING: 0,
-
 } as const;
 
 export class OrderEntity extends Entity implements StorableEntityInterface<OrderInterface> {
@@ -18,6 +17,7 @@ export class OrderEntity extends Entity implements StorableEntityInterface<Order
   public serviceId: TrainingInterface['id'];
   public price: TrainingInterface['price'];
   public trainingsCount: number;
+  public remainingTrainingsCount: number;
   public totalPrice: number;
   public paymentType: PaymentType;
   public userId: UserInterface['id'];
@@ -40,6 +40,7 @@ export class OrderEntity extends Entity implements StorableEntityInterface<Order
     this.serviceId = order.serviceId;
     this.price = order.price;
     this.trainingsCount = order.trainingsCount;
+    this.remainingTrainingsCount = order.remainingTrainingsCount;
     this.totalPrice = order.totalPrice;
     this.paymentType = order.paymentType;
     this.userId = order.userId;
@@ -55,6 +56,7 @@ export class OrderEntity extends Entity implements StorableEntityInterface<Order
       serviceId: this.serviceId,
       price: this.price,
       trainingsCount: this.trainingsCount,
+      remainingTrainingsCount: this.remainingTrainingsCount,
       totalPrice: this.totalPrice,
       paymentType: this.paymentType,
       userId: this.userId,

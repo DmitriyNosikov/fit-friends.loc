@@ -80,17 +80,18 @@ model Training {
 }
 
 model Order {
-  id             String      @id @default(uuid())
-  createdAt      DateTime?   @default(now()) @map("created_at")
-  updatedAt      DateTime?   @updatedAt @map("updated_at")
+id                      String      @id @default(uuid())
+createdAt               DateTime?   @default(now()) @map("created_at")
+updatedAt               DateTime?   @updatedAt @map("updated_at")
 
-  type           String
-  serviceId      String      @map("service_id")
-  price          Int
-  trainingsCount Int         @map("trainings_count")
-  totalPrice     Int         @map("totla_price")
-  paymentType    PaymentType @map("payment_type")
-  userId         String
+type                    String
+serviceId               String      @map("service_id")
+price                   Int
+trainingsCount          Int         @map("trainings_count")
+remainingTrainingsCount Int         @map("remaining_trainings_count")
+totalPrice              Int         @map("totla_price")
+paymentType             PaymentType @map("payment_type")
+userId                  String
 
   service Training @relation(fields: [serviceId], references: [id], onDelete: Cascade)
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)

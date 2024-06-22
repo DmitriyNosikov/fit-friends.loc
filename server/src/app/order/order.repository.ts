@@ -114,6 +114,32 @@ export class OrderRepository extends BasePostgresRepository<OrderEntity, OrderIn
     });
   }
 
+  public async getUserTrainingBalance(userId: string) {
+    const documents = await this.dbClient.order.findMany({
+      where: {
+        AND: [
+          { userId },
+          { remainingTrainingsCount: { gt: 0 } }
+        ]
+      }
+    });
+
+    const remainingTrainings = documents.map((training) => this.createEntityFromDocument(training as unknown as OrderInterface));
+    
+    return remainingTrainings;
+  }
+
+  public async changeTrainingBalance(orderId: string, balance: number) {
+    const updatedOrder = await this.dbClient.order.update({
+      where: { id: orderId },
+      data: { remainingTrainingsCount: balance }
+    });
+
+    const orderWithUpdatedBalance = this.createEntityFromDocument(updatedOrder as unknown as OrderInterface);
+
+    return this.createEntityFromDocument(orderWithUpdatedBalance);
+  }
+
   public async exists(orderId: string): Promise<boolean> {
     const order = await this.dbClient.order.findFirst({
       where: { id: orderId }

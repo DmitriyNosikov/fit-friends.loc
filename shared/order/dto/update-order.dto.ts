@@ -4,10 +4,12 @@ import {
   IsOptional,
   IsIn,
   IsNumber,
+  IsPositive,
   IsString,
   Max,
-  Min,
+  Min
 } from 'class-validator';
+import { Transform } from 'class-transformer';
 
 import { OrderValidation } from '@server/order/order.constant';
 import { TrainingInterface } from '@server/training/interfaces/training.interface';
@@ -37,7 +39,7 @@ export class UpdateOrderDTO {
     description: 'Training price on create order moment',
     example: 1800,
   })
-  @IsNumber()
+  @IsPositive()
   @IsOptional()
   price?: TrainingInterface['price'];
 

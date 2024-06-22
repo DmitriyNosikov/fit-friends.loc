@@ -39,13 +39,6 @@ export abstract class BasePostgresRepository<
   }
 
   // Support methods
-  public filterQuery<Q>(query: Q) {
-    const filteredQuery = fillDTO(Q, query);
-    const omitedQuery = omitUndefined(filteredQuery as Record<string, unknown>);
-
-    return omitedQuery;
-  }
-
   public calculateItemsPage(totalCount: number, limit: number): number {
     const postsPages = Math.ceil(totalCount / limit);
     return postsPages;

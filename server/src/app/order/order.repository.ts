@@ -13,6 +13,7 @@ import { SortDirectionEnum } from '@shared/types/sort/sort-direction.enum';
 import { BaseSearchQuery, DefaultSearchParam } from '@shared/types/search/base-search-query.type';
 import { PaginationResult } from '@server/libs/interfaces';
 import { OrderSearchFilters } from '@shared/order';
+import { UserIdPayload } from '@shared/types';
 
 @Injectable()
 export class OrderRepository extends BasePostgresRepository<OrderEntity, OrderInterface> {
@@ -50,7 +51,7 @@ export class OrderRepository extends BasePostgresRepository<OrderEntity, OrderIn
     return result;
   }
 
-  public async search(query?: BaseSearchQuery): Promise<PaginationResult<OrderEntity>> {
+  public async search(query?: BaseSearchQuery & UserIdPayload): Promise<PaginationResult<OrderEntity>> {
     const skip = query?.page && query?.limit ? (query.page - 1) * query.limit : undefined;
     const take = (!query?.limit || query?.limit > DefaultSearchParam.MAX_ITEMS_PER_PAGE) ? DefaultSearchParam.MAX_ITEMS_PER_PAGE : query.limit;
     const { where, orderBy } = this.getSearchFilters(query);
@@ -125,14 +126,33 @@ export class OrderRepository extends BasePostgresRepository<OrderEntity, OrderIn
     return true;
   }
 
+  public checkAccess(orderId: string, userId: string) {
+    const order = this.dbClient.order.findFirst({
+      where: {
+        id: orderId,
+        userId
+      }
+    });
+
+    if(!order) {
+      return false;
+    }
+
+    return true;
+  }
+
   private getEntity(document): OrderEntity {
     return this.createEntityFromDocument(document as unknown as OrderInterface);
   }
 
   //////////////////// Вспомогательные методы поиска и пагинации ////////////////////
-  private getSearchFilters(query: BaseSearchQuery): OrderSearchFilters {
+  private getSearchFilters(query: BaseSearchQuery & UserIdPayload): OrderSearchFilters {
     const where: Prisma.OrderWhereInput = {};
     const orderBy: Prisma.OrderOrderByWithRelationInput = {};
+
+    if(query?.userId) {
+      where.userId = query.userId;
+    }
 
     // Сортировка и направление сортировки
     const { key, value } = this.getSortKeyValue(query.sortType, query.sortDirection);

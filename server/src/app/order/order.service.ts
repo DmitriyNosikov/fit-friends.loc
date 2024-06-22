@@ -1,4 +1,6 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
+
+import { fillDTO, omitUndefined } from '@server/libs/helpers';
 
 import { OrderRepository } from './order.repository';
 import { OrderFactory } from './order.factory';
@@ -7,7 +9,7 @@ import { CreateOrderDTO, UpdateOrderDTO } from '@shared/order';
 import { OrderMessage } from './order.constant';
 import { OrderEntity } from './order.entity';
 import { TrainingService } from '@server/training/training.service';
-import { BaseSearchQuery } from '@shared/types';
+import { BaseSearchQuery, UserIdPayload } from '@shared/types';
 
 @Injectable()
 export class OrderService {
@@ -18,7 +20,9 @@ export class OrderService {
   ) { }
 
 
-  public async getOrderDetail(orderId: string): Promise<OrderEntity | null> {
+  public async getOrderDetail(orderId: string, userId: string): Promise<OrderEntity | null> {
+    await this.checkAccess(orderId, userId);
+    
     const order = await this.orderRepository.findById(orderId);
 
     if (!order) {
@@ -28,7 +32,7 @@ export class OrderService {
     return order;
   }
 
-  public async search(query?: BaseSearchQuery) {
+  public async search(query?: BaseSearchQuery & UserIdPayload) {
     const orders = await this.orderRepository.search(query);
 
     if(!orders && query) {
@@ -39,9 +43,7 @@ export class OrderService {
   }
 
   public async create(dto: CreateOrderDTO) {
-    const training = await this.trainingService.getTrainingDetail(dto.serviceId);
-    const price = training.price;
-    const totalPrice = price * dto.trainingsCount;
+    const { price, totalPrice } = await this.countPricesByTraining(dto.serviceId, dto.trainingsCount);
     const createOrderDTO = {
       ...dto,
       price,
@@ -55,30 +57,70 @@ export class OrderService {
 
   
   public async updateById(orderId: string, fieldsToUpdate: UpdateOrderDTO) {
-    const isOrderExists = await this.orderRepository.exists(orderId);
+    const { userId } = fieldsToUpdate;
 
-    if(!isOrderExists) {
-      throw new NotFoundException(`${OrderMessage.ERROR.NOT_FOUND}. Passed ID: ${orderId}`);
+    await this.checkAccess(orderId, userId);
+    
+    const order = await this.getOrderDetail(orderId, userId);
+    const trainingsCount = fieldsToUpdate.trainingsCount ?? order.trainingsCount;
+
+    let price = order.price;
+    let totalPrice = order.totalPrice;
+
+    if(fieldsToUpdate.serviceId) {
+      const { price: newPrice, totalPrice: newTotalPrice } = await this.countPricesByTraining(fieldsToUpdate.serviceId, trainingsCount);
+      price = newPrice;
+      totalPrice = newTotalPrice;
     }
 
-    const updatedOrder = await this.orderRepository.updateById(orderId, fieldsToUpdate);
+    if(fieldsToUpdate.price) {
+      price = fieldsToUpdate.price;
+      totalPrice = fieldsToUpdate.price * trainingsCount;
+    }
+
+    if(fieldsToUpdate.trainingsCount) {
+      totalPrice = price * fieldsToUpdate.trainingsCount;
+    }
+
+    const updateFieldsDTO = {
+      ...fieldsToUpdate,
+      price,
+      totalPrice
+    };
+
+    const updatedOrder = await this.orderRepository.updateById(orderId, updateFieldsDTO);
 
     return updatedOrder;
   }
 
-  public async deleteOrder(orderId: string): Promise<void> {
-    const isOrderExists = await this.orderRepository.exists(orderId);
-
-    if (!isOrderExists) {
-      return;
-    }
+  public async deleteOrder(orderId: string, userId: string): Promise<void> {
+    await this.checkAccess(orderId, userId);
 
     return await this.orderRepository.deleteById(orderId);
   }
 
   public filterQuery(query: BaseSearchQuery) {
-    const filteredQuery = this.orderRepository.filterQuery<BaseSearchQuery>(query);
-    
-    return filteredQuery;
+    const filteredQuery = fillDTO(BaseSearchQuery, query);
+    const omitedQuery = omitUndefined(filteredQuery as Record<string, unknown>);
+
+    return omitedQuery;
+  }
+
+  private async countPricesByTraining(serviceId: string, trainingsCount: number) {
+    const training = await this.trainingService.getTrainingDetail(serviceId);
+    const price = training.price;
+    const totalPrice = price * trainingsCount;
+
+    return { price, totalPrice };
+  }
+
+  private async checkAccess(orderId: string, userId: string): Promise<boolean | void> {
+    const isUserHaveAccessToOrder = await this.orderRepository.checkAccess(orderId, userId);
+
+    if(!isUserHaveAccessToOrder) {
+      throw new UnauthorizedException(`${OrderMessage.ERROR.HAVENT_ACCESS}. Order id: ${orderId}`);
+    }
+
+    return true;
   }
 }

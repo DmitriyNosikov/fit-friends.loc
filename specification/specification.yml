@@ -200,7 +200,7 @@ paths:
         - name: createdAt
           required: false
           in: query
-          description: Product creation date
+          description: Item's creation date
           example: 2024-05-29
           schema: {}
         - name: ratingTo
@@ -340,6 +340,131 @@ paths:
         "200":
           description: Training has been successfully deleted
       tags: *a2
+  /api/orders:
+    post:
+      operationId: OrderController_create
+      summary: Add new order
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateOrderDTO"
+      responses:
+        "201":
+          description: Order has been successfully created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreateOrderDTO"
+      tags: &a3
+        - orders
+    get:
+      operationId: OrderController_index
+      summary: Get orders list by passed params (or without it)
+      parameters:
+        - name: sortDirection
+          required: false
+          in: query
+          description: "Sorting direction. Default direction: desc"
+          example: " desc"
+          schema:
+            enum:
+              - asc
+              - desc
+            type: string
+        - name: sortType
+          required: false
+          in: query
+          description: "Sorting type. Default sort type: createdAt"
+          example: createdAt
+          schema:
+            enum:
+              - createdAt
+            type: string
+        - name: page
+          required: false
+          in: query
+          description: 'Current page in pagination (if items count more than "limit").
+            Default page: 1'
+          example: "1"
+          schema: {}
+        - name: limit
+          required: false
+          in: query
+          description: "Items per page (pagination). Max limit: 50"
+          example: "50"
+          schema: {}
+        - name: createdAt
+          required: false
+          in: query
+          description: Item's creation date
+          example: 2024-05-29
+          schema: {}
+      responses:
+        "200":
+          description: ""
+      tags: *a3
+  /api/orders/{orderId}:
+    get:
+      operationId: OrderController_show
+      summary: Get detail info about order
+      parameters:
+        - name: orderId
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Order found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreateOrderRDO"
+        "404":
+          description: Orders not found
+      tags: *a3
+    patch:
+      operationId: OrderController_updateTraining
+      summary: Update order info
+      parameters:
+        - name: orderId
+          required: true
+          in: path
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateOrderDTO"
+      responses:
+        "201":
+          description: Order has bees successfully updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreateOrderRDO"
+        "400":
+          description: "Can`t update order. Possible reason: Object with fields to update
+            are empty"
+      tags: *a3
+    delete:
+      operationId: OrderController_deleteOrder
+      summary: Delete order
+      parameters:
+        - name: orderId
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Order has been successfully deleted
+      tags: *a3
 info:
   title: The "Fit-Friends" service
   description: '"FIt-Friends" service API'
@@ -937,10 +1062,6 @@ components:
     TrainingsWithPaginationRDO:
       type: object
       properties:
-        entities:
-          description: Product entities array
-          allOf:
-            - $ref: "#/components/schemas/CreateTrainingRDO"
         totalPages:
           type: number
           description: Paginated item pages count
@@ -957,12 +1078,16 @@ components:
           type: number
           description: items per page
           example: 7
+        entities:
+          description: Item entities array
+          allOf:
+            - $ref: "#/components/schemas/CreateTrainingRDO"
       required:
-        - entities
         - totalPages
         - totalItems
         - currentPage
         - itemsPerPage
+        - entities
     UpdateTrainingDTO:
       type: object
       properties:
@@ -1058,3 +1183,151 @@ components:
         - rating
         - trainersName
         - isSpecial
+    CreateOrderDTO:
+      type: object
+      properties:
+        type:
+          type: string
+          description: Order type
+          example: абонемент
+          enum:
+            - абонемент
+        serviceId:
+          type: object
+          description: Training ID
+          example: d61ef04e-295a-41cb-a230-7e9e4570f14b
+        trainingsCount:
+          type: number
+          description: Trainings count
+          example: 15
+          minimum: 1
+          maximum: 50
+        paymentType:
+          type: string
+          description: Payment type
+          example: mir
+          enum:
+            - visa
+            - mir
+            - umoney
+        userId:
+          type: object
+          description: User ID
+          example: d61ef04e-295a-41cb-a230-7e9e4570f14b
+      required:
+        - type
+        - serviceId
+        - trainingsCount
+        - paymentType
+        - userId
+    CreateOrderRDO:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Uniq order ID
+          example: g83h4y0943-nv934819843-jv934h8t-n923g48n9438
+        createdAt:
+          format: date-time
+          type: string
+          description: Created at date
+          example: 2024-04-26 13:02:24.847
+        updatedAt:
+          format: date-time
+          type: string
+          description: Updated at date
+          example: 2024-04-26 13:02:24.847
+        type:
+          type: string
+          description: Order type
+          example: абонемент
+          enum:
+            - абонемент
+        serviceId:
+          type: object
+          description: Training ID
+          example: d61ef04e-295a-41cb-a230-7e9e4570f14b
+        price:
+          type: object
+          description: Training price on create order moment
+          example: 1800
+        trainingsCount:
+          type: number
+          description: Trainings count
+          example: 15
+          minimum: 1
+          maximum: 50
+        totalPrice:
+          type: number
+          description: Total order price (trainings count * price)
+          example: 27000
+        paymentType:
+          type: string
+          description: Payment type
+          example: mir
+          enum:
+            - visa
+            - mir
+            - umoney
+        userId:
+          type: object
+          description: User ID
+          example: d61ef04e-295a-41cb-a230-7e9e4570f14b
+      required:
+        - id
+        - createdAt
+        - updatedAt
+        - type
+        - serviceId
+        - price
+        - trainingsCount
+        - totalPrice
+        - paymentType
+        - userId
+    UpdateOrderDTO:
+      type: object
+      properties:
+        type:
+          type: string
+          description: Order type
+          example: абонемент
+          enum:
+            - абонемент
+        serviceId:
+          type: object
+          description: Training ID
+          example: d61ef04e-295a-41cb-a230-7e9e4570f14b
+        price:
+          type: object
+          description: Training price on create order moment
+          example: 1800
+        trainingsCount:
+          type: number
+          description: Trainings count
+          example: 15
+          minimum: 1
+          maximum: 50
+        totalPrice:
+          type: number
+          description: Total order price (trainings count * price)
+          example: 27000
+        paymentType:
+          type: string
+          description: Payment type
+          example: mir
+          enum:
+            - visa
+            - mir
+            - umoney
+        userId:
+          type: object
+          description: User ID
+          example: d61ef04e-295a-41cb-a230-7e9e4570f14b
+      required:
+        - type
+        - serviceId
+        - price
+        - trainingsCount
+        - totalPrice
+        - paymentType
+        - userId

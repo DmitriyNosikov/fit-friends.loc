@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, HttpStatus, Param, Patch, Post, Query, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpStatus, Param, Patch, Post, Query, UseGuards, UseInterceptors } from '@nestjs/common';
 import { ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { CreateOrderDTO, UpdateOrderDTO, CreateOrderRDO, OrdersWithPaginationRDO } from '@shared/order';
 
@@ -11,11 +11,12 @@ import { OrderMessage } from './order.constant';
 import { BaseSearchQuery, DefaultSearchParam } from '@shared/types/search/base-search-query.type';
 import { SortType } from '@shared/types/sort/sort-type.enum';
 import { SortDirection } from '@shared/types/sort/sort-direction.enum';
-
+import { InjectUserIdInterceptor } from '@server/libs/interceptors/inject-user-id.interceptor';
 
 @ApiTags('orders')
 @Controller('orders')
 @UseGuards(JWTAuthGuard)
+@UseInterceptors(InjectUserIdInterceptor)
 export class OrderController {
   constructor(
     private readonly orderService: OrderService
@@ -31,7 +32,7 @@ export class OrderController {
   public async create(@Body() dto: CreateOrderDTO) {
     const newOrder = await this.orderService.create(dto);
 
-    return fillDTO(CreateOrderDTO, newOrder.toPOJO());
+    return fillDTO(CreateOrderRDO, newOrder.toPOJO());
   }
 
   @Get('/')
@@ -68,9 +69,15 @@ export class OrderController {
     example: " desc",
     required: false
   })
-  public async index(@Query() query?: BaseSearchQuery): Promise<OrdersWithPaginationRDO | null> {
+  public async index(
+    @Body('userId') userId,
+    @Query() query?: BaseSearchQuery
+  ): Promise<OrdersWithPaginationRDO | null> {
     const preparedQuery = this.orderService.filterQuery(query);
-    const documents = await this.orderService.search(preparedQuery);
+    const documents = await this.orderService.search({
+      ...preparedQuery,
+      userId
+    });
 
     if(!documents.entities || documents.entities.length <= 0) {
       return;
@@ -95,8 +102,11 @@ export class OrderController {
     status: HttpStatus.NOT_FOUND,
     description: OrderMessage.ERROR.NOT_FOUND
   })
-  public async show(@Param('orderId') orderId: string): Promise<CreateOrderRDO> {
-    const orderDetail = await this.orderService.getOrderDetail(orderId);
+  public async show(
+    @Param('orderId') orderId: string,
+    @Body('userId') userId: string
+  ): Promise<CreateOrderRDO> {
+    const orderDetail = await this.orderService.getOrderDetail(orderId, userId);
 
     return fillDTO(CreateOrderRDO, orderDetail.toPOJO());
   }
@@ -128,7 +138,10 @@ export class OrderController {
     status: HttpStatus.OK,
     description: OrderMessage.SUCCESS.DELETED
   })
-  public async deleteTraining(@Param('orderId') orderId: string): Promise<void> {
-    await this.orderService.deleteOrder(orderId);
+  public async deleteOrder(
+    @Param('orderId') orderId: string,
+    @Body('userId') userId: string,
+  ): Promise<void> {
+    await this.orderService.deleteOrder(orderId, userId);
   }
 }

@@ -33,7 +33,11 @@ async function bootstrap() {
   // Подключаем валидацию DTO на основе class-validator
   app.useGlobalPipes(
     new ValidationPipe({
-      transform: true, // + трансформация типов данных на основе DTO
+      transform: true, // + трансформация типов данных на основе DTO,
+      transformOptions: {
+        // enableCircularCheck: true,
+        exposeUnsetFields: false
+      }
     }),
   );
 

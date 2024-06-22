@@ -4,6 +4,7 @@ import { TrainingFactory } from './training.factory';
 import { TrainingEntity } from './training.entity';
 import { TrainingMessage } from './training.constant';
 import { CreateTrainingDTO, TrainingSearchQuery, UpdateTrainingDTO } from '@shared/training';
+import { fillDTO, omitUndefined } from '@server/libs/helpers';
 
 @Injectable()
 export class TrainingService {
@@ -17,7 +18,7 @@ export class TrainingService {
     const training = await this.trainingRepository.findById(trainingId);
 
     if (!training) {
-      throw new NotFoundException(TrainingMessage.ERROR.NOT_FOUND);
+      throw new NotFoundException(`${TrainingMessage.ERROR.NOT_FOUND}. ID: ${trainingId}`);
     }
 
     return training;
@@ -64,8 +65,9 @@ export class TrainingService {
   }
 
   public filterQuery(query: TrainingSearchQuery) {
-    const filteredQuery = this.trainingRepository.filterQuery<TrainingSearchQuery>(query);
+    const filteredQuery = fillDTO(TrainingSearchQuery, query);
+    const omitedQuery = omitUndefined(filteredQuery as Record<string, unknown>);
 
-    return filteredQuery;
+    return omitedQuery;
   }
 }

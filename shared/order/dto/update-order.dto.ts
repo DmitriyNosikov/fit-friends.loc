@@ -55,17 +55,6 @@ export class UpdateOrderDTO {
   trainingsCount?: number;
 
   @ApiProperty({
-    description: 'Remaining user` trainings count',
-    example: 2,
-    minimum: OrderValidation.TRAININGS_COUNT.MIN,
-    maximum: OrderValidation.TRAININGS_COUNT.MAX
-  })
-  @Min(OrderValidation.TRAININGS_COUNT.MIN)
-  @Max(OrderValidation.TRAININGS_COUNT.MAX)
-  @IsNumber()
-  remainingTrainingsCount: number;
-
-  @ApiProperty({
     description: 'Total order price (trainings count * price)',
     example: 27000,
   })

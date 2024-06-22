@@ -13,20 +13,20 @@ import {
 } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 
+import { JWTAuthGuard } from './guards/jwt-auth.guard';
+import { LocalAuthGuard } from './guards/local-auth.guard';
+
+import { JWTRefreshGuard } from './guards/jwt-refresh.guard';
+import { InjectUserIdInterceptor } from '@server/libs/interceptors/inject-user-id.interceptor';
+
 import { fillDTO } from '../libs/helpers';
 
 import { RequestWithUser } from './interfaces/request-with-user.interface';
 
+import { CreateUserDTO, LoggedUserRDO, LoginUserDTO, UpdateUserDTO, UserRDO } from '../../../../shared/user/';
+import { UserInterface } from './interfaces';
 import { UserMessage } from './user.constant';
 import { UserService } from './user.service';
-
-import { JWTAuthGuard } from './guards/jwt-auth.guard';
-import { LocalAuthGuard } from './guards/local-auth.guard';
-
-import { CreateUserDTO, LoggedUserRDO, LoginUserDTO, UpdateUserDTO, UserRDO } from '../../../../shared/user/';
-import { UserInterface } from '../libs/interfaces';
-import { JWTRefreshGuard } from './guards/jwt-refresh.guard';
-import { InjectUserIdInterceptor } from '@server/libs/interceptors/inject-user-id.interceptor';
 
 @ApiTags('users')
 @Controller('users')

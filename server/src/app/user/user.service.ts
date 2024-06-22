@@ -12,17 +12,20 @@ import {
 import { JwtService } from '@nestjs/jwt';
 
 import { BCryptHasher, excludeKeys, getJWTPayload, omitUndefined } from '../libs/helpers';
-import { AuthUserInterface, UserInterface } from '../libs/interfaces';
-import { CreateUserDTO, LoginUserDTO, UpdateUserDTO } from '../../../../shared/user/'; // TODO: Заменить путь на @shared как будет больше времени разобраться
 
-import { UserMessage } from './user.constant';
-import { UserEntity } from './user.entity';
-import { UserFactory } from './user.factory';
-import { UserRepository } from './user.repository';
 import { jwtConfig } from 'server/src/config';
 import { ConfigType } from '@nestjs/config';
 import { RefreshTokenService } from '../refresh-token/refresh-token.service';
 import { RequestWithUserId } from '@server/libs/types';
+
+import { CreateUserDTO, LoginUserDTO, UpdateUserDTO } from '../../../../shared/user/'; // TODO: Заменить путь на @shared как будет больше времени разобраться
+
+import { AuthUserInterface, UserInterface } from './interfaces';
+import { UserMessage } from './user.constant';
+import { UserEntity } from './user.entity';
+import { UserFactory } from './user.factory';
+import { UserRepository } from './user.repository';
+
 
 
 @Injectable()

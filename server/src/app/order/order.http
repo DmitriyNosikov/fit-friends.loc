@@ -2,8 +2,8 @@
 @port = 8000
 @baseUrl = http://{{host}}:{{port}}/api/orders
 
-@orderId = 021a2fc1-ce89-439f-b2e6-6f7976114c64
-@authorization = Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJhMzJjM2I5Mi0wNzA4LTQ3ZDYtYWJiZC01MzFkZGNjOTVkNjMiLCJlbWFpbCI6Imlyb24tbWFuQHN0YXJraW5kdXN0cmllcy5pdCIsIm5hbWUiOiJUb255Iiwicm9sZSI6ImNsaWVudCIsImlhdCI6MTcxOTA4MzU1OSwiZXhwIjoxNzE5MDg0NDU5fQ.FEoHcJGtXwxDw6_boS5xOGl3Rp_CU_y-bOTyLKNFW-8
+@orderId = 201c2a72-d2a9-4b03-8ee1-0f4a5fa1d272
+@authorization = Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJmNzhkYWRjNi01OTAzLTQwNzktOTNhMy0yNTdkMGE0NTk1MmUiLCJlbWFpbCI6Imlyb24tbWFuQHN0YXJraW5kdXN0cmllcy5pdCIsIm5hbWUiOiJUb255Iiwicm9sZSI6ImNsaWVudCIsImlhdCI6MTcxOTA5MTA5MSwiZXhwIjoxNzE5MDkxOTkxfQ.UHWMTLSv5X9dbSlaIxgYQY_VUPoemQvvj15QKwpqDWk
 
 # Create new order
 POST {{baseUrl}}/ HTTP/1.1
@@ -12,8 +12,8 @@ Content-Type: application/json
 
 {
   "type": "абонемент",
-  "serviceId": "3bac977b-12ce-44c3-8dc4-c3a9e4e71794",
-  "trainingsCount": 10,
+  "serviceId": "b3110e27-cb56-4c74-b633-d71d697f03e9",
+  "trainingsCount": 5,
   "paymentType": "mir"
 }
 ###
@@ -36,31 +36,12 @@ Content-Type: application/json
 {{authorization}}
 
 {
-  "remainingTrainingsCount": 10
+  "trainingsCount": 10
 }
 ###
 
 # Delete order
 DELETE {{baseUrl}}/{{orderId}} HTTP/1.1
-Content-Type: application/json
-{{authorization}}
-###
-
-# /////////////////////////////////// BALANCE ///////////////////////////////////
-# Training balance
-GET {{baseUrl}}/balance HTTP/1.1
-Content-Type: application/json
-{{authorization}}
-###
-
-# Decrease training balance
-PATCH {{baseUrl}}/balance/decrease/{{orderId}}/3 HTTP/1.1
-Content-Type: application/json
-{{authorization}}
-###
-
-# Increase training balance
-PATCH {{baseUrl}}/balance/increase/{{orderId}}/3 HTTP/1.1
 Content-Type: application/json
 {{authorization}}
 ###

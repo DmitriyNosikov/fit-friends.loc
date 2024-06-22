@@ -1,10 +1,11 @@
 import { Injectable } from '@nestjs/common';
 
-import { BasePostgresRepository } from '../libs/data-access';
-import { UserInterface } from '../libs/interfaces';
 import { PrismaClientService } from '../prisma-client/prisma-client.service';
+import { BasePostgresRepository } from '../libs/data-access';
+
 import { UserEntity } from './user.entity';
 import { UserFactory } from './user.factory';
+import { UserInterface } from './interfaces';
 
 @Injectable()
 export class UserRepository extends BasePostgresRepository<UserEntity, UserInterface> {

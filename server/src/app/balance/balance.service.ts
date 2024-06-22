@@ -72,6 +72,8 @@ export class BalanceService {
 
     await this.checkAccess(balanceId, userId);
 
+    fieldsToUpdate.userId = undefined;
+
     const updatedOrder = await this.balanceRepository.updateById(balanceId, fieldsToUpdate);
 
     return updatedOrder;
@@ -126,7 +128,7 @@ export class BalanceService {
     return updatedBalance;
   }
 
-  // Вспомонательные методы
+  // Вспомогательные методы
   public filterQuery(query: BaseSearchQuery) {
     const filteredQuery = fillDTO(BaseSearchQuery, query);
     const omitedQuery = omitUndefined(filteredQuery as Record<string, unknown>);

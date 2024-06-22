@@ -122,7 +122,7 @@ export class UpdateTrainingDTO {
     description: 'Training rating',
     example: 0,
   })
-  @IsString()
+  @IsNumber()
   @IsOptional()
   rating?: number;
 

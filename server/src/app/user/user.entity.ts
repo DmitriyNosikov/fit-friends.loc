@@ -1,7 +1,8 @@
 
 import { TrainingDuration } from '@server/libs/types/training-duration.enum';
 import { Entity } from '../libs/entities';
-import { AuthUserInterface, StorableEntityInterface } from '../libs/interfaces';
+import { StorableEntityInterface } from '../libs/interfaces';
+import { AuthUserInterface } from './interfaces';
 import { Gender, Location, TrainingType, UserLevel, UserRole } from '../libs/types';
 
 

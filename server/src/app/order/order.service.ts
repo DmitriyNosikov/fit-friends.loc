@@ -47,8 +47,7 @@ export class OrderService {
     const createOrderDTO = {
       ...dto,
       price,
-      totalPrice,
-      remainingTrainingsCount: dto.trainingsCount
+      totalPrice
     };
     const orderEntity = this.orderFactory.create(createOrderDTO);
     const order = await this.orderRepository.create(orderEntity);
@@ -67,7 +66,6 @@ export class OrderService {
 
     let price = order.price;
     let totalPrice = order.totalPrice;
-    let remainingTrainingsCount = fieldsToUpdate.remainingTrainingsCount ?? order.remainingTrainingsCount;
 
     if(fieldsToUpdate.serviceId) {
       const { price: newPrice, totalPrice: newTotalPrice } = await this.countPricesByTraining(fieldsToUpdate.serviceId, trainingsCount);
@@ -82,14 +80,12 @@ export class OrderService {
 
     if(fieldsToUpdate.trainingsCount) {
       totalPrice = price * fieldsToUpdate.trainingsCount;
-      remainingTrainingsCount = fieldsToUpdate.trainingsCount;
     }
 
     const updateFieldsDTO = {
       ...fieldsToUpdate,
       price,
-      totalPrice,
-      remainingTrainingsCount
+      totalPrice
     };
 
     const updatedOrder = await this.orderRepository.updateById(orderId, updateFieldsDTO);
@@ -101,49 +97,6 @@ export class OrderService {
     await this.checkAccess(orderId, userId);
 
     return await this.orderRepository.deleteById(orderId);
-  }
-
-  //////////////////// Баланс тренировок пользователя ////////////////////
-  public async getUserTrainingBalance(userId: string) {
-    const trainingBalance = await this.orderRepository.getUserTrainingBalance(userId);
-
-    return trainingBalance;
-  }
-
-  public async decreaseTrainingBalance(orderId: string, userId: string, count: number) {
-    await this.checkAccess(orderId, userId);
-
-    const order = await this.getOrderDetail(orderId, userId);
-    let newBalance = order.remainingTrainingsCount - count;
-
-    if(newBalance < 0) {
-      newBalance = 0;
-    };
-
-    const updatedOrder = await this.changeTrainingBalance(orderId, newBalance);
-
-    return updatedOrder;
-  }
-
-  public async increaseTrainingBalance(orderId: string, userId: string, count: number) {
-    await this.checkAccess(orderId, userId);
-
-    const order = await this.getOrderDetail(orderId, userId);
-    let newBalance = order.remainingTrainingsCount + count;
-
-    if(newBalance > order.trainingsCount) {
-      newBalance = order.trainingsCount;
-    };
-
-    const updatedOrder = await this.changeTrainingBalance(orderId, newBalance);
-
-    return updatedOrder;
-  }
-
-  public async changeTrainingBalance(orderId: string, newBalance: number): Promise<OrderEntity> {
-    const updatedOrder = await this.orderRepository.changeTrainingBalance(orderId, newBalance);
-
-    return updatedOrder;
   }
 
   //////////////////// Вспомогательные методы ////////////////////

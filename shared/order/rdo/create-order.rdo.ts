@@ -62,15 +62,6 @@ export class CreateOrderRDO {
   trainingsCount: number;
 
   @ApiProperty({
-    description: 'Remaining trainings count on user balance',
-    example: 4,
-    minimum: OrderValidation.TRAININGS_COUNT.MIN,
-    maximum: OrderValidation.TRAININGS_COUNT.MAX
-  })
-  @Expose()
-  remainingTrainingsCount: number;
-
-  @ApiProperty({
     description: 'Total order price (trainings count * price)',
     example: 27000,
   })

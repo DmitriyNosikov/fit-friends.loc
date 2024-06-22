@@ -406,71 +406,6 @@ paths:
         "200":
           description: ""
       tags: *a3
-  /api/orders/balance:
-    get:
-      operationId: OrderController_balance
-      summary: Get user`s training balance
-      parameters: []
-      responses:
-        "200":
-          description: Order found
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/CreateOrderRDO"
-        "404":
-          description: Orders not found
-      tags: *a3
-  /api/orders/balance/decrease/{orderId}/{count}:
-    patch:
-      operationId: OrderController_decreaseBalance
-      summary: Decrease training balance
-      parameters:
-        - name: orderId
-          required: true
-          in: path
-          schema:
-            type: string
-        - name: count
-          required: true
-          in: path
-          schema:
-            type: number
-      responses:
-        "200":
-          description: Order found
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/CreateOrderRDO"
-        "404":
-          description: Orders not found
-      tags: *a3
-  /api/orders/balance/increase/{orderId}/{count}:
-    patch:
-      operationId: OrderController_increaseBalance
-      summary: Decrease training balance
-      parameters:
-        - name: orderId
-          required: true
-          in: path
-          schema:
-            type: string
-        - name: count
-          required: true
-          in: path
-          schema:
-            type: number
-      responses:
-        "200":
-          description: Order found
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/CreateOrderRDO"
-        "404":
-          description: Orders not found
-      tags: *a3
   /api/orders/{orderId}:
     get:
       operationId: OrderController_show
@@ -530,6 +465,189 @@ paths:
         "200":
           description: Order has been successfully deleted
       tags: *a3
+  /api/balance:
+    post:
+      operationId: BalanceController_create
+      summary: Add new balance
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateBalanceDTO"
+      responses:
+        "201":
+          description: Balance has been successfully created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreateBalanceDTO"
+      tags: &a4
+        - balance
+    get:
+      operationId: BalanceController_index
+      summary: Get user`s training balance
+      parameters:
+        - name: sortDirection
+          required: false
+          in: query
+          description: "Sorting direction. Default direction: desc"
+          example: " desc"
+          schema:
+            enum:
+              - asc
+              - desc
+            type: string
+        - name: sortType
+          required: false
+          in: query
+          description: "Sorting type. Default sort type: createdAt"
+          example: createdAt
+          schema:
+            enum:
+              - createdAt
+            type: string
+        - name: page
+          required: false
+          in: query
+          description: 'Current page in pagination (if items count more than "limit").
+            Default page: 1'
+          example: "1"
+          schema: {}
+        - name: limit
+          required: false
+          in: query
+          description: "Items per page (pagination). Max limit: 50"
+          example: "50"
+          schema: {}
+        - name: createdAt
+          required: false
+          in: query
+          description: Item's creation date
+          example: 2024-05-29
+          schema: {}
+      responses:
+        "200":
+          description: Balance found
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/CreateBalanceRDO"
+        "404":
+          description: Balance not found
+      tags: *a4
+  /api/balance/{balanceId}:
+    get:
+      operationId: BalanceController_show
+      summary: Get balance detail info
+      parameters:
+        - name: balanceId
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Balance found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreateBalanceRDO"
+        "404":
+          description: Balance not found
+      tags: *a4
+    patch:
+      operationId: BalanceController_updateTraining
+      summary: Update balance info
+      parameters:
+        - name: balanceId
+          required: true
+          in: path
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateBalanceDTO"
+      responses:
+        "201":
+          description: Balance has bees successfully updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreateBalanceRDO"
+        "400":
+          description: "Can`t update order. Possible reason: Object with fields to update
+            are empty"
+      tags: *a4
+    delete:
+      operationId: BalanceController_deleteOrder
+      summary: Delete balance
+      parameters:
+        - name: balanceId
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Balance has been successfully deleted
+      tags: *a4
+  /api/balance/increase/{serviceId}/{amount}:
+    patch:
+      operationId: BalanceController_increaseBalance
+      summary: Increase training balance by passed amount
+      parameters:
+        - name: serviceId
+          required: true
+          in: path
+          schema:
+            type: string
+        - name: amount
+          required: true
+          in: path
+          schema:
+            type: number
+      responses:
+        "200":
+          description: Balance found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreateBalanceRDO"
+        "404":
+          description: Balance not found
+      tags: *a4
+  /api/balance/decrease/{serviceId}/{amount}:
+    patch:
+      operationId: BalanceController_decreaseBalance
+      summary: Decrease training balance by passed amount
+      parameters:
+        - name: serviceId
+          required: true
+          in: path
+          schema:
+            type: string
+        - name: amount
+          required: true
+          in: path
+          schema:
+            type: number
+      responses:
+        "200":
+          description: Balance found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreateBalanceRDO"
+        "404":
+          description: Balance not found
+      tags: *a4
 info:
   title: The "Fit-Friends" service
   description: '"FIt-Friends" service API'
@@ -1322,12 +1440,6 @@ components:
           example: 15
           minimum: 1
           maximum: 50
-        remainingTrainingsCount:
-          type: number
-          description: Remaining trainings count on user balance
-          example: 4
-          minimum: 1
-          maximum: 50
         totalPrice:
           type: number
           description: Total order price (trainings count * price)
@@ -1352,7 +1464,6 @@ components:
         - serviceId
         - price
         - trainingsCount
-        - remainingTrainingsCount
         - totalPrice
         - paymentType
         - userId
@@ -1379,12 +1490,6 @@ components:
           example: 15
           minimum: 1
           maximum: 50
-        remainingTrainingsCount:
-          type: number
-          description: Remaining user` trainings count
-          example: 2
-          minimum: 1
-          maximum: 50
         totalPrice:
           type: number
           description: Total order price (trainings count * price)
@@ -1406,7 +1511,86 @@ components:
         - serviceId
         - price
         - trainingsCount
-        - remainingTrainingsCount
         - totalPrice
         - paymentType
+        - userId
+    CreateBalanceDTO:
+      type: object
+      properties:
+        orderId:
+          type: object
+          description: Order ID
+          example: d61ef04e-295a-41cb-a230-7e9e4570f14b
+        remainingTrainingsCount:
+          type: number
+          description: Remaining trainings count
+          example: 15
+          minimum: 1
+          maximum: 50
+      required:
+        - orderId
+        - remainingTrainingsCount
+    CreateBalanceRDO:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Uniq balance ID
+          example: g83h4y0943-nv934819843-jv934h8t-n923g48n9438
+        createdAt:
+          format: date-time
+          type: string
+          description: Created at date
+          example: 2024-04-26 13:02:24.847
+        updatedAt:
+          format: date-time
+          type: string
+          description: Updated at date
+          example: 2024-04-26 13:02:24.847
+        serviceId:
+          type: object
+          description: Training ID
+          example: d61ef04e-295a-41cb-a230-7e9e4570f14b
+        orderId:
+          type: object
+          description: Order ID
+          example: d61ef04e-295a-41cb-a230-7e9e4570f14b
+        remainingTrainingsCount:
+          type: number
+          description: Remaining trainings count
+          example: 15
+          minimum: 1
+          maximum: 50
+      required:
+        - id
+        - createdAt
+        - updatedAt
+        - serviceId
+        - orderId
+        - remainingTrainingsCount
+    UpdateBalanceDTO:
+      type: object
+      properties:
+        serviceId:
+          type: object
+          description: Training ID
+          example: d61ef04e-295a-41cb-a230-7e9e4570f14b
+        orderId:
+          type: object
+          description: Order ID
+          example: d61ef04e-295a-41cb-a230-7e9e4570f14b
+        remainingTrainingsCount:
+          type: number
+          description: Remaining trainings count
+          example: 15
+          minimum: 1
+          maximum: 50
+        userId:
+          type: object
+          description: User ID
+          example: d61ef04e-295a-41cb-a230-7e9e4570f14b
+      required:
+        - serviceId
+        - orderId
+        - remainingTrainingsCount
         - userId

@@ -1,7 +1,8 @@
 import { JwtModuleAsyncOptions } from '@nestjs/jwt'
 import { ConfigService } from '@nestjs/config';
 
-import { UserInterface, TokenPayloadInterface } from '../interfaces/';
+import { TokenPayloadInterface } from '../interfaces/';
+import { UserInterface } from '@server/user/interfaces';
 
 
 export function getJWTOptions(optionSpace?: string): JwtModuleAsyncOptions {

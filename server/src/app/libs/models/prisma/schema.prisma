@@ -19,6 +19,12 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum PaymentType {
+  visa
+  mir
+  umoney
+}
+
 //////////////////// USERS ////////////////////
 model User {
   id                String    @id @default(uuid())
@@ -43,6 +49,7 @@ model User {
   dayCaloriesLimit  Int?      @map("day_calories")
   isReadyToTraining Boolean?  @map("is_ready_to_training")
 
+  order Order[]
   refreshToken RefreshToken[]
 
   @@map("users")
@@ -67,14 +74,35 @@ model Training {
   trainersName      String    @map("trainers_name")
   isSpecial         Boolean?  @map("is_special")
 
+  order Order[]
 
   @@map("trainings")
+}
+
+model Order {
+  id             String      @id @default(uuid())
+  createdAt      DateTime?   @default(now()) @map("created_at")
+  updatedAt      DateTime?   @updatedAt @map("updated_at")
+
+  type           String
+  serviceId      String      @map("service_id")
+  price          Int
+  trainingsCount Int         @map("trainings_count")
+  totalPrice     Int         @map("totla_price")
+  paymentType    PaymentType @map("payment_type")
+  userId         String
+
+  service Training @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@map("orders")
 }
 
 model RefreshToken {
   id        String    @id @default(uuid())
   createdAt DateTime? @default(now()) @map("created_at")
   updatedAt DateTime? @updatedAt @map("updated_at")
+
   expiresIn DateTime? @map("expires_in")
   tokenId   String    @map("token_id")
   userId    String    @map("user_id")

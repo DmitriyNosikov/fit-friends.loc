@@ -1,0 +1,79 @@
+@host = 127.0.0.1
+@port = 8000
+@baseUrl = http://{{host}}:{{port}}/api/trainings
+#Test Request to JSON Placeholder
+GET https://jsonplaceholder.typicode.com/todos/1 HTTP/1.1
+Content-Type: application/json
+###
+
+@trainingId = 612e8386-464e-406f-b1f3-f523aa4cca4b
+@authorization = Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI0ZDYwYjJkYS1lMzkzLTQ0NDktYmJjMy0xOWJmYzk0MDhhMGEiLCJlbWFpbCI6Imlyb24tbWFuQHN0YXJraW5kdXN0cmllcy5pdCIsIm5hbWUiOiJUb255Iiwicm9sZSI6ImNsaWVudCIsImlhdCI6MTcxODgwMDY5NiwiZXhwIjoxNzE4ODAxNTk2fQ.dI_oozY4XL3ZbxXXllh_PCdPBQ8OBcpOlAq7n4xZZpQ
+
+# Create new training
+POST {{baseUrl}}/ HTTP/1.1
+Content-Type: application/json
+
+{
+  "title": "Run, Forest",
+  "background": "some/training/background.jpg",
+  "userLevel": "профессионал",
+  "trainingType": "кроссфит",
+  "trainingDuration": "30-50",
+  "price": 8800,
+  "calories": 1500,
+  "description": "impossible crossfit training for real beasts",
+  "gender": "мужской",
+  "video": "add/video/later.avi",
+  "trainersName": "Evil",
+  "isSpecial": true
+}
+###
+
+# Get trainings list
+GET {{baseUrl}}/ HTTP/1.1
+Content-Type: application/json
+{{authorization}}
+###
+
+# Get trainings list (+ price filtering)
+GET {{baseUrl}}/?priceFrom=2000&priceTo=3000&sortType=price HTTP/1.1
+Content-Type: application/json
+{{authorization}}
+###
+
+# Get trainings list (+ calories filtering)
+GET {{baseUrl}}/?caloriesFrom=100&caloriesTo=200&sortType=calories HTTP/1.1
+Content-Type: application/json
+{{authorization}}
+###
+
+# Get trainings list (+ rating filtering)
+GET {{baseUrl}}/?ratingFrom=0&ratingTo=2&sortType=rating HTTP/1.1
+Content-Type: application/json
+{{authorization}}
+###
+
+# Get detail info about training
+GET {{baseUrl}}/{{trainingId}} HTTP/1.1
+Content-Type: application/json
+{{authorization}}
+###
+
+# Update training
+PATCH {{baseUrl}}/{{trainingId}} HTTP/1.1
+Content-Type: application/json
+{{authorization}}
+
+{
+  "title": "Run, Forest!",
+  "trainingType": "кроссфит"
+}
+###
+
+# Delete training
+DELETE {{baseUrl}}/{{trainingId}} HTTP/1.1
+Content-Type: application/json
+{{authorization}}
+###
+
+

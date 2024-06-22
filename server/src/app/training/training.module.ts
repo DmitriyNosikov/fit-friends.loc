@@ -8,6 +8,6 @@ import { TrainingRepository } from './training.repository';
     imports: [],
     controllers: [TrainingController],
     providers: [TrainingService, TrainingFactory, TrainingRepository],
-    exports: []
+    exports: [TrainingService]
 })
 export class TrainingModule {}

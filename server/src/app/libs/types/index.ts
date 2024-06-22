@@ -6,4 +6,5 @@ export { TrainingType, TrainingTypeEnum, trainingTypeList } from './training-typ
 export { UserLevel, UserLevelEnum, userLevelList } from './user-level.enum';
 export { UserRole, UserRoleEnum, userRolesList } from './user-roles.enum';
 export { RequestWithUserId } from './request-with-user-id.type';
+export { OrderType, OrderTypeEnum, orderTypeList } from './order-type.enum';
 

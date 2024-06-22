@@ -34,7 +34,10 @@
       "@server/libs/*": ["server/src/app/libs/*"],
       "@server/user/*": ["server/src/app/user/*"],
       "@server/training/*": ["server/src/app/training/*"],
+      "@server/order/*": ["server/src/app/order/*"],
+
       "@client/*": ["client/*"],
+      
       "@shared/*": ["shared/*"],
     },
   },

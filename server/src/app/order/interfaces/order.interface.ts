@@ -1,7 +1,8 @@
-import { CreatedUpdatedDatesInterface, UserInterface } from '@server/libs/interfaces';
+import { CreatedUpdatedDatesInterface } from '@server/libs/interfaces';
 import { OrderType } from '@server/libs/types';
 import { PaymentType } from '@server/libs/types/payment-type.enum';
 import { TrainingInterface } from '@server/training/interfaces/training.interface';
+import { UserInterface } from '@server/user/interfaces';
 
 export interface OrderInterface extends CreatedUpdatedDatesInterface {
   id?: string;

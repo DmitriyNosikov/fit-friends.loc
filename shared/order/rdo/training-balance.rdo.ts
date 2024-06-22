@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { UserInterface } from '@server/libs/interfaces';
+import { UserInterface } from '@server/user/interfaces';
 import { OrderValidation } from '@server/order/order.constant';
 import { TrainingInterface } from '@server/training/interfaces/training.interface';
 import { Expose } from 'class-transformer';

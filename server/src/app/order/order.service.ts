@@ -103,7 +103,7 @@ export class OrderService {
     return await this.orderRepository.deleteById(orderId);
   }
 
-  // Баланс тренировок пользователя
+  //////////////////// Баланс тренировок пользователя ////////////////////
   public async getUserTrainingBalance(userId: string) {
     const trainingBalance = await this.orderRepository.getUserTrainingBalance(userId);
 
@@ -146,7 +146,7 @@ export class OrderService {
     return updatedOrder;
   }
 
-  // Вспомонательные методы
+  //////////////////// Вспомогательные методы ////////////////////
   public filterQuery(query: BaseSearchQuery) {
     const filteredQuery = fillDTO(BaseSearchQuery, query);
     const omitedQuery = omitUndefined(filteredQuery as Record<string, unknown>);

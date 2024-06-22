@@ -35,6 +35,7 @@
       "@server/user/*": ["server/src/app/user/*"],
       "@server/training/*": ["server/src/app/training/*"],
       "@server/order/*": ["server/src/app/order/*"],
+      "@server/balance/*": ["server/src/app/order/*"],
 
       "@client/*": ["client/*"],
       

@@ -4,30 +4,30 @@ import { Prisma } from '@prisma/client';
 import { PrismaClientService } from '../prisma-client/prisma-client.service';
 import { BasePostgresRepository } from '@server/libs/data-access';
 
-import { OrderEntity } from './order.entity';
-import { OrderInterface } from './interfaces/order.interface';
-import { OrderFactory } from './order.factory';
+import { BalanceEntity } from './balance.entity';
+import { BalanceInterface } from './interfaces/balance.interface';
+import { BalanceFactory } from './balance.factory';
 
 import { SortType, SortTypeEnum } from '@shared/types/sort/sort-type.enum';
 import { SortDirectionEnum } from '@shared/types/sort/sort-direction.enum';
 import { BaseSearchQuery, DefaultSearchParam } from '@shared/types/search/base-search-query.type';
 import { PaginationResult } from '@server/libs/interfaces';
-import { OrderSearchFilters } from '@shared/order';
+import { BalanceSearchFilters } from '@shared/balance';
 import { UserIdPayload } from '@shared/types';
 
 @Injectable()
-export class OrderRepository extends BasePostgresRepository<OrderEntity, OrderInterface> {
+export class BalanceRepository extends BasePostgresRepository<BalanceEntity, BalanceInterface> {
   constructor(
-    entityFactory: OrderFactory,
+    entityFactory: BalanceFactory,
     readonly dbClient: PrismaClientService
   ) {
     super(entityFactory, dbClient);
   }
 
 
-  public async findById(orderId: string): Promise<OrderEntity | null> {
-    const order = await this.dbClient.order.findFirst({
-      where: { id: orderId }
+  public async findById(balanceId: string): Promise<BalanceEntity | null> {
+    const order = await this.dbClient.balance.findFirst({
+      where: { id: balanceId }
     });
 
     if (!order) {
@@ -37,28 +37,31 @@ export class OrderRepository extends BasePostgresRepository<OrderEntity, OrderIn
     return this.getEntity(order);
   }
 
-  public async findByUserId(userId: string): Promise<OrderEntity[] | null> {
-    const orders = await this.dbClient.order.findMany({
-      where: { userId }
+  public async findByServiceId(serviceId: string, userId: string): Promise<BalanceEntity | null> {
+    const balance = await this.dbClient.balance.findFirst({
+      where: {
+        order: { serviceId, userId }
+      },
+      include: {
+        order: true,
+      }
     });
 
-    if (!orders) {
+    if (!balance) {
       return null;
     }
 
-    const result = orders.map((order) => this.getEntity(order));
-
-    return result;
+    return this.getEntity(balance);
   }
 
-  public async search(query?: BaseSearchQuery & UserIdPayload): Promise<PaginationResult<OrderEntity>> {
+  public async search(query?: BaseSearchQuery & UserIdPayload): Promise<PaginationResult<BalanceEntity>> {
     const skip = query?.page && query?.limit ? (query.page - 1) * query.limit : undefined;
     const take = (!query?.limit || query?.limit > DefaultSearchParam.MAX_ITEMS_PER_PAGE) ? DefaultSearchParam.MAX_ITEMS_PER_PAGE : query.limit;
     const { where, orderBy } = this.getSearchFilters(query);
 
     // Запрос на получение результата поиска
     const [items, totalItemsCount] = await Promise.all([
-      this.dbClient.order.findMany({
+      this.dbClient.balance.findMany({
         where,
 
         // Pagination
@@ -69,7 +72,7 @@ export class OrderRepository extends BasePostgresRepository<OrderEntity, OrderIn
       this.getItemsCount(where)
     ]);
 
-    const itemsEntities = items.map((item) => this.createEntityFromDocument(item as unknown as OrderInterface));
+    const itemsEntities = items.map((item) => this.createEntityFromDocument(item as unknown as BalanceInterface));
 
     return {
       entities: itemsEntities,
@@ -80,62 +83,65 @@ export class OrderRepository extends BasePostgresRepository<OrderEntity, OrderIn
     }
   }
 
-  public async create(entity: OrderEntity): Promise<OrderEntity | null> {
-    const order = await this.dbClient.order.create({
+  public async create(entity: BalanceEntity): Promise<BalanceEntity | null> {
+    const balance = await this.dbClient.balance.create({
       data: entity
     });
 
-    if (!order) {
+    if (!balance) {
       return null;
     }
 
-    return this.getEntity(order);
+    return this.getEntity(balance);
   }
 
   public async updateById(
-    orderId: string,
-    fieldsToUpdate: Partial<OrderEntity>
-  ): Promise<OrderEntity | null> {
-    const updatedOrder = await this.dbClient.order.update({
-      where: { id: orderId },
+    balanceId: string,
+    fieldsToUpdate: Partial<BalanceEntity>
+  ): Promise<BalanceEntity | null> {
+    const updatedBalance = await this.dbClient.balance.update({
+      where: { id: balanceId },
       data: { ...fieldsToUpdate }
     });
 
-    if (!updatedOrder) {
+    if (!updatedBalance) {
       return Promise.resolve(null);
     }
 
-    return this.getEntity(updatedOrder);
+    return this.getEntity(updatedBalance);
   }
 
-  public async deleteById(orderId: string): Promise<void> {
-    await this.dbClient.order.delete({
-      where: { id: orderId }
+  public async deleteById(balanceId: string): Promise<void> {
+    await this.dbClient.balance.delete({
+      where: { id: balanceId }
     });
   }
 
   public async getUserTrainingBalance(userId: string) {
-    const documents = await this.dbClient.order.findMany({
+    const documents = await this.dbClient.balance.findMany({
       where: {
         AND: [
-          { userId },
+          {
+            order: { userId }
+          },
           { remainingTrainingsCount: { gt: 0 } }
         ]
       }
     });
 
-    const remainingTrainings = documents.map((training) => this.createEntityFromDocument(training as unknown as OrderInterface));
+    const remainingTrainings = documents.map((training) => this.createEntityFromDocument(training as unknown as BalanceInterface));
     
     return remainingTrainings;
   }
 
-  public async changeTrainingBalance(orderId: string, balance: number) {
-    const updatedOrder = await this.dbClient.order.update({
-      where: { id: orderId },
+  public async changeTrainingBalance(balanceId: string, balance: number) {
+    // Обновляем баланс
+    const updatedOrder = await this.dbClient.balance.update({
+      where: { id: balanceId },
       data: { remainingTrainingsCount: balance }
     });
 
-    const orderWithUpdatedBalance = this.createEntityFromDocument(updatedOrder as unknown as OrderInterface);
+    const orderWithUpdatedBalance = this.createEntityFromDocument(updatedOrder as unknown as BalanceInterface);
 
     return orderWithUpdatedBalance;
   }
@@ -152,32 +158,34 @@ export class OrderRepository extends BasePostgresRepository<OrderEntity, OrderIn
     return true;
   }
 
-  public checkAccess(orderId: string, userId: string) {
-    const order = this.dbClient.order.findFirst({
+  public checkAccess(balanceId: string, userId: string) {
+    const balance = this.dbClient.balance.findFirst({
       where: {
-        id: orderId,
-        userId
-      }
+        id: balanceId,
+        order: { userId }
+      },
     });
 
-    if(!order) {
+    if(!balance) {
       return false;
     }
 
     return true;
   }
 
-  private getEntity(document): OrderEntity {
-    return this.createEntityFromDocument(document as unknown as OrderInterface);
+  private getEntity(document): BalanceEntity {
+    return this.createEntityFromDocument(document as unknown as BalanceInterface);
   }
 
   //////////////////// Вспомогательные методы поиска и пагинации ////////////////////
-  private getSearchFilters(query: BaseSearchQuery & UserIdPayload): OrderSearchFilters {
-    const where: Prisma.OrderWhereInput = {};
-    const orderBy: Prisma.OrderOrderByWithRelationInput = {};
+  private getSearchFilters(query: BaseSearchQuery & UserIdPayload): BalanceSearchFilters {
+    const where: Prisma.BalanceWhereInput = {};
+    const orderBy: Prisma.BalanceOrderByWithRelationInput = {};
 
     if(query?.userId) {
-      where.userId = query.userId;
+      where.order = {
+        userId: query.userId
+      }
     }
 
     // Сортировка и направление сортировки
@@ -199,7 +207,7 @@ export class OrderRepository extends BasePostgresRepository<OrderEntity, OrderIn
     }
   }
 
-  private async getItemsCount(where: Prisma.OrderWhereInput): Promise<number> {
-    return this.dbClient.order.count({ where });
+  private async getItemsCount(where: Prisma.BalanceWhereInput): Promise<number> {
+    return this.dbClient.balance.count({ where });
   }
 }

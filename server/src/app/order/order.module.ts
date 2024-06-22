@@ -4,9 +4,10 @@ import { OrderFactory } from './order.factory';
 import { OrderRepository } from './order.repository';
 import { TrainingModule } from '@server/training/training.module';
 import { OrderController } from './order.controlller';
+import { BalanceModule } from '../balance/balance.module';
 
 @Module({
-    imports: [TrainingModule],
+    imports: [TrainingModule, BalanceModule],
     controllers: [OrderController],
     providers: [OrderService, OrderFactory, OrderRepository],
     exports: []

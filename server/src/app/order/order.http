@@ -3,7 +3,7 @@
 @baseUrl = http://{{host}}:{{port}}/api/orders
 
 @orderId = 201c2a72-d2a9-4b03-8ee1-0f4a5fa1d272
-@authorization = Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJmNzhkYWRjNi01OTAzLTQwNzktOTNhMy0yNTdkMGE0NTk1MmUiLCJlbWFpbCI6Imlyb24tbWFuQHN0YXJraW5kdXN0cmllcy5pdCIsIm5hbWUiOiJUb255Iiwicm9sZSI6ImNsaWVudCIsImlhdCI6MTcxOTA5MTA5MSwiZXhwIjoxNzE5MDkxOTkxfQ.UHWMTLSv5X9dbSlaIxgYQY_VUPoemQvvj15QKwpqDWk
+@authorization = Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJmNzhkYWRjNi01OTAzLTQwNzktOTNhMy0yNTdkMGE0NTk1MmUiLCJlbWFpbCI6Imlyb24tbWFuQHN0YXJraW5kdXN0cmllcy5pdCIsIm5hbWUiOiJUb255Iiwicm9sZSI6ImNsaWVudCIsImlhdCI6MTcxOTA5MjgzMiwiZXhwIjoxNzE5MDkzNzMyfQ.L-UNTbo9DlSaURasSl9rRh6RZ3k4HqXggRiGDwnHNSE
 
 # Create new order
 POST {{baseUrl}}/ HTTP/1.1

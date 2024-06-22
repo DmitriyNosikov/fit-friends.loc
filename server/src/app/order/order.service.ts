@@ -10,13 +10,16 @@ import { OrderMessage } from './order.constant';
 import { OrderEntity } from './order.entity';
 import { TrainingService } from '@server/training/training.service';
 import { BaseSearchQuery, UserIdPayload } from '@shared/types';
+import { BalanceService } from '../balance/balance.service';
+import { CreateBalanceDTO } from '@shared/balance';
 
 @Injectable()
 export class OrderService {
   constructor(
     private readonly orderRepository: OrderRepository,
     private readonly orderFactory: OrderFactory,
-    private readonly trainingService: TrainingService
+    private readonly trainingService: TrainingService,
+    private readonly balanceService: BalanceService,
   ) { }
 
 
@@ -50,7 +53,14 @@ export class OrderService {
       totalPrice
     };
     const orderEntity = this.orderFactory.create(createOrderDTO);
+
     const order = await this.orderRepository.create(orderEntity);
+
+    const balanceData: CreateBalanceDTO = {
+      orderId: order.id,
+      remainingTrainingsCount: order.trainingsCount
+    };
+    await this.balanceService.create(balanceData)
 
     return order;
   }

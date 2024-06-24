@@ -28,8 +28,8 @@
     "pg:generate": "npx prisma generate --schema ./src/app/libs/models/prisma/schema.prisma",
     "pg:reset": "npx prisma migrate reset --schema ./src/app/libs/models/prisma/schema.prisma --force --skip-generate --skip-seed",
     "pg:fill": "npx ts-node ./src/app/libs/models/prisma/seed.ts",
-    "pg:rebuild": "npm run pg:migrate && npm run pg:generate",
-    "pg:refill": "npm run pg:reset && npm run pg:fill"
+    "pg:refill": "npm run pg:reset && npm run pg:fill",
+    "pg:rebuild": "npm run pg:migrate && npm run pg:generate"
   },
   "dependencies": {
     "@nestjs/common": "^10.0.0",

@@ -1,41 +1,135 @@
-export const ProductType = {
-  ELECTRO: 'electro',
-  ACOUSTIC: 'acoustic',
-  UKULELE: 'ukulele'
+import { TrainingInterface } from '@server/training/interfaces/training.interface';
+import { AuthUserInterface } from '@server/user/interfaces';
+
+const ADMIN_USER_ID = "dg34gdf5-dfh4-gh46-wef4-gfl78gn5hfh5";
+const SERVICE_ID_ONE = "u8320e27-cb56-4c74-b633-kfd093d812n4";
+const SERVICE_ID_TWO = "b3110e27-df4g-j456-3gf4-d71d697f03e9";
+const SERVICE_ID_THREE = "md98229j-k4g7-hd94-k4cj-fj45f34gdf68";
+
+export const UserRoleEnum = {
+  ADMIN: 'admin',
+  CLIENT: 'client',
+  TRAINER: 'trainer'
 } as const;
 
-const FIRST_PHOTO = "https://img.freepik.com/free-psd/realistic-guitar-mock-up_1022-50.jpg?w=826&t=st=1716907305~exp=1716907905~hmac=ee2b843ee9c79a37bbf0f97c964936231a2a7065f10449be541a8a485d17643e";
-const SECOND_PHOTO = "https://img.freepik.com/premium-psd/guitar-strap-mokcup-design_23-2151226476.jpg?w=740";
-const THIRD_PHOTO = "https://img.freepik.com/free-photo/electric-guitar-notepad-music-speaker-table-room-top-view_169016-52252.jpg?w=1380&t=st=1716907510~exp=1716908110~hmac=856ada8d504c3c7867eb247a0e1e880acaefc0c9fde5166cfa93626f01d9ae60";
+export const UserLevelEnum = {
+  NEWBIE: 'новичок',
+  REGULAR: 'любитель',
+  PRO: 'профессионал',
+} as const;
 
-export function getProducts() {
+export const TrainingTypeEnum = {
+  YOGA: 'йога',
+  RUNNING: 'бег',
+  BOX: 'бокс',
+  STRETCHING: 'стрейчинг',
+  CROSSFIT: 'кроссфит',
+  AEROBICS: 'аэробика',
+  PILATES: 'пилатес',
+} as const;
+
+export const TrainingDurationEnum = {
+  HALF_HOUR: '10-30',
+  HOUR: '30-50',
+  HOUR_AND_HALF: '50-80',
+  TWO_HOUDS: '80-100',
+} as const;
+
+export const GenderEnum = {
+  MALE: 'мужской',
+  FEMALE: 'женский',
+  NEVERMIND: 'неважно',
+} as const;
+
+export const PaymentTypeEnum = {
+  VISA: 'visa',
+  MIR: 'mir',
+  UMONEY: 'umoney',
+} as const;
+
+export function getAdminUser(): AuthUserInterface {
+  // const password = "jarvis-123";
+  const passwordHash = "$2b$10$lN0OTYWz8V9Bl4UA/Pr5z.xCbLL63fQ71B/jtAV96yrwuDFtBJhhO";
+
+  return {
+    id: ADMIN_USER_ID,
+    email: "iron-man@starkindustries.it",
+    name: "Tony",
+    passwordHash: passwordHash,
+    gender: "мужской",
+    location: "звездная",
+    role: UserRoleEnum.ADMIN,
+  };
+}
+
+export function getTrainings() {
   return [
     {
-      type: ProductType.ELECTRO,
-      vendorCode: '662253e794534cbee6562f7d',
-      title: 'Richie Sambora`s guitar',
-      description: "Unique epic solo-master`s guitar",
-      photo: FIRST_PHOTO,
-      stringsCount: 6,
-      price: 383490,
+      id: SERVICE_ID_ONE,
+      title: "Run, Forest",
+      background: "just/simple/training.jpg",
+      userLevel: UserLevelEnum.NEWBIE,
+      trainingType: TrainingTypeEnum.AEROBICS,
+      trainingDuration: TrainingDurationEnum.HALF_HOUR,
+      price: 1000,
+      calories: 1100,
+      description: "Simple training for simple person",
+      gender: GenderEnum.NEVERMIND,
+      video: "test/video/later.avi",
+      trainersName: "Johny",
+      isSpecial: false
     },
     {
-      type: ProductType.ACOUSTIC,
-      vendorCode: '86224f68a3f9a165a1ab5fbk',
-      title: 'Chester Bennington`s Acoustic Guitar',
-      description: "LP solo-singer`s guitar",
-      photo: SECOND_PHOTO,
-      stringsCount: 7,
-      price: 938541,
+      id: SERVICE_ID_TWO,
+      title: "Like a pro",
+      background: "train/like/pro.png",
+      userLevel: UserLevelEnum.REGULAR,
+      trainingType: TrainingTypeEnum.RUNNING,
+      trainingDuration: TrainingDurationEnum.HALF_HOUR,
+      price: 1500,
+      calories: 1450,
+      description: "Regular running day",
+      gender: GenderEnum.NEVERMIND,
+      video: "test/video/later.avi",
+      trainersName: "Alexa",
+      isSpecial: false
     },
     {
-      type: ProductType.ELECTRO,
-      vendorCode: '3f9a13e794534cbee64534cb',
-      title: 'Just a test guitar',
-      description: "Guitar to test for our customers",
-      photo: THIRD_PHOTO,
-      stringsCount: 12,
-      price: 13880,
+      id: SERVICE_ID_THREE,
+      title: "Run, Forest!",
+      background: "just/run/dont/stop.png",
+      userLevel: UserLevelEnum.PRO,
+      trainingType: TrainingTypeEnum.RUNNING,
+      trainingDuration: TrainingDurationEnum.HOUR,
+      price: 2500,
+      calories: 2000,
+      description: "Training for really running fans!",
+      gender: GenderEnum.NEVERMIND,
+      video: "test/video/later.avi",
+      trainersName: "Evil",
+      isSpecial: true
     }
   ];
+}
+
+export function getOrders() {
+  const trainings: TrainingInterface[] = getTrainings();
+  const orders = [];
+
+  trainings.forEach((training) => {
+    const trainingsCount = Math.floor(Math.random() * 10);
+    const totalPrice = training.price * trainingsCount;
+
+    orders.push({
+      userId: ADMIN_USER_ID,
+      type: "абонемент",
+      serviceId: training.id,
+      trainingsCount: trainingsCount,
+      paymentType: PaymentTypeEnum.MIR,
+      price: training.price,
+      totalPrice: totalPrice
+    });
+  });
+
+  return orders;
 }

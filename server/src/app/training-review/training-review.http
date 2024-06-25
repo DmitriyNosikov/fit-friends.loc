@@ -1,0 +1,7 @@
+@host = 127.0.0.1
+@port = 8000
+@baseUrl = http://{{host}}:{{port}}/api/training-reviews
+#Test Request to JSON Placeholder
+GET https://jsonplaceholder.typicode.com/todos/1 HTTP/1.1
+Content-Type: application/json
+###

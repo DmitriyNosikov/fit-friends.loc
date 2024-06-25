@@ -50,6 +50,7 @@ model User {
   isReadyToTraining Boolean?  @map("is_ready_to_training")
 
   order Order[]
+  trainingReview TrainingReview[]
   refreshToken RefreshToken[]
 
   @@map("users")
@@ -75,6 +76,7 @@ model Training {
   isSpecial         Boolean?  @map("is_special")
 
   order Order[]
+  review TrainingReview[]
 
   @@map("trainings")
 }
@@ -110,6 +112,22 @@ model Balance {
   order Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
   
   @@map("balances")
+}
+
+model TrainingReview {
+  id                      String      @id @default(uuid())
+  createdAt               DateTime?   @default(now()) @map("created_at")
+  updatedAt               DateTime?   @updatedAt @map("updated_at")
+
+  userId                  String
+  trainingId              String
+  rating                  Int
+  text                    String
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  training Training @relation(fields: [trainingId], references: [id], onDelete: Cascade)
+  
+  @@map("training_reviews")
 }
 
 model RefreshToken {

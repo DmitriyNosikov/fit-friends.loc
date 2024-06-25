@@ -16,28 +16,67 @@ export class TrainingReviewRepository extends BasePostgresRepository<TrainingRev
     super(entityFactory, dbClient);
   }
 
-  public async findById(userId: string): Promise<TrainingReviewEntity | null> {
-    const user = await this.dbClient.user.findFirst({
-      where: { id: userId }
+  public async findById(reviewId: string): Promise<TrainingReviewEntity | null> {
+    const review = await this.dbClient.trainingReview.findFirst({
+      where: { id: reviewId }
     });
 
-    if(!user) {
+    if(!review) {
       return null;
     }
 
-    const userEntity = this.createEntityFromDocument(user as unknown as UserInterface);
+    const reviewEntity = this.createEntityFromDocument(review as unknown as TrainingReviewInterface);
 
-    return userEntity;
+    return reviewEntity;
   }
 
-  public async create(entity: TrainingReviewEntity): Promise<TrainingReviewEntity | null> {}
+  public async create(entity: TrainingReviewEntity): Promise<TrainingReviewEntity | null> {
+    const review = await this.dbClient.trainingReview.create({
+      data: entity
+    });
+
+    if(!review) {
+      return null;
+    }
+
+    const reviewEntity = this.createEntityFromDocument(review as unknown as TrainingReviewInterface);
+
+    return reviewEntity;
+  }
 
   public async updateById(
     reviewId: string,
     fieldsToUpdate: Partial<TrainingReviewEntity>
-  ): Promise<TrainingReviewEntity | null> {}
+  ): Promise<TrainingReviewEntity | null> {
+    const updatedReview = await this.dbClient.trainingReview.update({
+      where: { id: reviewId },
+      data: { ...fieldsToUpdate }
+    });
 
-  public async deleteById(reviewId: string): Promise<void> {}
+    if(!updatedReview) {
+      return Promise.resolve(null);
+    }
 
-  public async exists(reviewId: string): Promise<boolean> {}
+    const reviewEntity = this.createEntityFromDocument(updatedReview as unknown as TrainingReviewInterface);
+
+    return reviewEntity;
+  }
+
+  public async deleteById(reviewId: string): Promise<void> {
+    await this.dbClient.trainingReview.delete({
+      where: { id: reviewId }
+    });
+  }
+
+  public async exists(reviewId: string): Promise<boolean> {
+    const review = await this.dbClient.trainingReview.findFirst({
+      where: { id: reviewId }
+    });
+
+    if(!review) {
+      return false;
+    }
+
+    return true;
+  }
 }

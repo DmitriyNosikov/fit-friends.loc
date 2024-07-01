@@ -341,6 +341,53 @@ paths:
           description: Training has been successfully deleted
       tags: *a2
   /api/training-reviews/{trainingId}:
+    get:
+      operationId: TrainingReviewController_index
+      summary: Get reviews list by passed params (or without it)
+      parameters:
+        - name: sortDirection
+          required: false
+          in: query
+          description: "Sorting direction. Default direction: desc"
+          example: " desc"
+          schema:
+            enum:
+              - asc
+              - desc
+            type: string
+        - name: sortType
+          required: false
+          in: query
+          description: "Sorting type. Default sort type: createdAt"
+          example: createdAt
+          schema:
+            enum:
+              - createdAt
+            type: string
+        - name: page
+          required: false
+          in: query
+          description: 'Current page in pagination (if items count more than "limit").
+            Default page: 1'
+          example: "1"
+          schema: {}
+        - name: limit
+          required: false
+          in: query
+          description: "Items per page (pagination). Max limit: 50"
+          example: "50"
+          schema: {}
+        - name: createdAt
+          required: false
+          in: query
+          description: Item's creation date
+          example: 2024-05-29
+          schema: {}
+      responses:
+        "200":
+          description: ""
+      tags: &a3
+        - training-reviews
     post:
       operationId: TrainingReviewController_create
       summary: Add new review to training
@@ -364,8 +411,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/CreateTrainingReviewRDO"
-      tags: &a3
-        - training-reviews
+      tags: *a3
   /api/training-reviews/{trainingId}/{reviewId}:
     patch:
       operationId: TrainingReviewController_update

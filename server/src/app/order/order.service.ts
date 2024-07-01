@@ -1,7 +1,5 @@
 import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 
-import { fillDTO, omitUndefined } from '@server/libs/helpers';
-
 import { OrderRepository } from './order.repository';
 import { OrderFactory } from './order.factory';
 
@@ -110,13 +108,6 @@ export class OrderService {
   }
 
   //////////////////// Вспомогательные методы ////////////////////
-  public filterQuery(query: BaseSearchQuery) {
-    const filteredQuery = fillDTO(BaseSearchQuery, query);
-    const omitedQuery = omitUndefined(filteredQuery as Record<string, unknown>);
-
-    return omitedQuery;
-  }
-
   private async countPricesByTraining(serviceId: string, trainingsCount: number) {
     const training = await this.trainingService.findById(serviceId);
     const price = training.price;

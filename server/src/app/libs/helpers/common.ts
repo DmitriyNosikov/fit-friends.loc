@@ -3,6 +3,7 @@ import { resolve } from 'node:path';
 import { OpenAPIObject } from '@nestjs/swagger';
 import * as yaml from 'yaml';
 import * as fs from 'node:fs';
+import { BaseSearchQuery } from '@shared/types';
 
 export type DateTimeUnit = 's' | 'h' | 'd' | 'm' | 'y';
 export type TimeAndUnit = { value: number; unit: DateTimeUnit };
@@ -27,6 +28,13 @@ export function fillDTO<T, O extends PlainObject<T> | PlainObject<T>[]> (
   options: ClassTransformOptions = { excludeExtraneousValues: true }
 ): T | T[] {
   return plainToClass(DTOClass, plainObject, options);
+}
+
+export function filterQuery(query: BaseSearchQuery) {
+  const filteredQuery = fillDTO(BaseSearchQuery, query);
+  const omitedQuery = omitUndefined(filteredQuery as Record<string, unknown>);
+
+  return omitedQuery;
 }
 
 export function omitUndefined(value: Record<string, unknown>) {

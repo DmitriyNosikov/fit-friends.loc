@@ -1,15 +1,20 @@
-import { Body, Controller, Delete, HttpStatus, Param, Patch, Post, UseGuards, UseInterceptors, UsePipes } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpStatus, Param, Patch, Post, Query, UseGuards, UseInterceptors } from '@nestjs/common';
 import { ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { TrainingReviewService } from './training-review.service';
-import { CreateTrainingReviewDTO, CreateTrainingReviewRDO, UpdateTrainingReviewDTO } from '@shared/training-review';
-import { TrainingReviewMessage } from './training-review.constant';
-import { fillDTO } from '@server/libs/helpers';
+
+import { fillDTO, filterQuery } from '@server/libs/helpers';
+
 import { UserIdValidationPipe } from '@server/libs/pipes/user-id-validation.pipe';
 import { JWTAuthGuard } from '@server/user/guards/jwt-auth.guard';
 import { InjectUserIdInterceptor } from '@server/libs/interceptors/inject-user-id.interceptor';
 import { InjectTrainingIdInterceptor } from '@server/libs/interceptors/inject-training-id.interceptor';
-import { TrainingReviewPermissionValidationPipe } from '@server/libs/pipes/training-review-permission.validation.pipe';
 import { TrainingReviewCheckPermissionInterceptor } from '@server/libs/interceptors/training-review-check-permission.interceptor';
+
+import { TrainingReviewService } from './training-review.service';
+import { TrainingReviewMessage } from './training-review.constant';
+
+import { CreateTrainingReviewDTO, CreateTrainingReviewRDO, TrainingReviewsWithPaginationRDO, UpdateTrainingReviewDTO } from '@shared/training-review';
+import { BaseSearchQuery, DefaultSearchParam } from '@shared/types/search/base-search-query.type';
+import { SortDirection, SortType, TrainingIdPayload } from '@shared/types';
 
 @ApiTags('training-reviews')
 @Controller('training-reviews')
@@ -17,6 +22,64 @@ export class TrainingReviewController {
   constructor(
     private readonly reviewService: TrainingReviewService
   ) {}
+
+  @Get(':trainingId')
+  @UseGuards(JWTAuthGuard)
+  @UseInterceptors(InjectTrainingIdInterceptor)
+  @ApiOperation({ summary: 'Get reviews list by passed params (or without it)' })
+  @ApiQuery({
+    name: "createdAt",
+    description: `Item's creation date`,
+    example: "2024-05-29",
+    required: false
+  })
+  @ApiQuery({
+    name: "limit",
+    description: `Items per page (pagination). Max limit: ${DefaultSearchParam.MAX_ITEMS_PER_PAGE}`,
+    example: "50",
+    required: false
+  })
+  @ApiQuery({
+    name: "page",
+    description: `Current page in pagination (if items count more than "limit"). Default page: ${DefaultSearchParam.PAGE}`,
+    example: "1",
+    required: false
+  })
+  @ApiQuery({
+    name: "sortType",
+    description: `Sorting type. Default sort type: ${DefaultSearchParam.SORT.TYPE}`,
+    enum: SortType,
+    example: "createdAt",
+    required: false
+  })
+  @ApiQuery({
+    name: "sortDirection",
+    description: `Sorting direction. Default direction: ${DefaultSearchParam.SORT.DIRECTION}`,
+    enum: SortDirection,
+    example: " desc",
+    required: false
+  })
+  public async index(
+    @Body('trainingId') trainingId: string,
+    @Query() query?: BaseSearchQuery & TrainingIdPayload,
+  ): Promise<TrainingReviewsWithPaginationRDO | null> {
+    const preparedQuery = filterQuery(query);
+    const documents = await this.reviewService.search({
+      ...preparedQuery,
+      trainingId
+    });
+
+    if(!documents.entities || documents.entities.length <= 0) {
+      return;
+    }
+
+    const reviews = {
+      ...documents,
+      entities: documents.entities.map((document) => document.toPOJO())
+    }
+
+    return reviews;
+  }
 
   @Post(':trainingId')
   @UseGuards(JWTAuthGuard)

@@ -7,6 +7,7 @@ export { getJWTOptions, getJWTPayload } from './jwt';
 // COMMON
 export {
   fillDTO,
+  filterQuery,
   omitUndefined,
   excludeKeys,
   getDate,

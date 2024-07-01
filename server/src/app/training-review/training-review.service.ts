@@ -1,10 +1,15 @@
 import { BadRequestException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
+
+import { omitUndefined } from '@server/libs/helpers';
+import { CreateTrainingReviewDTO, UpdateTrainingReviewDTO } from '@shared/training-review';
+import { BaseSearchQuery, TrainingIdPayload } from '@shared/types';
+
 import { TrainingReviewFactory } from './training-reviews.factory';
 import { TrainingReviewRepository } from './training-review.repository';
-import { CreateTrainingReviewDTO, UpdateTrainingReviewDTO } from '@shared/training-review';
 import { TrainingReviewMessage } from './training-review.constant';
 import { TrainingReviewEntity } from './training-review.entity';
-import { omitUndefined } from '@server/libs/helpers';
+
+
 
 @Injectable()
 export class TrainingReviewService {
@@ -20,6 +25,16 @@ export class TrainingReviewService {
     }
 
     return existsReview;
+  }
+
+  public async search(query?: BaseSearchQuery & TrainingIdPayload) {
+    const reviews = await this.trainingReviewRepository.search(query);
+
+    if(!reviews && query) {
+      throw new NotFoundException(`Can't find reviews by passed params " ${query}"`);
+    }
+
+    return reviews;
   }
 
   public async create(dto: CreateTrainingReviewDTO) {
@@ -55,6 +70,7 @@ export class TrainingReviewService {
     return await this.trainingReviewRepository.deleteById(reviewId);
   }
 
+  //////////////////// Вспомогательные методы ////////////////////
   public async checkAccess(reviewId: string, userId: string): Promise<boolean | void> {
     const isUserHaveAccessToReview = await this.trainingReviewRepository.checkAccess(reviewId, userId);
 

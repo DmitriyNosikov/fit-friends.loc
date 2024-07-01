@@ -15,6 +15,7 @@ export class TrainingService {
 
   public async findById(trainingId: string): Promise<TrainingEntity | null> {
     const training = await this.trainingRepository.findById(trainingId);
+    console.log('TRAINING ID: ', trainingId, training);
 
     if (!training) {
       throw new NotFoundException(`${TrainingMessage.ERROR.NOT_FOUND}. ID: ${trainingId}`);

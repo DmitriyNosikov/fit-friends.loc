@@ -17,6 +17,7 @@ export const TrainingReviewMessage: MessagesType = {
     TRAINING_NOT_FOUND: 'Training not found',
     USER_NOT_FOUND: 'User not found',
     CANT_UPDATE: 'Can`t update review. Possible reason: Object with fields to update are empty',
+    HAVENT_ACCESS: 'Sorry, review is not exists or you haven`t permission to this'
   },
   SUCCESS: {
     FOUND: 'Review found',

@@ -340,6 +340,72 @@ paths:
         "200":
           description: Training has been successfully deleted
       tags: *a2
+  /api/training-reviews/{trainingId}:
+    post:
+      operationId: TrainingReviewController_create
+      summary: Add new review to training
+      parameters:
+        - name: Training id
+          required: true
+          in: query
+          description: Correct training id
+          example: g83h4y0943-nv934819843-jv934h8t-n923g48n9438
+          schema: {}
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateTrainingReviewDTO"
+      responses:
+        "201":
+          description: Review has been successfully created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreateTrainingReviewRDO"
+      tags: &a3
+        - training-reviews
+  /api/training-reviews/{trainingId}/{reviewId}:
+    patch:
+      operationId: TrainingReviewController_update
+      summary: Update training review
+      parameters:
+        - name: reviewId
+          required: true
+          in: path
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateTrainingReviewDTO"
+      responses:
+        "201":
+          description: Review has been successfully created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreateTrainingReviewRDO"
+        "400":
+          description: "Can`t update review. Possible reason: Object with fields to update
+            are empty"
+      tags: *a3
+    delete:
+      operationId: TrainingReviewController_delete
+      summary: Delete training review
+      parameters:
+        - name: reviewId
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Review has been successfully deleted
+      tags: *a3
   /api/orders:
     post:
       operationId: OrderController_create
@@ -358,7 +424,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/CreateOrderDTO"
-      tags: &a3
+      tags: &a4
         - orders
     get:
       operationId: OrderController_index
@@ -405,7 +471,7 @@ paths:
       responses:
         "200":
           description: ""
-      tags: *a3
+      tags: *a4
   /api/orders/{orderId}:
     get:
       operationId: OrderController_show
@@ -425,7 +491,7 @@ paths:
                 $ref: "#/components/schemas/CreateOrderRDO"
         "404":
           description: Orders not found
-      tags: *a3
+      tags: *a4
     patch:
       operationId: OrderController_updateTraining
       summary: Update order info
@@ -451,7 +517,7 @@ paths:
         "400":
           description: "Can`t update order. Possible reason: Object with fields to update
             are empty"
-      tags: *a3
+      tags: *a4
     delete:
       operationId: OrderController_deleteOrder
       summary: Delete order
@@ -464,7 +530,7 @@ paths:
       responses:
         "200":
           description: Order has been successfully deleted
-      tags: *a3
+      tags: *a4
   /api/balance:
     post:
       operationId: BalanceController_create
@@ -483,7 +549,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/CreateBalanceDTO"
-      tags: &a4
+      tags: &a5
         - balance
     get:
       operationId: BalanceController_index
@@ -538,7 +604,7 @@ paths:
                   $ref: "#/components/schemas/CreateBalanceRDO"
         "404":
           description: Balance not found
-      tags: *a4
+      tags: *a5
   /api/balance/{balanceId}:
     get:
       operationId: BalanceController_show
@@ -558,7 +624,7 @@ paths:
                 $ref: "#/components/schemas/CreateBalanceRDO"
         "404":
           description: Balance not found
-      tags: *a4
+      tags: *a5
     patch:
       operationId: BalanceController_updateTraining
       summary: Update balance info
@@ -584,7 +650,7 @@ paths:
         "400":
           description: "Can`t update order. Possible reason: Object with fields to update
             are empty"
-      tags: *a4
+      tags: *a5
     delete:
       operationId: BalanceController_deleteOrder
       summary: Delete balance
@@ -597,7 +663,7 @@ paths:
       responses:
         "200":
           description: Balance has been successfully deleted
-      tags: *a4
+      tags: *a5
   /api/balance/increase/{serviceId}/{amount}:
     patch:
       operationId: BalanceController_increaseBalance
@@ -622,7 +688,7 @@ paths:
                 $ref: "#/components/schemas/CreateBalanceRDO"
         "404":
           description: Balance not found
-      tags: *a4
+      tags: *a5
   /api/balance/decrease/{serviceId}/{amount}:
     patch:
       operationId: BalanceController_decreaseBalance
@@ -647,7 +713,7 @@ paths:
                 $ref: "#/components/schemas/CreateBalanceRDO"
         "404":
           description: Balance not found
-      tags: *a4
+      tags: *a5
 info:
   title: The "Fit-Friends" service
   description: '"FIt-Friends" service API'
@@ -1366,6 +1432,101 @@ components:
         - rating
         - trainersName
         - isSpecial
+    CreateTrainingReviewDTO:
+      type: object
+      properties:
+        userId:
+          type: object
+          description: Review author id
+          example: g83h4y0943-nv934819843-jv934h8t-n923g48n9438
+        trainingId:
+          type: object
+          description: Training id
+          example: g83h4y0943-nv934819843-jv934h8t-n923g48n9438
+        rating:
+          type: number
+          description: Author`s training rate
+          example: g83h4y0943-nv934819843-jv934h8t-n923g48n9438
+          minimum: 1
+          maximum: 5
+        text:
+          type: string
+          description: Author review`s text
+          example: it was amazing training
+      required:
+        - userId
+        - trainingId
+        - rating
+        - text
+    CreateTrainingReviewRDO:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Uniq review ID
+          example: g83h4y0943-nv934819843-jv934h8t-n923g48n9438
+        createdAt:
+          format: date-time
+          type: string
+          description: Created at date
+          example: 2024-04-26 13:02:24.847
+        updatedAt:
+          format: date-time
+          type: string
+          description: Updated at date
+          example: 2024-04-26 13:02:24.847
+        userId:
+          type: object
+          description: Review author id
+          example: g83h4y0943-nv934819843-jv934h8t-n923g48n9438
+        trainingId:
+          type: object
+          description: Training id
+          example: g83h4y0943-nv934819843-jv934h8t-n923g48n9438
+        rating:
+          type: number
+          description: Author`s training rate
+          example: g83h4y0943-nv934819843-jv934h8t-n923g48n9438
+          minimum: 1
+          maximum: 5
+        text:
+          type: string
+          description: Author review`s text
+          example: it was amazing training
+      required:
+        - id
+        - createdAt
+        - updatedAt
+        - userId
+        - trainingId
+        - rating
+        - text
+    UpdateTrainingReviewDTO:
+      type: object
+      properties:
+        userId:
+          type: object
+          description: Review author id
+          example: g83h4y0943-nv934819843-jv934h8t-n923g48n9438
+        trainingId:
+          type: object
+          description: Training id
+          example: g83h4y0943-nv934819843-jv934h8t-n923g48n9438
+        rating:
+          type: number
+          description: Author`s training rate
+          example: g83h4y0943-nv934819843-jv934h8t-n923g48n9438
+          minimum: 1
+          maximum: 5
+        text:
+          type: string
+          description: Author review`s text
+          example: it was amazing training
+      required:
+        - userId
+        - trainingId
+        - rating
+        - text
     CreateOrderDTO:
       type: object
       properties:

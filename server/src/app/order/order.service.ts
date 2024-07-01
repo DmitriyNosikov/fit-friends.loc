@@ -118,7 +118,7 @@ export class OrderService {
   }
 
   private async countPricesByTraining(serviceId: string, trainingsCount: number) {
-    const training = await this.trainingService.getTrainingDetail(serviceId);
+    const training = await this.trainingService.findById(serviceId);
     const price = training.price;
     const totalPrice = price * trainingsCount;
 

@@ -68,6 +68,21 @@ export class TrainingReviewRepository extends BasePostgresRepository<TrainingRev
     });
   }
 
+  public async checkAccess(reviewId: string, userId: string) {
+    const review = await this.dbClient.trainingReview.findFirst({
+      where: {
+        id: reviewId,
+        userId
+      },
+    });
+
+    if(!review) {
+      return false;
+    }
+
+    return true;
+  }
+
   public async exists(reviewId: string): Promise<boolean> {
     const review = await this.dbClient.trainingReview.findFirst({
       where: { id: reviewId }

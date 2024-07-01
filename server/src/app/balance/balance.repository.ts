@@ -158,8 +158,8 @@ export class BalanceRepository extends BasePostgresRepository<BalanceEntity, Bal
     return true;
   }
 
-  public checkAccess(balanceId: string, userId: string) {
-    const balance = this.dbClient.balance.findFirst({
+  public async checkAccess(balanceId: string, userId: string) {
+    const balance = await this.dbClient.balance.findFirst({
       where: {
         id: balanceId,
         order: { userId }

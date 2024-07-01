@@ -17,7 +17,7 @@ POST {{baseUrl}}/register/ HTTP/1.1
 Content-Type: application/json
 
 {
-  "email": "iron-man@starkindustries.it",
+  "email": "iron-man2@starkindustries.it",
   "name": "Tony",
   "password": "jarvis-123",
   "gender": "мужской",
@@ -31,7 +31,7 @@ POST  {{baseUrl}}/login/ HTTP/1.1
 Content-Type: application/json
 
 {
-  "email": "iron-man@starkindustries.it",
+  "email": "iron-man2@starkindustries.it",
   "password": "jarvis-123"
 }
 ###

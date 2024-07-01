@@ -7,6 +7,7 @@ import { UserModule } from './user/user.module';
 import { TrainingModule } from './training/training.module';
 import { OrderModule } from './order/order.module';
 import { BalanceModule } from './balance/balance.module';
+import { TrainingReviewModule } from './training-review/training-review.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { BalanceModule } from './balance/balance.module';
 
     UserModule,
     TrainingModule,
+    TrainingReviewModule,
     OrderModule,
     BalanceModule
   ],

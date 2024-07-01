@@ -46,6 +46,16 @@ export class UserService {
     private readonly refreshTokenService: RefreshTokenService
   ) {}
 
+  public async findById(userId: string): Promise<UserEntity | null> {
+    const existUser = await this.userRepository.findById(userId);
+
+    if(!existUser) {
+      throw new NotFoundException(`User with id ${userId} not found`);
+    }
+
+    return existUser;
+  }
+
   public async getUserByEmail(email: string): Promise<UserEntity | null> {
     const existUser = await this.userRepository.findByEmail(email);
 

@@ -34,6 +34,7 @@
       "@server/libs/*": ["server/src/app/libs/*"],
       "@server/user/*": ["server/src/app/user/*"],
       "@server/training/*": ["server/src/app/training/*"],
+      "@server/training-review/*": ["server/src/app/training-review/*"],
       "@server/order/*": ["server/src/app/order/*"],
       "@server/balance/*": ["server/src/app/order/*"],
 

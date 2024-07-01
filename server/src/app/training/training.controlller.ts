@@ -165,7 +165,7 @@ export class TrainingController {
     description: TrainingMessage.ERROR.NOT_FOUND
   })
   public async show(@Param('trainingId') trainingId: string): Promise<CreateTrainingRDO> {
-    const trainingDetail = await this.trainingService.getTrainingDetail(trainingId);
+    const trainingDetail = await this.trainingService.findById(trainingId);
 
     return fillDTO(CreateTrainingRDO, trainingDetail.toPOJO());
   }

@@ -13,8 +13,7 @@ export class TrainingService {
     private readonly trainingFactory: TrainingFactory,
   ) { }
 
-
-  public async getTrainingDetail(trainingId: string): Promise<TrainingEntity | null> {
+  public async findById(trainingId: string): Promise<TrainingEntity | null> {
     const training = await this.trainingRepository.findById(trainingId);
 
     if (!training) {

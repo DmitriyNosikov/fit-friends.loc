@@ -110,7 +110,7 @@ export class CreateUserDTO {
     example: 'some/interesting/avatar.jpg',
   })
   @IsString()
-  @IsOptional()
+  @IsOptional() // TODO: Должно быть обязательным для заполнения (будет реализовано вместе с загрузкой файлов)
   pageBackground: string;
 
   // Опросник (TODO: все полня временно @IsOptional() пока не решим, где их оставить)

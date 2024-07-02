@@ -6,9 +6,9 @@ GET https://jsonplaceholder.typicode.com/todos/1 HTTP/1.1
 Content-Type: application/json
 ###
 
-@userId = 5fcfd4be-4501-4bce-b54a-1568c782605b
-@authorization = Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJkNjFlZjA0ZS0yOTVhLTQxY2ItYTIzMC03ZTllNDU3MGYxNGIiLCJlbWFpbCI6Imlyb24tbWFuQHN0YXJraW5kdXN0cmllcy5pdCIsIm5hbWUiOiJUb255Iiwicm9sZSI6IiIsImlhdCI6MTcxOTA2OTc0MSwiZXhwIjoxNzE5MDcwNjQxfQ.3iTWLYKANDbiksxQnUgurO2ZMarOFGdy6_ex7AKhuKk
-@refresh = Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJkNjFlZjA0ZS0yOTVhLTQxY2ItYTIzMC03ZTllNDU3MGYxNGIiLCJlbWFpbCI6Imlyb24tbWFuQHN0YXJraW5kdXN0cmllcy5pdCIsIm5hbWUiOiJUb255Iiwicm9sZSI6IiIsImlhdCI6MTcxOTA2OTc0MSwiZXhwIjoxNzE5MDcwNjQxfQ.3iTWLYKANDbiksxQnUgurO2ZMarOFGdy6_ex7AKhuKk
+@userId = 3b066fce-219c-43bd-83ab-6f0a61f103a3
+@authorization = Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJkZzM0Z2RmNS1kZmg0LWdoNDYtd2VmNC1nZmw3OGduNWhmaDUiLCJlbWFpbCI6Imlyb24tbWFuQHN0YXJraW5kdXN0cmllcy5pdCIsIm5hbWUiOiJUb255Iiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzE5OTI5MjU2LCJleHAiOjE3MTk5MzAxNTZ9.6RvVDPJDNCJs9fLnH2Sy9l1SnI-rIGUZ0pxqKH3w8Io
+@refresh = Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJkZzM0Z2RmNS1kZmg0LWdoNDYtd2VmNC1nZmw3OGduNWhmaDUiLCJlbWFpbCI6Imlyb24tbWFuQHN0YXJraW5kdXN0cmllcy5pdCIsIm5hbWUiOiJUb255Iiwicm9sZSI6ImFkbWluIiwidG9rZW5JZCI6IjRiYTliMmYwLWQ2MmEtNGJlNS1iNDgyLWM4MjY2NGYwMmM2MCIsImlhdCI6MTcxOTkyOTI1NiwiZXhwIjoxNzE5OTMwMTU2fQ.cWsMoS4J89PGhXLpTd7ynq7ehkxDT9NK4Pdr6cJFjEs
 
 # /////////////////////////////////// AUTNENTICATION ///////////////////////////////////
 
@@ -17,7 +17,7 @@ POST {{baseUrl}}/register/ HTTP/1.1
 Content-Type: application/json
 
 {
-  "email": "iron-man2@starkindustries.it",
+  "email": "iron-man@starkindustries.it",
   "name": "Tony",
   "password": "jarvis-123",
   "gender": "мужской",
@@ -31,7 +31,7 @@ POST  {{baseUrl}}/login/ HTTP/1.1
 Content-Type: application/json
 
 {
-  "email": "iron-man2@starkindustries.it",
+  "email": "iron-man@starkindustries.it",
   "password": "jarvis-123"
 }
 ###

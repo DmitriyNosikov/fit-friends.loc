@@ -13,6 +13,7 @@ import { UserController } from './user.controller';
 import { UserFactory } from './user.factory';
 import { UserRepository } from './user.repository';
 import { UserService } from './user.service';
+import { FileVaultModule } from '../file-vault/file-vault.module';
 
 
 @Module({
@@ -23,6 +24,8 @@ import { UserService } from './user.service';
     JwtModule.registerAsync(
       getJWTOptions(ConfigEnvironment.JWT)
     ),
+
+    FileVaultModule
   ],
   controllers: [UserController],
   providers: [

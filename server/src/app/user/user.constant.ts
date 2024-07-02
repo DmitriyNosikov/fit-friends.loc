@@ -26,7 +26,8 @@ export const UserValidation = {
   TRAINING_TYPE: {
     MIN_COUNT: 1,
     MAX_COUNT: 3
-  }
+  },
+  ALLOWED_IMG_EXT: [ 'jpg', 'jpeg', 'png' ]
 } as const;
 
 export const UserMessage: MessagesType = {

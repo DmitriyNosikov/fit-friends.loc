@@ -137,6 +137,15 @@ paths:
               schema:
                 $ref: "#/components/schemas/UserRDO"
       tags: *a1
+  /api/files/upload:
+    post:
+      operationId: FileVaultController_uploadFile
+      parameters: []
+      responses:
+        "201":
+          description: ""
+      tags:
+        - files
   /api/trainings:
     post:
       operationId: TrainingController_create
@@ -760,15 +769,6 @@ paths:
         "404":
           description: Balance not found
       tags: *a5
-  /api/files/upload:
-    post:
-      operationId: FileVaultController_uploadFile
-      parameters: []
-      responses:
-        "201":
-          description: ""
-      tags:
-        - files
 info:
   title: The "Fit-Friends" service
   description: '"FIt-Friends" service API'

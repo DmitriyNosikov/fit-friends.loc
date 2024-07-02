@@ -18,7 +18,7 @@ export class FileVaultService {
   ) {}
 
   private getUploadDirectoryPath(): string {
-    const uploadDirectoryPath = this.configService.get<string>(`${ConfigEnvironment.APP}.${ConfigEnum.UPLOAD_DIRECTORY_PATH}`)
+    const uploadDirectoryPath = this.configService.get<string>(`${ConfigEnvironment.APP}.${ConfigEnum.UPLOAD_DIRECTORY_PATH}`);
     const currentDateDirectory = getCurrentDayTimeDirectory();
     return join(uploadDirectoryPath, currentDateDirectory);
   }

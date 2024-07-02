@@ -11,9 +11,9 @@ Content-Type: multipart/form-data; boundary=boundary
 {{authorization}}
 
 --boundary
-Content-Disposition: form-data; name="file"; filename="file-vault.http"
+Content-Disposition: form-data; name="file"; filename="1383312477_620277079.png"
 
-< ./file-vault.http
+< ./1383312477_620277079.png
 
 --boundary--
 

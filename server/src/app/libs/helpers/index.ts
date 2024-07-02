@@ -15,4 +15,4 @@ export {
 } from './common';
 
 // FILES
-export { getCurrentDayTimeDirectory, getUniqFilenamePrefix } from './files';
+export { getCurrentDayTimeDirectory, getUniqFilenamePrefix, getExtByName } from './files';

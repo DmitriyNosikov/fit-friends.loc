@@ -8,3 +8,13 @@ export function getCurrentDayTimeDirectory() {
 export function getUniqFilenamePrefix() {
   return dayjs().unix() * dayjs().millisecond();
 }
+
+export function getExtByName(filename: string) {
+  const splittedFilename: string[] = filename.split('.');
+
+  if(splittedFilename.length <= 0) {
+    return;
+  }
+
+  return splittedFilename[splittedFilename.length - 1];
+}

@@ -18,7 +18,8 @@ import { ConfigType } from '@nestjs/config';
 import { RefreshTokenService } from '../refresh-token/refresh-token.service';
 import { RequestWithUserId } from '@server/libs/types';
 
-import { CreateUserDTO, LoginUserDTO, UpdateUserDTO } from '../../../../shared/user/'; // TODO: Заменить путь на @shared как будет больше времени разобраться
+// TODO: Заменить путь на @shared как будет больше времени разобраться
+import { CreateUserDTO, LoginUserDTO, UpdateUserDTO } from '../../../../shared/user/'; 
 
 import { AuthUserInterface, UserInterface } from './interfaces';
 import { UserMessage } from './user.constant';

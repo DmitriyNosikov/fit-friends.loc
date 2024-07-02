@@ -19,7 +19,8 @@ export class FileVaultService {
 
   private getUploadDirectoryPath(): string {
     const uploadDirectoryPath = this.configService.get<string>(`${ConfigEnvironment.APP}.${ConfigEnum.UPLOAD_DIRECTORY_PATH}`)
-    return uploadDirectoryPath;
+    const currentDateDirectory = getCurrentDayTimeDirectory();
+    return join(uploadDirectoryPath, currentDateDirectory);
   }
 
   private getDestinationFilePath(filename: string): string {
@@ -28,14 +29,12 @@ export class FileVaultService {
 
   public async saveFile(file: Express.Multer.File): Promise<string> {
     try {
-      const currentDateDirectory = getCurrentDayTimeDirectory();
-      const uniqFilename = `${getUniqFilenamePrefix()}-${file.originalname}`;
-      const filesDirectory = `${currentDateDirectory}/${uniqFilename}`;
-      const filesDestination = this.getDestinationFilePath(filesDirectory);
-
       const uploadDirectoryPath = this.getUploadDirectoryPath();
 
-      await ensureDir(`${uploadDirectoryPath}/${currentDateDirectory}`);
+      const uniqFilename = `${getUniqFilenamePrefix()}-${file.originalname}`;
+      const filesDestination = this.getDestinationFilePath(uniqFilename);
+
+      await ensureDir(uploadDirectoryPath);
       await writeFile(filesDestination, file.buffer);
 
       return filesDestination;

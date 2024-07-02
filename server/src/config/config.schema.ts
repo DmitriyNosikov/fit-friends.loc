@@ -5,12 +5,14 @@ export const ConfigEnum = {
   HOST: 'host',
   PORT: 'port',
   UPLOAD_DIRECTORY_PATH: 'uploadDirectoryPath',
+  STATIC_SERVE_ROOT: 'staticServeRoot',
 } as const;
 
 export interface ConfigInterface {
   [ConfigEnum.HOST]: string;
   [ConfigEnum.PORT]: number;
   [ConfigEnum.UPLOAD_DIRECTORY_PATH]: string;
+  [ConfigEnum.STATIC_SERVE_ROOT]: string;
 }
 
 export class ConfigSchema implements ConfigInterface {
@@ -25,6 +27,9 @@ export class ConfigSchema implements ConfigInterface {
 
   @IsString()
   uploadDirectoryPath: string;
+
+  @IsString()
+  staticServeRoot: string;
 
   async validate() {
     return await validateOrReject(this).catch((errors) => {

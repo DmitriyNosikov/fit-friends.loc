@@ -1,9 +1,7 @@
 import dayjs from 'dayjs';
 
 export function getCurrentDayTimeDirectory() {
-  const year = dayjs().format('YYYY')
-  const month = dayjs().format('MM');
-  const day = dayjs().format('DD');
+  const [year, month, day] = dayjs().format('YYYY MM DD').split(' ');
   return `${year}/${month}/${day}`;
 }
 

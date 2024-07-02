@@ -12,6 +12,7 @@ async function getConfig(): Promise<ConfigInterface> {
     port: parseInt(port, 10),
     host: process.env.HOST,
     uploadDirectoryPath: process.env.UPLOAD_DIRECTORY_PATH,
+    staticServeRoot: process.env.STATIC_SERVE_ROOT,
   });
 
   await config.validate();

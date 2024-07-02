@@ -1,8 +1,9 @@
-import { plainToClass, ClassConstructor, ClassTransformOptions } from 'class-transformer';
 import { resolve } from 'node:path';
-import { OpenAPIObject } from '@nestjs/swagger';
 import * as yaml from 'yaml';
 import * as fs from 'node:fs';
+import { plainToClass, ClassConstructor, ClassTransformOptions } from 'class-transformer';
+
+import { OpenAPIObject } from '@nestjs/swagger';
 import { BaseSearchQuery } from '@shared/types';
 
 export type DateTimeUnit = 's' | 'h' | 'd' | 'm' | 'y';

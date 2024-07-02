@@ -11,6 +11,7 @@ async function getConfig(): Promise<ConfigInterface> {
   const config = plainToClass(ConfigSchema, {
     port: parseInt(port, 10),
     host: process.env.HOST,
+    uploadDirectoryPath: process.env.UPLOAD_DIRECTORY_PATH,
   });
 
   await config.validate();

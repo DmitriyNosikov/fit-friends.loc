@@ -8,6 +8,7 @@ import { TrainingModule } from './training/training.module';
 import { OrderModule } from './order/order.module';
 import { BalanceModule } from './balance/balance.module';
 import { TrainingReviewModule } from './training-review/training-review.module';
+import { FileVaultModule } from './file-vault/file-vault.module';
 
 @Module({
   imports: [
@@ -22,7 +23,8 @@ import { TrainingReviewModule } from './training-review/training-review.module';
     TrainingModule,
     TrainingReviewModule,
     OrderModule,
-    BalanceModule
+    BalanceModule,
+    FileVaultModule
   ],
   controllers: [AppController],
   providers: [AppService],

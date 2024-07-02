@@ -13,3 +13,6 @@ export {
   getDate,
   generateSpecYaml
 } from './common';
+
+// FILES
+export { getCurrentDayTimeDirectory, getUniqFilenamePrefix } from './files';

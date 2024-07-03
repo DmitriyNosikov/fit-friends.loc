@@ -78,18 +78,39 @@ export class TrainingReviewService {
 
     const updatedReview = await this.trainingReviewRepository.updateById(reviewId, fieldsToUpdate);
 
+    // Если рейтинг обновился - пересчитать его у тренировки
+    if(dto.rating) {
+      let trainingId = null;
+      
+      if(dto.trainingId) {
+        trainingId = dto.trainingId;
+      } else {
+        const existsReview = await this.trainingReviewRepository.findById(reviewId);
+
+        trainingId = existsReview.trainingId;
+      }
+
+      if(trainingId) {
+        // Пересчитываем рейтинг для тренировки
+        await this.updateTrainingRating(trainingId);
+      }
+    }
+
     return updatedReview;
   }
 
   
   public async delete(reviewId: string): Promise<void> {
-    const isReviewExists = await this.trainingReviewRepository.exists(reviewId);
+    const existsReview = await this.trainingReviewRepository.findById(reviewId);
 
-    if(!isReviewExists) {
+    if(!existsReview) {
       return;
     }
 
-    return await this.trainingReviewRepository.deleteById(reviewId);
+    await this.trainingReviewRepository.deleteById(reviewId);
+
+    // Пересчитываем рейтинг для тренировки
+    await this.updateTrainingRating(existsReview.trainingId);
   }
 
   //////////////////// Вспомогательные методы ////////////////////
@@ -115,6 +136,8 @@ export class TrainingReviewService {
     }, 0);
 
     const ratingAverage = Math.round(generalRating / reviews.length);
+
+    console.log(`RATING INFO: ${generalRating} / ${reviews.length} = ${ratingAverage}`);
 
     return ratingAverage;
   }

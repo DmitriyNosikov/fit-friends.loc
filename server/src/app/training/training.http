@@ -6,8 +6,8 @@ GET https://jsonplaceholder.typicode.com/todos/1 HTTP/1.1
 Content-Type: application/json
 ###
 
-@trainingId = 62dd4f38-ab30-44a5-84df-04458c82596a
-@authorization = Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJmNzhkYWRjNi01OTAzLTQwNzktOTNhMy0yNTdkMGE0NTk1MmUiLCJlbWFpbCI6Imlyb24tbWFuQHN0YXJraW5kdXN0cmllcy5pdCIsIm5hbWUiOiJUb255Iiwicm9sZSI6ImNsaWVudCIsImlhdCI6MTcxOTA5MTA5MSwiZXhwIjoxNzE5MDkxOTkxfQ.UHWMTLSv5X9dbSlaIxgYQY_VUPoemQvvj15QKwpqDWk
+@trainingId = md98229j-k4g7-hd94-k4cj-fj45f34gdf68
+@authorization = Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJkZzM0Z2RmNS1kZmg0LWdoNDYtd2VmNC1nZmw3OGduNWhmaDUiLCJlbWFpbCI6Imlyb24tbWFuQHN0YXJraW5kdXN0cmllcy5pdCIsIm5hbWUiOiJUb255Iiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzIwMDE3OTA1LCJleHAiOjE3MjAwMTg4MDV9.XKGxt7VOF16KoGXFPZH-WQJjipAD4iJ_HuFTBQMTE20
 
 # Create new training
 POST {{baseUrl}}/ HTTP/1.1

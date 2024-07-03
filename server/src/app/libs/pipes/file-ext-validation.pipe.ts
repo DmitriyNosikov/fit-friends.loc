@@ -17,6 +17,6 @@ export class FileExtValidationPipe implements PipeTransform {
       throw new BadRequestException(`Unsupported file extension. Allowed to upload: ${ allowedExtensions.join(', ') }. Passed: .${fileExtension}`);
     }
 
-    return true;
+    return value;
   }
 }

@@ -11,6 +11,7 @@ Content-Type: multipart/form-data; boundary=boundary
 {{authorization}}
 
 --boundary
+Content-Type: image/png
 Content-Disposition: form-data; name="file"; filename="1383312477_620277079.png"
 
 < ./1383312477_620277079.png

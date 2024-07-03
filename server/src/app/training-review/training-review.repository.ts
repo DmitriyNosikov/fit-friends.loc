@@ -35,6 +35,21 @@ export class TrainingReviewRepository extends BasePostgresRepository<TrainingRev
     return reviewEntity;
   }
 
+  
+  public async findByTrainingId(trainingId: string): Promise<TrainingReviewEntity[] | null> {
+    const reviews = await this.dbClient.trainingReview.findMany({
+      where: { trainingId }
+    });
+
+    if(!reviews) {
+      return null;
+    }
+
+    const reviewEntities = reviews.map((review) => this.createEntityFromDocument(review as unknown as TrainingReviewInterface));
+
+    return reviewEntities;
+  }
+
   public async search(query?: BaseSearchQuery & TrainingIdPayload): Promise<PaginationResult<TrainingReviewEntity>> {
     const skip = query?.page && query?.limit ? (query.page - 1) * query.limit : undefined;
     const take = (!query?.limit || query?.limit > DefaultSearchParam.MAX_ITEMS_PER_PAGE) ? DefaultSearchParam.MAX_ITEMS_PER_PAGE : query.limit;

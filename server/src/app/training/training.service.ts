@@ -64,6 +64,16 @@ export class TrainingService {
     return await this.trainingRepository.deleteById(trainingId);
   }
 
+  public async exists(trainingId: string): Promise<boolean> {
+    const isTrainingExists = await this.trainingRepository.exists(trainingId);
+
+    if(!isTrainingExists) {
+      return false;
+    }
+
+    return true;
+  }
+
   public filterQuery(query: TrainingSearchQuery) {
     const filteredQuery = fillDTO(TrainingSearchQuery, query);
     const omitedQuery = omitUndefined(filteredQuery as Record<string, unknown>);

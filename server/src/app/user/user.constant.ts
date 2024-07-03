@@ -1,6 +1,14 @@
-import { MessagesType, UserRoleEnum } from '../libs/types/';
+import { MessagesType, UserLevelEnum, UserRoleEnum, trainingTypeList } from '../libs/types/';
 
-export const DEFAULT_USER_ROLE = UserRoleEnum.CLIENT;
+export const USER_DEFAULT = {
+  ROLE: UserRoleEnum.CLIENT,
+  CALORIES: {
+    MALE: 3300,
+    FEMALE: 2300
+  },
+  TRAINING_TYPE: trainingTypeList.slice(0, 3),
+  LEVEL: UserLevelEnum.REGULAR
+} as const;
 
 export const UserValidation = {
   NAME: {

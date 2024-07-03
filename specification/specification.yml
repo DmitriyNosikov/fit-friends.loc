@@ -870,13 +870,13 @@ components:
             - 30-50
             - 50-80
             - 80-100
-        loseCalories:
+        loseCaloriesLimit:
           type: number
           description: User lose calories aim
           example: 1000
           minimum: 1000
           maximum: 5000
-        dayCalories:
+        dayCaloriesLimit:
           type: number
           description: User calories per day limit
           example: "5000"
@@ -900,8 +900,8 @@ components:
         - level
         - trainingType
         - trainingDuration
-        - loseCalories
-        - dayCalories
+        - loseCaloriesLimit
+        - dayCaloriesLimit
         - isReadyToTraining
     UserRDO:
       type: object
@@ -999,13 +999,13 @@ components:
             - 30-50
             - 50-80
             - 80-100
-        loseCalories:
+        loseCaloriesLimit:
           type: number
           description: User lose calories aim
           example: "1000"
           minimum: 1000
           maximum: 5000
-        dayCalories:
+        dayCaloriesLimit:
           type: number
           description: User calories per day limit
           example: "5000"
@@ -1031,8 +1031,8 @@ components:
         - level
         - trainingType
         - trainingTime
-        - loseCalories
-        - dayCalories
+        - loseCaloriesLimit
+        - dayCaloriesLimit
         - isReadyToTraining
     LoginUserDTO:
       type: object
@@ -1059,6 +1059,10 @@ components:
           example: Tony
           minimum: 1
           maximum: 15
+        email:
+          type: string
+          description: User email
+          example: iron-man@starkindustries.it
         avatar:
           type: string
           description: User avatar
@@ -1124,13 +1128,13 @@ components:
             - 30-50
             - 50-80
             - 80-100
-        loseCalories:
+        loseCaloriesLimit:
           type: number
           description: User lose calories aim
           example: "1000"
           minimum: 1000
           maximum: 5000
-        dayCalories:
+        dayCaloriesLimit:
           type: number
           description: User calories per day limit
           example: "5000"
@@ -1142,6 +1146,7 @@ components:
           example: "true"
       required:
         - name
+        - email
         - avatar
         - gender
         - birthDate
@@ -1151,8 +1156,8 @@ components:
         - level
         - trainingType
         - trainingTime
-        - loseCalories
-        - dayCalories
+        - loseCaloriesLimit
+        - dayCaloriesLimit
         - isReadyToTraining
     CreateTrainingDTO:
       type: object

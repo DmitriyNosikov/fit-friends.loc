@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger'
-import { DEFAULT_USER_ROLE, UserValidation } from '@server/user/user.constant';
+import { UserValidation } from '@server/user/user.constant';
 import { 
   Gender,
   GenderEnum,
@@ -15,8 +15,7 @@ import {
   locationList,
   trainingTimeList,
   trainingTypeList,
-  userLevelList,
-  userRolesList
+  userLevelList
 } from '@server/libs/types';
 import {
   ArrayMaxSize,
@@ -48,21 +47,19 @@ export class UpdateUserDTO {
   name?: string;
 
   @ApiProperty({
+    description: 'User email',
+    example: 'iron-man@starkindustries.it',
+  })
+  @IsEmail()
+  @IsOptional()
+  email?: string;
+
+  @ApiProperty({
     description: 'User avatar',
     example: 'some/interesting/avatar.jpg',
   })
   @IsOptional()
   avatar?: string;
-
-  // @ApiProperty({
-  //   description: 'User role',
-  //   example: 'admin',
-  //   enum: UserRoleEnum
-  // })
-  // @IsIn(userRolesList)
-  // @IsString()
-  // @IsOptional()
-  // role?: UserRole;
 
   @ApiProperty({
     description: 'User gender',
@@ -131,7 +128,7 @@ export class UpdateUserDTO {
   @IsIn(trainingTypeList, { each: true })
   @IsString({ each: true })
   @IsOptional()
-  trainingType?: TrainingType;
+  trainingType?: TrainingType[];
 
   @ApiProperty({
     description: 'User training time periods (in minutes)',
@@ -153,7 +150,7 @@ export class UpdateUserDTO {
   @Min(UserValidation.LOSE_CALORIES.MIN)
   @IsNumber()
   @IsOptional()
-  loseCalories?: number;
+  loseCaloriesLimit?: number;
 
   @ApiProperty({
     description: 'User calories per day limit',
@@ -165,7 +162,7 @@ export class UpdateUserDTO {
   @Min(UserValidation.DAY_CALORIES.MIN)
   @IsNumber()
   @IsOptional()
-  dayCalories?: number;
+  dayCaloriesLimit?: number;
 
   @ApiProperty({
     description: 'Is user ready to training',

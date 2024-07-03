@@ -45,8 +45,8 @@ model User {
   level             String?
   trainingType      String[]  @map("training_type")
   trainingDuration  String?   @map("training_duration")
-  loseCaloriesLimit Int?      @map("lose_calories")
-  dayCaloriesLimit  Int?      @map("day_calories")
+  loseCaloriesLimit Int?      @map("lose_calories_limit")
+  dayCaloriesLimit  Int?      @map("day_calories_limit")
   isReadyToTraining Boolean?  @map("is_ready_to_training")
 
   order Order[]

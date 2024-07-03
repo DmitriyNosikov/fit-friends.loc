@@ -128,7 +128,7 @@ export class UserRDO {
     maximum: UserValidation.LOSE_CALORIES.MAX,
   })
   @Expose()
-  loseCalories!: Number;
+  loseCaloriesLimit!: Number;
 
   @ApiProperty({
     description: 'User calories per day limit',
@@ -137,7 +137,7 @@ export class UserRDO {
     maximum: UserValidation.DAY_CALORIES.MAX,
   })
   @Expose()
-  dayCalories!: Number;
+  dayCaloriesLimit!: Number;
 
   @ApiProperty({
     description: 'Is user ready to training',

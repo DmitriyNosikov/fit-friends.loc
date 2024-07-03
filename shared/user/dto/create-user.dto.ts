@@ -5,7 +5,7 @@ import { LocationEnum, locationList } from '@server/libs/types/location.enum';
 import { TrainingDuration, TrainingDurationEnum, trainingTimeList } from '@server/libs/types/training-duration.enum';
 import { TrainingType, TrainingTypeEnum, trainingTypeList } from '@server/libs/types/training-type.enum';
 import { UserLevel, UserLevelEnum, userLevelList } from '@server/libs/types/user-level.enum';
-import { DEFAULT_USER_ROLE, UserValidation } from '@server/user/user.constant';
+import { USER_DEFAULT, UserValidation } from '@server/user/user.constant';
 import {
   ArrayMaxSize,
   IsArray,
@@ -67,7 +67,7 @@ export class CreateUserDTO {
   @IsIn(userRolesList)
   @IsString()
   @IsOptional()
-  role: UserRole = DEFAULT_USER_ROLE;
+  role: UserRole = USER_DEFAULT.ROLE;
 
   @ApiProperty({
     description: 'User gender',
@@ -122,7 +122,7 @@ export class CreateUserDTO {
   @IsIn(userLevelList)
   @IsString()
   @IsOptional()
-  level: UserLevel;
+  level: UserLevel = USER_DEFAULT.LEVEL;
 
   @ApiProperty({
     description: 'User trainings type',
@@ -134,7 +134,7 @@ export class CreateUserDTO {
   @IsIn(trainingTypeList, { each: true })
   @IsString({ each: true })
   @IsOptional()
-  trainingType: TrainingType;
+  trainingType: TrainingType[] = USER_DEFAULT.TRAINING_TYPE;
 
   @ApiProperty({
     description: 'User training time periods (duration in minutes)',
@@ -156,7 +156,7 @@ export class CreateUserDTO {
   @Min(UserValidation.LOSE_CALORIES.MIN)
   @IsNumber()
   @IsOptional()
-  loseCalories: number;
+  loseCaloriesLimit: number;
 
   @ApiProperty({
     description: 'User calories per day limit',
@@ -168,7 +168,7 @@ export class CreateUserDTO {
   @Min(UserValidation.DAY_CALORIES.MIN)
   @IsNumber()
   @IsOptional()
-  dayCalories: number;
+  dayCaloriesLimit: number;
 
   @ApiProperty({
     description: 'Is user ready to training',
@@ -176,5 +176,5 @@ export class CreateUserDTO {
   })
   @IsBoolean()
   @IsOptional()
-  isReadyToTraining: boolean;
+  isReadyToTraining: boolean = false;
 }

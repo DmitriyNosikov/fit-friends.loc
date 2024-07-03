@@ -16,13 +16,13 @@ import { BCryptHasher, excludeKeys, getJWTPayload, omitUndefined } from '../libs
 import { jwtConfig } from 'server/src/config';
 import { ConfigType } from '@nestjs/config';
 import { RefreshTokenService } from '../refresh-token/refresh-token.service';
-import { RequestWithUserId } from '@server/libs/types';
+import { GenderEnum, RequestWithUserId } from '@server/libs/types';
 
 // TODO: Заменить путь на @shared как будет больше времени разобраться
 import { CreateUserDTO, LoginUserDTO, UpdateUserDTO } from '../../../../shared/user/'; 
 
 import { AuthUserInterface, UserInterface } from './interfaces';
-import { UserMessage } from './user.constant';
+import { USER_DEFAULT, UserMessage } from './user.constant';
 import { UserEntity } from './user.entity';
 import { UserFactory } from './user.factory';
 import { UserRepository } from './user.repository';
@@ -75,11 +75,23 @@ export class UserService {
       throw new ConflictException(UserMessage.ERROR.ALREADY_EXISTS);
     }
 
+    let dayCaloriesLimit = dto.dayCaloriesLimit ?? 0;
+
+    if(!dto.dayCaloriesLimit) {
+      dayCaloriesLimit = (dto.gender === GenderEnum.MALE)
+      ? USER_DEFAULT.CALORIES.MALE
+      : (dto.gender === GenderEnum.FEMALE)
+        ? USER_DEFAULT.CALORIES.FEMALE
+        : 0
+    }
+
     const newUser = {
       ...dto,
+      dayCaloriesLimit,
       passwordHash: ''
     } as unknown as AuthUserInterface;
 
+    
     const userEntity = this.userFactory.create(newUser);
     const hashedPassword = await this.hasher.getHash(password);
 

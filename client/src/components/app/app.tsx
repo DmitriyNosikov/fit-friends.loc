@@ -10,6 +10,7 @@ import Main from '@client/src/pages/main/main';
 import Layout from '../layout/layout';
 import PrivateRoute from '../private-route/private-route';
 import OnlyUnauthorizedRoute from '../only-unauthorized-route/only-unauthorized-route';
+import Intro from '@client/src/pages/intro/intro';
 
 // TODO: Нужен Helmet для смены заголовков
 
@@ -18,10 +19,16 @@ export default function App(): ReactElement {
     <Routes>
       <Route path={AppRoute.MAIN} element={<Layout />} >
         <Route index element={
-          <PrivateRoute redirectTo={AppRoute.LOGIN}>
+          <PrivateRoute redirectTo={AppRoute.INTRO}>
             <Main />
           </PrivateRoute>
         } />
+
+        <Route path={AppRoute.INTRO} element={
+          <OnlyUnauthorizedRoute children={
+            <Intro />
+          }/>
+        }/>
 
         <Route path={AppRoute.LOGIN} element={
           <OnlyUnauthorizedRoute children={

@@ -15,6 +15,7 @@ export const ApiRoute = {
 // -- App
 export const AppRoute = {
   MAIN: '/',
+  INTRO: '/intro',
   LOGIN: '/login',
   REGISTRATION: '/registration',
   PAGE_404: '/page404',

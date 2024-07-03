@@ -1,4 +1,45 @@
+import { useRef, useState } from 'react';
+import { toast } from 'react-toastify';
+
 export default function Registration() {
+  const userAvatar = useRef<HTMLInputElement>(null);
+  const userName = useRef<HTMLInputElement>(null);
+  const userEmail = useRef<HTMLInputElement>(null);
+  const userBirthDate = useRef<HTMLInputElement>(null);
+  const userPassword = useRef<HTMLInputElement>(null);
+
+  const [userLocation, setUserLocation] = useState('');
+  const [userGender, setuserGender] = useState('неважно');
+
+  function handleChangeLocation() {
+    console.log('Change location is not implemented yet');
+  }
+
+  function handleChangeGender(e: React.ChangeEvent<HTMLInputElement>) {
+    console.log('Change gender is not implemented yet');
+    console.log('Selected gender value: ', e);
+  }
+
+  function handleChangePolicyAgreement(e: React.ChangeEvent<HTMLInputElement>) {
+    const target = e.target;
+  }
+
+  async function handleFormSubmit(evt: React.FormEvent<HTMLFormElement>) {
+    evt.preventDefault();
+
+    if(!userName.current ||
+      !userEmail.current ||
+      !userPassword.current) {
+      toast.warn('All fields are required');
+
+      return false;
+    }
+
+    const userNameValue = userName.current.value;
+    const userEmailValue = userEmail.current.value;
+    const userPasswordValue = userPassword.current.value;
+  }
+
   return (
     <>
       <div className="background-logo">
@@ -16,12 +57,12 @@ export default function Registration() {
                 <h1 className="popup-form__title">Регистрация</h1>
               </div>
               <div className="popup-form__form">
-                <form method="get">
+                <form method="get" onSubmit={handleFormSubmit}>
                   <div className="sign-up">
                     <div className="sign-up__load-photo">
                       <div className="input-load-avatar">
                         <label>
-                          <input className="visually-hidden" type="file" accept="image/png, image/jpeg" />
+                          <input className="visually-hidden" type="file" accept="image/png, image/jpeg" ref={userAvatar} />
                           <span className="input-load-avatar__btn">
                             <svg width="20" height="20" aria-hidden="true">
                               <use xlinkHref="#icon-import"></use>
@@ -38,7 +79,7 @@ export default function Registration() {
                         <label>
                           <span className="custom-input__label">Имя</span>
                           <span className="custom-input__wrapper">
-                            <input type="text" name="name" />
+                            <input type="text" name="name" ref={userName} />
                           </span>
                         </label>
                       </div>
@@ -46,7 +87,7 @@ export default function Registration() {
                         <label>
                           <span className="custom-input__label">E-mail</span>
                           <span className="custom-input__wrapper">
-                            <input type="email" name="email" />
+                            <input type="email" name="email" ref={userEmail} />
                           </span>
                         </label>
                       </div>
@@ -54,7 +95,7 @@ export default function Registration() {
                         <label>
                           <span className="custom-input__label">Дата рождения</span>
                           <span className="custom-input__wrapper">
-                            <input type="date" name="birthday" max="2099-12-31" />
+                            <input type="date" name="birthday" max="2099-12-31" ref={userBirthDate} />
                           </span>
                         </label>
                       </div>
@@ -73,7 +114,7 @@ export default function Registration() {
                         <label>
                           <span className="custom-input__label">Пароль</span>
                           <span className="custom-input__wrapper">
-                            <input type="password" name="password" autoComplete="off" />
+                            <input type="password" name="password" autoComplete="off" ref={userPassword} />
                           </span>
                         </label>
                       </div>
@@ -81,21 +122,21 @@ export default function Registration() {
                         <div className="custom-toggle-radio custom-toggle-radio--big">
                           <div className="custom-toggle-radio__block">
                             <label>
-                              <input type="radio" name="sex" />
+                              <input type="radio" name="sex" onChange={handleChangeGender}/>
                               <span className="custom-toggle-radio__icon"></span>
                               <span className="custom-toggle-radio__label">Мужской</span>
                             </label>
                           </div>
                           <div className="custom-toggle-radio__block">
                             <label>
-                              <input type="radio" name="sex" checked />
+                              <input type="radio" name="sex" defaultChecked onChange={handleChangeGender}/>
                               <span className="custom-toggle-radio__icon"></span>
                               <span className="custom-toggle-radio__label">Женский</span>
                             </label>
                           </div>
                           <div className="custom-toggle-radio__block">
                             <label>
-                              <input type="radio" name="sex" />
+                              <input type="radio" name="sex" onChange={handleChangeGender}/>
                               <span className="custom-toggle-radio__icon"></span>
                               <span className="custom-toggle-radio__label">Неважно</span>
                             </label>
@@ -108,7 +149,7 @@ export default function Registration() {
                       <div className="role-selector sign-up__role-selector">
                         <div className="role-btn">
                           <label>
-                            <input className="visually-hidden" type="radio" name="role" value="coach" checked />
+                            <input className="visually-hidden" type="radio" name="role" value="coach" defaultChecked />
                             <span className="role-btn__icon">
                               <svg width="12" height="13" aria-hidden="true">
                                 <use xlinkHref="#icon-cup"></use>
@@ -132,7 +173,7 @@ export default function Registration() {
                     </div>
                     <div className="sign-up__checkbox">
                       <label>
-                        <input type="checkbox" value="user-agreement" name="user-agreement" checked />
+                        <input type="checkbox" value="user-agreement" name="user-agreement" defaultChecked onChange={handleChangePolicyAgreement}/>
                         <span className="sign-up__checkbox-icon" >
                             <svg width="9" height="6" aria-hidden="true">
                               <use xlinkHref="#arrow-check"></use>

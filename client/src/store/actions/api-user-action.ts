@@ -26,6 +26,7 @@ const APIAction = {
   USER_CHECK_AUTH: `${APIUserPrefix}/checkAuth`,
   USER_GET_DETAIL: `${APIUserPrefix}/getDetail`,
   USER_GET_ADDITIONAL: `${APIUserPrefix}/getAdditional`,
+  USER_UPLOAD_AVATAR: `${APIUserPrefix}/uploadAvatar`,
 } as const;
 
 // ASYNC ACTIONS
@@ -81,8 +82,22 @@ export const registerAction = createAsyncThunk<LoggedUserRDO, CreateUserDTO, Asy
   ) => {
     dispatch(setDataLoadingStatus(true));
 
+    // Аватар нужно загружать отдельно
+    let avatarUrl = '';
+    if(newUserData.avatar) {
+      dispatch(uploadAvatarAction(newUserData.avatar as FormData))
+      .then((result) => {
+        avatarUrl = result.payload as string;
+      });
+    }
+
+    const newUserDataWithAvatar = {
+      ...newUserData,
+      avatar: avatarUrl ?? newUserData.avatar
+    };
+
     try {
-      const { data } = await api.post<LoggedUserRDO>(ApiRoute.REGISTER, newUserData);
+      const { data } = await api.post<LoggedUserRDO>(ApiRoute.REGISTER, newUserDataWithAvatar);
 
       console.log('USER REGISTRATION DATA: ', data);
 
@@ -95,6 +110,34 @@ export const registerAction = createAsyncThunk<LoggedUserRDO, CreateUserDTO, Asy
       dispatch(setDataLoadingStatus(false));
 
       return rejectWithValue(err);
+    }
+  }
+);
+
+
+export const uploadAvatarAction = createAsyncThunk<string | unknown, FormData, AsyncOptions>(
+  APIAction.USER_UPLOAD_AVATAR,
+  async (
+    avatarFormData, // Avatar Form Data
+    { dispatch, rejectWithValue, extra: api } // AsyncOptions
+  ) => {
+    dispatch(setDataLoadingStatus(true));
+
+    // Аватар нужно загружать отдельно
+    if(avatarFormData) {
+      try {
+        const { data: avatarUrl } = await api.post<string>(ApiRoute.LOAD_FILES, avatarFormData);
+
+        dispatch(setDataLoadingStatus(false));
+
+        return avatarUrl;
+      } catch(err) {
+        toast.warn(`Can't load your avatar: ${err}`);
+
+        dispatch(setDataLoadingStatus(false));
+
+        return rejectWithValue(err);
+      }
     }
   }
 );

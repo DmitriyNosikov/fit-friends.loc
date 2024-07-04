@@ -47,7 +47,7 @@ export class CreateUserDTO {
     example: 'some/interesting/avatar.jpg',
   })
   @IsOptional()
-  avatar!: string;
+  avatar!: FormData | string;
 
   @ApiProperty({
     description: 'User password',
@@ -112,7 +112,7 @@ export class CreateUserDTO {
   })
   @IsString()
   @IsOptional() // TODO: Должно быть обязательным для заполнения (будет реализовано вместе с загрузкой файлов)
-  pageBackground?: string;
+  pageBackground?: FormData | string;
 
   // Опросник (TODO: все полня временно @IsOptional() пока не решим, где их оставить)
   @ApiProperty({

@@ -24,7 +24,10 @@ export default function RegistrationAvatar({ onAvatarUpload }: RegistrationAvata
       avatarContainer?.setAttribute('style', `background-image: url(${fileReader.result}); background-size: cover;`);
     })
 
-    onAvatarUpload(avatar);
+    const formData = new FormData();
+    formData.append('file', avatar);
+
+    onAvatarUpload(formData);
   }
 
   return (

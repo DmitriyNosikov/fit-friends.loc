@@ -2,7 +2,9 @@ import { BASE_URL } from './services/api';
 
 // -- Backend API
 const BACKEND_API_URL = {
-  USERS: `${BASE_URL}/api/users`
+  USERS: `${BASE_URL}/api/users`,
+  LOAD_FILES: `${BASE_URL}/api/files`,
+  GET_FILES: `${BASE_URL}/api/static`,
 }
 export const ApiRoute = {
   USER_API: BACKEND_API_URL.USERS,
@@ -10,7 +12,9 @@ export const ApiRoute = {
   REGISTER: `${BACKEND_API_URL.USERS}/register`,
   LOGIN: `${BACKEND_API_URL.USERS}/login`,
   CHECK_JWT_TOKEN: `${BACKEND_API_URL.USERS}/check`,
-  GET_ADDITIONAL_INFO: `${BACKEND_API_URL.USERS}/additional`
+  GET_ADDITIONAL_INFO: `${BACKEND_API_URL.USERS}/additional`,
+
+  LOAD_FILES: `${BACKEND_API_URL.LOAD_FILES}/upload`
 } as const;
 
 // -- App

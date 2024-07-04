@@ -815,7 +815,7 @@ components:
           description: User email
           example: iron-man@starkindustries.it
         avatar:
-          type: string
+          type: object
           description: User avatar
           example: some/interesting/avatar.jpg
         password:
@@ -861,7 +861,7 @@ components:
             - звездная
             - спортивная
         pageBackground:
-          type: string
+          type: object
           description: User profile background. If not passed = User avatar
           example: some/interesting/avatar.jpg
         level:

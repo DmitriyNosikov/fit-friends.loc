@@ -11,7 +11,7 @@ import RegistrationLocation from '@client/src/components/registration-location/r
 import RegistrationAvatar from '@client/src/components/registration-avatar/registration-avatar';
 import RegistrationRole from '@client/src/components/registration-role/registration-role';
 import RegistrationGender from '@client/src/components/registration-gender/registration-gender';
-import { clearFieldError, registrationValidationSchema, validateFields } from '../../validation/registration-validation';
+import { clearFieldError, validateFields } from '../../validation/registration-validation';
 
 import { CreateUserDTO } from '@shared/user';
 
@@ -59,14 +59,13 @@ export default function Registration() {
       return;
     }
 
-
     const nameValue = userName?.current?.value;
     const emailValue = userEmail?.current?.value;
     const birthDateValue = userBirthDate?.current?.value;
     const passwordValue = userPassword?.current?.value;
 
     const userData = {
-      avatar: '' ?? userAvatar,
+      avatar: userAvatar ?? '',
       name: nameValue,
       email: emailValue,
       birthDate: birthDateValue ? new Date(birthDateValue) : undefined,
@@ -76,15 +75,15 @@ export default function Registration() {
       role: userRole,
     } as CreateUserDTO;
 
-    const validateRegistration = validateFields(userData);
+    const isFormHasErrors = validateFields(userData);
 
-    if(!validateRegistration) {
+    if(isFormHasErrors) {
       toast.warn('Validation error. Please, correct marked fields and try send form again.');
     }
 
     console.log('USER DATA: ', userData);
 
-    // dispatch(registerAction(userData))
+    dispatch(registerAction(userData))
   }
 
   function handleFormFieldChange(e: React.FormEvent<HTMLFormElement>) {

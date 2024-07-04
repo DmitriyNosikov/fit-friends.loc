@@ -35,6 +35,8 @@ ALLOWED_IMG_EXT: ['jpg', 'jpeg', 'png']
 } as const;
 
 export const registrationValidationSchema = Joi.object({
+  avatar: Joi.any(),
+
   name: Joi.string()
     .min(UserValidation.NAME.MIN_LENGTH)
     .max(UserValidation.NAME.MAX_LENGTH)
@@ -49,8 +51,7 @@ export const registrationValidationSchema = Joi.object({
     .max(UserValidation.PASSWORD.MAX_LENGTH)
     .required(),
 
-  birthDate: Joi.date()
-    .required(),
+  birthDate: Joi.date(),
 
   role: Joi.string()
     .required(),
@@ -64,11 +65,15 @@ export const registrationValidationSchema = Joi.object({
 
 
 export function validateFields(target: CreateUserDTO) {
-  // clearErrors();
+  clearErrors();
 
   const validationErrors = registrationValidationSchema.validate(target, { abortEarly: false });
 
+  let isFieldsHasErrors = false;
+
   if(validationErrors.error?.details) {
+    isFieldsHasErrors = true;
+
     const errorDetails = validationErrors.error.details;
 
     errorDetails.forEach((error) => {
@@ -82,10 +87,9 @@ export function validateFields(target: CreateUserDTO) {
       }
    });
 
-   return false;
   }
 
-  return true;
+  return isFieldsHasErrors;
 }
 
 export function clearErrors() {

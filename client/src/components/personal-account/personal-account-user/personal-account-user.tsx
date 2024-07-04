@@ -1,212 +1,212 @@
+import { useAppSelector } from '@client/src/hooks';
+import { getAdditionalInfo, getUserInfo } from '@client/src/store/slices/user-process/user-process.selectors';
 import { ReactElement } from 'react';
+import Specialization from '../specialization/specialization';
+import useAdditionalInfo from '@client/src/hooks/useAdditionalInfo';
+import { upperCaseFirst } from '@client/src/utils/common';
+import { UserLevelEnum } from '@shared/types/user-level.enum';
 
 export default function PersonalAccountUser(): ReactElement {
+  useAdditionalInfo();
+
+  const userInfo = useAppSelector(getUserInfo);
+  const additionalInfo = useAppSelector(getAdditionalInfo);
+
+  // TODO: Тут должен быть спиннер на загрузку данных
+  if(!userInfo) {
+    return;
+  }
+
+  const {
+    name,
+    avatar,
+    description,
+    trainingType,
+    location,
+    gender,
+    dayCaloriesLimit,
+    loseCaloriesLimit,
+    isReadyToTraining,
+    level
+  } = userInfo;
+
+  let userLevel = '';
+
+  switch(level) {
+    case UserLevelEnum.NEWBIE: {
+      userLevel = 'новичок';
+      break;
+    }
+    case UserLevelEnum.REGULAR: {
+      userLevel = 'любитель';
+      break;
+    }
+    case UserLevelEnum.PRO: {
+      userLevel = 'профессионал';
+      break;
+    }
+  }
+
   return (
     <section className="inner-page">
       <div className="container">
         <div className="inner-page__wrapper">
-          <h1 className="visually-hidden">Карточка тренировки</h1>
-          <aside className="reviews-side-bar">
-            <button className="btn-flat btn-flat--underlined reviews-side-bar__back" type="button">
-              <svg width={14} height={10} aria-hidden="true">
-                <use xlinkHref="#arrow-left" />
-              </svg><span>Назад</span>
-            </button>
-            <h2 className="reviews-side-bar__title">Отзывы</h2>
-            <ul className="reviews-side-bar__list">
-              <li className="reviews-side-bar__item">
-                <div className="review">
-                  <div className="review__user-info">
-                    <div className="review__user-photo">
-                      <picture>
-                        <source type="image/webp" srcSet="img/content/avatars/users//photo-1.webp, img/content/avatars/users//photo-1@2x.webp 2x" /><img src="img/content/avatars/users//photo-1.png" srcSet="img/content/avatars/users//photo-1@2x.png 2x" width={64} height={64} alt="Изображение пользователя" />
-                      </picture>
-                    </div><span className="review__user-name">Никита</span>
-                    <div className="review__rating">
-                      <svg width={16} height={16} aria-hidden="true">
-                        <use xlinkHref="#icon-star" />
-                      </svg><span>5</span>
-                    </div>
-                  </div>
-                  <p className="review__comment">Эта тренировка для меня зарядка по&nbsp;утрам, помогает проснуться.</p>
+          <h1 className="visually-hidden">Личный кабинет</h1>
+          <section className="user-info">
+            <div className="user-info__header">
+              <div className="input-load-avatar">
+                <label>
+                  <input className="visually-hidden" type="file" name="user-photo-1" accept="image/png, image/jpeg" />
+                  <span className="input-load-avatar__avatar">
+                    <img src={avatar} srcSet="img/content/user-photo-1@2x.png 2x" width={98} height={98} alt="user photo" />
+                  </span>
+                </label>
+              </div>
+            </div>
+
+            <form className="user-info__form" action="#" method="post">
+              <button className="btn-flat btn-flat--underlined user-info__edit-button" type="button" aria-label="Редактировать">
+                <svg width={12} height={12} aria-hidden="true">
+                  <use xlinkHref="#icon-edit" />
+                </svg>
+                <span>Редактировать</span>
+              </button>
+              <div className="user-info__section">
+                <h2 className="user-info__title">Обо мне</h2>
+                <div className="custom-input custom-input--readonly user-info__input">
+                  <label><span className="custom-input__label">Имя</span>
+                    <span className="custom-input__wrapper">
+                    <input type="text" name="name" defaultValue={name} disabled /></span>
+                  </label>
                 </div>
-              </li>
-              <li className="reviews-side-bar__item">
-                <div className="review">
-                  <div className="review__user-info">
-                    <div className="review__user-photo">
-                      <picture>
-                        <source type="image/webp" srcSet="img/content/avatars/users//photo-2.webp, img/content/avatars/users//photo-2@2x.webp 2x" /><img src="img/content/avatars/users//photo-2.png" srcSet="img/content/avatars/users//photo-2@2x.png 2x" width={64} height={64} alt="Изображение пользователя" />
-                      </picture>
-                    </div><span className="review__user-name">Дарья</span>
-                    <div className="review__rating">
-                      <svg width={16} height={16} aria-hidden="true">
-                        <use xlinkHref="#icon-star" />
-                      </svg><span>5</span>
-                    </div>
-                  </div>
-                  <p className="review__comment">Спасибо, классная тренировка! Понятная и&nbsp;интересная, с&nbsp;акцентом на&nbsp;правильную технику, как я&nbsp;люблю.</p>
-                </div>
-              </li>
-              <li className="reviews-side-bar__item">
-                <div className="review">
-                  <div className="review__user-info">
-                    <div className="review__user-photo">
-                      <picture>
-                        <source type="image/webp" srcSet="img/content/avatars/users//photo-3.webp, img/content/avatars/users//photo-3@2x.webp 2x" /><img src="img/content/avatars/users//photo-3.png" srcSet="img/content/avatars/users//photo-3@2x.png 2x" width={64} height={64} alt="Изображение пользователя" />
-                      </picture>
-                    </div><span className="review__user-name">Катерина</span>
-                    <div className="review__rating">
-                      <svg width={16} height={16} aria-hidden="true">
-                        <use xlinkHref="#icon-star" />
-                      </svg><span>4</span>
-                    </div>
-                  </div>
-                  <p className="review__comment">Хорошая тренировка, но&nbsp;все&nbsp;же не&nbsp;хватило немного динамики. Для меня оказалась слишком легкой.</p>
-                </div>
-              </li>
-              <li className="reviews-side-bar__item">
-                <div className="review">
-                  <div className="review__user-info">
-                    <div className="review__user-photo">
-                      <picture>
-                        <source type="image/webp" srcSet="img/content/avatars/users//photo-4.webp, img/content/avatars/users//photo-4@2x.webp 2x" /><img src="img/content/avatars/users//photo-4.png" srcSet="img/content/avatars/users//photo-4@2x.png 2x" width={64} height={64} alt="Изображение пользователя" />
-                      </picture>
-                    </div><span className="review__user-name">Татьяна</span>
-                    <div className="review__rating">
-                      <svg width={16} height={16} aria-hidden="true">
-                        <use xlinkHref="#icon-star" />
-                      </svg><span>5</span>
-                    </div>
-                  </div>
-                  <p className="review__comment">Регулярно выполняю эту тренировку дома и&nbsp;вижу результат! Спина стала прямее, появилось больше сил и&nbsp;гибкость тоже стала лучше, хотя упражнения довольно простые.</p>
-                </div>
-              </li>
-              <li className="reviews-side-bar__item">
-                <div className="review">
-                  <div className="review__user-info">
-                    <div className="review__user-photo">
-                      <picture>
-                        <source type="image/webp" srcSet="img/content/avatars/users//photo-5.webp, img/content/avatars/users//photo-5@2x.webp 2x" /><img src="img/content/avatars/users//photo-5.png" srcSet="img/content/avatars/users//photo-5@2x.png 2x" width={64} height={64} alt="Изображение пользователя" />
-                      </picture>
-                    </div><span className="review__user-name">Наталья</span>
-                    <div className="review__rating">
-                      <svg width={16} height={16} aria-hidden="true">
-                        <use xlinkHref="#icon-star" />
-                      </svg><span>5</span>
-                    </div>
-                  </div>
-                  <p className="review__comment">Ну&nbsp;какой&nbsp;же кайф! Спасибо, крутая программа. С&nbsp;музыкой вообще супер! Действительно, Energy!</p>
-                </div>
-              </li>
-              <li className="reviews-side-bar__item">
-                <div className="review">
-                  <div className="review__user-info">
-                    <div className="review__user-photo">
-                      <picture>
-                        <source type="image/webp" srcSet="img/content/avatars/users//photo-1.webp, img/content/avatars/users//photo-1@2x.webp 2x" /><img src="img/content/avatars/users//photo-1.png" srcSet="img/content/avatars/users//photo-1@2x.png 2x" width={64} height={64} alt="Изображение пользователя" />
-                      </picture>
-                    </div><span className="review__user-name">Никита</span>
-                    <div className="review__rating">
-                      <svg width={16} height={16} aria-hidden="true">
-                        <use xlinkHref="#icon-star" />
-                      </svg><span>5</span>
-                    </div>
-                  </div>
-                  <p className="review__comment">Эта тренировка для меня зарядка по&nbsp;утрам, помогает проснуться.</p>
-                </div>
-              </li>
-            </ul>
-            <button className="btn btn--medium reviews-side-bar__button" type="button">Оставить отзыв</button>
-          </aside>
-          <div className="training-card">
-            <div className="training-info">
-              <h2 className="visually-hidden">Информация о тренировке</h2>
-              <div className="training-info__header">
-                <div className="training-info__coach">
-                  <div className="training-info__photo">
-                    <picture>
-                      <source type="image/webp" srcSet="img/content/avatars/coaches//photo-1.webp, img/content/avatars/coaches//photo-1@2x.webp 2x" /><img src="img/content/avatars/coaches//photo-1.png" srcSet="img/content/avatars/coaches//photo-1@2x.png 2x" width={64} height={64} alt="Изображение тренера" />
-                    </picture>
-                  </div>
-                  <div className="training-info__coach-info"><span className="training-info__label">Тренер</span><span className="training-info__name">Валерия</span></div>
+                <div className="custom-textarea custom-textarea--readonly user-info__textarea">
+                  <label><span className="custom-textarea__label">Описание</span>
+                    <textarea
+                      name="description"
+                      placeholder=" "
+                      defaultValue={`${description}`}
+                    />
+                  </label>
                 </div>
               </div>
-              <div className="training-info__main-content">
+              <div className="user-info__section user-info__section--status">
+                <h2 className="user-info__title user-info__title--status">Статус</h2>
+                <div className="custom-toggle custom-toggle--switch user-info__toggle">
+                  <label>
+                    <input type="checkbox" name="ready-for-training" defaultChecked={isReadyToTraining} />
+                      <span className="custom-toggle__icon">
+                        <svg width={9} height={6} aria-hidden="true">
+                          <use xlinkHref="#arrow-check" />
+                        </svg>
+                      </span>
+                      <span className="custom-toggle__label">Готов тренировать</span>
+                  </label>
+                </div>
+              </div>
+
+              {
+                // Типы тренировок (специализация пользователя)
+                additionalInfo?.trainingType &&
+                  <Specialization trainingTypeList={additionalInfo.trainingType} usersTrainingType={trainingType} />
+              }
+
+              <div className="custom-select--readonly custom-select user-info__select">
+                <span className="custom-select__label">Локация</span>
+                <div className="custom-select__placeholder">ст. м. {upperCaseFirst(location)}</div>
+
+                <button className="custom-select__button" type="button" aria-label="Выберите одну из опций" disabled>
+                  <span className="custom-select__text" />
+                  <span className="custom-select__icon">
+                    <svg width={15} height={6} aria-hidden="true">
+                      <use xlinkHref="#arrow-down" />
+                    </svg>
+                  </span></button>
+                <ul className="custom-select__list" role="listbox"></ul>
+              </div>
+
+              <div className="custom-select--readonly custom-select user-info__select">
+                <span className="custom-select__label">Пол</span>
+                <div className="custom-select__placeholder">{upperCaseFirst(gender)}</div>
+                <button className="custom-select__button" type="button" aria-label="Выберите одну из опций" disabled>
+                  <span className="custom-select__text" />
+                  <span className="custom-select__icon">
+                    <svg width={15} height={6} aria-hidden="true">
+                      <use xlinkHref="#arrow-down" />
+                    </svg>
+                    </span>
+                  </button>
+                <ul className="custom-select__list" role="listbox"></ul>
+              </div>
+
+              <div className="custom-select--readonly custom-select user-info__select"><span className="custom-select__label">Уровень</span>
+                <div className="custom-select__placeholder">{upperCaseFirst(userLevel)}</div>
+                <button className="custom-select__button" type="button" aria-label="Выберите одну из опций" disabled>
+                  <span className="custom-select__text" />
+                  <span className="custom-select__icon">
+                  <svg width={15} height={6} aria-hidden="true">
+                    <use xlinkHref="#arrow-down" />
+                  </svg></span></button>
+                <ul className="custom-select__list" role="listbox"></ul>
+              </div>
+            </form>
+          </section>
+
+          <div className="inner-page__content">
+            <div className="personal-account-user">
+
+              <div className="personal-account-user__schedule">
                 <form action="#" method="get">
-                  <div className="training-info__form-wrapper">
-                    <div className="training-info__info-wrapper">
-                      <div className="training-info__input training-info__input--training">
-                        <label><span className="training-info__label">Название тренировки</span>
-                          <input type="text" name="training" defaultValue="energy" disabled />
-                        </label>
-                        <div className="training-info__error">Обязательное поле</div>
-                      </div>
-                      <div className="training-info__textarea">
-                        <label><span className="training-info__label">Описание тренировки</span>
-                          <textarea name="description" disabled defaultValue={"Упражнения укрепляют мышечный корсет, делают суставы более гибкими, улучшают осанку и координацию."} />
-                        </label>
-                      </div>
+                  <div className="personal-account-user__form">
+                    <div className="personal-account-user__input">
+                      <label><span className="personal-account-user__label">План на день, ккал</span>
+                        <input type="text" name="schedule-for-the-day" defaultValue={`${dayCaloriesLimit}`} />
+                      </label>
                     </div>
-                    <div className="training-info__rating-wrapper">
-                      <div className="training-info__input training-info__input--rating">
-                        <label><span className="training-info__label">Рейтинг</span><span className="training-info__rating-icon">
-                          <svg width={18} height={18} aria-hidden="true">
-                            <use xlinkHref="#icon-star" />
-                          </svg></span>
-                          <input type="number" name="rating" defaultValue={4} disabled />
-                        </label>
-                      </div>
-                      <ul className="training-info__list">
-                        <li className="training-info__item">
-                          <div className="hashtag hashtag--white"><span>#пилатес</span></div>
-                        </li>
-                        <li className="training-info__item">
-                          <div className="hashtag hashtag--white"><span>#для_всех</span></div>
-                        </li>
-                        <li className="training-info__item">
-                          <div className="hashtag hashtag--white"><span>#320ккал</span></div>
-                        </li>
-                        <li className="training-info__item">
-                          <div className="hashtag hashtag--white"><span>#30_50минут</span></div>
-                        </li>
-                      </ul>
+                    <div className="personal-account-user__input">
+                      <label><span className="personal-account-user__label">План на неделю, ккал</span>
+                        <input type="text" name="schedule-for-the-week" defaultValue={`${loseCaloriesLimit}`} />
+                      </label>
                     </div>
-                    <div className="training-info__price-wrapper">
-                      <div className="training-info__input training-info__input--price">
-                        <label><span className="training-info__label">Стоимость</span>
-                          <input type="text" name="price" defaultValue="800 ₽" disabled />
-                        </label>
-                        <div className="training-info__error">Введите число</div>
-                      </div>
-                      <button className="btn training-info__buy" type="button">Купить</button>
-                    </div>
+
                   </div>
                 </form>
               </div>
-            </div>
-            <div className="training-video">
-              <h2 className="training-video__title">Видео</h2>
-              <div className="training-video__video">
-                <div className="training-video__thumbnail">
-                  <picture>
-                    <source type="image/webp" srcSet="img/content/training-video/video-thumbnail.webp, img/content/training-video/video-thumbnail@2x.webp 2x" /><img src="img/content/training-video/video-thumbnail.png" srcSet="img/content/training-video/video-thumbnail@2x.png 2x" width={922} height={566} alt="Обложка видео" />
-                  </picture>
+
+              <div className="personal-account-user__additional-info">
+                <a className="thumbnail-link thumbnail-link--theme-light" href="#">
+                  <div className="thumbnail-link__icon thumbnail-link__icon--theme-light">
+                    <svg width={30} height={26} aria-hidden="true">
+                      <use xlinkHref="#icon-friends" />
+                    </svg>
+                  </div>
+                  <span className="thumbnail-link__text">Мои друзья</span>
+                </a>
+
+                <a className="thumbnail-link thumbnail-link--theme-light" href="#">
+                  <div className="thumbnail-link__icon thumbnail-link__icon--theme-light">
+                    <svg width={30} height={26} aria-hidden="true">
+                      <use xlinkHref="#icon-shopping-cart" />
+                    </svg>
+                  </div>
+                  <span className="thumbnail-link__text">Мои покупки</span>
+                </a>
+
+                <div className="thumbnail-spec-gym">
+                  <div className="thumbnail-spec-gym__image">
+                    <picture>
+                      <source type="image/webp" srcSet="img/content/thumbnails/nearest-gym-01.webp, img/content/thumbnails/nearest-gym-01@2x.webp 2x" /><img src="img/content/thumbnails/nearest-gym-01.jpg" srcSet="img/content/thumbnails/nearest-gym-01@2x.jpg 2x" width={330} height={190} alt="" />
+                    </picture>
+                  </div>
+                  {/* <p class="thumbnail-spec-gym__type">Ближайший зал</p> */}
+                  <div className="thumbnail-spec-gym__header" style={{ textAlign: 'center' }}>
+                  <h3 className="thumbnail-spec-gym__title">Скоро тут появится что-то полезное</h3>
                 </div>
-                <button className="training-video__play-button btn-reset">
-                  <svg width={18} height={30} aria-hidden="true">
-                    <use xlinkHref="#icon-arrow" />
-                  </svg>
-                </button>
-              </div>
-              <div className="training-video__buttons-wrapper">
-                <button className="btn training-video__button training-video__button--start" type="button" disabled>Приступить</button>
-                <button className="btn training-video__button training-video__button--stop" type="button">Закончить</button>
               </div>
             </div>
           </div>
         </div>
+        </div>
       </div>
-    </section>
+    </section >
   )
 }

@@ -120,7 +120,7 @@ export class UserRDO {
     enum: TrainingDurationEnum
   })
   @Expose()
-  TrainingDuration!: TrainingDuration;
+  trainingDuration!: TrainingDuration;
 
   @ApiProperty({
     description: 'User lose calories aim',

@@ -1013,7 +1013,7 @@ components:
             - кроссфит
             - аэробика
             - пилатес
-        TrainingDuration:
+        trainingDuration:
           type: string
           description: User training time periods (in minutes)
           example: 10-30
@@ -1053,7 +1053,7 @@ components:
         - pageBackground
         - level
         - trainingType
-        - TrainingDuration
+        - trainingDuration
         - loseCaloriesLimit
         - dayCaloriesLimit
         - isReadyToTraining

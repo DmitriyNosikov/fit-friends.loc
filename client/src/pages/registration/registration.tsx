@@ -1,5 +1,6 @@
 import { useRef, useState } from 'react';
 import { toast } from 'react-toastify';
+import dayjs from 'dayjs';
 
 import { useAppDispatch, useAppSelector } from '@client/src/hooks';
 import useAdditionalInfo from '@client/src/hooks/useAdditionalInfo';
@@ -23,6 +24,7 @@ export default function Registration() {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
+  const maxBirthDate = dayjs().format('YYYY-MM-DD');
   const additionalInfo = useAppSelector(getAdditionalInfo);
   const gender = additionalInfo?.gender;
   const location = additionalInfo?.location;
@@ -132,7 +134,7 @@ export default function Registration() {
                         <label>
                           <span className="custom-input__label">Имя</span>
                           <span className="custom-input__wrapper">
-                            <input type="text" name="name" ref={userName} />
+                            <input type="text" name="name" ref={userName} required/>
                           </span>
                           <span className="custom-input__error"></span>
                         </label>
@@ -142,7 +144,7 @@ export default function Registration() {
                         <label>
                           <span className="custom-input__label">E-mail</span>
                           <span className="custom-input__wrapper">
-                            <input type="email" name="email" ref={userEmail} />
+                            <input type="email" name="email" ref={userEmail} required/>
                           </span>
                           <span className="custom-input__error"></span>
                         </label>
@@ -152,7 +154,7 @@ export default function Registration() {
                         <label>
                           <span className="custom-input__label">Дата рождения</span>
                           <span className="custom-input__wrapper">
-                            <input type="date" name="birthday" max="2099-12-31" ref={userBirthDate} />
+                            <input type="date" name="birthday" max={maxBirthDate} ref={userBirthDate} />
                           </span>
                           <span className="custom-input__error"></span>
                         </label>
@@ -167,7 +169,7 @@ export default function Registration() {
                         <label>
                           <span className="custom-input__label">Пароль</span>
                           <span className="custom-input__wrapper">
-                            <input type="password" name="password" autoComplete="off" ref={userPassword} />
+                            <input type="password" name="password" autoComplete="off" ref={userPassword} required/>
                           </span>
                           <span className="custom-input__error"></span>
                         </label>
@@ -186,7 +188,15 @@ export default function Registration() {
 
                     <div className="sign-up__checkbox">
                       <label>
-                        <input type="checkbox" value="user-agreement" name="user-agreement" defaultChecked onChange={handleChangePolicyAgreement} ref={policyAgreement}/>
+                        <input
+                          type="checkbox"
+                          value="user-agreement"
+                          name="user-agreement"
+                          defaultChecked
+                          onChange={handleChangePolicyAgreement}
+                          ref={policyAgreement}
+                          required
+                        />
                         <span className="sign-up__checkbox-icon" >
                             <svg width="9" height="6" aria-hidden="true">
                               <use xlinkHref="#arrow-check"></use>

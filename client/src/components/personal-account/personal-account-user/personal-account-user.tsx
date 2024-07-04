@@ -5,6 +5,7 @@ import Specialization from '../specialization/specialization';
 import useAdditionalInfo from '@client/src/hooks/useAdditionalInfo';
 import { upperCaseFirst } from '@client/src/utils/common';
 import { UserLevelEnum } from '@shared/types/user-level.enum';
+import { BASE_URL } from '@client/src/services/api';
 
 export default function PersonalAccountUser(): ReactElement {
   useAdditionalInfo();
@@ -29,6 +30,10 @@ export default function PersonalAccountUser(): ReactElement {
     isReadyToTraining,
     level
   } = userInfo;
+
+  // TODO: Временное решение, т.к. сервер отдает статику без
+  // http://localhost:8000 (исправить на правильную отдачу)
+  const userAvatarUrl = avatar ? `${BASE_URL}${avatar}` : '';
 
   let userLevel = '';
 
@@ -58,7 +63,7 @@ export default function PersonalAccountUser(): ReactElement {
                 <label>
                   <input className="visually-hidden" type="file" name="user-photo-1" accept="image/png, image/jpeg" />
                   <span className="input-load-avatar__avatar">
-                    <img src={avatar} srcSet="img/content/user-photo-1@2x.png 2x" width={98} height={98} alt="user photo" />
+                    <img src={userAvatarUrl} srcSet="img/content/user-photo-1@2x.png 2x" width={98} height={98} alt="user photo" />
                   </span>
                 </label>
               </div>

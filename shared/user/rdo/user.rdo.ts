@@ -7,6 +7,7 @@ import { TrainingTypeEnum } from '@server/libs/types/training-type.enum';
 import { UserLevelEnum } from '@server/libs/types/user-level.enum';
 import { UserValidation } from '@server/user/user.constant';
 import { Expose } from 'class-transformer';
+
 export class UserRDO {
   @ApiProperty({
     description: 'Uniq user ID',
@@ -57,7 +58,7 @@ export class UserRDO {
     example: 'admin',
   })
   @Expose()
-  role: UserRole;
+  role!: UserRole;
 
   @ApiProperty({
     description: 'User gender',

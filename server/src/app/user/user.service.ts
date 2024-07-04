@@ -21,8 +21,9 @@ import { GenderEnum, RequestWithUserId } from '@server/libs/types';
 // TODO: Заменить путь на @shared как будет больше времени разобраться
 import { CreateUserDTO, LoginUserDTO, UpdateUserDTO } from '../../../../shared/user/'; 
 
-import { AuthUserInterface, UserInterface } from './interfaces';
 import { USER_DEFAULT, UserMessage } from './user.constant';
+import { AuthUserInterface, UserInterface } from './interfaces';
+
 import { UserEntity } from './user.entity';
 import { UserFactory } from './user.factory';
 import { UserRepository } from './user.repository';

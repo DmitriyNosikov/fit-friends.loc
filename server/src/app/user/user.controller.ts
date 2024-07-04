@@ -24,11 +24,12 @@ import { fillDTO } from '../libs/helpers';
 import { RequestWithUser } from './interfaces/request-with-user.interface';
 
 import { AdditionalInfoRDO, CreateUserDTO, LoggedUserRDO, LoginUserDTO, UpdateUserDTO, UserRDO } from '../../../../shared/user/';
+import { trainingDurationList, genderTypeList, locationList, trainingTypeList, userRolesList } from '@server/libs/types';
 import { UserInterface } from './interfaces';
 import { UserMessage } from './user.constant';
+
 import { UserService } from './user.service';
 
-import { trainingDurationList, genderTypeList, locationList, trainingTypeList, userRolesList } from '@server/libs/types';
 
 @ApiTags('users')
 @Controller('users')

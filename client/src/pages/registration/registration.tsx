@@ -1,26 +1,27 @@
 import { useRef, useState } from 'react';
 import { toast } from 'react-toastify';
 
-import { Gender, Location, UserRole } from '@server/libs/types';
-
-import { upperCaseFirst } from '@client/src/utils/common';
-import { useAppDispatch, useAppSelector } from '@client/src/hooks';
+import { useAppSelector } from '@client/src/hooks';
 import useAdditionalInfo from '@client/src/hooks/useAdditionalInfo';
 
 import { getAdditionalInfo } from '@client/src/store/slices/user-process/user-process.selectors';
-import { registerAction } from '@client/src/store/actions/api-user-action';
+
 
 import RegistrationLocation from '@client/src/components/registration-location/registration-location';
 import RegistrationAvatar from '@client/src/components/registration-avatar/registration-avatar';
 import RegistrationRole from '@client/src/components/registration-role/registration-role';
 import RegistrationGender from '@client/src/components/registration-gender/registration-gender';
+import { registrationValidation } from '../../validation/registration-validation';
 
+import { ValidationError } from 'validate';
+import { CreateUserDTO } from '@shared/user';
 
+type ValidationErrorWithMessage = ValidationError & { message?: string };
 
 export default function Registration() {
   useAdditionalInfo();
 
-  const dispatch = useAppDispatch();
+  // const dispatch = useAppDispatch();
 
   const additionalInfo = useAppSelector(getAdditionalInfo);
   const gender = additionalInfo?.gender;
@@ -61,6 +62,29 @@ export default function Registration() {
       return;
     }
 
+
+    const nameValue = userName?.current?.value;
+    const emailValue = userEmail?.current?.value;
+    const birthDateValue = userBirthDate?.current?.value;
+    const passwordValue = userPassword?.current?.value;
+
+    const userData = {
+      avatar: '' ?? userAvatar,
+      name: nameValue,
+      email: emailValue,
+      birthDate: birthDateValue ? new Date(birthDateValue) : undefined,
+      password: passwordValue,
+      location: userLocation,
+      gender: userGender,
+      role: userRole,
+    } as CreateUserDTO;
+
+    const validateRegistration = validateFields(userData);
+
+    if(!validateRegistration) {
+      toast.warn('Validation error. Please, correct marked fields and try send form again.');
+    }
+
     console.log('NAME: ', userName.current);
     console.log('EMAIL: ', userEmail.current);
     console.log('PASSWORD: ', userPassword.current);
@@ -69,39 +93,34 @@ export default function Registration() {
     console.log('ROLE: ', userRole);
     console.log('POLICY: ', policyAgreement.current.checked);
 
-    if(
-      !userName.current ||
-      !userEmail.current ||
-      !userPassword.current ||
-      !userLocation ||
-      !userGender ||
-      !userRole ||
-      !policyAgreement.current
-    ) {
-      toast.warn('All fields are required');
+    console.log('USER DATA: ', userData);
+
+    // dispatch(registerAction(userData))
+  }
+
+  function validateFields(target: CreateUserDTO) {
+    const validationErrors = registrationValidation.validate(target);
+
+    if(validationErrors.length > 0) {
+      console.log('ERRORS: ', validationErrors);
+
+      validationErrors.forEach((error: ValidationErrorWithMessage) => {
+        const inputContainerId = error.path;
+        const inputContainer = document.querySelector(`#${inputContainerId}`);
+        const errorTextBox = inputContainer?.querySelector('.custom-input__error');
+
+        console.log('ERROR: ', error.message, inputContainerId, inputContainer, errorTextBox)
+
+        if(errorTextBox && error.message) {
+          errorTextBox.textContent = error.message;
+          inputContainer?.classList.add('custom-input--error');
+        }
+      });
 
       return false;
     }
 
-    const nameValue = userName.current.value;
-    const emailValue = userEmail.current.value;
-    const birthDateValue = userBirthDate?.current?.value;
-    const passwordValue = userPassword.current.value;
-
-    const userData = {
-      avatar: '' ?? userAvatar,
-      name: nameValue,
-      email: emailValue,
-      birthDate: birthDateValue ? new Date(birthDateValue) : undefined,
-      password: passwordValue,
-      role: userRole as UserRole,
-      gender: userGender as Gender,
-      location: userLocation as Location
-    };
-
-    console.log('USER DATA: ', userData);
-
-    dispatch(registerAction(userData))
+    return true;
   }
 
   return (
@@ -120,38 +139,42 @@ export default function Registration() {
               <div className="popup-form__title-wrapper">
                 <h1 className="popup-form__title">Регистрация</h1>
               </div>
+
               <div className="popup-form__form">
-                <form method="get" onSubmit={handleFormSubmit}>
+                <form name="registration" method="get" className="registration-form" onSubmit={handleFormSubmit}>
                   <div className="sign-up">
 
                     {/* User avatar */}
                     <RegistrationAvatar onAvatarUpload={setUserAvatar} />
 
                     <div className="sign-up__data">
-                      <div className="custom-input">
+                      <div className="custom-input" id="name">
                         <label>
                           <span className="custom-input__label">Имя</span>
                           <span className="custom-input__wrapper">
                             <input type="text" name="name" ref={userName} />
                           </span>
+                          <span className="custom-input__error"></span>
                         </label>
                       </div>
 
-                      <div className="custom-input">
+                      <div className="custom-input" id="email">
                         <label>
                           <span className="custom-input__label">E-mail</span>
                           <span className="custom-input__wrapper">
                             <input type="email" name="email" ref={userEmail} />
                           </span>
+                          <span className="custom-input__error"></span>
                         </label>
                       </div>
 
-                      <div className="custom-input">
+                      <div className="custom-input" id="birthDate">
                         <label>
                           <span className="custom-input__label">Дата рождения</span>
                           <span className="custom-input__wrapper">
                             <input type="date" name="birthday" max="2099-12-31" ref={userBirthDate} />
                           </span>
+                          <span className="custom-input__error"></span>
                         </label>
                       </div>
 
@@ -160,12 +183,13 @@ export default function Registration() {
                         location &&  <RegistrationLocation locationList={location} onLocationCheck={setUserLocation} />
                       }
 
-                      <div className="custom-input">
+                      <div className="custom-input" id="password">
                         <label>
                           <span className="custom-input__label">Пароль</span>
                           <span className="custom-input__wrapper">
                             <input type="password" name="password" autoComplete="off" ref={userPassword} />
                           </span>
+                          <span className="custom-input__error"></span>
                         </label>
                       </div>
 

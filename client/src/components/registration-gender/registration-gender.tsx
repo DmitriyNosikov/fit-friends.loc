@@ -15,24 +15,27 @@ export default function RegistrationGender({ genderList, onGenderChange }: Regis
   }
 
   return (
-    <div className="sign-up__radio"><span className="sign-up__label">Пол</span>
-        <div className="custom-toggle-radio custom-toggle-radio--big">
-          {
-            genderList.map((genderItem: string) => {
-              const isSelected = (genderItem === 'женский');
+    <div className="sign-up__radio" id="gender">
+      <span className="sign-up__label">Пол</span>
+      <div className="custom-toggle-radio custom-toggle-radio--big">
+        {
+          genderList.map((genderItem: string) => {
+            const isSelected = (genderItem === 'женский');
 
-              return (
-                <div className="custom-toggle-radio__block" key={genderItem}>
-                  <label>
-                    <input type="radio" name="sex" defaultValue={genderItem}  defaultChecked={isSelected} onChange={handleChangeGender}/>
-                    <span className="custom-toggle-radio__icon"></span>
-                    <span className="custom-toggle-radio__label">{upperCaseFirst(genderItem)}</span>
-                  </label>
-                </div>
-              );
-            })
-          }
-        </div>
+            return (
+              <div className="custom-toggle-radio__block" key={genderItem}>
+                <label>
+                  <input type="radio" name="sex" defaultValue={genderItem}  defaultChecked={isSelected} onChange={handleChangeGender}/>
+                  <span className="custom-toggle-radio__icon"></span>
+                  <span className="custom-toggle-radio__label">{upperCaseFirst(genderItem)}</span>
+                  <span className="custom-input__error"></span>
+                </label>
+              </div>
+            );
+          })
+        }
       </div>
+      <span className="custom-input__error"></span>
+    </div>
   )
 }

@@ -73,7 +73,7 @@ export const checkAuthAction = createAsyncThunk<void, void, AsyncOptions>(
   }
 );
 
-export const registerAction = createAsyncThunk<any, CreateUserDTO, AsyncOptions>(
+export const registerAction = createAsyncThunk<LoggedUserRDO, CreateUserDTO, AsyncOptions>(
   APIAction.USER_REGISTER,
   async (
     newUserData, // New User Data

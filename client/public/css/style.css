@@ -1372,6 +1372,7 @@ input:disabled ~ .role-btn__btn,
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
+  flex-wrap: wrap;
   width: 100%;
 }
 

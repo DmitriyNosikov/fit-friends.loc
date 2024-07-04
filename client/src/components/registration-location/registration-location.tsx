@@ -10,12 +10,12 @@ export default function RegistrationLocation({ locationList, onLocationCheck }: 
   const locationListContainer = locationListElem?.closest('.custom-select');
   const locationTextBox = locationListContainer?.querySelector('.custom-select__text');
 
-  function handleLocationBtnClick(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
+  function handleLocationBtnClick() {
     locationListContainer?.classList.toggle('custom-select--not-selected');
     locationListContainer?.classList.toggle('is-open');
   }
 
-  function handleLocationBtnLeave(e: React.FocusEvent<HTMLDivElement, Element>) {
+  function handleLocationBtnLeave() {
     locationListContainer?.classList.add('custom-select--not-selected');
     locationListContainer?.classList.remove('is-open');
   }
@@ -37,7 +37,8 @@ export default function RegistrationLocation({ locationList, onLocationCheck }: 
 
 
   return (
-    <div className="custom-select custom-select--not-selected" onBlur={handleLocationBtnLeave}><span className="custom-select__label">Ваша локация</span>
+    <div className="custom-select custom-select--not-selected" onBlur={handleLocationBtnLeave} id="location">
+      <span className="custom-select__label">Ваша локация</span>
       <button className="custom-select__button" type="button" aria-label="Выберите одну из опций" onClick={handleLocationBtnClick}>
         <span className="custom-select__text"></span>
         <span className="custom-select__icon">
@@ -55,6 +56,7 @@ export default function RegistrationLocation({ locationList, onLocationCheck }: 
           })
         }
       </ul>
+      <span className="custom-input__error"></span>
     </div>
   )
 }

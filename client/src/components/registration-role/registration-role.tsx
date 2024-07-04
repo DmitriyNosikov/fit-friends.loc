@@ -15,7 +15,7 @@ export default function RegistrationRole({ roles, onRoleChangeHandler }: Registr
   }
 
   return (
-    <div className="sign-up__role">
+    <div className="sign-up__role" id="role">
       <h2 className="sign-up__legend">Выберите роль</h2>
       <div className="role-selector sign-up__role-selector">
         {
@@ -50,6 +50,7 @@ export default function RegistrationRole({ roles, onRoleChangeHandler }: Registr
           })
         }
       </div>
+      <span className="custom-input__error"></span>
     </div>
   )
 }

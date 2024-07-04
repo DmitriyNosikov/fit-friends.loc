@@ -5,7 +5,7 @@ import { LocationEnum, locationList } from '@server/libs/types/location.enum';
 import { TrainingDuration, TrainingDurationEnum, trainingDurationList } from '@server/libs/types/training-duration.enum';
 import { TrainingType, TrainingTypeEnum, trainingTypeList } from '@server/libs/types/training-type.enum';
 import { UserLevel, UserLevelEnum, userLevelList } from '@server/libs/types/user-level.enum';
-import { USER_DEFAULT, UserValidation } from '@server/user/user.constant';
+
 import {
   ArrayMaxSize,
   IsArray,
@@ -21,6 +21,7 @@ import {
   Min,
   MinLength
 } from 'class-validator';
+import { USER_DEFAULT, UserValidation } from '@server/user/user.constant';
 
 export class CreateUserDTO {
   @ApiProperty({
@@ -32,21 +33,21 @@ export class CreateUserDTO {
   @MaxLength(UserValidation.NAME.MAX_LENGTH)
   @MinLength(UserValidation.NAME.MIN_LENGTH)
   @IsString()
-  name: string;
+  name!: string;
 
   @ApiProperty({
     description: 'User email',
     example: 'iron-man@starkindustries.it',
   })
   @IsEmail()
-  email: string;
+  email!: string;
 
   @ApiProperty({
     description: 'User avatar',
     example: 'some/interesting/avatar.jpg',
   })
   @IsOptional()
-  avatar: string;
+  avatar!: string;
 
   @ApiProperty({
     description: 'User password',
@@ -57,7 +58,7 @@ export class CreateUserDTO {
   @MaxLength(UserValidation.PASSWORD.MAX_LENGTH)
   @MinLength(UserValidation.PASSWORD.MIN_LENGTH)
   @IsString()
-  password: string;
+  password!: string;
 
   @ApiProperty({
     description: 'User role',
@@ -76,7 +77,7 @@ export class CreateUserDTO {
   })
   @IsIn(genderTypeList)
   @IsString()
-  gender: Gender;
+  gender!: Gender;
 
   @ApiProperty({
     description: 'User birth date',
@@ -103,7 +104,7 @@ export class CreateUserDTO {
   })
   @IsIn(locationList)
   @IsString()
-  location: Location;
+  location!: Location;
 
   @ApiProperty({
     description: 'User profile background. If not passed = User avatar',

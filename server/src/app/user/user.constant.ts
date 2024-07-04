@@ -1,4 +1,5 @@
-import { MessagesType, UserLevelEnum, UserRoleEnum, trainingTypeList } from '../libs/types/';
+import { MessagesType, UserLevelEnum, UserRoleEnum, trainingTypeList } from '@server/libs/types';
+
 
 export const USER_DEFAULT = {
   ROLE: UserRoleEnum.CLIENT,

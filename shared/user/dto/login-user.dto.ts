@@ -1,7 +1,6 @@
-import { UserValidation } from '@server/user/user.constant';
 import { ApiProperty } from '@nestjs/swagger';
+import { UserValidation } from '@server/user/user.constant';
 import { IsString, MaxLength, MinLength } from 'class-validator';
-
 export class LoginUserDTO {
   @ApiProperty({
     description: 'User email',

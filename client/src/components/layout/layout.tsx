@@ -5,7 +5,7 @@ import { AppRoute } from '@client/src/const';
 
 export default function Layout(): ReactElement {
   const location = useLocation();
-  const notShowHeaderRoutes = [AppRoute.REGISTRATION] as string[];
+  const notShowHeaderRoutes = [AppRoute.REGISTRATION, AppRoute.LOGIN] as string[];
 
   return (
     <>

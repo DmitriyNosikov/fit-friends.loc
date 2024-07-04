@@ -14,10 +14,13 @@ import RegistrationGender from '@client/src/components/registration-gender/regis
 import { clearFieldError, validateFields } from '../../validation/registration-validation';
 
 import { CreateUserDTO } from '@shared/user';
+import { useNavigate } from 'react-router-dom';
+import { AppRoute } from '@client/src/const';
 
 export default function Registration() {
   useAdditionalInfo();
 
+  const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
   const additionalInfo = useAppSelector(getAdditionalInfo);
@@ -81,9 +84,16 @@ export default function Registration() {
       toast.warn('Validation error. Please, correct marked fields and try send form again.');
     }
 
-    console.log('USER DATA: ', userData);
-
     dispatch(registerAction(userData))
+      .then((result) => {
+        if('error' in result) {
+          return;
+        }
+
+        toast.success('You have been successfully registered. Try to LogIn right now :)');
+
+        navigate(AppRoute.LOGIN);
+      })
   }
 
   function handleFormFieldChange(e: React.FormEvent<HTMLFormElement>) {

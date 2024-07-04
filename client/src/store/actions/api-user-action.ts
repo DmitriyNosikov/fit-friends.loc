@@ -108,13 +108,11 @@ export const registerAction = createAsyncThunk<LoggedUserRDO, CreateUserDTO, Asy
     try {
       const { data } = await api.post<LoggedUserRDO>(ApiRoute.REGISTER, newUserDataWithAvatar);
 
-      console.log('USER REGISTRATION DATA: ', data);
-
       dispatch(setDataLoadingStatus(false));
 
       return data;
     } catch(err) {
-      toast.warn(`Registration ended with error: ${err}`);
+      toast.error(`Registration ended with error: ${err}`);
 
       dispatch(setDataLoadingStatus(false));
 

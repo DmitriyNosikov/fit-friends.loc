@@ -111,8 +111,12 @@ export default function Registration() {
           inputContainer?.classList.add('custom-input--error');
         }
      });
-    }
+
+     return false;
   }
+
+  return true;
+}
 
   return (
     <>

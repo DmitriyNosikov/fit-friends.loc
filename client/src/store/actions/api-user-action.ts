@@ -83,17 +83,26 @@ export const registerAction = createAsyncThunk<LoggedUserRDO, CreateUserDTO, Asy
     dispatch(setDataLoadingStatus(true));
 
     // Аватар нужно загружать отдельно
-    let avatarUrl = '';
+    let uploadedAvatarUrl = '';
     if(newUserData.avatar) {
-      dispatch(uploadAvatarAction(newUserData.avatar as FormData))
-      .then((result) => {
-        avatarUrl = result.payload as string;
-      });
+      try {
+        const { data: avatarUrl } = await api.post<string>(ApiRoute.LOAD_FILES, newUserData.avatar);
+
+        uploadedAvatarUrl = avatarUrl;
+
+      } catch(err) {
+        toast.warn(`Can't load your avatar: ${err}`);
+
+        dispatch(setDataLoadingStatus(false));
+
+        return rejectWithValue(err);
+      }
     }
 
+    // Регистрация пользователя
     const newUserDataWithAvatar = {
       ...newUserData,
-      avatar: avatarUrl ?? newUserData.avatar
+      avatar: uploadedAvatarUrl ?? newUserData.avatar
     };
 
     try {

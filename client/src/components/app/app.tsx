@@ -1,6 +1,6 @@
 import { ReactElement } from 'react';
 import { Route, Routes } from 'react-router-dom';
-import { AppRoute } from '../../const';
+import { AppRoute, AuthorizationStatus } from '../../const';
 
 import Page404 from '../../pages/page404/page404';
 import Login from '@client/src/pages/login/login';

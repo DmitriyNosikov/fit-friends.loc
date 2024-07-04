@@ -1,9 +1,43 @@
+import { AppRoute } from '@client/src/const';
+import { useAppDispatch } from '@client/src/hooks';
+import { loginAction } from '@client/src/store/actions/api-user-action';
+import { LoginUserDTO } from '@shared/user';
 import { ReactElement, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
+
+const CHANGE_FORM_TIMEOUT = 50;
 
 export default function Login(): ReactElement {
+  const navigate = useNavigate();
+  const dispatch = useAppDispatch();
+
   const userEmail = useRef<HTMLInputElement>(null);
   const userPassword = useRef<HTMLInputElement>(null);
 
+  if((userEmail.current?.value && userPassword.current?.value)) {
+    disableSubmitBtn(false);
+  }
+
+  function handleFormChange(e: React.FormEvent<HTMLFormElement>) {
+    const target = e.target as HTMLInputElement;
+
+    if(timer) {
+      clearTimeout(timer);
+    }
+
+    timer = setTimeout(() => {
+      if(
+        (target.type === 'email' || target.type === 'password')
+        && (!userEmail.current?.value || !userPassword.current?.value)
+      ) {
+        disableSubmitBtn(true)
+        return;
+      }
+
+      disableSubmitBtn(false)
+    }, CHANGE_FORM_TIMEOUT)
+  }
 
   function handleFormSubmit(evt: React.FormEvent<HTMLFormElement>) {
     evt.preventDefault();
@@ -12,7 +46,34 @@ export default function Login(): ReactElement {
       return false;
     }
 
-    console.log('Login not implemented yet');
+    const userLoginData: LoginUserDTO = {
+      email: userEmail.current.value,
+      password: userPassword.current.value,
+    };
+
+    dispatch(loginAction(userLoginData))
+      .then((result) => {
+        if('error' in result) {
+          return;
+        }
+
+        toast.info('You have been successfully authorized');
+
+        navigate(AppRoute.MAIN);
+      });
+  }
+
+  let timer: NodeJS.Timeout | null = null;
+
+  function disableSubmitBtn(disable = false) {
+    const submitBtn = document.querySelector('.sign-in__button');
+
+    if(disable) {
+      submitBtn?.setAttribute('disabled', 'true');
+      return;
+    }
+
+    submitBtn?.removeAttribute('disabled');
   }
 
   return (
@@ -32,8 +93,9 @@ export default function Login(): ReactElement {
                 <h1 className="popup-form__title">Вход</h1>
               </div>
               <div className="popup-form__form">
-                <form method="get" onSubmit={handleFormSubmit}>
+                <form method="get" onSubmit={handleFormSubmit} onChange={handleFormChange}>
                   <div className="sign-in">
+
                     <div className="custom-input sign-in__input">
                       <label>
                         <span className="custom-input__label">E-mail</span>
@@ -42,6 +104,7 @@ export default function Login(): ReactElement {
                         </span>
                       </label>
                     </div>
+
                     <div className="custom-input sign-in__input">
                       <label>
                         <span className="custom-input__label">Пароль</span>
@@ -50,7 +113,8 @@ export default function Login(): ReactElement {
                         </span>
                       </label>
                     </div>
-                    <button className="btn sign-in__button" type="submit">Продолжить</button>
+
+                    <button className="btn sign-in__button" type="submit" disabled>Продолжить</button>
                   </div>
                 </form>
               </div>

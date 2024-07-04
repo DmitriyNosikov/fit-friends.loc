@@ -121,7 +121,6 @@ export const registerAction = createAsyncThunk<LoggedUserRDO, CreateUserDTO, Asy
   }
 );
 
-
 export const uploadAvatarAction = createAsyncThunk<string | unknown, FormData, AsyncOptions>(
   APIAction.USER_UPLOAD_AVATAR,
   async (
@@ -153,23 +152,32 @@ export const loginAction = createAsyncThunk<void, LoginUserDTO, AsyncOptions>(
   APIAction.USER_LOGIN,
   async (
     { email, password }, // AuthData
-    { dispatch, extra: api } // AsyncOptions
+    { dispatch, rejectWithValue, extra: api } // AsyncOptions
   ) => {
     dispatch(setDataLoadingStatus(true));
 
-    const { data } = await api.post<LoggedUserRDO>(
-      ApiRoute.LOGIN,
-      { email, password }
-    );
-    const { accessToken } = data;
+    try {
+      const { data } = await api.post<LoggedUserRDO>(
+        ApiRoute.LOGIN,
+        { email, password }
+      );
+      const { accessToken } = data;
 
-    if(accessToken) {
+      if(!accessToken) {
+        throw new Error('Didn`t get access token from server. Please, try again later.');
+      }
+
       setToken(accessToken);
-    }
 
-    dispatch(setUserInfoAction(data));
-    dispatch(setDataLoadingStatus(false));
-    dispatch(redirectToRoute(AppRoute.MAIN));
+      dispatch(setUserInfoAction(data));
+      dispatch(setDataLoadingStatus(false));
+    } catch(err) {
+      toast.error(`Can't authorize you: ${err}`);
+
+      dispatch(setDataLoadingStatus(false));
+
+      return rejectWithValue(err);
+    }
   }
 );
 

@@ -11,12 +11,9 @@ import RegistrationLocation from '@client/src/components/registration-location/r
 import RegistrationAvatar from '@client/src/components/registration-avatar/registration-avatar';
 import RegistrationRole from '@client/src/components/registration-role/registration-role';
 import RegistrationGender from '@client/src/components/registration-gender/registration-gender';
-import { registrationValidation } from '../../validation/registration-validation';
+import { registrationValidationSchema } from '../../validation/registration-validation';
 
-import { ValidationError } from 'validate';
 import { CreateUserDTO } from '@shared/user';
-
-type ValidationErrorWithMessage = ValidationError & { message?: string };
 
 export default function Registration() {
   useAdditionalInfo();
@@ -99,28 +96,22 @@ export default function Registration() {
   }
 
   function validateFields(target: CreateUserDTO) {
-    const validationErrors = registrationValidation.validate(target);
+    const validationErrors = registrationValidationSchema.validate(target, { abortEarly: false });
 
-    if(validationErrors.length > 0) {
-      console.log('ERRORS: ', validationErrors);
+    if(validationErrors.error?.details) {
+      const errorDetails = validationErrors.error.details;
 
-      validationErrors.forEach((error: ValidationErrorWithMessage) => {
-        const inputContainerId = error.path;
+      errorDetails.forEach((error) => {
+        const inputContainerId = error.context?.key;
         const inputContainer = document.querySelector(`#${inputContainerId}`);
         const errorTextBox = inputContainer?.querySelector('.custom-input__error');
-
-        console.log('ERROR: ', error.message, inputContainerId, inputContainer, errorTextBox)
 
         if(errorTextBox && error.message) {
           errorTextBox.textContent = error.message;
           inputContainer?.classList.add('custom-input--error');
         }
-      });
-
-      return false;
+     });
     }
-
-    return true;
   }
 
   return (

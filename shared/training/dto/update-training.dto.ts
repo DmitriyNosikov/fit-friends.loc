@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Gender, GenderEnum, TrainingType, TrainingTypeEnum, UserLevel, UserLevelEnum, genderTypeList, trainingTypeList, userLevelList } from '@server/libs/types';
-import { TrainingDuration, TrainingDurationEnum, trainingTimeList } from '@server/libs/types/training-duration.enum';
+import { TrainingDuration, TrainingDurationEnum, trainingDurationList } from '@server/libs/types/training-duration.enum';
 import { TrainingValidation } from '@server/training/training.constant';
 import {
     IsBoolean,
@@ -62,7 +62,7 @@ export class UpdateTrainingDTO {
     example: '10-30',
     enum: TrainingDurationEnum
   })
-  @IsIn(trainingTimeList)
+  @IsIn(trainingDurationList)
   @IsString()
   @IsOptional()
   trainingDuration?: TrainingDuration;

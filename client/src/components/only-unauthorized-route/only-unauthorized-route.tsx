@@ -1,6 +1,9 @@
 import { ReactElement } from 'react';
 import { Navigate } from 'react-router-dom';
-import { AppRoute } from '../../const';
+
+import { AppRoute, AuthorizationStatus } from '../../const';
+import { useAppSelector } from '@client/src/hooks';
+import { getUserAuthStatus } from '@client/src/store/slices/user-process/user-process.selectors';
 
 type UnauthorizedRouteProps = {
   redirectTo?: typeof AppRoute[keyof typeof AppRoute],
@@ -9,9 +12,8 @@ type UnauthorizedRouteProps = {
 
 // Достпу к роуту только для неавторизованных пользователей
 export default function OnlyUnauthorizedRoute({ redirectTo = AppRoute.MAIN, children }: UnauthorizedRouteProps): ReactElement {
-  // const authStatus = useAppSelector(getUserAuthStatus);
-  // const isUserAuthorized = (authStatus === AuthorizationStatus.AUTH);
-  const isUserAuthorized = true;
+  const authStatus = useAppSelector(getUserAuthStatus);
+  const isUserAuthorized = (authStatus === AuthorizationStatus.AUTH);
 
   return (
     (isUserAuthorized)

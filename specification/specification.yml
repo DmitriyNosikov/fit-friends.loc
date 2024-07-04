@@ -7,6 +7,27 @@ paths:
       responses:
         "200":
           description: ""
+  /api/users/additional:
+    get:
+      operationId: UserController_getAdditionalInfo
+      summary: Return additional info about availible genders, locations, training
+        types and training durations
+      parameters: []
+      responses:
+        "200":
+          description: Additional info found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdditionalInfoRDO"
+        "500":
+          description: Can`t found additional info
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdditionalInfoRDO"
+      tags: &a1
+        - users
   /api/users/register:
     post:
       operationId: UserController_create
@@ -27,8 +48,7 @@ paths:
                 $ref: "#/components/schemas/UserRDO"
         "409":
           description: User with passed email already exists
-      tags: &a1
-        - users
+      tags: *a1
   /api/users/login:
     post:
       operationId: UserController_login
@@ -778,6 +798,9 @@ tags: []
 servers: []
 components:
   schemas:
+    AdditionalInfoRDO:
+      type: object
+      properties: {}
     CreateUserDTO:
       type: object
       properties:
@@ -990,7 +1013,7 @@ components:
             - кроссфит
             - аэробика
             - пилатес
-        trainingTime:
+        TrainingDuration:
           type: string
           description: User training time periods (in minutes)
           example: 10-30
@@ -1030,7 +1053,7 @@ components:
         - pageBackground
         - level
         - trainingType
-        - trainingTime
+        - TrainingDuration
         - loseCaloriesLimit
         - dayCaloriesLimit
         - isReadyToTraining
@@ -1119,7 +1142,7 @@ components:
             - кроссфит
             - аэробика
             - пилатес
-        trainingTime:
+        TrainingDuration:
           type: string
           description: User training time periods (in minutes)
           example: 10-30
@@ -1155,7 +1178,7 @@ components:
         - pageBackground
         - level
         - trainingType
-        - trainingTime
+        - TrainingDuration
         - loseCaloriesLimit
         - dayCaloriesLimit
         - isReadyToTraining

@@ -12,6 +12,10 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 import App from './components/app/app';
+import { checkAuthAction } from './store/actions/api-user-action';
+
+// Проверяем авторизацию пользователя
+store.dispatch(checkAuthAction());
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement

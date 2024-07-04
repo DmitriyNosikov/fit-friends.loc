@@ -9,7 +9,8 @@ export const ApiRoute = {
 
   REGISTER: `${BACKEND_API_URL.USERS}/register`,
   LOGIN: `${BACKEND_API_URL.USERS}/login`,
-  CHECK_JWT_TOKEN: `${BACKEND_API_URL.USERS}/check`
+  CHECK_JWT_TOKEN: `${BACKEND_API_URL.USERS}/check`,
+  GET_ADDITIONAL_INFO: `${BACKEND_API_URL.USERS}/additional`
 } as const;
 
 // -- App

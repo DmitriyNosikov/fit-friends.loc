@@ -85,6 +85,10 @@ export class UserService {
         : 0
     }
 
+    if(dto.pageBackground && dto.avatar) {
+      dto.pageBackground = dto.avatar;
+    }
+
     const newUser = {
       ...dto,
       dayCaloriesLimit,

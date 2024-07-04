@@ -23,10 +23,12 @@ import { fillDTO } from '../libs/helpers';
 
 import { RequestWithUser } from './interfaces/request-with-user.interface';
 
-import { CreateUserDTO, LoggedUserRDO, LoginUserDTO, UpdateUserDTO, UserRDO } from '../../../../shared/user/';
+import { AdditionalInfoRDO, CreateUserDTO, LoggedUserRDO, LoginUserDTO, UpdateUserDTO, UserRDO } from '../../../../shared/user/';
 import { UserInterface } from './interfaces';
 import { UserMessage } from './user.constant';
 import { UserService } from './user.service';
+
+import { trainingDurationList, genderTypeList, locationList, trainingTypeList, userRolesList } from '@server/libs/types';
 
 @ApiTags('users')
 @Controller('users')
@@ -34,7 +36,27 @@ export class UserController {
   constructor(
     private readonly userService: UserService
   ){}
-
+  @Get('additional')
+  @ApiOperation({ summary: 'Return additional info about availible genders, locations, training types and training durations' })
+  @ApiResponse({
+    type: AdditionalInfoRDO,
+    status: HttpStatus.OK,
+    description: UserMessage.SUCCESS.ADDITIONAL
+  })
+  @ApiResponse({
+    type: AdditionalInfoRDO,
+    status: HttpStatus.INTERNAL_SERVER_ERROR,
+    description: UserMessage.ERROR.CANT_FOUND_ADDITIONAL
+  })
+  public async getAdditionalInfo(): Promise<AdditionalInfoRDO> {
+    return {
+      gender: genderTypeList,
+      location: locationList,
+      trainingType: trainingTypeList,
+      trainingDuration: trainingDurationList,
+      roles: userRolesList,
+    };
+  }
 
   @Post('register')
   @ApiOperation({ summary: 'Register new user' })

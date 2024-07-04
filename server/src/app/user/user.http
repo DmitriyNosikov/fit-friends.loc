@@ -69,3 +69,8 @@ Content-type: application/json
 DELETE {{baseUrl}}/{{userId}} HTTP/1.1
 {{authorization}}
 ###
+
+
+# Get additional info
+GET {{baseUrl}}/additional HTTP/1.1
+###

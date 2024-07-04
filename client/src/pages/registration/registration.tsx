@@ -1,43 +1,107 @@
 import { useRef, useState } from 'react';
 import { toast } from 'react-toastify';
 
+import { Gender, Location, UserRole } from '@server/libs/types';
+
+import { upperCaseFirst } from '@client/src/utils/common';
+import { useAppDispatch, useAppSelector } from '@client/src/hooks';
+import useAdditionalInfo from '@client/src/hooks/useAdditionalInfo';
+
+import { getAdditionalInfo } from '@client/src/store/slices/user-process/user-process.selectors';
+import { registerAction } from '@client/src/store/actions/api-user-action';
+
+import RegistrationLocation from '@client/src/components/registration-location/registration-location';
+import RegistrationAvatar from '@client/src/components/registration-avatar/registration-avatar';
+import RegistrationRole from '@client/src/components/registration-role/registration-role';
+import RegistrationGender from '@client/src/components/registration-gender/registration-gender';
+
+
+
 export default function Registration() {
-  const userAvatar = useRef<HTMLInputElement>(null);
+  useAdditionalInfo();
+
+  const dispatch = useAppDispatch();
+
+  const additionalInfo = useAppSelector(getAdditionalInfo);
+  const gender = additionalInfo?.gender;
+  const location = additionalInfo?.location;
+  const roles = additionalInfo?.roles;
+
   const userName = useRef<HTMLInputElement>(null);
   const userEmail = useRef<HTMLInputElement>(null);
   const userBirthDate = useRef<HTMLInputElement>(null);
   const userPassword = useRef<HTMLInputElement>(null);
-
+  const [userAvatar, setUserAvatar] = useState('');
   const [userLocation, setUserLocation] = useState('');
-  const [userGender, setuserGender] = useState('неважно');
+  const [userGender, setUserGender] = useState('неважно');
+  const [userRole, setUserRole] = useState('client');
+  const policyAgreement = useRef<HTMLInputElement>(null);
 
-  function handleChangeLocation() {
-    console.log('Change location is not implemented yet');
+  // Policy agreement
+  const signUpBtn = document.querySelector('.sign-up__button');
+  function handleChangePolicyAgreement() {
+    const target = policyAgreement?.current?.checked;
+
+    if(!target) {
+      signUpBtn?.setAttribute('disabled', 'true');
+      return;
+    }
+
+    signUpBtn?.removeAttribute('disabled');
   }
 
-  function handleChangeGender(e: React.ChangeEvent<HTMLInputElement>) {
-    console.log('Change gender is not implemented yet');
-    console.log('Selected gender value: ', e);
-  }
-
-  function handleChangePolicyAgreement(e: React.ChangeEvent<HTMLInputElement>) {
-    const target = e.target;
-  }
-
+  // Form Submit
   async function handleFormSubmit(evt: React.FormEvent<HTMLFormElement>) {
     evt.preventDefault();
 
-    if(!userName.current ||
+    const isPolicyAgreementChecked = policyAgreement?.current?.checked;
+
+    if(!isPolicyAgreementChecked) {
+      toast.warn('You have to agree with privacy policy');
+      return;
+    }
+
+    console.log('NAME: ', userName.current);
+    console.log('EMAIL: ', userEmail.current);
+    console.log('PASSWORD: ', userPassword.current);
+    console.log('LOCATION: ', userLocation);
+    console.log('GENDER: ', userGender);
+    console.log('ROLE: ', userRole);
+    console.log('POLICY: ', policyAgreement.current.checked);
+
+    if(
+      !userName.current ||
       !userEmail.current ||
-      !userPassword.current) {
+      !userPassword.current ||
+      !userLocation ||
+      !userGender ||
+      !userRole ||
+      !policyAgreement.current
+    ) {
       toast.warn('All fields are required');
 
       return false;
     }
 
-    const userNameValue = userName.current.value;
-    const userEmailValue = userEmail.current.value;
-    const userPasswordValue = userPassword.current.value;
+    const nameValue = userName.current.value;
+    const emailValue = userEmail.current.value;
+    const birthDateValue = userBirthDate?.current?.value;
+    const passwordValue = userPassword.current.value;
+
+    const userData = {
+      avatar: '' ?? userAvatar,
+      name: nameValue,
+      email: emailValue,
+      birthDate: birthDateValue ? new Date(birthDateValue) : undefined,
+      password: passwordValue,
+      role: userRole as UserRole,
+      gender: userGender as Gender,
+      location: userLocation as Location
+    };
+
+    console.log('USER DATA: ', userData);
+
+    dispatch(registerAction(userData))
   }
 
   return (
@@ -59,21 +123,10 @@ export default function Registration() {
               <div className="popup-form__form">
                 <form method="get" onSubmit={handleFormSubmit}>
                   <div className="sign-up">
-                    <div className="sign-up__load-photo">
-                      <div className="input-load-avatar">
-                        <label>
-                          <input className="visually-hidden" type="file" accept="image/png, image/jpeg" ref={userAvatar} />
-                          <span className="input-load-avatar__btn">
-                            <svg width="20" height="20" aria-hidden="true">
-                              <use xlinkHref="#icon-import"></use>
-                            </svg>
-                          </span>
-                        </label>
-                      </div>
-                      <div className="sign-up__description">
-                        <h2 className="sign-up__legend">Загрузите фото профиля</h2><span className="sign-up__text">JPG, PNG, оптимальный размер 100&times;100&nbsp;px</span>
-                      </div>
-                    </div>
+
+                    {/* User avatar */}
+                    <RegistrationAvatar onAvatarUpload={setUserAvatar} />
+
                     <div className="sign-up__data">
                       <div className="custom-input">
                         <label>
@@ -83,6 +136,7 @@ export default function Registration() {
                           </span>
                         </label>
                       </div>
+
                       <div className="custom-input">
                         <label>
                           <span className="custom-input__label">E-mail</span>
@@ -91,6 +145,7 @@ export default function Registration() {
                           </span>
                         </label>
                       </div>
+
                       <div className="custom-input">
                         <label>
                           <span className="custom-input__label">Дата рождения</span>
@@ -99,17 +154,12 @@ export default function Registration() {
                           </span>
                         </label>
                       </div>
-                      <div className="custom-select custom-select--not-selected"><span className="custom-select__label">Ваша локация</span>
-                        <button className="custom-select__button" type="button" aria-label="Выберите одну из опций">
-                          <span className="custom-select__text"></span>
-                          <span className="custom-select__icon">
-                            <svg width="15" height="6" aria-hidden="true">
-                              <use xlinkHref="#arrow-down"></use>
-                            </svg>
-                          </span>
-                        </button>
-                        <ul className="custom-select__list" role="listbox"></ul>
-                      </div>
+
+                      {
+                        // Location list
+                        location &&  <RegistrationLocation locationList={location} onLocationCheck={setUserLocation} />
+                      }
+
                       <div className="custom-input">
                         <label>
                           <span className="custom-input__label">Пароль</span>
@@ -118,62 +168,21 @@ export default function Registration() {
                           </span>
                         </label>
                       </div>
-                      <div className="sign-up__radio"><span className="sign-up__label">Пол</span>
-                        <div className="custom-toggle-radio custom-toggle-radio--big">
-                          <div className="custom-toggle-radio__block">
-                            <label>
-                              <input type="radio" name="sex" onChange={handleChangeGender}/>
-                              <span className="custom-toggle-radio__icon"></span>
-                              <span className="custom-toggle-radio__label">Мужской</span>
-                            </label>
-                          </div>
-                          <div className="custom-toggle-radio__block">
-                            <label>
-                              <input type="radio" name="sex" defaultChecked onChange={handleChangeGender}/>
-                              <span className="custom-toggle-radio__icon"></span>
-                              <span className="custom-toggle-radio__label">Женский</span>
-                            </label>
-                          </div>
-                          <div className="custom-toggle-radio__block">
-                            <label>
-                              <input type="radio" name="sex" onChange={handleChangeGender}/>
-                              <span className="custom-toggle-radio__icon"></span>
-                              <span className="custom-toggle-radio__label">Неважно</span>
-                            </label>
-                          </div>
-                        </div>
-                      </div>
+
+                      {
+                        // User gender
+                        gender && <RegistrationGender genderList={gender} onGenderChange={setUserGender} />
+                      }
                     </div>
-                    <div className="sign-up__role">
-                      <h2 className="sign-up__legend">Выберите роль</h2>
-                      <div className="role-selector sign-up__role-selector">
-                        <div className="role-btn">
-                          <label>
-                            <input className="visually-hidden" type="radio" name="role" value="coach" defaultChecked />
-                            <span className="role-btn__icon">
-                              <svg width="12" height="13" aria-hidden="true">
-                                <use xlinkHref="#icon-cup"></use>
-                              </svg>
-                            </span>
-                            <span className="role-btn__btn">Я хочу тренировать</span>
-                          </label>
-                        </div>
-                        <div className="role-btn">
-                          <label>
-                            <input className="visually-hidden" type="radio" name="role" value="sportsman" />
-                            <span className="role-btn__icon">
-                              <svg width="12" height="13" aria-hidden="true">
-                                <use xlinkHref="#icon-weight"></use>
-                              </svg>
-                            </span>
-                            <span className="role-btn__btn">Я хочу тренироваться</span>
-                          </label>
-                        </div>
-                      </div>
-                    </div>
+
+                    {
+                      // User roles
+                      roles && <RegistrationRole roles={roles} onRoleChangeHandler={setUserRole} />
+                    }
+
                     <div className="sign-up__checkbox">
                       <label>
-                        <input type="checkbox" value="user-agreement" name="user-agreement" defaultChecked onChange={handleChangePolicyAgreement}/>
+                        <input type="checkbox" value="user-agreement" name="user-agreement" defaultChecked onChange={handleChangePolicyAgreement} ref={policyAgreement}/>
                         <span className="sign-up__checkbox-icon" >
                             <svg width="9" height="6" aria-hidden="true">
                               <use xlinkHref="#arrow-check"></use>

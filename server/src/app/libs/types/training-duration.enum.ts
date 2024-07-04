@@ -6,4 +6,4 @@ export const TrainingDurationEnum = {
 } as const;
 
 export type TrainingDuration = (typeof TrainingDurationEnum)[keyof typeof TrainingDurationEnum];
-export const trainingTimeList: TrainingDuration[] = ['10-30', '30-50', '50-80', '80-100'];
+export const trainingDurationList: TrainingDuration[] = ['10-30', '30-50', '50-80', '80-100'];

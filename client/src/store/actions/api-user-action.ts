@@ -3,9 +3,9 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 import { toast } from 'react-toastify';
 
 import { setDataLoadingStatus } from '../slices/main-process/main-process';
-import { setUserInfoAction } from '../slices/user-process/user-process';
+import { setAdditionalInfo, setUserInfoAction } from '../slices/user-process/user-process';
 
-import { CreateUserDTO, LoggedUserRDO, LoginUserDTO } from '@shared/user';
+import { AdditionalInfoRDO, CreateUserDTO, LoggedUserRDO, LoginUserDTO } from '@shared/user';
 import { redirectToRoute } from '../middlewares/redirect-action';
 
 
@@ -25,9 +25,32 @@ const APIAction = {
   USER_LOGIN: `${APIUserPrefix}/login`,
   USER_CHECK_AUTH: `${APIUserPrefix}/checkAuth`,
   USER_GET_DETAIL: `${APIUserPrefix}/getDetail`,
+  USER_GET_ADDITIONAL: `${APIUserPrefix}/getAdditional`,
 } as const;
 
 // ASYNC ACTIONS
+export const getAdditionalInfoAction = createAsyncThunk<AdditionalInfoRDO, void, AsyncOptions>(
+  APIAction.USER_GET_ADDITIONAL,
+  async (_arg, { dispatch, rejectWithValue, extra: api }) => {
+    dispatch(setDataLoadingStatus(true));
+
+    try {
+      const { data } = await api.get<AdditionalInfoRDO>(ApiRoute.GET_ADDITIONAL_INFO);
+
+      dispatch(setAdditionalInfo(data));
+
+      return data;
+    } catch(err) {
+      toast.warn(`Can't get additional info: ${err}`);
+
+      dispatch(setAdditionalInfo(null));
+      dispatch(setDataLoadingStatus(false));
+
+      return rejectWithValue(err);
+    }
+  }
+);
+
 // --- Auth
 //---------------------------------------------Return Payload AsyncOptions
 export const checkAuthAction = createAsyncThunk<void, void, AsyncOptions>(
@@ -50,7 +73,7 @@ export const checkAuthAction = createAsyncThunk<void, void, AsyncOptions>(
   }
 );
 
-export const registerAction = createAsyncThunk<LoggedUserRDO, CreateUserDTO, AsyncOptions>(
+export const registerAction = createAsyncThunk<any, CreateUserDTO, AsyncOptions>(
   APIAction.USER_REGISTER,
   async (
     newUserData, // New User Data
@@ -60,6 +83,8 @@ export const registerAction = createAsyncThunk<LoggedUserRDO, CreateUserDTO, Asy
 
     try {
       const { data } = await api.post<LoggedUserRDO>(ApiRoute.REGISTER, newUserData);
+
+      console.log('USER REGISTRATION DATA: ', data);
 
       dispatch(setDataLoadingStatus(false));
 

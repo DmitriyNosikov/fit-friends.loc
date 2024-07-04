@@ -43,8 +43,7 @@ export const registrationValidationSchema = Joi.object({
     .max(UserValidation.PASSWORD.MAX_LENGTH)
     .required(),
 
-  birthDate: Joi.string()
-    .isoDate()
+  birthDate: Joi.date()
     .required(),
 
   role: Joi.string()

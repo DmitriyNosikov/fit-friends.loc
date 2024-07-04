@@ -1,11 +1,11 @@
 import { useRef, useState } from 'react';
 import { toast } from 'react-toastify';
 
-import { useAppSelector } from '@client/src/hooks';
+import { useAppDispatch, useAppSelector } from '@client/src/hooks';
 import useAdditionalInfo from '@client/src/hooks/useAdditionalInfo';
 
 import { getAdditionalInfo } from '@client/src/store/slices/user-process/user-process.selectors';
-
+import { registerAction } from '@client/src/store/actions/api-user-action';
 
 import RegistrationLocation from '@client/src/components/registration-location/registration-location';
 import RegistrationAvatar from '@client/src/components/registration-avatar/registration-avatar';
@@ -18,7 +18,7 @@ import { CreateUserDTO } from '@shared/user';
 export default function Registration() {
   useAdditionalInfo();
 
-  // const dispatch = useAppDispatch();
+  const dispatch = useAppDispatch();
 
   const additionalInfo = useAppSelector(getAdditionalInfo);
   const gender = additionalInfo?.gender;
@@ -92,10 +92,19 @@ export default function Registration() {
 
     console.log('USER DATA: ', userData);
 
-    // dispatch(registerAction(userData))
+    dispatch(registerAction(userData))
+  }
+
+  function handleFormFieldChange(e: React.FormEvent<HTMLFormElement>) {
+    const target = e.target;
+
+    // При изменении поля, если на нем есть ошибка - очищаем ее
+    clearFieldError(target as HTMLElement);
   }
 
   function validateFields(target: CreateUserDTO) {
+    clearErrors();
+
     const validationErrors = registrationValidationSchema.validate(target, { abortEarly: false });
 
     if(validationErrors.error?.details) {
@@ -113,10 +122,24 @@ export default function Registration() {
      });
 
      return false;
+    }
+
+    return true;
   }
 
-  return true;
-}
+  function clearErrors() {
+    const fieldsWithErorrs = document.querySelectorAll('.custom-input--error');
+
+    fieldsWithErorrs.forEach((errorField) => errorField.classList.remove('custom-input--error'));
+  }
+
+  function clearFieldError(target: HTMLElement) {
+    const errorContainer = target.closest('.custom-input--error');
+
+    if(errorContainer) {
+      errorContainer.classList.remove('custom-input--error');
+    }
+  }
 
   return (
     <>
@@ -136,7 +159,7 @@ export default function Registration() {
               </div>
 
               <div className="popup-form__form">
-                <form name="registration" method="get" className="registration-form" onSubmit={handleFormSubmit}>
+                <form name="registration" method="get" className="registration-form" onChange={handleFormFieldChange} onSubmit={handleFormSubmit}>
                   <div className="sign-up">
 
                     {/* User avatar */}

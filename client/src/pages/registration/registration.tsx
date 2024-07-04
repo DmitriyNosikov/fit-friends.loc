@@ -11,7 +11,7 @@ import RegistrationLocation from '@client/src/components/registration-location/r
 import RegistrationAvatar from '@client/src/components/registration-avatar/registration-avatar';
 import RegistrationRole from '@client/src/components/registration-role/registration-role';
 import RegistrationGender from '@client/src/components/registration-gender/registration-gender';
-import { registrationValidationSchema } from '../../validation/registration-validation';
+import { clearFieldError, registrationValidationSchema, validateFields } from '../../validation/registration-validation';
 
 import { CreateUserDTO } from '@shared/user';
 
@@ -82,17 +82,9 @@ export default function Registration() {
       toast.warn('Validation error. Please, correct marked fields and try send form again.');
     }
 
-    console.log('NAME: ', userName.current);
-    console.log('EMAIL: ', userEmail.current);
-    console.log('PASSWORD: ', userPassword.current);
-    console.log('LOCATION: ', userLocation);
-    console.log('GENDER: ', userGender);
-    console.log('ROLE: ', userRole);
-    console.log('POLICY: ', policyAgreement.current.checked);
-
     console.log('USER DATA: ', userData);
 
-    dispatch(registerAction(userData))
+    // dispatch(registerAction(userData))
   }
 
   function handleFormFieldChange(e: React.FormEvent<HTMLFormElement>) {
@@ -100,45 +92,6 @@ export default function Registration() {
 
     // При изменении поля, если на нем есть ошибка - очищаем ее
     clearFieldError(target as HTMLElement);
-  }
-
-  function validateFields(target: CreateUserDTO) {
-    clearErrors();
-
-    const validationErrors = registrationValidationSchema.validate(target, { abortEarly: false });
-
-    if(validationErrors.error?.details) {
-      const errorDetails = validationErrors.error.details;
-
-      errorDetails.forEach((error) => {
-        const inputContainerId = error.context?.key;
-        const inputContainer = document.querySelector(`#${inputContainerId}`);
-        const errorTextBox = inputContainer?.querySelector('.custom-input__error');
-
-        if(errorTextBox && error.message) {
-          errorTextBox.textContent = error.message;
-          inputContainer?.classList.add('custom-input--error');
-        }
-     });
-
-     return false;
-    }
-
-    return true;
-  }
-
-  function clearErrors() {
-    const fieldsWithErorrs = document.querySelectorAll('.custom-input--error');
-
-    fieldsWithErorrs.forEach((errorField) => errorField.classList.remove('custom-input--error'));
-  }
-
-  function clearFieldError(target: HTMLElement) {
-    const errorContainer = target.closest('.custom-input--error');
-
-    if(errorContainer) {
-      errorContainer.classList.remove('custom-input--error');
-    }
   }
 
   return (

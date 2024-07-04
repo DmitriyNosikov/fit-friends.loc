@@ -1,6 +1,6 @@
 import { ReactElement } from 'react';
 import { Route, Routes } from 'react-router-dom';
-import { AppRoute, AuthorizationStatus } from '../../const';
+import { AppRoute } from '../../const';
 
 import Page404 from '../../pages/page404/page404';
 import Login from '@client/src/pages/login/login';
@@ -11,6 +11,7 @@ import Layout from '../layout/layout';
 import PrivateRoute from '../private-route/private-route';
 import OnlyUnauthorizedRoute from '../only-unauthorized-route/only-unauthorized-route';
 import Intro from '@client/src/pages/intro/intro';
+import PersonalAccount from '../personal-account/personal-account';
 
 // TODO: Нужен Helmet для смены заголовков
 
@@ -40,6 +41,12 @@ export default function App(): ReactElement {
           <OnlyUnauthorizedRoute children={
             <Registration />
           }/>
+        }/>
+
+        <Route path={AppRoute.ACCOUNT} element={
+          <PrivateRoute redirectTo={AppRoute.INTRO}>
+            <PersonalAccount />
+          </PrivateRoute>
         }/>
 
         <Route path="*" element={<Page404 />} />

@@ -1,8 +1,8 @@
 import { Entity } from '@server/libs/entities';
 import { StorableEntityInterface } from '@server/libs/interfaces';
 import { TrainingInterface } from './interfaces/training.interface';
-import { Gender, TrainingType, UserLevel } from '@server/libs/types';
-import { TrainingDuration } from '@server/libs/types/training-duration.enum';
+import { Gender, TrainingDuration, TrainingType, UserLevel } from '@server/libs/types';
+
 
 export const TRAINING_DEFAULT = {
   RATING: 0,

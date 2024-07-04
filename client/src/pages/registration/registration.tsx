@@ -7,10 +7,10 @@ import useAdditionalInfo from '@client/src/hooks/useAdditionalInfo';
 import { getAdditionalInfo } from '@client/src/store/slices/user-process/user-process.selectors';
 import { registerAction } from '@client/src/store/actions/api-user-action';
 
-import RegistrationLocation from '@client/src/components/registration-location/registration-location';
-import RegistrationAvatar from '@client/src/components/registration-avatar/registration-avatar';
-import RegistrationRole from '@client/src/components/registration-role/registration-role';
-import RegistrationGender from '@client/src/components/registration-gender/registration-gender';
+import RegistrationLocation from '@client/src/components/registration/registration-location/registration-location';
+import RegistrationAvatar from '@client/src/components/registration/registration-avatar/registration-avatar';
+import RegistrationRole from '@client/src/components/registration/registration-role/registration-role';
+import RegistrationGender from '@client/src/components/registration/registration-gender/registration-gender';
 import { clearFieldError, validateFields } from '../../validation/registration-validation';
 
 import { CreateUserDTO } from '@shared/user';

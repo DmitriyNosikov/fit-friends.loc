@@ -23,6 +23,7 @@ export const AppRoute = {
   INTRO: '/intro',
   LOGIN: '/login',
   REGISTRATION: '/registration',
+  ACCOUNT: '/account',
   PAGE_404: '/page404',
 } as const;
 

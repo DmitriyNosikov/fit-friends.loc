@@ -148,7 +148,7 @@ export class BalanceController {
     await this.balanceService.deleteBalance(balanceId, userId);
   }
 
-  @Patch('increase/:serviceId/:amount')
+  @Patch('/:balanceId/increase/:amount')
   @ApiOperation({ summary: 'Increase training balance by passed amount' })
   @ApiResponse({
     type: CreateBalanceRDO,
@@ -160,17 +160,16 @@ export class BalanceController {
     description: BalanceMessage.ERROR.NOT_FOUND
   })
   public async increaseBalance(
-    @Param('serviceId') serviceId: string,
+    @Param('balanceId') balanceId: string,
     @Param('amount') amount: number,
     @Body('userId') userId: string
   ): Promise<CreateBalanceRDO> {
-    const balance = await this.balanceService.getUserBalanceByServiceId(serviceId, userId)
-    const newBalance = await this.balanceService.increaseTrainingBalance(balance.id, userId, amount);
+    const newBalance = await this.balanceService.increaseTrainingBalance(balanceId, userId, amount);
 
     return fillDTO(CreateBalanceRDO, newBalance.toPOJO());
   }
 
-  @Patch('decrease/:serviceId/:amount')
+  @Patch(':balanceId/decrease/:amount')
   @ApiOperation({ summary: 'Decrease training balance by passed amount' })
   @ApiResponse({
     type: CreateBalanceRDO,
@@ -182,12 +181,11 @@ export class BalanceController {
     description: BalanceMessage.ERROR.NOT_FOUND
   })
   public async decreaseBalance(
-    @Param('serviceId') serviceId: string,
+    @Param('balanceId') balanceId: string,
     @Param('amount') amount: number,
     @Body('userId') userId: string
   ): Promise<CreateBalanceRDO> {
-    const balance = await this.balanceService.getUserBalanceByServiceId(serviceId, userId)
-    const newBalance = await this.balanceService.decreaseTrainingBalance(balance.id, userId, amount);
+    const newBalance = await this.balanceService.decreaseTrainingBalance(balanceId, userId, amount);
 
     return fillDTO(CreateBalanceRDO, newBalance.toPOJO());
   }

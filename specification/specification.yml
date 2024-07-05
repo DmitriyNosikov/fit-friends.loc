@@ -752,12 +752,12 @@ paths:
         "200":
           description: Balance has been successfully deleted
       tags: *a5
-  /api/balance/increase/{serviceId}/{amount}:
+  /api/balance/{balanceId}/increase/{amount}:
     patch:
       operationId: BalanceController_increaseBalance
       summary: Increase training balance by passed amount
       parameters:
-        - name: serviceId
+        - name: balanceId
           required: true
           in: path
           schema:
@@ -777,12 +777,12 @@ paths:
         "404":
           description: Balance not found
       tags: *a5
-  /api/balance/decrease/{serviceId}/{amount}:
+  /api/balance/{balanceId}/decrease/{amount}:
     patch:
       operationId: BalanceController_decreaseBalance
       summary: Decrease training balance by passed amount
       parameters:
-        - name: serviceId
+        - name: balanceId
           required: true
           in: path
           schema:

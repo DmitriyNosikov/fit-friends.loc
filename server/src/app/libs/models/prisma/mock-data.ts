@@ -5,20 +5,21 @@ const ADMIN_USER_ID = "dg34gdf5-dfh4-gh46-wef4-gfl78gn5hfh5";
 const SERVICE_ID_ONE = "u8320e27-cb56-4c74-b633-kfd093d812n4";
 const SERVICE_ID_TWO = "b3110e27-df4g-j456-3gf4-d71d697f03e9";
 const SERVICE_ID_THREE = "md98229j-k4g7-hd94-k4cj-fj45f34gdf68";
+const SERVICE_ID_FOUR = "kf98229j-tgg7-hp92-hy5f-ht45f34gdf35";
 
-export const UserRoleEnum = {
+const UserRoleEnum = {
   ADMIN: 'admin',
   CLIENT: 'client',
   TRAINER: 'trainer'
 } as const;
 
-export const UserLevelEnum = {
+const UserLevelEnum = {
   NEWBIE: 'новичок',
   REGULAR: 'любитель',
   PRO: 'профессионал',
 } as const;
 
-export const TrainingTypeEnum = {
+const TrainingTypeEnum = {
   YOGA: 'йога',
   RUNNING: 'бег',
   BOX: 'бокс',
@@ -28,23 +29,23 @@ export const TrainingTypeEnum = {
   PILATES: 'пилатес',
 } as const;
 
-export type TrainingType = (typeof TrainingTypeEnum)[keyof typeof TrainingTypeEnum];
-export const trainingTypeList: TrainingType[] = ['йога', 'бег', 'бокс', 'стрейчинг', 'кроссфит', 'аэробика', 'пилатес'];
+type TrainingType = (typeof TrainingTypeEnum)[keyof typeof TrainingTypeEnum];
+const trainingTypeList: TrainingType[] = ['йога', 'бег', 'бокс', 'стрейчинг', 'кроссфит', 'аэробика', 'пилатес'];
 
-export const TrainingDurationEnum = {
+const TrainingDurationEnum = {
   HALF_HOUR: '10-30',
   HOUR: '30-50',
   HOUR_AND_HALF: '50-80',
-  TWO_HOUDS: '80-100',
+  TWO_HOURS: '80-100',
 } as const;
 
-export const GenderEnum = {
+const GenderEnum = {
   MALE: 'мужской',
   FEMALE: 'женский',
   NEVERMIND: 'неважно',
 } as const;
 
-export const PaymentTypeEnum = {
+const PaymentTypeEnum = {
   VISA: 'visa',
   MIR: 'mir',
   UMONEY: 'umoney',
@@ -73,14 +74,14 @@ export function getTrainings() {
   return [
     {
       id: SERVICE_ID_ONE,
-      title: "Run, Forest",
-      background: "just/simple/training.jpg",
+      title: "fitball",
+      background: "img/content/thumbnails/training-01.jpg",
       userLevel: UserLevelEnum.NEWBIE,
-      trainingType: TrainingTypeEnum.AEROBICS,
+      trainingType: TrainingTypeEnum.STRETCHING,
       trainingDuration: TrainingDurationEnum.HALF_HOUR,
       price: 1000,
       calories: 1100,
-      description: "Simple training for simple person",
+      description: "Тренировка на фитболе — отличном тренажере для развития чувства баланса и равновесия, улучшения координации.",
       gender: GenderEnum.NEVERMIND,
       video: "test/video/later.avi",
       trainersName: "Johny",
@@ -88,32 +89,47 @@ export function getTrainings() {
     },
     {
       id: SERVICE_ID_TWO,
-      title: "Like a pro",
-      background: "train/like/pro.png",
+      title: "run, forrest",
+      background: "img/content/thumbnails/training-02.jpg",
       userLevel: UserLevelEnum.REGULAR,
       trainingType: TrainingTypeEnum.RUNNING,
       trainingDuration: TrainingDurationEnum.HALF_HOUR,
       price: 1500,
       calories: 1450,
-      description: "Regular running day",
-      gender: GenderEnum.NEVERMIND,
+      description: "Узнайте правильную технику бега, развивайте выносливость и откройте для себя все секреты длительных пробежек.",
+      gender: GenderEnum.MALE,
       video: "test/video/later.avi",
       trainersName: "Alexa",
       isSpecial: false
     },
     {
       id: SERVICE_ID_THREE,
-      title: "Run, Forest!",
-      background: "just/run/dont/stop.png",
-      userLevel: UserLevelEnum.PRO,
+      title: "full body stretch",
+      background: "img/content/thumbnails/training-03.jpg",
+      userLevel: UserLevelEnum.REGULAR,
       trainingType: TrainingTypeEnum.RUNNING,
-      trainingDuration: TrainingDurationEnum.HOUR,
+      trainingDuration: TrainingDurationEnum.TWO_HOURS,
       price: 2500,
       calories: 2000,
-      description: "Training for really running fans!",
+      description: "Комплекс упражнений на растяжку всего тела для новичков. Плавное погружение в стретчинг и умеренная нагрузка.",
       gender: GenderEnum.NEVERMIND,
       video: "test/video/later.avi",
       trainersName: "Evil",
+      isSpecial: true
+    },
+    {
+      id: SERVICE_ID_FOUR,
+      title: "devil's cindy",
+      background: "img/content/thumbnails/training-03.jpg",
+      userLevel: UserLevelEnum.PRO,
+      trainingType: TrainingTypeEnum.CROSSFIT,
+      trainingDuration: TrainingDurationEnum.HOUR,
+      price: 2200,
+      calories: 2700,
+      description: "Знаменитый кроссфит комплекс. Синди — универсальная тренировка для развития функциональной силы.",
+      gender: GenderEnum.FEMALE,
+      video: "test/video/later.avi",
+      trainersName: "Cindy",
       isSpecial: true
     }
   ];

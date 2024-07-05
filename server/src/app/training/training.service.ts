@@ -96,6 +96,10 @@ export class TrainingService {
     const filteredQuery = fillDTO(TrainingSearchQuery, query);
     const omitedQuery = omitUndefined(filteredQuery as Record<string, unknown>);
 
+    if(query.isSpecial !== undefined && query.isSpecial !== null) {
+      omitedQuery.isSpecial = query.isSpecial
+    }
+
     return omitedQuery;
   }
 }

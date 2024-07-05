@@ -7,7 +7,7 @@ Content-Type: application/json
 ###
 
 @trainingId = md98229j-k4g7-hd94-k4cj-fj45f34gdf68
-@authorization = Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJkZzM0Z2RmNS1kZmg0LWdoNDYtd2VmNC1nZmw3OGduNWhmaDUiLCJlbWFpbCI6Imlyb24tbWFuQHN0YXJraW5kdXN0cmllcy5pdCIsIm5hbWUiOiJUb255Iiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzIwMTY1NTIzLCJleHAiOjE3MjAxNjY0MjN9.aa7GPMBHEn8mRwT7_ELm1f4VpWU6J8kieXuvkbBtFHo
+@authorization = Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJkZzM0Z2RmNS1kZmg0LWdoNDYtd2VmNC1nZmw3OGduNWhmaDUiLCJlbWFpbCI6Imlyb24tbWFuQHN0YXJraW5kdXN0cmllcy5pdCIsIm5hbWUiOiJUb255Iiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzIwMTY2NjUyLCJleHAiOjE3MjAxNjc1NTJ9.YXDIul0C16IJX9vmo2d_RTx0_sCdgkMwQBV2PEYU8-c
 
 # /////////////////////////////// CREATE ///////////////////////////////
 # Create new training
@@ -55,6 +55,13 @@ Content-Type: application/json
 {{authorization}}
 ###
 
+# Get special trainings list
+GET {{baseUrl}}/?isSpecial=true HTTP/1.1
+Content-Type: application/json
+{{authorization}}
+###
+
+# /////////////////////////////// DETAIL INFO ///////////////////////////////
 # Get detail info about training
 GET {{baseUrl}}/{{trainingId}} HTTP/1.1
 Content-Type: application/json

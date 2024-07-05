@@ -189,6 +189,11 @@ export class TrainingRepository extends BasePostgresRepository<TrainingEntity, T
       this.setRatingFilter(query, andFilters);
     }
 
+    // Поиск по специальным предложениям
+    if(query?.isSpecial !== undefined && query?.isSpecial !== null) {  
+      where.isSpecial = query.isSpecial;
+    }
+
     // Добавление установелнных фильтров
     if(andFilters.length > 0) {
       where.AND = [];

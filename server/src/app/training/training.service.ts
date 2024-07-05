@@ -34,8 +34,8 @@ export class TrainingService {
       throw new NotFoundException(`Can't find products by passed params " ${preparedQuery}"`);
     }
 
+    // Сортировка тренировок пользователя от более подходящих к менее подходящим
     trainings.entities = await this.sortTrainingsByUser(query.userId, trainings.entities);
-    console.log('SORTED TRAININGS: ', await this.sortTrainingsByUser(query.userId, trainings.entities));
 
     return trainings;
   }
@@ -136,8 +136,6 @@ export class TrainingService {
       if (dayCaloriesLimit <= trainingB.calories) {
         trainingBWeight += 1;
       }
-
-      console.log(`WEIGHTS: A[${trainingA.id}]: ${trainingAWeight} | B[${trainingB.id}]: ${trainingBWeight}`);
 
       // Возвращаем результат сравнения
       // Если тренировка А подходит больше - ее вес будет больше, чем тренировка B и наоборот

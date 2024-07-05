@@ -7,7 +7,7 @@ Content-Type: application/json
 ###
 
 @trainingId = md98229j-k4g7-hd94-k4cj-fj45f34gdf68
-@authorization = Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJkZzM0Z2RmNS1kZmg0LWdoNDYtd2VmNC1nZmw3OGduNWhmaDUiLCJlbWFpbCI6Imlyb24tbWFuQHN0YXJraW5kdXN0cmllcy5pdCIsIm5hbWUiOiJUb255Iiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzIwMTY2NjUyLCJleHAiOjE3MjAxNjc1NTJ9.YXDIul0C16IJX9vmo2d_RTx0_sCdgkMwQBV2PEYU8-c
+@authorization = Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJkZzM0Z2RmNS1kZmg0LWdoNDYtd2VmNC1nZmw3OGduNWhmaDUiLCJlbWFpbCI6Imlyb24tbWFuQHN0YXJraW5kdXN0cmllcy5pdCIsIm5hbWUiOiJUb255Iiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzIwMjExMTExLCJleHAiOjE3MjAyMTIwMTF9.Ks_UmpNLNNeaZ_Gm-Ocbj9xhU6vfRRcqWb53o78_bk8
 
 # /////////////////////////////// CREATE ///////////////////////////////
 # Create new training

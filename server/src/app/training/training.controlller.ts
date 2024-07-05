@@ -39,6 +39,8 @@ export class TrainingController {
   }
 
   @Get('/')
+  @UseGuards(JWTAuthGuard)
+  @UseInterceptors(InjectUserIdInterceptor)
   @ApiOperation({ summary: 'Get trainings list by passed params (or without it)' })
   @ApiQuery({
     name: "title",
@@ -137,9 +139,11 @@ export class TrainingController {
     status: HttpStatus.NOT_FOUND,
     description: TrainingMessage.ERROR.NOT_FOUND
   })
-  public async index(@Query() query?: TrainingSearchQuery): Promise<TrainingsWithPaginationRDO | null> {
-    const preparedQuery = this.trainingService.filterQuery(query);
-    const documents = await this.trainingService.search(preparedQuery);
+  public async index(
+    @Body('userId') userId: string,
+    @Query() query?: TrainingSearchQuery
+  ): Promise<TrainingsWithPaginationRDO | null> {
+    const documents = await this.trainingService.search({ ...query, userId });
 
     if(!documents.entities || documents.entities.length <= 0) {
       return;

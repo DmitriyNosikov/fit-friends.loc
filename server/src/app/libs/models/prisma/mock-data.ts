@@ -85,6 +85,7 @@ export function getTrainings() {
       gender: GenderEnum.NEVERMIND,
       video: "test/video/later.avi",
       trainersName: "Johny",
+      rating: 0,
       isSpecial: false
     },
     {
@@ -100,6 +101,7 @@ export function getTrainings() {
       gender: GenderEnum.MALE,
       video: "test/video/later.avi",
       trainersName: "Alexa",
+      rating: 0,
       isSpecial: false
     },
     {
@@ -115,6 +117,7 @@ export function getTrainings() {
       gender: GenderEnum.NEVERMIND,
       video: "test/video/later.avi",
       trainersName: "Evil",
+      rating: 0,
       isSpecial: true
     },
     {
@@ -130,6 +133,7 @@ export function getTrainings() {
       gender: GenderEnum.FEMALE,
       video: "test/video/later.avi",
       trainersName: "Cindy",
+      rating: 0,
       isSpecial: true
     }
   ];

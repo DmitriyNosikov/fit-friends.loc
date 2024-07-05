@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Gender, GenderEnum, TrainingType, TrainingTypeEnum, UserLevel, UserLevelEnum, genderTypeList, trainingTypeList, userLevelList } from '@server/libs/types';
 import { TrainingDuration, TrainingDurationEnum, trainingDurationList } from '@shared/types/training-duration.enum';
-import { TrainingValidation } from '@server/training/training.constant';
+import { TRAINING_DEFAULT, TrainingValidation } from '@server/training/training.constant';
 import {
     IsBoolean,
     IsIn,
@@ -118,7 +118,7 @@ export class CreateTrainingDTO {
   @Max(TrainingValidation.RATING.MAX)
   @IsNumber()
   @IsOptional()
-  rating?: number;
+  rating?: number = TRAINING_DEFAULT.RATING;
 
   @ApiProperty({
     description: 'Training creator`s name',

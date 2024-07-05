@@ -14,7 +14,7 @@ export default function SpecialForYouItem({ training }: SpecialForYouItemProps):
   const { id, background, title } = training;
 
   return (
-    <>
+    <li className="special-for-you__item" key={training.id}>
       <div className="thumbnail-preview">
         <div className="thumbnail-preview__image">
           <picture>
@@ -39,6 +39,6 @@ export default function SpecialForYouItem({ training }: SpecialForYouItemProps):
           </div>
         </div>
       </div>
-    </>
+    </li>
   )
 }

@@ -3,6 +3,7 @@ import { MessagesType } from '@server/libs/types';
 export const BalanceMessage: MessagesType = {
   ERROR: {
     NOT_FOUND: 'Balance not found',
+    EMPTY_BALANCE: 'Balance not found or empty',
     CANT_UPDATE: 'Can`t update order. Possible reason: Object with fields to update are empty',
     HAVENT_ACCESS: 'Sorry, balance is not exists or you haven`t permission to this'
   },

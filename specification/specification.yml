@@ -697,26 +697,22 @@ paths:
         "404":
           description: Balance not found
       tags: *a5
-  /api/balance/{balanceId}:
+  /api/balance/count:
     get:
-      operationId: BalanceController_show
-      summary: Get balance detail info
-      parameters:
-        - name: balanceId
-          required: true
-          in: path
-          schema:
-            type: string
+      operationId: BalanceController_countBalance
+      summary: Get summary user`s balance
+      parameters: []
       responses:
         "200":
           description: Balance found
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/CreateBalanceRDO"
+                type: number
         "404":
           description: Balance not found
       tags: *a5
+  /api/balance/{balanceId}:
     patch:
       operationId: BalanceController_updateTraining
       summary: Update balance info

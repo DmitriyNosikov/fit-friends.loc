@@ -97,10 +97,10 @@ export class BalanceController {
     return result;
   }
 
-  @Get(':balanceId')
-  @ApiOperation({ summary: 'Get balance detail info' })
+  @Get('/count')
+  @ApiOperation({ summary: 'Get summary user`s balance' })
   @ApiResponse({
-    type: CreateBalanceRDO,
+    type: Number,
     status: HttpStatus.OK,
     description: BalanceMessage.SUCCESS.FOUND
   })
@@ -108,13 +108,10 @@ export class BalanceController {
     status: HttpStatus.NOT_FOUND,
     description: BalanceMessage.ERROR.NOT_FOUND
   })
-  public async show(
-    @Param('balanceId') balanceId: string,
-    @Body('userId') userId: string
-  ): Promise<CreateBalanceRDO> {
-    const balanceDetail = await this.balanceService.getBalanceDetail(balanceId, userId);
+  public async countBalance(@Body('userId') userId: string): Promise<number> {
+    const trainingBalance = await this.balanceService.countAvailableTrainings(userId);
 
-    return fillDTO(CreateBalanceRDO, balanceDetail.toPOJO());
+    return trainingBalance;
   }
 
   @Patch(':balanceId')

@@ -5,12 +5,14 @@ import { TrainingEntity } from './training.entity';
 import { TrainingMessage } from './training.constant';
 import { CreateTrainingDTO, TrainingSearchQuery, UpdateTrainingDTO } from '@shared/training';
 import { fillDTO, omitUndefined } from '@server/libs/helpers';
+import { UserService } from '@server/user/user.service';
 
 @Injectable()
 export class TrainingService {
   constructor(
     private readonly trainingRepository: TrainingRepository,
     private readonly trainingFactory: TrainingFactory,
+    private readonly userService: UserService,
   ) { }
 
   public async findById(trainingId: string): Promise<TrainingEntity | null> {
@@ -62,6 +64,22 @@ export class TrainingService {
     }
 
     return await this.trainingRepository.deleteById(trainingId);
+  }
+
+  public async getTrainingsForUser(userId: string) {
+    const userInfo = await this.userService.findById(userId);
+    const { trainingType, trainingDuration, level, dayCaloriesLimit } = userInfo;
+
+    const searchQuery = { trainingType, trainingDuration, level, dayCaloriesTo: dayCaloriesLimit };
+    const filteredQuery = this.filterQuery(searchQuery);
+
+    const convenientTrainings = await this.trainingRepository.getTrainingsForUser(filteredQuery);
+
+    if(!convenientTrainings) {
+      return;
+    }
+
+    return convenientTrainings;
   }
 
   public async exists(trainingId: string): Promise<boolean> {

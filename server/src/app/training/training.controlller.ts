@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, HttpStatus, Param, Patch, Post, Query, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpStatus, Param, Patch, Post, Query, UseGuards, UseInterceptors } from '@nestjs/common';
 import { ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import {
   CreateTrainingDTO,
@@ -15,6 +15,7 @@ import { JWTAuthGuard } from '@server/user/guards/jwt-auth.guard';
 import { DefaultSearchParam } from '@shared/types/search/base-search-query.type';
 import { SortDirection } from '@shared/types/sort/sort-direction.enum';
 import { genderTypeList, trainingTypeList } from '@server/libs/types';
+import { InjectUserIdInterceptor } from '@server/libs/interceptors/inject-user-id.interceptor';
 
 @ApiTags('trainings')
 @Controller('trainings')
@@ -150,6 +151,34 @@ export class TrainingController {
     }
 
     return trainings;
+  }
+
+  @Get('/convenient-trainings')
+  @UseGuards(JWTAuthGuard)
+  @UseInterceptors(InjectUserIdInterceptor)
+  @ApiOperation({ summary: 'Get convenient trainings for user by quiz params' })
+  @ApiResponse({
+    type: [CreateTrainingRDO],
+    status: HttpStatus.OK,
+    description: TrainingMessage.SUCCESS.FOUND
+  })
+  @ApiResponse({
+    status: HttpStatus.NOT_FOUND,
+    description: TrainingMessage.ERROR.NOT_FOUND
+  })
+  public async getTrainingsForUser(@Body('userId') userId: string): Promise<TrainingsWithPaginationRDO | null> {
+    const documents = await this.trainingService.getTrainingsForUser(userId);
+
+    if(!documents.entities || documents.entities.length <= 0) {
+      return;
+    }
+
+    const convenientTrainings = {
+      ...documents,
+      entities: documents.entities.map((document) => document.toPOJO())
+    }
+
+    return convenientTrainings;
   }
 
   @Get(':trainingId')

@@ -1,7 +1,7 @@
 import { DefaultSearchParam } from '@shared/types/search/base-search-query.type';
 import { IsNumber, Min, Max, IsString, IsIn, IsOptional, IsDateString } from 'class-validator';
 import { Expose, Transform } from 'class-transformer';
-import { Gender, TrainingType, genderTypeList, trainingTypeList } from '@server/libs/types';
+import { Gender, TrainingDuration, TrainingType, UserLevel, genderTypeList, trainingDurationList, trainingTypeList, userLevelList } from '@server/libs/types';
 import { TrainingValidation } from '@server/training/training.constant';
 import { TrainingSortType, TrainingSortTypeEnum } from './training-sort-type.enum';
 import { SortDirection, SortDirectionEnum } from '@shared/types';
@@ -28,6 +28,25 @@ export class TrainingSearchQuery {
   @IsString({ each: true })
   @IsOptional()
   public trainingType?: TrainingType | TrainingType[];
+
+  @Expose()
+  @Transform(({ value }) => {
+    if(value && !Array.isArray(value)) {
+      value = [value];
+    }
+
+    return value;
+  })
+  @IsIn(trainingDurationList, { each: true })
+  @IsString({ each: true })
+  @IsOptional()
+  public trainingDuration?: TrainingDuration | TrainingDuration[];
+
+  @Expose()
+  @IsIn(userLevelList)
+  @IsString()
+  @IsOptional()
+  public level?: UserLevel;
 
   @Expose()
   @IsIn(genderTypeList)
@@ -64,7 +83,7 @@ export class TrainingSearchQuery {
   })
   @IsNumber()
   @IsOptional()
-  public caloriesFrom?: number;
+  public dayCaloriesFrom?: number;
 
   @Expose()
   @Transform((field) => {
@@ -74,7 +93,7 @@ export class TrainingSearchQuery {
   })
   @IsNumber()
   @IsOptional()
-  public  caloriesTo?: number;
+  public  dayCaloriesTo?: number;
 
   @Expose()
   @Transform((field) => {

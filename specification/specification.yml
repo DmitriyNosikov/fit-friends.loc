@@ -310,6 +310,23 @@ paths:
         "404":
           description: Training not found
       tags: *a2
+  /api/trainings/convenient-trainings:
+    get:
+      operationId: TrainingController_getTrainingsForUser
+      summary: Get convenient trainings for user by quiz params
+      parameters: []
+      responses:
+        "200":
+          description: Training found
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/CreateTrainingRDO"
+        "404":
+          description: Training not found
+      tags: *a2
   /api/trainings/{trainingId}:
     get:
       operationId: TrainingController_show

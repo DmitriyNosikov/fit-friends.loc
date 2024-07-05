@@ -56,7 +56,7 @@ export class TrainingRepository extends BasePostgresRepository<TrainingEntity, T
       this.getItemsCount(where)
     ]);
 
-    const itemsEntities = items.map((item) => this.createEntityFromDocument(item as unknown as TrainingInterface));
+    const itemsEntities = items.map((item) => this.getEntity(item));
 
     return {
       entities: itemsEntities,
@@ -101,6 +101,12 @@ export class TrainingRepository extends BasePostgresRepository<TrainingEntity, T
     });
   }
 
+  public async getTrainingsForUser(query?: TrainingSearchQuery): Promise<PaginationResult<TrainingEntity>> {
+    const convenientTrainings = await this.search(query);
+
+    return convenientTrainings;
+  }
+
   public async exists(trainingId: string): Promise<boolean> {
     const training = await this.dbClient.training.findFirst({
       where: { id: trainingId }
@@ -123,7 +129,6 @@ export class TrainingRepository extends BasePostgresRepository<TrainingEntity, T
     const orderBy: Prisma.TrainingOrderByWithRelationInput = {};
 
     const andFilters: AndFilters = [];
-    where.AND = [];
 
     // Поиск по заголовку
     if(query?.title) {
@@ -133,15 +138,35 @@ export class TrainingRepository extends BasePostgresRepository<TrainingEntity, T
       }
     }
 
-    // Поиск по определенному типу
+    // Поиск по определенному типу тренировок
     if(query?.trainingType) {
       if(!Array.isArray(query.trainingType)) {
         query.trainingType = [query.trainingType];
       }
 
-      where.trainingType = {
-        in: query.trainingType,
-      };
+      if(query.trainingType.length > 0) {
+        where.trainingType = {
+          in: query.trainingType,
+        };
+      }
+    }
+
+    // Поиск по длительности тренировок
+    if(query?.trainingDuration) {
+      if(!Array.isArray(query.trainingDuration)) {
+        query.trainingDuration = [query.trainingDuration];
+      }
+
+      if(query.trainingDuration.length > 0) {
+        where.trainingDuration = {
+          in: query.trainingDuration,
+        };
+      }
+    }
+
+    // Поиск по уровню пользователя
+    if(query?.level) {  
+      where.userLevel = query.level;
     }
 
     // Поиск по полу
@@ -155,8 +180,8 @@ export class TrainingRepository extends BasePostgresRepository<TrainingEntity, T
     }
 
     // Поиск по калориям/диапазону калорий
-    if(query?.caloriesFrom || query?.caloriesTo) {
-      this.setCaloriesFilter(query, andFilters);
+    if(query?.dayCaloriesFrom || query?.dayCaloriesTo) {
+      this.setDayCaloriesFilter(query, andFilters);
     }
 
     // Поиск по рейтингу/диапазону рейтингов
@@ -166,6 +191,7 @@ export class TrainingRepository extends BasePostgresRepository<TrainingEntity, T
 
     // Добавление установелнных фильтров
     if(andFilters.length > 0) {
+      where.AND = [];
       where.AND.push(...andFilters);
     }
 
@@ -175,6 +201,72 @@ export class TrainingRepository extends BasePostgresRepository<TrainingEntity, T
     orderBy[key] = value;
 
     return { where, orderBy };
+  }
+
+  private setPriceFilter(query: TrainingSearchQuery, andFilters: AndFilters ) {
+    const priceFilterFrom = [];
+    if(query?.priceFrom) {
+      priceFilterFrom.push({ price: { equals: query.priceFrom } })
+      priceFilterFrom.push({ price: { gt: query.priceFrom } })
+    }
+
+    const priceFilterTo = [];
+    if(query?.priceTo) {
+      priceFilterTo.push({ price: { equals: query.priceTo } })
+      priceFilterTo.push({ price: { lt: query.priceTo } })
+    }
+
+    if(priceFilterFrom.length > 0) {
+      andFilters.push({ OR: priceFilterFrom } as never);
+    }
+
+    if(priceFilterTo.length > 0) {
+      andFilters.push({ OR: priceFilterTo } as never);
+    }
+  }
+
+  private setDayCaloriesFilter(query: TrainingSearchQuery, andFilters: AndFilters ) {
+    const caloriesFilterFrom = [];
+    if(query?.dayCaloriesFrom) {
+      caloriesFilterFrom.push({ calories: { equals: query.dayCaloriesFrom } })
+      caloriesFilterFrom.push({ calories: { gt: query.dayCaloriesFrom } })
+    }
+
+    const caloriesFilterTo = [];
+    if(query?.dayCaloriesTo) {
+      caloriesFilterTo.push({ calories: { equals: query.dayCaloriesTo } })
+      caloriesFilterTo.push({ calories: { lt: query.dayCaloriesTo } })
+    }
+
+    if(caloriesFilterFrom.length > 0) {
+      andFilters.push({ OR: caloriesFilterFrom } as never);
+    }
+
+    if( caloriesFilterTo.length > 0) {
+      andFilters.push({ OR: caloriesFilterTo } as never);
+    }
+  }
+
+  private setRatingFilter(query: TrainingSearchQuery, andFilters: AndFilters ) {
+    const ratingFilterFrom = [];
+    if(query?.ratingFrom) {
+      ratingFilterFrom.push({ rating: { equals: query.ratingFrom } })
+      ratingFilterFrom.push({ rating: { gt: query.ratingFrom } })
+    }
+
+    const ratingFilterTo = [];
+    if(query?.ratingTo) {
+      ratingFilterTo.push({ rating: { equals: query.ratingTo } })
+      ratingFilterTo.push({ rating: { lt: query.ratingTo } })
+    }
+
+    if(ratingFilterFrom.length > 0 ) {
+      andFilters.push({ OR: ratingFilterTo } as never);
+    }
+
+    if(ratingFilterTo.length > 0) {
+      andFilters.push({ OR: ratingFilterTo } as never);
+    }
   }
 
   private getSortKeyValue(sortType: TrainingSortTypeEnum, sortDirection: SortDirectionEnum) {
@@ -194,63 +286,6 @@ export class TrainingRepository extends BasePostgresRepository<TrainingEntity, T
       default: {
         return { key: DefaultSearchParam.SORT.TYPE, value: DefaultSearchParam.SORT.DIRECTION };
       }
-    }
-  }
-
-  private setPriceFilter(query: TrainingSearchQuery, andFilters: AndFilters ) {
-    const priceFilterFrom = [];
-    if(query?.priceFrom) {
-      priceFilterFrom.push({ price: { equals: query.priceFrom } })
-      priceFilterFrom.push({ price: { gt: query.priceFrom } })
-    }
-
-    const priceFilterTo = [];
-    if(query?.priceTo) {
-      priceFilterTo.push({ price: { equals: query.priceTo } })
-      priceFilterTo.push({ price: { lt: query.priceTo } })
-    }
-
-    if(priceFilterFrom.length > 0 || priceFilterTo.length > 0) {
-      andFilters.push({ OR: priceFilterFrom } as never);
-      andFilters.push({ OR: priceFilterTo } as never);
-    }
-  }
-
-  private setCaloriesFilter(query: TrainingSearchQuery, andFilters: AndFilters ) {
-    const caloriesFilterFrom = [];
-    if(query?.caloriesFrom) {
-      caloriesFilterFrom.push({ calories: { equals: query.caloriesFrom } })
-      caloriesFilterFrom.push({ calories: { gt: query.caloriesFrom } })
-    }
-
-    const caloriesFilterTo = [];
-    if(query?.caloriesTo) {
-      caloriesFilterTo.push({ calories: { equals: query.caloriesTo } })
-      caloriesFilterTo.push({ calories: { lt: query.caloriesTo } })
-    }
-
-    if(caloriesFilterFrom.length > 0 || caloriesFilterTo.length > 0) {
-      andFilters.push({ OR: caloriesFilterFrom } as never);
-      andFilters.push({ OR: caloriesFilterTo } as never);
-    }
-  }
-
-  private setRatingFilter(query: TrainingSearchQuery, andFilters: AndFilters ) {
-    const ratingFilterFrom = [];
-    if(query?.ratingFrom) {
-      ratingFilterFrom.push({ rating: { equals: query.ratingFrom } })
-      ratingFilterFrom.push({ rating: { gt: query.ratingFrom } })
-    }
-
-    const ratingFilterTo = [];
-    if(query?.ratingTo) {
-      ratingFilterTo.push({ rating: { equals: query.ratingTo } })
-      ratingFilterTo.push({ rating: { lt: query.ratingTo } })
-    }
-
-    if(ratingFilterFrom.length > 0 || ratingFilterTo.length > 0) {
-      andFilters.push({ OR: ratingFilterFrom } as never);
-      andFilters.push({ OR: ratingFilterTo } as never);
     }
   }
 

@@ -28,6 +28,9 @@ export const TrainingTypeEnum = {
   PILATES: 'пилатес',
 } as const;
 
+export type TrainingType = (typeof TrainingTypeEnum)[keyof typeof TrainingTypeEnum];
+export const trainingTypeList: TrainingType[] = ['йога', 'бег', 'бокс', 'стрейчинг', 'кроссфит', 'аэробика', 'пилатес'];
+
 export const TrainingDurationEnum = {
   HALF_HOUR: '10-30',
   HOUR: '30-50',
@@ -59,6 +62,10 @@ export function getAdminUser(): AuthUserInterface {
     gender: "мужской",
     location: "звездная",
     role: UserRoleEnum.ADMIN,
+    level: UserLevelEnum.PRO,
+    dayCaloriesLimit: 3300,
+    loseCaloriesLimit: 7800,
+    trainingType: trainingTypeList
   };
 }
 

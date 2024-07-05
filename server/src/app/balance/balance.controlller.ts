@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, HttpStatus, Param, Patch, Post, UseGuards, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpStatus, Param, Patch, Post, Query, UseGuards, UseInterceptors } from '@nestjs/common';
 import { ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 
 import { JWTAuthGuard } from '@server/user/guards/jwt-auth.guard';
@@ -12,11 +12,8 @@ import { BalanceMessage } from './balance.constant';
 
 
 import { PaginationResult } from '@server/libs/interfaces';
-import { DefaultSearchParam } from '@shared/types/search/base-search-query.type';
+import { BaseSearchQuery, DefaultSearchParam } from '@shared/types/search/base-search-query.type';
 import { SortDirection, SortType } from '@shared/types';
-
-
-
 @ApiTags('balance')
 @Controller('balance')
 @UseGuards(JWTAuthGuard)
@@ -82,8 +79,15 @@ export class BalanceController {
     status: HttpStatus.NOT_FOUND,
     description: BalanceMessage.ERROR.NOT_FOUND
   })
-  public async index(@Body('userId') userId: string): Promise<PaginationResult<CreateBalanceRDO>> {
-    const trainingBalance = await this.balanceService.search({ userId });
+  public async index(
+    @Query() query: BaseSearchQuery,
+    @Body('userId') userId: string
+  ): Promise<PaginationResult<CreateBalanceRDO>> {
+    const searchQuery = {
+      ...query,
+      userId
+    };
+    const trainingBalance = await this.balanceService.search(searchQuery);
 
     const result = {
       ...trainingBalance,

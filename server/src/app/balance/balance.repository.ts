@@ -26,15 +26,16 @@ export class BalanceRepository extends BasePostgresRepository<BalanceEntity, Bal
 
 
   public async findById(balanceId: string): Promise<BalanceEntity | null> {
-    const order = await this.dbClient.balance.findFirst({
-      where: { id: balanceId }
+    const balance = await this.dbClient.balance.findFirst({
+      where: { id: balanceId },
+      include: { order: true }
     });
 
-    if (!order) {
+    if (!balance) {
       return null;
     }
 
-    return this.getEntity(order);
+    return this.getEntity(balance);
   }
 
   public async findByServiceId(serviceId: string, userId: string): Promise<BalanceEntity | null> {

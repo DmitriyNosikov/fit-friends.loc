@@ -1,6 +1,28 @@
 import { ReactElement } from 'react';
 
+import { useAppSelector } from '@client/src/hooks';
+import useConvenientTrainingsList from '@client/src/hooks/useConvenientTrainingsList';
+
+import {
+  getConvenientTrainingsLoadingStatus,
+  getUserConvenientTrainings
+} from '@client/src/store/slices/training-process/training-process.selectors';
+
+import Spinner from '../tools/spinner/spinner';
+import SpecialForYouItem from './special-for-you-item/special-for-you-item';
+import Stub from '../tools/stub/stub';
+
 export default function SpecialForYou(): ReactElement {
+  useConvenientTrainingsList();
+
+  const convenientTrainings = useAppSelector(getUserConvenientTrainings);
+  const loadingStatus = useAppSelector(getConvenientTrainingsLoadingStatus);
+
+  if(loadingStatus) {
+    return <Spinner />
+  }
+
+
   return (
     <section className="special-for-you">
       <div className="container">
@@ -30,97 +52,27 @@ export default function SpecialForYou(): ReactElement {
               </button>
             </div>
           </div>
+
+          {
+            (!convenientTrainings?.entities || convenientTrainings?.entities.length <= 0) && <Stub />
+          }
+
           <ul className="special-for-you__list">
-            <li className="special-for-you__item">
-              <div className="thumbnail-preview">
-                <div className="thumbnail-preview__image">
-                  <picture>
-                    <source
-                      type="image/webp"
-                      srcSet="img/content/thumbnails/preview-03.webp, img/content/thumbnails/preview-03@2x.webp 2x"
-                    />
-                    <img
-                      src="img/content/thumbnails/preview-03.jpg"
-                      srcSet="img/content/thumbnails/preview-03@2x.jpg 2x"
-                      width={452}
-                      height={191}
-                      alt=""
-                    />
-                  </picture>
-                </div>
-                <div className="thumbnail-preview__inner">
-                  <h3 className="thumbnail-preview__title">crossfit</h3>
-                  <div className="thumbnail-preview__button-wrapper">
-                    <a
-                      className="btn btn--small thumbnail-preview__button"
-                      href="#"
-                    >
-                      Подробнее
-                    </a>
-                  </div>
-                </div>
-              </div>
-            </li>
-            <li className="special-for-you__item">
-              <div className="thumbnail-preview">
-                <div className="thumbnail-preview__image">
-                  <picture>
-                    <source
-                      type="image/webp"
-                      srcSet="img/content/thumbnails/preview-02.webp, img/content/thumbnails/preview-02@2x.webp 2x"
-                    />
-                    <img
-                      src="img/content/thumbnails/preview-02.jpg"
-                      srcSet="img/content/thumbnails/preview-02@2x.jpg 2x"
-                      width={452}
-                      height={191}
-                      alt=""
-                    />
-                  </picture>
-                </div>
-                <div className="thumbnail-preview__inner">
-                  <h3 className="thumbnail-preview__title">power</h3>
-                  <div className="thumbnail-preview__button-wrapper">
-                    <a
-                      className="btn btn--small thumbnail-preview__button"
-                      href="#"
-                    >
-                      Подробнее
-                    </a>
-                  </div>
-                </div>
-              </div>
-            </li>
-            <li className="special-for-you__item">
-              <div className="thumbnail-preview">
-                <div className="thumbnail-preview__image">
-                  <picture>
-                    <source
-                      type="image/webp"
-                      srcSet="img/content/thumbnails/preview-01.webp, img/content/thumbnails/preview-01@2x.webp 2x"
-                    />
-                    <img
-                      src="img/content/thumbnails/preview-01.jpg"
-                      srcSet="img/content/thumbnails/preview-01@2x.jpg 2x"
-                      width={452}
-                      height={191}
-                      alt=""
-                    />
-                  </picture>
-                </div>
-                <div className="thumbnail-preview__inner">
-                  <h3 className="thumbnail-preview__title">boxing</h3>
-                  <div className="thumbnail-preview__button-wrapper">
-                    <a
-                      className="btn btn--small thumbnail-preview__button"
-                      href="#"
-                    >
-                      Подробнее
-                    </a>
-                  </div>
-                </div>
-              </div>
-            </li>
+            {
+              convenientTrainings?.entities && convenientTrainings.entities.map((training) => {
+                const itemProps = {
+                  id: training.id as string,
+                  background: training.background,
+                  title: training.title
+                };
+
+                return (
+                  <li className="special-for-you__item" key={training.id}>
+                    <SpecialForYouItem training={itemProps}/>
+                  </li>
+                )
+              })
+            }
           </ul>
         </div>
       </div>

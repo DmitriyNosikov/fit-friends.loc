@@ -1,16 +1,16 @@
 import { useEffect } from 'react';
 import { useAppDispatch } from '.';
-import { fetchAdditionalInfoAction } from '../store/actions/api-user-action';
+import { fetchConvenientTrainingsAction } from '../store/actions/api-training-action';
 
 
-export default function useAdditionalInfo() {
+export default function useConvenientTrainingsList() {
   const dispatch = useAppDispatch();
 
   useEffect(() => {
     let isMounted = true;
 
     if(isMounted) {
-      dispatch(fetchAdditionalInfoAction());
+      dispatch(fetchConvenientTrainingsAction()); // Список тренировок
     }
 
     return () => {

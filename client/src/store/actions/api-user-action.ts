@@ -30,7 +30,7 @@ const APIAction = {
 } as const;
 
 // ASYNC ACTIONS
-export const getAdditionalInfoAction = createAsyncThunk<AdditionalInfoRDO, void, AsyncOptions>(
+export const fetchAdditionalInfoAction = createAsyncThunk<AdditionalInfoRDO, void, AsyncOptions>(
   APIAction.USER_GET_ADDITIONAL,
   async (_arg, { dispatch, rejectWithValue, extra: api }) => {
     dispatch(setDataLoadingStatus(true));

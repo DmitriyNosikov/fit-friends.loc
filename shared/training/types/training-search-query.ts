@@ -1,7 +1,16 @@
 import { DefaultSearchParam } from '@shared/types/search/base-search-query.type';
-import { IsNumber, Min, Max, IsString, IsIn, IsOptional, IsDateString } from 'class-validator';
+import { IsNumber, Min, Max, IsString, IsIn, IsOptional, IsDateString, IsBoolean } from 'class-validator';
 import { Expose, Transform } from 'class-transformer';
-import { Gender, TrainingDuration, TrainingType, UserLevel, genderTypeList, trainingDurationList, trainingTypeList, userLevelList } from '@server/libs/types';
+import {
+  Gender,
+  TrainingDuration,
+  TrainingType,
+  UserLevel,
+  genderTypeList,
+  trainingDurationList,
+  trainingTypeList,
+  userLevelList
+} from '@server/libs/types';
 import { TrainingValidation } from '@server/training/training.constant';
 import { TrainingSortType, TrainingSortTypeEnum } from './training-sort-type.enum';
 import { SortDirection, SortDirectionEnum } from '@shared/types';
@@ -116,6 +125,20 @@ export class TrainingSearchQuery {
   @IsNumber()
   @IsOptional()
   public ratingTo?: number;
+
+  @Expose()
+  @Transform((field) => {
+    if(field.value) {
+      if(field.value === 'false' || parseInt(field.value) <= 0) {
+        return false;
+      }
+
+      return !!field.value;
+    }
+  })
+  @IsBoolean()
+  @IsOptional()
+  public isSpecial?: boolean;
 
   // TODO: Если extends от BaseSearchQuery - возникают проблемы с полем
   // SortType и несоответстием типов. По этой причине пока полностью переносим

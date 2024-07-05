@@ -5,6 +5,7 @@ const BACKEND_API_URL = {
   USERS: `${BASE_URL}/api/users`,
   LOAD_FILES: `${BASE_URL}/api/files`,
   GET_FILES: `${BASE_URL}/api/static`,
+  TRAININGS: `${BASE_URL}/api/trainings`,
 }
 export const ApiRoute = {
   USER_API: BACKEND_API_URL.USERS,
@@ -14,7 +15,10 @@ export const ApiRoute = {
   CHECK_JWT_TOKEN: `${BACKEND_API_URL.USERS}/check`,
   GET_ADDITIONAL_INFO: `${BACKEND_API_URL.USERS}/additional`,
 
-  LOAD_FILES: `${BACKEND_API_URL.LOAD_FILES}/upload`
+  LOAD_FILES: `${BACKEND_API_URL.LOAD_FILES}/upload`,
+
+  TRAININGS_API: `${BACKEND_API_URL.TRAININGS}/`,
+  CONVENIENT_TRAININGS_API: `${BACKEND_API_URL.TRAININGS}/convenient-trainings`,
 } as const;
 
 // -- App
@@ -24,6 +28,7 @@ export const AppRoute = {
   LOGIN: '/login',
   REGISTRATION: '/registration',
   ACCOUNT: '/account',
+  TRAININGS: '/trainings',
   PAGE_404: '/page404',
 } as const;
 
@@ -32,6 +37,7 @@ export const AppRoute = {
 export const Namespace = {
   MAIN: 'MAIN',
   USER: 'USER',
+  TRAINING: 'TRAINING'
 } as const;
 
 // USER AUTH STATUSES

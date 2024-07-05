@@ -16,9 +16,7 @@ export default function Layout(): ReactElement {
         }
 
         <main className="page-content">
-          <div className="container">
-            <Outlet />
-          </div>
+          <Outlet />
         </main>
       </div>
     </>

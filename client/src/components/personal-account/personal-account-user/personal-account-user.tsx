@@ -6,6 +6,7 @@ import useAdditionalInfo from '@client/src/hooks/useAdditionalInfo';
 import { upperCaseFirst } from '@client/src/utils/common';
 import { UserLevelEnum } from '@shared/types/user-level.enum';
 import { BASE_URL } from '@client/src/services/api';
+import Spinner from '../../tools/spinner/spinner';
 
 export default function PersonalAccountUser(): ReactElement {
   useAdditionalInfo();
@@ -15,7 +16,7 @@ export default function PersonalAccountUser(): ReactElement {
 
   // TODO: Тут должен быть спиннер на загрузку данных
   if(!userInfo) {
-    return;
+    return <Spinner />
   }
 
   const {

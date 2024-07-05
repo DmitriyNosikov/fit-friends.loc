@@ -66,7 +66,7 @@ export class UserRDO {
     enum: GenderEnum
   })
   @Expose()
-  gender!: number;
+  gender!: string;
 
   @ApiProperty({
     description: 'User birth date',
@@ -112,7 +112,7 @@ export class UserRDO {
     enum: TrainingTypeEnum
   })
   @Expose()
-  trainingType!: TrainingType;
+  trainingType!: TrainingType[];
 
   @ApiProperty({
     description: 'User training time periods (in minutes)',
@@ -129,7 +129,7 @@ export class UserRDO {
     maximum: UserValidation.LOSE_CALORIES.MAX,
   })
   @Expose()
-  loseCaloriesLimit!: Number;
+  loseCaloriesLimit!: number;
 
   @ApiProperty({
     description: 'User calories per day limit',
@@ -138,12 +138,12 @@ export class UserRDO {
     maximum: UserValidation.DAY_CALORIES.MAX,
   })
   @Expose()
-  dayCaloriesLimit!: Number;
+  dayCaloriesLimit!: number;
 
   @ApiProperty({
     description: 'Is user ready to training',
     example: 'true',
   })
   @Expose()
-  isReadyToTraining!: Boolean;
+  isReadyToTraining!: boolean;
 }

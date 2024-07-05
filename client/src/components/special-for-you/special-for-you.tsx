@@ -71,7 +71,7 @@ export default function SpecialForYou(): ReactElement {
           <ul className="special-for-you__list">
             <Swiper
               modules={[Navigation]}
-              spaceBetween={50}
+              spaceBetween={20}
               slidesPerView={3}
               slidesPerGroup={3}
               allowTouchMove={false}

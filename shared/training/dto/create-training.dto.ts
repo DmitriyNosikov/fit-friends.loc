@@ -25,14 +25,14 @@ export class CreateTrainingDTO {
   @MinLength(TrainingValidation.TITLE.MIN_LENGTH)
   @MaxLength(TrainingValidation.TITLE.MAX_LENGTH)
   @IsString()
-  title: string;
+  title!: string;
 
   @ApiProperty({
     description: 'User profile background. If not passed = User avatar',
     example: 'some/interesting/avatar.jpg',
   })
   @IsString()
-  background: string;
+  background!: string;
 
   @ApiProperty({
     description: 'Training level, that user have to have for this',
@@ -41,7 +41,7 @@ export class CreateTrainingDTO {
   })
   @IsIn(userLevelList)
   @IsString()
-  userLevel: UserLevel;
+  userLevel!: UserLevel;
 
   
   @ApiProperty({
@@ -51,7 +51,7 @@ export class CreateTrainingDTO {
   })
   @IsIn(trainingTypeList)
   @IsString()
-  trainingType: TrainingType;
+  trainingType!: TrainingType;
 
   @ApiProperty({
     description: 'User training time periods (duration in minutes)',
@@ -60,7 +60,7 @@ export class CreateTrainingDTO {
   })
   @IsIn(trainingDurationList)
   @IsString()
-  trainingDuration: TrainingDuration;
+  trainingDuration!: TrainingDuration;
 
   @ApiProperty({
     description: 'Training price',
@@ -69,7 +69,15 @@ export class CreateTrainingDTO {
   })
   @Min(TrainingValidation.PRICE.MIN)
   @IsNumber()
-  price: number;
+  price!: number;
+
+  @ApiProperty({
+    description: 'Discount value',
+    example: 522,
+  })
+  @Min(TrainingValidation.PRICE.MIN)
+  @IsNumber()
+  discount!: number;
 
   @ApiProperty({
     description: 'Calories count to lose with this training',
@@ -80,7 +88,7 @@ export class CreateTrainingDTO {
   @Max(TrainingValidation.CALORIES.MAX)
   @Min(TrainingValidation.CALORIES.MIN)
   @IsNumber()
-  calories: number;
+  calories!: number;
 
   @ApiProperty({
     description: 'Training description',
@@ -89,7 +97,7 @@ export class CreateTrainingDTO {
   @MaxLength(TrainingValidation.DESCRIPTION.MAX_LENGTH)
   @MinLength(TrainingValidation.DESCRIPTION.MIN_LENGTH)
   @IsString()
-  description: string;
+  description!: string;
 
   @ApiProperty({
     description: 'Gender for who this training',
@@ -98,16 +106,15 @@ export class CreateTrainingDTO {
   })
   @IsIn(genderTypeList)
   @IsString()
-  gender: Gender;
+  gender!: Gender;
 
   @ApiProperty({
     description: 'Training video',
     example: 'some/interesting/video.avi',
   })
   @IsString()
-  video: string;
+  video!: string;
 
-  
   @ApiProperty({
     description: 'Training rating',
     example: 0,
@@ -125,7 +132,7 @@ export class CreateTrainingDTO {
     example: 'Tony Stark',
   })
   @IsString()
-  trainersName: string;
+  trainersName!: string;
 
   @ApiProperty({
     description: 'Is special offer or simple training',

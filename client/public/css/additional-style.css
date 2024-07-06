@@ -1,0 +1,13 @@
+.special-offers__slider {
+  --swiper-pagination-bottom: 24px;
+  --swiper-pagination-bullet-horizontal-gap: 4px;
+  --swiper-pagination-color:  #c5ec2a;
+  --swiper-pagination-bullet-size: 10px;
+
+  --swiper-pagination-bullet-inactive-opacity: 1;
+  --swiper-pagination-bullet-inactive-color: #e8e8e8;
+}
+
+.promo-slider__bottom-container {
+  justify-content: flex-end;
+}

@@ -128,6 +128,7 @@ export class TrainingRepository extends BasePostgresRepository<TrainingEntity, T
     const where: Prisma.TrainingWhereInput = {};
     const orderBy: Prisma.TrainingOrderByWithRelationInput = {};
 
+    where.AND = [];
     const andFilters: AndFilters = [];
 
     // Поиск по заголовку
@@ -196,12 +197,12 @@ export class TrainingRepository extends BasePostgresRepository<TrainingEntity, T
 
     // Поиск тренировок со скидками
     if(query?.withDiscount !== undefined && query?.withDiscount !== null) {  
-      where.discount = { not: null };
+      where.AND.push({ discount: { not: null } });
+      where.AND.push({ discount: { gt: 0 } });
     }
 
     // Добавление установелнных фильтров
     if(andFilters.length > 0) {
-      where.AND = [];
       where.AND.push(...andFilters);
     }
 

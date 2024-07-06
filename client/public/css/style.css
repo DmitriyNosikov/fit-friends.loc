@@ -5971,6 +5971,7 @@ input:active + .custom-textarea__text {
   -webkit-box-align: end;
   -ms-flex-align: end;
   align-items: flex-end;
+  justify-content: flex-end;
   margin-top: auto;
 }
 

@@ -1,6 +1,7 @@
 import { BASE_URL } from './services/api';
 
 export const SPECIAL_FOR_YOU_MAX_SLIDES_COUNT = 9;
+export const SPECIAL_OFFERS_MAX_SLIDES_COUNT = 3;
 
 // -- Backend API
 const BACKEND_API_URL = {
@@ -21,6 +22,8 @@ export const ApiRoute = {
 
   TRAININGS_API: `${BACKEND_API_URL.TRAININGS}/`,
   CONVENIENT_TRAININGS_API: `${BACKEND_API_URL.TRAININGS}/convenient-trainings`,
+  WITH_DISCOUNT_TRAININGS_API: `${BACKEND_API_URL.TRAININGS}/with-discount`,
+  WITH_RATING_TRAININGS_API: `${BACKEND_API_URL.TRAININGS}/with-rating`,
 } as const;
 
 // -- App

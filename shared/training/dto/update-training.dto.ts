@@ -78,6 +78,15 @@ export class UpdateTrainingDTO {
   price?: number;
 
   @ApiProperty({
+    description: 'Discount value',
+    example: 522,
+  })
+  @Min(TrainingValidation.PRICE.MIN)
+  @IsNumber()
+  @IsOptional()
+  discount?: number;
+
+  @ApiProperty({
     description: 'Calories count to lose with this training',
     example: 1000,
     minimum: TrainingValidation.CALORIES.MIN,

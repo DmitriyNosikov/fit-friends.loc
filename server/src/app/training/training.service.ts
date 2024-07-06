@@ -41,6 +41,12 @@ export class TrainingService {
   }
 
   public async create(dto: CreateTrainingDTO) {
+    // Если на тренировку есть скидка
+    // Она становится спец. предложением
+    if(dto.discount) {
+      dto.isSpecial = true;
+    }
+
     const trainingEntity = this.trainingFactory.create(dto);
     const training = await this.trainingRepository.create(trainingEntity);
 
@@ -53,6 +59,12 @@ export class TrainingService {
 
     if (!isTrainingExists) {
       throw new NotFoundException(`${TrainingMessage.ERROR.NOT_FOUND}. Passed ID: ${trainingId}`);
+    }
+
+    // Если на тренировку есть скидка
+    // Она становится спец. предложением
+    if(fieldsToUpdate.discount) {
+      fieldsToUpdate.isSpecial = true;
     }
 
     const updatedTraining = await this.trainingRepository.updateById(trainingId, fieldsToUpdate);

@@ -1270,6 +1270,10 @@ components:
           description: Training price
           example: 1522
           minimum: 0
+        discount:
+          type: number
+          description: Discount value
+          example: 522
         calories:
           type: number
           description: Calories count to lose with this training
@@ -1313,6 +1317,7 @@ components:
         - trainingType
         - trainingDuration
         - price
+        - discount
         - calories
         - description
         - gender
@@ -1513,6 +1518,10 @@ components:
           description: Training price
           example: 1522
           minimum: 0
+        discount:
+          type: number
+          description: Discount value
+          example: 522
         calories:
           type: number
           description: Calories count to lose with this training
@@ -1554,6 +1563,7 @@ components:
         - trainingType
         - trainingDuration
         - price
+        - discount
         - calories
         - description
         - gender

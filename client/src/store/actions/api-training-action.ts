@@ -7,15 +7,16 @@ import { AsyncOptions } from '@client/src/types/async-options.type';
 import { CreateTrainingRDO, TrainingSearchQuery, TrainingsWithPaginationRDO } from '@shared/training';
 
 import { setDataLoadingStatus } from '../slices/main-process/main-process';
-import { appendTrainingsAction, deleteTrainingItemStateAction, setConvenientTrainingsAction, setTrainingItemAction, setTrainingsAction, updateTrainingsListAction,  } from '../slices/training-process/training-process';
+import { appendTrainingsAction, deleteTrainingItemStateAction, setConvenientTrainingsAction, setTrainingItemAction, setTrainingsAction, setWithDiscountTrainingsAction, setWithRatingTrainingsAction, updateTrainingsListAction,  } from '../slices/training-process/training-process';
 import { redirectToRoute } from '../middlewares/redirect-action';
-import { adaptQueryParams } from '@client/src/utils/adapters';
 
 const APITrainingPrefix = `[${Namespace.TRAINING}-BACKEND]`;
 const APIAction = {
   // TRAINING BACKEND
   TRAININGS_FETCH_LIST: `${APITrainingPrefix}/list`,
   TRAININGS_FETCH_CONVENIENT: `${APITrainingPrefix}/convenient-list`,
+  TRAININGS_FETCH_WITH_DISCOUNT: `${APITrainingPrefix}/discount-list`,
+  TRAININGS_FETCH_WITH_RATING: `${APITrainingPrefix}/rating-list`,
   TRAININGS_FETCH_ITEM: `${APITrainingPrefix}/item`,
 
   TRAININGS_CREATE: `${APITrainingPrefix}/create`,
@@ -29,7 +30,7 @@ const APIAction = {
 // ASYNC ACTIONS
 type TrainingId = string;
 
-// --- Trainings
+// Загрузка списка тренировок с пагинацией
 export const fetchTrainingsAction = createAsyncThunk<void, void, AsyncOptions>(
   APIAction.TRAININGS_FETCH_LIST,
   async (_arg, { dispatch, rejectWithValue, extra: api }) => {
@@ -51,6 +52,7 @@ export const fetchTrainingsAction = createAsyncThunk<void, void, AsyncOptions>(
   }
 );
 
+// Загрузка тренировок, подходящих по параметрам для пользователя
 export const fetchConvenientTrainingsAction = createAsyncThunk<void, void, AsyncOptions>(
   APIAction.TRAININGS_FETCH_CONVENIENT,
   async (_arg, { dispatch, rejectWithValue, extra: api }) => {
@@ -72,6 +74,51 @@ export const fetchConvenientTrainingsAction = createAsyncThunk<void, void, Async
   }
 );
 
+// Загрузка тренировок со скидками
+export const fetchWithDiscountTrainingsAction = createAsyncThunk<void, void, AsyncOptions>(
+  APIAction.TRAININGS_FETCH_WITH_DISCOUNT,
+  async (_arg, { dispatch, rejectWithValue, extra: api }) => {
+    dispatch(setDataLoadingStatus(true));
+
+    try {
+      const { data } = await api.get<TrainingsWithPaginationRDO>(ApiRoute.WITH_DISCOUNT_TRAININGS_API);
+
+      dispatch(setWithDiscountTrainingsAction(data));
+      dispatch(setDataLoadingStatus(false));
+
+    } catch(err) {
+      toast.warn('Can`t load trainings with discount. Please, refresh page or try again later')
+
+      dispatch(setDataLoadingStatus(false));
+
+      return rejectWithValue(err);
+    }
+  }
+);
+
+// Загрузка тренироок с рейтингом больше 0
+export const fetchWithRatingTrainingsAction = createAsyncThunk<void, void, AsyncOptions>(
+  APIAction.TRAININGS_FETCH_WITH_RATING,
+  async (_arg, { dispatch, rejectWithValue, extra: api }) => {
+    dispatch(setDataLoadingStatus(true));
+
+    try {
+      const { data } = await api.get<TrainingsWithPaginationRDO>(ApiRoute.WITH_RATING_TRAININGS_API);
+
+      dispatch(setWithRatingTrainingsAction(data));
+      dispatch(setDataLoadingStatus(false));
+
+    } catch(err) {
+      toast.warn('Can`t load trainings with rating. Please, refresh page or try again later')
+
+      dispatch(setDataLoadingStatus(false));
+
+      return rejectWithValue(err);
+    }
+  }
+);
+
+// Загрузка детальной информации о тренировке
 export const fetchTrainingItemAction = createAsyncThunk<void, TrainingId, AsyncOptions>(
   APIAction.TRAININGS_FETCH_ITEM,
   async (
@@ -95,7 +142,7 @@ export const fetchTrainingItemAction = createAsyncThunk<void, TrainingId, AsyncO
   }
 );
 
-// Update product item
+// Обноелвние тренировки
 export const updateTrainingItemAction = createAsyncThunk<void, Partial<CreateTrainingRDO>, AsyncOptions>(
   APIAction.TRAININGS_UPDATE,
   async (
@@ -119,7 +166,7 @@ export const updateTrainingItemAction = createAsyncThunk<void, Partial<CreateTra
   }
 );
 
-// Delete product item
+// Удаление тренировки
 export const deleteTrainingItemAction = createAsyncThunk<void, TrainingId, AsyncOptions>(
   APIAction.TRAININGS_DELETE,
   async (
@@ -140,7 +187,7 @@ export const deleteTrainingItemAction = createAsyncThunk<void, TrainingId, Async
   }
 );
 
-// Pagination
+// Пагинация
 type PageNumber = number;
 
 export const getPaginationPage = createAsyncThunk<void, PageNumber, AsyncOptions>(

@@ -28,7 +28,7 @@ export default function SpecialForYouItem({ training }: SpecialForYouItemProps):
           </picture>
         </div>
         <div className="thumbnail-preview__inner">
-          <h3 className="thumbnail-preview__title">{title.toUpperCase()}</h3>
+          <h3 className="thumbnail-preview__title">{title}</h3>
           <div className="thumbnail-preview__button-wrapper">
             <Link
               className="btn btn--small thumbnail-preview__button"

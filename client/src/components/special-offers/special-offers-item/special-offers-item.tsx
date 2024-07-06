@@ -29,7 +29,7 @@ export default function SpecialOffersItem({ training }: SpecialOffersItemProps):
           />
         </div>
         <div className="promo-slider__header">
-          <h3 className="promo-slider__title">{title.toUpperCase()}</h3>
+          <h3 className="promo-slider__title">{title}</h3>
           <div className="promo-slider__logo">
             <svg width={74} height={74} aria-hidden="true">
               <use xlinkHref="#logotype" />

@@ -1,6 +1,7 @@
 import { BASE_URL } from './services/api';
 
 export const SPECIAL_FOR_YOU_MAX_SLIDES_COUNT = 9;
+export const POPULAR_MAX_SLIDES_COUNT = 9;
 export const SPECIAL_OFFERS_MAX_SLIDES_COUNT = 3;
 
 // -- Backend API

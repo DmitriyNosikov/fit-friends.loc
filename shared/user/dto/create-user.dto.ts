@@ -81,7 +81,7 @@ export class CreateUserDTO {
 
   @ApiProperty({
     description: 'User birth date',
-    example: '26.09.1993',
+    example: '1993-09-26',
   })
   @IsDateString()
   @IsOptional()

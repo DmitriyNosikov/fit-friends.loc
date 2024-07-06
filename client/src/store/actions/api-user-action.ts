@@ -5,7 +5,7 @@ import { toast } from 'react-toastify';
 import { setDataLoadingStatus } from '../slices/main-process/main-process';
 import { setAdditionalInfo, setUserInfoAction } from '../slices/user-process/user-process';
 
-import { AdditionalInfoRDO, CreateUserDTO, LoggedUserRDO, LoginUserDTO } from '@shared/user';
+import { AdditionalInfoRDO, CreateUserDTO, LoggedUserRDO, LoginUserDTO, UpdateUserDTO } from '@shared/user';
 import { redirectToRoute } from '../middlewares/redirect-action';
 
 
@@ -23,6 +23,7 @@ const APIAction = {
   // USERS BACKEND
   USER_REGISTER: `${APIUserPrefix}/register`,
   USER_LOGIN: `${APIUserPrefix}/login`,
+  USER_UPDATE: `${APIUserPrefix}/update`,
   USER_CHECK_AUTH: `${APIUserPrefix}/checkAuth`,
   USER_GET_DETAIL: `${APIUserPrefix}/getDetail`,
   USER_GET_ADDITIONAL: `${APIUserPrefix}/getAdditional`,
@@ -54,15 +55,15 @@ export const fetchAdditionalInfoAction = createAsyncThunk<AdditionalInfoRDO, voi
 
 // --- Auth
 //---------------------------------------------Return Payload AsyncOptions
-export const checkAuthAction = createAsyncThunk<void, void, AsyncOptions>(
+export const checkUserAuthAction = createAsyncThunk<void, void, AsyncOptions>(
   APIAction.USER_CHECK_AUTH,
   async (_arg, { dispatch, extra: api }) => {
     dispatch(setDataLoadingStatus(true));
 
     try {
-      const { data } = await api.post<TokenPayload>(ApiRoute.CHECK_JWT_TOKEN);
+      await api.post<TokenPayload>(ApiRoute.CHECK_JWT_TOKEN);
 
-      dispatch(fetchUserDetailInfoAction(data))
+      dispatch(fetchUserDetailInfoAction)
     } catch(error) {
       deleteToken();
 
@@ -74,7 +75,7 @@ export const checkAuthAction = createAsyncThunk<void, void, AsyncOptions>(
   }
 );
 
-export const registerAction = createAsyncThunk<LoggedUserRDO, CreateUserDTO, AsyncOptions>(
+export const registerUserAction = createAsyncThunk<LoggedUserRDO, CreateUserDTO, AsyncOptions>(
   APIAction.USER_REGISTER,
   async (
     newUserData, // New User Data
@@ -121,34 +122,7 @@ export const registerAction = createAsyncThunk<LoggedUserRDO, CreateUserDTO, Asy
   }
 );
 
-export const uploadAvatarAction = createAsyncThunk<string | unknown, FormData, AsyncOptions>(
-  APIAction.USER_UPLOAD_AVATAR,
-  async (
-    avatarFormData, // Avatar Form Data
-    { dispatch, rejectWithValue, extra: api } // AsyncOptions
-  ) => {
-    dispatch(setDataLoadingStatus(true));
-
-    // Аватар нужно загружать отдельно
-    if(avatarFormData) {
-      try {
-        const { data: avatarUrl } = await api.post<string>(ApiRoute.LOAD_FILES, avatarFormData);
-
-        dispatch(setDataLoadingStatus(false));
-
-        return avatarUrl;
-      } catch(err) {
-        toast.warn(`Can't load your avatar: ${err}`);
-
-        dispatch(setDataLoadingStatus(false));
-
-        return rejectWithValue(err);
-      }
-    }
-  }
-);
-
-export const loginAction = createAsyncThunk<void, LoginUserDTO, AsyncOptions>(
+export const loginUserAction = createAsyncThunk<void, LoginUserDTO, AsyncOptions>(
   APIAction.USER_LOGIN,
   async (
     { email, password }, // AuthData
@@ -181,17 +155,79 @@ export const loginAction = createAsyncThunk<void, LoginUserDTO, AsyncOptions>(
   }
 );
 
-export const fetchUserDetailInfoAction = createAsyncThunk<void, TokenPayload, AsyncOptions>(
-  APIAction.USER_GET_DETAIL,
+export const updateUserAction = createAsyncThunk<LoggedUserRDO, UpdateUserDTO, AsyncOptions>(
+  APIAction.USER_UPDATE,
   async (
-    { userId }, // AuthData
-    { dispatch, extra: api } // AsyncOptions
+    updateUserData, // New User Data
+    { dispatch, rejectWithValue, extra: api } // AsyncOptions
   ) => {
     dispatch(setDataLoadingStatus(true));
 
-    const { data } = await api.get<LoggedUserRDO>(`${ApiRoute.USER_API}/${userId}`);
+    try {
+      const { data } = await api.patch<LoggedUserRDO>(ApiRoute.USER_API, updateUserData);
 
-    dispatch(setUserInfoAction(data));
-    dispatch(setDataLoadingStatus(false));
+      dispatch(setUserInfoAction(data));
+      dispatch(setDataLoadingStatus(false));
+
+      return data;
+    } catch(err) {
+      toast.error(`User updating ended with error: ${err}`);
+
+      dispatch(setDataLoadingStatus(false));
+
+      return rejectWithValue(err);
+    }
+  }
+);
+
+export const uploadAvatarAction = createAsyncThunk<string | unknown, FormData, AsyncOptions>(
+  APIAction.USER_UPLOAD_AVATAR,
+  async (
+    avatarFormData, // Avatar Form Data
+    { dispatch, rejectWithValue, extra: api } // AsyncOptions
+  ) => {
+    dispatch(setDataLoadingStatus(true));
+
+    // Аватар нужно загружать отдельно
+    if(avatarFormData) {
+      try {
+        const { data: avatarUrl } = await api.post<string>(ApiRoute.LOAD_FILES, avatarFormData);
+
+        dispatch(setDataLoadingStatus(false));
+
+        return avatarUrl;
+      } catch(err) {
+        toast.warn(`Can't load your avatar: ${err}`);
+
+        dispatch(setDataLoadingStatus(false));
+
+        return rejectWithValue(err);
+      }
+    }
+  }
+);
+
+export const fetchUserDetailInfoAction = createAsyncThunk<void, void, AsyncOptions>(
+  APIAction.USER_GET_DETAIL,
+  async (
+    _, // AuthData
+    { dispatch, rejectWithValue, extra: api } // AsyncOptions
+  ) => {
+    dispatch(setDataLoadingStatus(true));
+
+    try {
+      const { data } = await api.get<LoggedUserRDO>(`${ApiRoute.USER_API}`);
+
+      console.log('USER DATA: ', data);
+
+      dispatch(setUserInfoAction(data));
+      dispatch(setDataLoadingStatus(false));
+    } catch(err) {
+      toast.warn(`Can't get user's detail info: ${err}`);
+
+      dispatch(setDataLoadingStatus(false));
+
+      return rejectWithValue(err);
+    }
   }
 );

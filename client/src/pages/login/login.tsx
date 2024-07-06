@@ -1,6 +1,6 @@
 import { AppRoute } from '@client/src/const';
 import { useAppDispatch } from '@client/src/hooks';
-import { loginAction } from '@client/src/store/actions/api-user-action';
+import { loginUserAction } from '@client/src/store/actions/api-user-action';
 import { LoginUserDTO } from '@shared/user';
 import { ReactElement, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -51,7 +51,7 @@ export default function Login(): ReactElement {
       password: userPassword.current.value,
     };
 
-    dispatch(loginAction(userLoginData))
+    dispatch(loginUserAction(userLoginData))
       .then((result) => {
         if('error' in result) {
           return;

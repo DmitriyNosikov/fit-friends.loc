@@ -29,6 +29,7 @@ import { UserInterface } from './interfaces';
 import { UserMessage } from './user.constant';
 
 import { UserService } from './user.service';
+import { UserIdPayload } from '@shared/types';
 
 
 @ApiTags('users')
@@ -102,8 +103,9 @@ export class UserController {
     return fillDTO(LoggedUserRDO, loggedUserWithPayload);
   }
 
-  @Get('/:userId')
+  @Get('/')
   @UseGuards(JWTAuthGuard)
+  @UseInterceptors(InjectUserIdInterceptor)
   @ApiOperation({ summary: 'Get detail info about user' })
   @ApiResponse({
     type: UserRDO,
@@ -114,13 +116,13 @@ export class UserController {
     status: HttpStatus.NOT_FOUND,
     description: UserMessage.ERROR.NOT_FOUND
   })
-  public async show(@Param('userId') userId: string): Promise<LoggedUserRDO> {
+  public async show(@Body('userId') userId: string): Promise<LoggedUserRDO> {
     const userDetail = await this.userService.getUserDetail(userId);
 
     return fillDTO(LoggedUserRDO, userDetail.toPOJO());
   }
 
-  @Patch(':userId')
+  @Patch('/')
   @UseGuards(JWTAuthGuard)
   @UseInterceptors(InjectUserIdInterceptor)
   @ApiOperation({ summary: 'Update user info' })
@@ -134,10 +136,9 @@ export class UserController {
     description: UserMessage.ERROR.CANT_UPDATE
   })
   public async updateUser(
-    @Param('userId') userId: string,
-    @Body() dto: UpdateUserDTO
+    @Body() dto: UpdateUserDTO & UserIdPayload
   ): Promise<UserRDO | null> {
-    const updatedUser = await this.userService.updateUser(userId, dto);
+    const updatedUser = await this.userService.updateUser(dto.userId, dto);
 
     return fillDTO(UserRDO, updatedUser.toPOJO());
   }

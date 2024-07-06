@@ -89,6 +89,10 @@ export class UserService {
       dto.pageBackground = dto.avatar;
     }
 
+    if(dto.birthDate) {
+      dto.birthDate = dto.birthDate ? new Date(dto.birthDate) : null;
+    }
+
     const newUser = {
       ...dto,
       dayCaloriesLimit,
@@ -126,6 +130,12 @@ export class UserService {
 
     if(Object.keys(fieldsToUpdate).length <= 0) {
       throw new BadRequestException(UserMessage.ERROR.CANT_UPDATE);
+    }
+
+    if(fieldsToUpdate?.birthDate) {
+      fieldsToUpdate.birthDate = fieldsToUpdate.birthDate
+      ? new Date(fieldsToUpdate.birthDate as string)
+      : null;
     }
 
     const preparedFields = excludeKeys(fieldsToUpdate, ['userId']);

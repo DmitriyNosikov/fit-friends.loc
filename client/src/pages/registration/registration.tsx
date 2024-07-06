@@ -6,7 +6,7 @@ import { useAppDispatch, useAppSelector } from '@client/src/hooks';
 import useAdditionalInfo from '@client/src/hooks/useAdditionalInfo';
 
 import { getAdditionalInfo } from '@client/src/store/slices/user-process/user-process.selectors';
-import { registerAction } from '@client/src/store/actions/api-user-action';
+import { registerUserAction } from '@client/src/store/actions/api-user-action';
 
 import RegistrationLocation from '@client/src/components/registration/registration-location/registration-location';
 import RegistrationAvatar from '@client/src/components/registration/registration-avatar/registration-avatar';
@@ -86,7 +86,7 @@ export default function Registration() {
       toast.warn('Validation error. Please, correct marked fields and try send form again.');
     }
 
-    dispatch(registerAction(userData))
+    dispatch(registerUserAction(userData))
       .then((result) => {
         if('error' in result) {
           return;

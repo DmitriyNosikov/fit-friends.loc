@@ -5,7 +5,6 @@ import { Pagination } from 'swiper/modules';
 import 'swiper/css';
 import 'swiper/css/bundle';
 
-import useWithDiscountTrainingsList from '@client/src/hooks/useWithDiscountTrainingsList';
 import { useAppSelector } from '@client/src/hooks';
 import { getTrainingsWithDiscount, getWithDiscountTrainingsLoadingStatus } from '@client/src/store/slices/training-process/training-process.selectors';
 import Spinner from '../tools/spinner/spinner';
@@ -13,14 +12,8 @@ import { SPECIAL_OFFERS_MAX_SLIDES_COUNT } from '@client/src/const';
 import SpecialOffersItem from './special-offers-item/special-offers-item';
 
 export default function SpecialOffers(): ReactElement {
-  useWithDiscountTrainingsList();
-
   const trainings = useAppSelector(getTrainingsWithDiscount);
   const isTrainingsLoading = useAppSelector(getWithDiscountTrainingsLoadingStatus);
-
-  if (isTrainingsLoading) {
-    return <Spinner />
-  }
 
   // Слайдер может содержать не более SPECIAL_FOR_YOU_MAX_SLIDES_COUNT слайдов
   let slides = trainings?.entities;

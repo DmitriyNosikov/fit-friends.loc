@@ -1,5 +1,6 @@
 import { TrainingSearchQuery } from '@shared/training';
 import { BaseSearchQuery } from '@shared/types';
+import { UserLevel, UserLevelEnum } from '@shared/types/user-level.enum';
 
 export function adaptQueryParams(queryString: BaseSearchQuery | TrainingSearchQuery) {
   let adaptedQueryString = '';
@@ -20,7 +21,7 @@ export function adaptQueryParams(queryString: BaseSearchQuery | TrainingSearchQu
   return adaptedQueryString;
 }
 
-function getUrlStringFromArray(key: string, values: string[]): string {
+export function getUrlStringFromArray(key: string, values: string[]): string {
   let temp = [];
   let preparedString = '';
 
@@ -28,4 +29,30 @@ function getUrlStringFromArray(key: string, values: string[]): string {
   preparedString = temp.join('&');
 
   return preparedString;
+}
+
+export function getAdaptedUserLevel(level: string) {
+  let userLevel = '';
+
+  switch (level) {
+    case UserLevelEnum.NEWBIE: {
+      userLevel = 'новичок';
+      break;
+    }
+    case UserLevelEnum.REGULAR: {
+      userLevel = 'любитель';
+      break;
+    }
+    case UserLevelEnum.PRO: {
+      userLevel = 'профессионал';
+      break;
+    }
+
+    default: {
+      userLevel = level;
+      break;
+    }
+  }
+
+  return userLevel;
 }

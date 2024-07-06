@@ -7,7 +7,6 @@ import 'swiper/css';
 import 'swiper/css/bundle';
 
 import { AppRoute, POPULAR_MAX_SLIDES_COUNT } from '@client/src/const';
-import useWithRatingTrainingsList from '@client/src/hooks/useWithRatingTrainingsList';
 import { useAppSelector } from '@client/src/hooks';
 import { getTrainingsWithRating, getWithRatingTrainingsLoadingStatus } from '@client/src/store/slices/training-process/training-process.selectors';
 import Spinner from '../tools/spinner/spinner';
@@ -15,8 +14,6 @@ import PopularTrainingsItem from './popular-trainings-item/popular-trainings-ite
 import Stub from '../tools/stub/stub';
 
 export default function PopularTrainings(): ReactElement {
-  useWithRatingTrainingsList();
-
   const navigate = useNavigate();
   const trainings = useAppSelector(getTrainingsWithRating);
   const isTrainingsLoading = useAppSelector(getWithRatingTrainingsLoadingStatus);
@@ -112,7 +109,7 @@ export default function PopularTrainings(): ReactElement {
                     };
 
                     return (
-                      <SwiperSlide>
+                      <SwiperSlide key={training.id}>
                         <PopularTrainingsItem training={itemProps} />
                       </SwiperSlide>
                     )

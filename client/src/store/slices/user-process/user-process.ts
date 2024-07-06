@@ -1,6 +1,6 @@
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 import { AdditionalInfoRDO, LoggedUserRDO } from '@shared/user/';
-import { checkAuthAction, loginAction } from '../../actions/api-user-action';
+import { checkUserAuthAction, loginUserAction } from '../../actions/api-user-action';
 
 import { AuthorizationStatus, Namespace } from '@client/src/const';
 import { getToken } from '@client/src/services/token';
@@ -31,7 +31,7 @@ export const userProcess = createSlice({
   extraReducers(builder) {
     builder
       // CHECK AUTH ACTION STATUSES
-      .addCase(checkAuthAction.fulfilled, (state) => {
+      .addCase(checkUserAuthAction.fulfilled, (state) => {
         if(getToken() === '') {
           state.authorizationStatus = AuthorizationStatus.NO_AUTH;
           return;
@@ -39,15 +39,15 @@ export const userProcess = createSlice({
 
         state.authorizationStatus = AuthorizationStatus.AUTH;
       })
-      .addCase(checkAuthAction.rejected, (state) => {
+      .addCase(checkUserAuthAction.rejected, (state) => {
         state.authorizationStatus = AuthorizationStatus.NO_AUTH;
       })
 
       // LOGIN ACTION STATUSES
-      .addCase(loginAction.fulfilled, (state) => {
+      .addCase(loginUserAction.fulfilled, (state) => {
         state.authorizationStatus = AuthorizationStatus.AUTH;
       })
-      .addCase(loginAction.rejected, (state) => {
+      .addCase(loginUserAction.rejected, (state) => {
         state.authorizationStatus = AuthorizationStatus.NO_AUTH;
       })
   },

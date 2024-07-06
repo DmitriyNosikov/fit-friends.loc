@@ -19,8 +19,6 @@ import Stub from '../tools/stub/stub';
 import { SPECIAL_FOR_YOU_MAX_SLIDES_COUNT } from '@client/src/const';
 
 export default function SpecialForYou(): ReactElement {
-  useConvenientTrainingsList();
-
   const convenientTrainings = useAppSelector(getUserConvenientTrainings);
   const loadingStatus = useAppSelector(getConvenientTrainingsLoadingStatus);
 

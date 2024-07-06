@@ -11,7 +11,6 @@ type SpecialOffersItemProps = {
 };
 
 export default function SpecialOffersItem({ training }: SpecialOffersItemProps): ReactElement {
-  console.log('TRAINING WITH DISCOUNT: ', training);
   const { title, background, description, price, discount } = training;
 
   const newPrice: number = price - discount;

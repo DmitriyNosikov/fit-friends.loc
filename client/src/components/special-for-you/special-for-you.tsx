@@ -10,31 +10,36 @@ import useConvenientTrainingsList from '@client/src/hooks/useConvenientTrainings
 
 import {
   getConvenientTrainingsLoadingStatus,
-  getTrainings,
   getUserConvenientTrainings
 } from '@client/src/store/slices/training-process/training-process.selectors';
 
 import Spinner from '../tools/spinner/spinner';
 import SpecialForYouItem from './special-for-you-item/special-for-you-item';
 import Stub from '../tools/stub/stub';
-import useTrainingsList from '@client/src/hooks/useTrainingsList';
+import { SPECIAL_FOR_YOU_MAX_SLIDES_COUNT } from '@client/src/const';
 
 export default function SpecialForYou(): ReactElement {
-  // useConvenientTrainingsList();
+  useConvenientTrainingsList();
 
-  // const convenientTrainings = useAppSelector(getUserConvenientTrainings);
-
-  useTrainingsList()
-  const convenientTrainings = useAppSelector(getTrainings);
+  const convenientTrainings = useAppSelector(getUserConvenientTrainings);
   const loadingStatus = useAppSelector(getConvenientTrainingsLoadingStatus);
 
   if (loadingStatus) {
     return <Spinner />
   }
 
+  if(!convenientTrainings?.entities) {
+    return <></>;
+  }
+
+  // Слайдер может содержать не более SPECIAL_FOR_YOU_MAX_SLIDES_COUNT слайдов
+  let slides = convenientTrainings.entities;
+
+  if(convenientTrainings.itemsPerPage > SPECIAL_FOR_YOU_MAX_SLIDES_COUNT) {
+    slides = slides.slice(0, SPECIAL_FOR_YOU_MAX_SLIDES_COUNT)
+  }
 
   return (
-
     <section className="special-for-you">
       <div className="container">
         <div className="special-for-you__wrapper">
@@ -68,28 +73,27 @@ export default function SpecialForYou(): ReactElement {
             (!convenientTrainings?.entities || convenientTrainings?.entities.length <= 0) && <Stub />
           }
 
-          <ul className="special-for-you__list">
-            <Swiper
-              modules={[Navigation]}
-              spaceBetween={20}
-              slidesPerView={3}
-              slidesPerGroup={3}
-              allowTouchMove={false}
-              watchSlidesProgress
-              speed={1500}
+          <Swiper
+            modules={[Navigation]}
+            spaceBetween={20}
+            slidesPerView={3}
+            slidesPerGroup={3}
+            allowTouchMove={false}
+            watchSlidesProgress
+            speed={1500}
 
-              navigation={{
-                enabled: true,
-                prevEl: '.special-for-you__control--prev',
-                nextEl: '.special-for-you__control--next',
-              }}
-            >
+            navigation={{
+              enabled: true,
+              prevEl: '.special-for-you__control--prev',
+              nextEl: '.special-for-you__control--next',
+            }}
+          >
+            <ul className="special-for-you__list">
               {
-                convenientTrainings?.entities && convenientTrainings.entities.map((training) => {
+                slides.map((training) => {
                   const itemProps = {
+                    ...training,
                     id: training.id as string,
-                    background: training.background,
-                    title: training.title
                   };
 
                   return (
@@ -99,26 +103,8 @@ export default function SpecialForYou(): ReactElement {
                   )
                 })
               }
-            </Swiper>
-          </ul>
-
-          {/* <ul className="special-for-you__list">
-            {
-              convenientTrainings?.entities && convenientTrainings.entities.map((training) => {
-                const itemProps = {
-                  id: training.id as string,
-                  background: training.background,
-                  title: training.title
-                };
-
-                return (
-                  <li className="special-for-you__item" key={training.id}>
-                    <SpecialForYouItem training={itemProps}/>
-                  </li>
-                )
-              })
-            }
-          </ul> */}
+            </ul>
+          </Swiper>
         </div>
       </div>
     </section >

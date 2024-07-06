@@ -4,15 +4,23 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation } from 'swiper/modules';
 import 'swiper/css';
 import 'swiper/css/bundle';
+import { useNavigate } from 'react-router-dom';
+import { AppRoute } from '@client/src/const';
 
-export default function PopularTrainings(): ReactElement {
+export default function  PopularTrainings(): ReactElement {
+  const navigate = useNavigate();
+
+  function handleSeeAllBtnClick() {
+    navigate(AppRoute.TRAININGS);
+  }
+
   return (
     <section className="popular-trainings">
       <div className="container">
         <div className="popular-trainings__wrapper">
           <div className="popular-trainings__title-wrapper">
             <h2 className="popular-trainings__title">Популярные тренировки</h2>
-            <button className="btn-flat popular-trainings__button" type="button">
+            <button className="btn-flat popular-trainings__button" type="button" onClick={handleSeeAllBtnClick}>
               <span>Смотреть все</span>
               <svg width={14} height={10} aria-hidden="true">
                 <use xlinkHref="#arrow-right" />

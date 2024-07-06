@@ -5,10 +5,11 @@ import { Link, useLocation } from 'react-router-dom';
 
 export default function HeaderNav(): ReactElement {
   const location = useLocation();
+  const mainPages: string[] = [AppRoute.MAIN, AppRoute.TRAININGS];
 
   const mainClassName = classNames(
     'main-nav__link',
-    { 'is-active': location.pathname === AppRoute.MAIN }
+    { 'is-active': mainPages.includes(location.pathname) }
   )
 
   const accountClassName = classNames(

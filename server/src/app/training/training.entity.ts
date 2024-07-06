@@ -19,6 +19,7 @@ export class TrainingEntity extends Entity implements StorableEntityInterface<Tr
   public trainingType: TrainingType;
   public trainingDuration: TrainingDuration;
   public price: number;
+  public discount?: number;
   public calories: number;
   public description: string;
   public gender: Gender;
@@ -47,6 +48,7 @@ export class TrainingEntity extends Entity implements StorableEntityInterface<Tr
     this.trainingType = training.trainingType;
     this.trainingDuration = training.trainingDuration;
     this.price = training.price;
+    this.discount = training.discount;
     this.calories = training.calories;
     this.description = training.description;
     this.gender = training.gender;
@@ -68,6 +70,7 @@ export class TrainingEntity extends Entity implements StorableEntityInterface<Tr
       trainingType: this.trainingType,
       trainingDuration: this.trainingDuration,
       price: this.price,
+      discount: this.discount,
       calories: this.calories,
       description: this.description,
       gender: this.gender,

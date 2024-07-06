@@ -112,6 +112,7 @@ export function getTrainings() {
       trainingType: TrainingTypeEnum.RUNNING,
       trainingDuration: TrainingDurationEnum.TWO_HOURS,
       price: 2500,
+      discount: 500,
       calories: 2000,
       description: "Комплекс упражнений на растяжку всего тела для новичков. Плавное погружение в стретчинг и умеренная нагрузка.",
       gender: GenderEnum.NEVERMIND,

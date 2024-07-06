@@ -1,11 +1,49 @@
 import { ReactElement } from 'react';
 
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { Pagination } from 'swiper/modules';
+import 'swiper/css';
+import 'swiper/css/bundle';
+
 export default function SpecialOffers(): ReactElement {
   return (
     <section className="special-offers">
       <div className="container">
         <div className="special-offers__wrapper">
           <h2 className="visually-hidden">Специальные предложения</h2>
+
+          {/* <Swiper
+            modules={[Pagination]}
+            spaceBetween={20}
+            slidesPerView={1}
+            slidesPerGroup={1}
+            allowTouchMove={false}
+            watchSlidesProgress
+            speed={1500}
+
+            pagination={{
+              enabled: true,
+              clickable: true
+            }}
+          >
+            <ul className="special-for-you__list">
+              {
+                slides.map((training) => {
+                  const itemProps = {
+                    ...training,
+                    id: training.id as string,
+                  };
+
+                  return (
+                    <SwiperSlide key={training.id}>
+                      <SpecialForYouItem training={itemProps} />
+                    </SwiperSlide>
+                  )
+                })
+              }
+            </ul>
+          </Swiper> */}
+
           <ul className="special-offers__list">
             <li className="special-offers__item is-active">
               <aside className="promo-slider">

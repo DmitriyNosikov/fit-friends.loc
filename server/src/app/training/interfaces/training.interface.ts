@@ -10,6 +10,7 @@ export interface TrainingInterface extends CreatedUpdatedDatesInterface {
   trainingType: TrainingType;
   trainingDuration: TrainingDuration;
   price: number;
+  discount?: number;
   calories: number;
   description: string;
   gender: Gender;

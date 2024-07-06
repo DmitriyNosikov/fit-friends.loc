@@ -321,9 +321,37 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/CreateTrainingRDO"
+                $ref: "#/components/schemas/TrainingsWithPaginationRDO"
+        "404":
+          description: Training not found
+      tags: *a2
+  /api/trainings/with-discount:
+    get:
+      operationId: TrainingController_getTrainigsWithDiscount
+      summary: Get trainings with discount
+      parameters: []
+      responses:
+        "200":
+          description: Training found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TrainingsWithPaginationRDO"
+        "404":
+          description: Training not found
+      tags: *a2
+  /api/trainings/with-rating:
+    get:
+      operationId: TrainingController_getTrainigsWithRating
+      summary: Get trainings with rating more than 0
+      parameters: []
+      responses:
+        "200":
+          description: Training found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TrainingsWithPaginationRDO"
         "404":
           description: Training not found
       tags: *a2
@@ -1353,6 +1381,10 @@ components:
           description: Training price
           example: 1522
           minimum: 0
+        discount:
+          type: number
+          description: Discount value
+          example: 522
         calories:
           type: number
           description: Calories count to lose with this training
@@ -1397,6 +1429,7 @@ components:
         - trainingType
         - trainingDuration
         - price
+        - discount
         - calories
         - description
         - gender

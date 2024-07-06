@@ -12,6 +12,8 @@ import PrivateRoute from '../private-route/private-route';
 import OnlyUnauthorizedRoute from '../only-unauthorized-route/only-unauthorized-route';
 import Intro from '@client/src/pages/intro/intro';
 import PersonalAccount from '../personal-account/personal-account';
+import TrainingsDetail from '../../pages/trainings/trainings-detail/trainings-detail';
+import TrainingsList from '@client/src/pages/trainings/trainings-list/trainings-list';
 
 // TODO: Нужен Helmet для смены заголовков
 
@@ -46,6 +48,18 @@ export default function App(): ReactElement {
         <Route path={AppRoute.ACCOUNT} element={
           <PrivateRoute redirectTo={AppRoute.INTRO}>
             <PersonalAccount />
+          </PrivateRoute>
+        }/>
+
+        <Route path={`${AppRoute.TRAININGS}`} element={
+          <PrivateRoute redirectTo={AppRoute.INTRO}>
+            <TrainingsList />
+          </PrivateRoute>
+        }/>
+
+        <Route path={`${AppRoute.TRAININGS}/:trainingId`} element={
+          <PrivateRoute redirectTo={AppRoute.INTRO}>
+            <TrainingsDetail />
           </PrivateRoute>
         }/>
 

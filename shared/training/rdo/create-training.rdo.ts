@@ -51,7 +51,6 @@ export class CreateTrainingRDO {
   @Expose()
   userLevel: UserLevel;
 
-  
   @ApiProperty({
     description: 'Training type',
     example: 'кроссфит',
@@ -75,6 +74,13 @@ export class CreateTrainingRDO {
   })
   @Expose()
   price: number;
+
+  @ApiProperty({
+    description: 'Discount value',
+    example: 522,
+  })
+  @Expose()
+  discount?: number;
 
   @ApiProperty({
     description: 'Calories count to lose with this training',

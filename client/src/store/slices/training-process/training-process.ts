@@ -30,6 +30,18 @@ export const trainingProcess = createSlice({
       state.paginatedTrainings = action.payload;
     },
 
+    // Добавление тренировок при нажатии а кнопку "Показать еще"
+    appendTrainingsAction: (state, action: PayloadAction<TrainingsWithPaginationRDO | null>) => {
+      const addingTrainings = action.payload;
+
+      if(!state.paginatedTrainings || !addingTrainings) {
+        return;
+      }
+
+      addingTrainings?.entities.forEach((trainingItem) => state.paginatedTrainings?.entities.push(trainingItem));
+      state.paginatedTrainings.currentPage = addingTrainings.currentPage; // Обновляем текущую страницу
+    },
+
     setConvenientTrainingsAction: (state, action: PayloadAction<TrainingsWithPaginationRDO | null>) => {
       state.paginatedConvenientTrainings = action.payload;
     },
@@ -98,6 +110,7 @@ export const trainingProcess = createSlice({
 
 export const {
   setTrainingsAction,
+  appendTrainingsAction,
   setConvenientTrainingsAction,
   setTrainingItemAction,
   updateTrainingsListAction,

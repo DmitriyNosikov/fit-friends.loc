@@ -2,7 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { TrainingRepository } from './training.repository';
 import { TrainingFactory } from './training.factory';
 import { TrainingEntity } from './training.entity';
-import { TrainingMessage } from './training.constant';
+import { TrainingMessage, TrainingValidation } from './training.constant';
 import { CreateTrainingDTO, TrainingSearchQuery, UpdateTrainingDTO } from '@shared/training';
 import { fillDTO, omitUndefined } from '@server/libs/helpers';
 import { UserService } from '@server/user/user.service';
@@ -70,6 +70,31 @@ export class TrainingService {
     return await this.trainingRepository.deleteById(trainingId);
   }
 
+  public async getTrainingsWithDiscount() {
+    const searchQuery: TrainingSearchQuery = { withDiscount: true };
+    const trainings = await this.trainingRepository.search(searchQuery);
+
+    if (!trainings) {
+      return;
+    }
+
+    return trainings;
+  }
+
+  public async getTrainingsWithRating() {
+    const searchQuery: TrainingSearchQuery = {
+      ratingFrom: 1,
+      ratingTo: TrainingValidation.RATING.MAX
+    };
+    const trainings = await this.trainingRepository.search(searchQuery);
+
+    if (!trainings) {
+      return;
+    }
+
+    return trainings;
+  }
+
   public async getTrainingsForUser(userId: string) {
     const userInfo = await this.userService.findById(userId);
     const { trainingType, trainingDuration, level, dayCaloriesLimit } = userInfo;
@@ -82,6 +107,9 @@ export class TrainingService {
     if (!convenientTrainings) {
       return;
     }
+
+    // Сортировка тренировок пользователя от более подходящих к менее подходящим
+    convenientTrainings.entities = await this.sortTrainingsByUser(userId, convenientTrainings.entities);
 
     return convenientTrainings;
   }

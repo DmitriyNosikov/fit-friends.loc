@@ -194,6 +194,11 @@ export class TrainingRepository extends BasePostgresRepository<TrainingEntity, T
       where.isSpecial = query.isSpecial;
     }
 
+    // Поиск тренировок со скидками
+    if(query?.withDiscount !== undefined && query?.withDiscount !== null) {  
+      where.discount = { not: null };
+    }
+
     // Добавление установелнных фильтров
     if(andFilters.length > 0) {
       where.AND = [];
@@ -266,7 +271,7 @@ export class TrainingRepository extends BasePostgresRepository<TrainingEntity, T
     }
 
     if(ratingFilterFrom.length > 0 ) {
-      andFilters.push({ OR: ratingFilterTo } as never);
+      andFilters.push({ OR: ratingFilterFrom } as never);
     }
 
     if(ratingFilterTo.length > 0) {

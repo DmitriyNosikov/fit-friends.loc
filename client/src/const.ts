@@ -1,5 +1,7 @@
 import { BASE_URL } from './services/api';
 
+export const SPECIAL_FOR_YOU_MAX_SLIDES_COUNT = 9;
+
 // -- Backend API
 const BACKEND_API_URL = {
   USERS: `${BASE_URL}/api/users`,

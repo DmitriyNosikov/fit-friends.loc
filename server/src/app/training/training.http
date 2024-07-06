@@ -7,7 +7,7 @@ Content-Type: application/json
 ###
 
 @trainingId = md98229j-k4g7-hd94-k4cj-fj45f34gdf68
-@authorization = Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJkZzM0Z2RmNS1kZmg0LWdoNDYtd2VmNC1nZmw3OGduNWhmaDUiLCJlbWFpbCI6Imlyb24tbWFuQHN0YXJraW5kdXN0cmllcy5pdCIsIm5hbWUiOiJUb255Iiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzIwMjExMTExLCJleHAiOjE3MjAyMTIwMTF9.Ks_UmpNLNNeaZ_Gm-Ocbj9xhU6vfRRcqWb53o78_bk8
+@authorization = Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJkZzM0Z2RmNS1kZmg0LWdoNDYtd2VmNC1nZmw3OGduNWhmaDUiLCJlbWFpbCI6Imlyb24tbWFuQHN0YXJraW5kdXN0cmllcy5pdCIsIm5hbWUiOiJUb255Iiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzIwMjcwODkzLCJleHAiOjE3MjAyNzE3OTN9.t3v-QUpy69_vV4nw1FydxXwPEO58_TokAqwGI1f-2j8
 
 # /////////////////////////////// CREATE ///////////////////////////////
 # Create new training
@@ -70,6 +70,18 @@ Content-Type: application/json
 
 # /////////////////////////////// CONVENIENT TRAININGS ///////////////////////////////
 GET {{baseUrl}}/convenient-trainings HTTP/1.1
+Content-Type: application/json
+{{authorization}}
+###
+
+# /////////////////////////////// WITH DISCOUNT TRAININGS ///////////////////////////////
+GET {{baseUrl}}/with-discount HTTP/1.1
+Content-Type: application/json
+{{authorization}}
+###
+
+# /////////////////////////////// WITH RATING TRAININGS ///////////////////////////////
+GET {{baseUrl}}/with-rating HTTP/1.1
 Content-Type: application/json
 {{authorization}}
 ###

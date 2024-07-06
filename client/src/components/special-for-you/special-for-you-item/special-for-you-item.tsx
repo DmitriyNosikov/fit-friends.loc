@@ -32,7 +32,7 @@ export default function SpecialForYouItem({ training }: SpecialForYouItemProps):
           <div className="thumbnail-preview__button-wrapper">
             <Link
               className="btn btn--small thumbnail-preview__button"
-              to={`${AppRoute.TRAININGS}${id}`}
+              to={`${AppRoute.TRAININGS}/${id}`}
             >
               Подробнее
             </Link>

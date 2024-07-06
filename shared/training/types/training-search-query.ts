@@ -140,6 +140,20 @@ export class TrainingSearchQuery {
   @IsOptional()
   public isSpecial?: boolean;
 
+  @Expose()
+  @Transform((field) => {
+    if(field.value) {
+      if(field.value === 'false' || parseInt(field.value) <= 0) {
+        return false;
+      }
+
+      return !!field.value;
+    }
+  })
+  @IsBoolean()
+  @IsOptional()
+  public withDiscount?: boolean;
+
   // TODO: Если extends от BaseSearchQuery - возникают проблемы с полем
   // SortType и несоответстием типов. По этой причине пока полностью переносим
   // все свойства из BaseSearchQuery до разрешения данной проблемы

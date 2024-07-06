@@ -19,25 +19,29 @@ export function getTrainingsWithRating(state: TrainingStateNamespace): Trainings
   return state[Namespace.TRAINING].paginatedWithRatingTrainings;
 }
 
-// Loading statuses
-export function getTrainingsListLoadingStatus(state: TrainingStateNamespace): Boolean {
-  return state[Namespace.TRAINING].isTrainingsLoading;
-}
-
-export function getConvenientTrainingsLoadingStatus(state: TrainingStateNamespace): Boolean {
-  return state[Namespace.TRAINING].isConvenientTrainingsLoading;
-}
-
-export function getWithDiscountTrainingsLoadingStatus(state: TrainingStateNamespace): Boolean {
-  return state[Namespace.TRAINING].isWithDiscountTrainingsLoading;
-}
-
-export function getWithRatingTrainingsLoadingStatus(state: TrainingStateNamespace): Boolean {
-  return state[Namespace.TRAINING].isWithRatingTrainingsLoading;
-}
-
-
 // Trainings item
 export function getTrainingItem(state: TrainingStateNamespace): CreateTrainingRDO | null {
   return state[Namespace.TRAINING].trainingItem;
+}
+
+
+// Loading statuses
+export function getTrainingsListLoadingStatus(state: TrainingStateNamespace): boolean {
+  return state[Namespace.TRAINING].isTrainingsLoading;
+}
+
+export function getConvenientTrainingsLoadingStatus(state: TrainingStateNamespace): boolean {
+  return state[Namespace.TRAINING].isConvenientTrainingsLoading;
+}
+
+export function getWithDiscountTrainingsLoadingStatus(state: TrainingStateNamespace): boolean {
+  return state[Namespace.TRAINING].isWithDiscountTrainingsLoading;
+}
+
+export function getWithRatingTrainingsLoadingStatus(state: TrainingStateNamespace): boolean {
+  return state[Namespace.TRAINING].isWithRatingTrainingsLoading;
+}
+
+export function getTrainingItemLoadingStatus(state: TrainingStateNamespace): boolean {
+  return state[Namespace.TRAINING].isTrainingsItemLoading;
 }

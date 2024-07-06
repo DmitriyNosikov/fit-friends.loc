@@ -2,7 +2,7 @@ import { Namespace } from '@client/src/const';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { CreateTrainingRDO, TrainingsWithPaginationRDO } from '@shared/training';
 
-import { fetchConvenientTrainingsAction, fetchTrainingsAction, fetchWithDiscountTrainingsAction, fetchWithRatingTrainingsAction } from '../../actions/api-training-action';
+import { fetchConvenientTrainingsAction, fetchTrainingItemAction, fetchTrainingsAction, fetchWithDiscountTrainingsAction, fetchWithRatingTrainingsAction } from '../../actions/api-training-action';
 
 export type TrainingProcess = {
   paginatedTrainings: TrainingsWithPaginationRDO | null,
@@ -12,6 +12,7 @@ export type TrainingProcess = {
   trainingItem: CreateTrainingRDO | null,
 
   isTrainingsLoading: boolean,
+  isTrainingsItemLoading: boolean,
   isConvenientTrainingsLoading: boolean,
   isWithDiscountTrainingsLoading: boolean,
   isWithRatingTrainingsLoading: boolean,
@@ -25,6 +26,7 @@ const initialState: TrainingProcess = {
   trainingItem: null,
 
   isTrainingsLoading: false,
+  isTrainingsItemLoading: false,
   isConvenientTrainingsLoading: false,
   isWithDiscountTrainingsLoading: false,
   isWithRatingTrainingsLoading: false,
@@ -34,8 +36,14 @@ export const trainingProcess = createSlice({
   name: Namespace.TRAINING,
   initialState,
   reducers: {
+    // Список тренировок
     setTrainingsAction: (state, action: PayloadAction<TrainingsWithPaginationRDO | null>) => {
       state.paginatedTrainings = action.payload;
+    },
+
+    // Детальная информация о тренировке
+    setTrainingItemAction: (state, action: PayloadAction<CreateTrainingRDO | null>) => {
+      state.trainingItem = action.payload;
     },
 
     // Добавление тренировок при нажатии а кнопку "Показать еще"
@@ -63,10 +71,6 @@ export const trainingProcess = createSlice({
     // Тренировки с рейтингом больше 0
     setWithRatingTrainingsAction: (state, action: PayloadAction<TrainingsWithPaginationRDO | null>) => {
       state.paginatedWithRatingTrainings = action.payload;
-    },
-
-    setTrainingItemAction: (state, action: PayloadAction<CreateTrainingRDO | null>) => {
-      state.trainingItem = action.payload;
     },
 
     // При обновлении какой либо тренировки. ее нужно обновить во всех списках
@@ -139,6 +143,17 @@ export const trainingProcess = createSlice({
       })
       .addCase(fetchTrainingsAction.rejected, (state) => {
         state.isTrainingsLoading = false;
+      })
+
+      // Training item
+      .addCase(fetchTrainingItemAction.pending, (state) => {
+        state.isTrainingsItemLoading = true;
+      })
+      .addCase(fetchTrainingItemAction.fulfilled, (state) => {
+        state.isTrainingsItemLoading = false;
+      })
+      .addCase(fetchTrainingItemAction.rejected, (state) => {
+        state.isTrainingsItemLoading = false;
       })
 
       // Convenient trainings list

@@ -1,11 +1,16 @@
 import { AppRoute } from '@client/src/const';
 import classNames from 'classnames';
 import { ReactElement } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useParams } from 'react-router-dom';
 
 export default function HeaderNav(): ReactElement {
   const location = useLocation();
-  const mainPages: string[] = [AppRoute.MAIN, AppRoute.TRAININGS];
+  const params = useParams();
+  const mainPages: string[] = [
+    AppRoute.MAIN,
+    AppRoute.TRAININGS,
+    `${AppRoute.TRAININGS}/${params.trainingId}`
+  ];
 
   const mainClassName = classNames(
     'main-nav__link',

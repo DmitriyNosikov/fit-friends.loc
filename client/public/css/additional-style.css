@@ -11,3 +11,7 @@
 .promo-slider__bottom-container {
   justify-content: flex-end;
 }
+
+.input-load-avatar__avatar > img {
+  border-radius: 50%;
+}

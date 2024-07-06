@@ -147,9 +147,11 @@ export const updateUserAction = createAsyncThunk<LoggedUserRDO, UpdateUserDTO, A
       dispatch(setUserInfoAction(data));
       dispatch(setDataLoadingStatus(false));
 
+      toast.success('User has been successfully updated');
+
       return data;
     } catch(err) {
-      toast.error(`User updating ended with error: ${err}`);
+      toast.error(`Can't update user info: ${err}`);
 
       dispatch(setDataLoadingStatus(false));
 
@@ -158,24 +160,24 @@ export const updateUserAction = createAsyncThunk<LoggedUserRDO, UpdateUserDTO, A
   }
 );
 
-export const uploadAvatarAction = createAsyncThunk<string | unknown, FormData, AsyncOptions>(
+export const uploadFileAction = createAsyncThunk<string | unknown, FormData, AsyncOptions>(
   APIAction.USER_UPLOAD_AVATAR,
   async (
-    avatarFormData, // Avatar Form Data
+    fileFormData, // Avatar Form Data
     { dispatch, rejectWithValue, extra: api } // AsyncOptions
   ) => {
     dispatch(setDataLoadingStatus(true));
 
     // Аватар нужно загружать отдельно
-    if(avatarFormData) {
+    if(fileFormData) {
       try {
-        const { data: avatarUrl } = await api.post<string>(ApiRoute.LOAD_FILES, avatarFormData);
+        const { data: avatarUrl } = await api.post<string>(ApiRoute.LOAD_FILES, fileFormData);
 
         dispatch(setDataLoadingStatus(false));
 
         return avatarUrl;
       } catch(err) {
-        toast.warn(`Can't load your avatar: ${err}`);
+        toast.warn(`Can't load file: ${err}`);
 
         dispatch(setDataLoadingStatus(false));
 
@@ -195,8 +197,6 @@ export const fetchUserDetailInfoAction = createAsyncThunk<void, void, AsyncOptio
 
     try {
       const { data } = await api.get<LoggedUserRDO>(`${ApiRoute.USER_API}`);
-
-      console.log('USER DATA: ', data);
 
       dispatch(setUserInfoAction(data));
       dispatch(setDataLoadingStatus(false));

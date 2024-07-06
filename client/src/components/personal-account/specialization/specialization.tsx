@@ -5,11 +5,10 @@ import { ReactElement } from 'react';
 type SpecializationProps = {
   trainingTypeList: TrainingType[],
   usersTrainingType: TrainingType[]
-  reference: React.RefObject<HTMLInputElement>,
   formEditable: boolean
 };
 
-export default function Specialization({ trainingTypeList, usersTrainingType, reference, formEditable }: SpecializationProps): ReactElement {
+export default function Specialization({ trainingTypeList, usersTrainingType, formEditable }: SpecializationProps): ReactElement {
   return (
     <div className="user-info__section">
       <h2 className="user-info__title user-info__title--specialization">Специализация</h2>
@@ -27,7 +26,6 @@ export default function Specialization({ trainingTypeList, usersTrainingType, re
                     name="specialization"
                     defaultValue={type}
                     defaultChecked={isChecked}
-                    ref={reference}
                     disabled={!formEditable}
                   />
                   <span className="btn-checkbox__btn">{upperCaseFirst(type)}</span>

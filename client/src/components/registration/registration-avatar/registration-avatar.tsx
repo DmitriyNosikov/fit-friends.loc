@@ -1,3 +1,4 @@
+import { getImgPreviewLink } from '@client/src/utils/common';
 import { useRef } from 'react';
 
 type RegistrationAvatarProps = {
@@ -16,12 +17,11 @@ export default function RegistrationAvatar({ onAvatarUpload }: RegistrationAvata
     }
 
     const avatar = target?.files[0];
-    const fileReader = new FileReader();
 
-    fileReader.readAsDataURL(avatar);
-
-    fileReader.addEventListener('loadend', () => {
-      avatarContainer?.setAttribute('style', `background-image: url(${fileReader.result}); background-size: cover;`);
+    getImgPreviewLink(avatar, (link: string | ArrayBuffer | null) => {
+      if(link) {
+        avatarContainer?.setAttribute('style', `background-image: url(${link}); background-size: cover;`);
+      }
     })
 
     const formData = new FormData();

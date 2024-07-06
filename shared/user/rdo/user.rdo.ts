@@ -80,7 +80,7 @@ export class UserRDO {
     example: 'Some interesting profile description',
   })
   @Expose()
-  description!: Date;
+  description!: string;
 
   @ApiProperty({
     description: 'User metro station',

@@ -8,7 +8,6 @@ import useAdditionalInfo from '@client/src/hooks/useAdditionalInfo';
 import { getAdditionalInfo } from '@client/src/store/slices/user-process/user-process.selectors';
 import { registerUserAction } from '@client/src/store/actions/api-user-action';
 
-import RegistrationLocation from '@client/src/components/registration/registration-location/registration-location';
 import RegistrationAvatar from '@client/src/components/registration/registration-avatar/registration-avatar';
 import RegistrationRole from '@client/src/components/registration/registration-role/registration-role';
 import RegistrationGender from '@client/src/components/registration/registration-gender/registration-gender';
@@ -168,7 +167,13 @@ export default function Registration() {
                         <div className="custom-select custom-select--not-selected" id="location">
                           <span className="custom-select__label">Ваша локация</span>
 
-                          <CustomSelectBtn itemsList={location} onItemSelect={setUserLocation} />
+                          <CustomSelectBtn
+                            itemsList={location}
+                            uniqCSSId='registration-location'
+                            onItemSelect={setUserLocation}
+                          />
+
+                          <span className="custom-input__error"></span>
                         </div>
                         </>
                     }

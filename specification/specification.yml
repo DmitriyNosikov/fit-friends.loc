@@ -1001,7 +1001,6 @@ components:
           description: User birth date
           example: 26.09.1993
         description:
-          format: date-time
           type: string
           description: User profile description
           example: Some interesting profile description

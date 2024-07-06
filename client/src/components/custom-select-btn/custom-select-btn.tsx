@@ -1,16 +1,23 @@
-import { Location } from '@server/libs/types';
 import { ReactElement } from 'react';
 
 type GenderSelectBtnProps = {
-  itemsList: Location[],
+  itemsList: string[],
+  uniqCSSId: string,
   onBtnClick?: Function,
   onItemSelect?: Function,
   onLeave?: Function,
   disabled?: boolean
 }
 
-export default function CustomSelectBtn({ itemsList, onBtnClick, onItemSelect, onLeave, disabled }: GenderSelectBtnProps): ReactElement {
-  const customSelectListElem = document.querySelector('.custom-select__list');
+export default function CustomSelectBtn({
+  itemsList,
+  uniqCSSId,
+  onBtnClick,
+  onItemSelect,
+  onLeave,
+  disabled
+}: GenderSelectBtnProps): ReactElement {
+  const customSelectListElem = document.querySelector(`#${uniqCSSId}`);
   const customSelectListContainer = customSelectListElem?.closest('.custom-select');
   const itemTextBox = customSelectListContainer?.querySelector('.custom-select__text');
 
@@ -40,7 +47,7 @@ export default function CustomSelectBtn({ itemsList, onBtnClick, onItemSelect, o
       return;
     }
 
-    customSelectListContainer?.classList.add('not-empty');
+    // customSelectListContainer?.classList.add('not-empty');
     customSelectListContainer?.classList.remove('custom-select--not-selected');
     itemTextBox.textContent = itemTextContent;
 
@@ -59,7 +66,7 @@ export default function CustomSelectBtn({ itemsList, onBtnClick, onItemSelect, o
           </svg>
         </span>
       </button>
-      <ul className="custom-select__list" role="listbox">
+      <ul className="custom-select__list" role="listbox" id={uniqCSSId}>
         {
           itemsList && itemsList.map((item: string) => {
             return (

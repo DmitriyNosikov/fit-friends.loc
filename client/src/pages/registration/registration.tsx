@@ -17,6 +17,7 @@ import { clearFieldError, validateFields } from '../../validation/registration-v
 import { CreateUserDTO } from '@shared/user';
 import { useNavigate } from 'react-router-dom';
 import { AppRoute } from '@client/src/const';
+import CustomSelectBtn from '@client/src/components/custom-select-btn/custom-select-btn';
 
 export default function Registration() {
   useAdditionalInfo();
@@ -45,7 +46,7 @@ export default function Registration() {
   function handleChangePolicyAgreement() {
     const target = policyAgreement?.current?.checked;
 
-    if(!target) {
+    if (!target) {
       signUpBtn?.setAttribute('disabled', 'true');
       return;
     }
@@ -59,7 +60,7 @@ export default function Registration() {
 
     const isPolicyAgreementChecked = policyAgreement?.current?.checked;
 
-    if(!isPolicyAgreementChecked) {
+    if (!isPolicyAgreementChecked) {
       toast.warn('You have to agree with privacy policy');
       return;
     }
@@ -82,13 +83,13 @@ export default function Registration() {
 
     const isFormHasErrors = validateFields(userData);
 
-    if(isFormHasErrors) {
+    if (isFormHasErrors) {
       toast.warn('Validation error. Please, correct marked fields and try send form again.');
     }
 
     dispatch(registerUserAction(userData))
       .then((result) => {
-        if('error' in result) {
+        if ('error' in result) {
           return;
         }
 
@@ -108,110 +109,117 @@ export default function Registration() {
   return (
     <>
       <div className="background-logo">
-          <svg className="background-logo__logo" width="750" height="284" aria-hidden="true">
-            <use xlinkHref="#logo-big"></use>
-          </svg>
-          <svg className="background-logo__icon" width="343" height="343" aria-hidden="true">
-            <use xlinkHref="#icon-logotype"></use>
-          </svg>
-        </div>
-        <div className="popup-form popup-form--sign-up">
-          <div className="popup-form__wrapper">
-            <div className="popup-form__content">
-              <div className="popup-form__title-wrapper">
-                <h1 className="popup-form__title">Регистрация</h1>
-              </div>
+        <svg className="background-logo__logo" width="750" height="284" aria-hidden="true">
+          <use xlinkHref="#logo-big"></use>
+        </svg>
+        <svg className="background-logo__icon" width="343" height="343" aria-hidden="true">
+          <use xlinkHref="#icon-logotype"></use>
+        </svg>
+      </div>
+      <div className="popup-form popup-form--sign-up">
+        <div className="popup-form__wrapper">
+          <div className="popup-form__content">
+            <div className="popup-form__title-wrapper">
+              <h1 className="popup-form__title">Регистрация</h1>
+            </div>
 
-              <div className="popup-form__form">
-                <form name="registration" method="get" className="registration-form" onChange={handleFormFieldChange} onSubmit={handleFormSubmit}>
-                  <div className="sign-up">
+            <div className="popup-form__form">
+              <form name="registration" method="get" className="registration-form" onChange={handleFormFieldChange} onSubmit={handleFormSubmit}>
+                <div className="sign-up">
 
-                    {/* User avatar */}
-                    <RegistrationAvatar onAvatarUpload={setUserAvatar} />
+                  {/* User avatar */}
+                  <RegistrationAvatar onAvatarUpload={setUserAvatar} />
 
-                    <div className="sign-up__data">
-                      <div className="custom-input" id="name">
-                        <label>
-                          <span className="custom-input__label">Имя</span>
-                          <span className="custom-input__wrapper">
-                            <input type="text" name="name" ref={userName} required/>
-                          </span>
-                          <span className="custom-input__error"></span>
-                        </label>
-                      </div>
+                  <div className="sign-up__data">
+                    <div className="custom-input" id="name">
+                      <label>
+                        <span className="custom-input__label">Имя</span>
+                        <span className="custom-input__wrapper">
+                          <input type="text" name="name" ref={userName} required />
+                        </span>
+                        <span className="custom-input__error"></span>
+                      </label>
+                    </div>
 
-                      <div className="custom-input" id="email">
-                        <label>
-                          <span className="custom-input__label">E-mail</span>
-                          <span className="custom-input__wrapper">
-                            <input type="email" name="email" ref={userEmail} required/>
-                          </span>
-                          <span className="custom-input__error"></span>
-                        </label>
-                      </div>
+                    <div className="custom-input" id="email">
+                      <label>
+                        <span className="custom-input__label">E-mail</span>
+                        <span className="custom-input__wrapper">
+                          <input type="email" name="email" ref={userEmail} required />
+                        </span>
+                        <span className="custom-input__error"></span>
+                      </label>
+                    </div>
 
-                      <div className="custom-input" id="birthDate">
-                        <label>
-                          <span className="custom-input__label">Дата рождения</span>
-                          <span className="custom-input__wrapper">
-                            <input type="date" name="birthday" max={maxBirthDate} ref={userBirthDate} />
-                          </span>
-                          <span className="custom-input__error"></span>
-                        </label>
-                      </div>
-
-                      {
-                        // Location list
-                        location &&  <RegistrationLocation locationList={location} onLocationCheck={setUserLocation} />
-                      }
-
-                      <div className="custom-input" id="password">
-                        <label>
-                          <span className="custom-input__label">Пароль</span>
-                          <span className="custom-input__wrapper">
-                            <input type="password" name="password" autoComplete="off" ref={userPassword} required/>
-                          </span>
-                          <span className="custom-input__error"></span>
-                        </label>
-                      </div>
-
-                      {
-                        // User gender
-                        gender && <RegistrationGender genderList={gender} onGenderChange={setUserGender} />
-                      }
+                    <div className="custom-input" id="birthDate">
+                      <label>
+                        <span className="custom-input__label">Дата рождения</span>
+                        <span className="custom-input__wrapper">
+                          <input type="date" name="birthday" max={maxBirthDate} ref={userBirthDate} />
+                        </span>
+                        <span className="custom-input__error"></span>
+                      </label>
                     </div>
 
                     {
-                      // User roles
-                      roles && <RegistrationRole roles={roles} onRoleChangeHandler={setUserRole} />
+                      // Location list
+                      location &&
+                        <>
+                        <div className="custom-select custom-select--not-selected" id="location">
+                          <span className="custom-select__label">Ваша локация</span>
+
+                          <CustomSelectBtn itemsList={location} onItemSelect={setUserLocation} />
+                        </div>
+                        </>
                     }
 
-                    <div className="sign-up__checkbox">
+                    <div className="custom-input" id="password">
                       <label>
-                        <input
-                          type="checkbox"
-                          value="user-agreement"
-                          name="user-agreement"
-                          defaultChecked
-                          onChange={handleChangePolicyAgreement}
-                          ref={policyAgreement}
-                          required
-                        />
-                        <span className="sign-up__checkbox-icon" >
-                            <svg width="9" height="6" aria-hidden="true">
-                              <use xlinkHref="#arrow-check"></use>
-                            </svg>
+                        <span className="custom-input__label">Пароль</span>
+                        <span className="custom-input__wrapper">
+                          <input type="password" name="password" autoComplete="off" ref={userPassword} required />
                         </span>
-                        <span className="sign-up__checkbox-label">Я соглашаюсь с <span>политикой конфиденциальности</span> компании</span>
+                        <span className="custom-input__error"></span>
                       </label>
                     </div>
-                    <button className="btn sign-up__button" type="submit">Продолжить</button>
+
+                    {
+                      // User gender
+                      gender && <RegistrationGender genderList={gender} onGenderChange={setUserGender} />
+                    }
                   </div>
-                </form>
-              </div>
+
+                  {
+                    // User roles
+                    roles && <RegistrationRole roles={roles} onRoleChangeHandler={setUserRole} />
+                  }
+
+                  <div className="sign-up__checkbox">
+                    <label>
+                      <input
+                        type="checkbox"
+                        value="user-agreement"
+                        name="user-agreement"
+                        defaultChecked
+                        onChange={handleChangePolicyAgreement}
+                        ref={policyAgreement}
+                        required
+                      />
+                      <span className="sign-up__checkbox-icon" >
+                        <svg width="9" height="6" aria-hidden="true">
+                          <use xlinkHref="#arrow-check"></use>
+                        </svg>
+                      </span>
+                      <span className="sign-up__checkbox-label">Я соглашаюсь с <span>политикой конфиденциальности</span> компании</span>
+                    </label>
+                  </div>
+                  <button className="btn sign-up__button" type="submit">Продолжить</button>
+                </div>
+              </form>
             </div>
           </div>
         </div>
+      </div>
     </>
   );
 }

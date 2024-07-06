@@ -1,12 +1,16 @@
-import { ReactElement, useState } from 'react';
+import { ReactElement, useRef, useState } from 'react';
+
+import { useAppSelector } from '@client/src/hooks';
+import { getAdditionalInfo } from '@client/src/store/slices/user-process/user-process.selectors';
+
+import { LoggedUserRDO } from '@shared/user';
+import { BASE_URL } from '@client/src/services/api';
 
 import { getAdaptedUserLevel } from '@client/src/utils/adapters';
-import { useAppSelector } from '@client/src/hooks';
-import { BASE_URL } from '@client/src/services/api';
-import { getAdditionalInfo } from '@client/src/store/slices/user-process/user-process.selectors';
-import { LoggedUserRDO } from '@shared/user';
-import Specialization from '../specialization/specialization';
 import { upperCaseFirst } from '@client/src/utils/common';
+
+import Specialization from '../specialization/specialization';
+import CustomSelectBtn from '../../custom-select-btn/custom-select-btn';
 
 type PersonalAccountUserFormProps = {
   userInfo: LoggedUserRDO
@@ -29,11 +33,39 @@ export default function PersonalAccountUserForm({ userInfo }: PersonalAccountUse
     level
   } = userInfo;
 
+  const userName = useRef<HTMLInputElement>(null);
+  const userDescription = useRef<HTMLTextAreaElement>(null);
+  const userIsReadyToTrain = useRef<HTMLInputElement>(null);
+  const userSpecialization = useRef<HTMLInputElement>(null);
+  const [userAvatar, setUserAvatar] = useState('');
+  const [userLocation, setUserLocation] = useState('');
+  const [userGender, setUserGender] = useState('неважно');
+  const [userRole, setUserRole] = useState('client');
+
   const userAvatarUrl = avatar ? `${BASE_URL}${avatar}` : '';
   let userLevel = getAdaptedUserLevel(level);
 
+  console.log('ADDITIONL INFO: ', additionalInfo);
+
   function editBtnClickHandler() {
     setFormEditable(!formEditable);
+
+    if(formEditable) {
+      onSaveBtnClick();
+    }
+  }
+
+  function onSaveBtnClick() {
+    console.log('Form is saving...');
+  }
+
+  function handleLocationBtnClick() {
+  }
+
+  function handleLocationBtnLeave() {
+  }
+
+  function handleLocationSelect(e: React.MouseEvent<HTMLLIElement, MouseEvent>) {
   }
 
   return (
@@ -63,18 +95,27 @@ export default function PersonalAccountUserForm({ userInfo }: PersonalAccountUse
         <div className="user-info__section">
           <h2 className="user-info__title">Обо мне</h2>
           <div className="custom-input custom-input--readonly user-info__input">
-            <label><span className="custom-input__label">Имя</span>
+            <label>
+              <span className="custom-input__label">Имя</span>
               <span className="custom-input__wrapper">
-                <input type="text" name="name" defaultValue={name} disabled={!formEditable} />
+                <input
+                  type="text"
+                  name="name"
+                  defaultValue={name}
+                  ref={userName}
+                  disabled={!formEditable}
+                />
               </span>
             </label>
           </div>
           <div className="custom-textarea custom-textarea--readonly user-info__textarea">
-            <label><span className="custom-textarea__label">Описание</span>
+            <label>
+              <span className="custom-textarea__label">Описание</span>
               <textarea
                 name="description"
                 placeholder=" "
                 defaultValue={`${description}`}
+                ref={userDescription}
                 disabled={!formEditable}
               />
             </label>
@@ -88,6 +129,7 @@ export default function PersonalAccountUserForm({ userInfo }: PersonalAccountUse
                 type="checkbox"
                 name="ready-for-training"
                 defaultChecked={isReadyToTraining}
+                ref={userIsReadyToTrain}
                 disabled={!formEditable}
               />
               <span className="custom-toggle__icon">
@@ -106,6 +148,7 @@ export default function PersonalAccountUserForm({ userInfo }: PersonalAccountUse
           <Specialization
             trainingTypeList={additionalInfo.trainingType}
             usersTrainingType={trainingType}
+            reference={userSpecialization}
             formEditable={formEditable}
           />
         }
@@ -114,14 +157,15 @@ export default function PersonalAccountUserForm({ userInfo }: PersonalAccountUse
           <span className="custom-select__label">Локация</span>
           <div className="custom-select__placeholder">ст. м. {upperCaseFirst(location)}</div>
 
-          <button className="custom-select__button" type="button" aria-label="Выберите одну из опций" disabled={!formEditable}>
-            <span className="custom-select__text" />
-            <span className="custom-select__icon">
-              <svg width={15} height={6} aria-hidden="true">
-                <use xlinkHref="#arrow-down" />
-              </svg>
-            </span></button>
-          <ul className="custom-select__list" role="listbox"></ul>
+          {
+            additionalInfo?.location &&
+            <CustomSelectBtn
+              itemsList={additionalInfo.location}
+              onBtnClick={handleLocationBtnClick}
+              onItemSelect={handleLocationSelect}
+              disabled={!formEditable}
+            />
+          }
         </div>
 
         <div className="custom-select--readonly custom-select user-info__select">

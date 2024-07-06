@@ -1,5 +1,5 @@
 import { Location } from '@server/libs/types';
-import LocationSelectBtn from '../../location-select-btn/location-select-btn';
+import CustomSelectBtn from '../../custom-select-btn/custom-select-btn';
 
 type RegistrationLocationProps = {
   locationList: Location[],
@@ -41,7 +41,11 @@ export default function RegistrationLocation({ locationList, onLocationCheck }: 
     <div className="custom-select custom-select--not-selected" onBlur={handleLocationBtnLeave} id="location">
       <span className="custom-select__label">Ваша локация</span>
 
-      <LocationSelectBtn locationList={locationList} onBtnClick={handleLocationBtnClick} onLocationSelect={handleLocationSelect}/>
+      <CustomSelectBtn
+        itemsList={locationList}
+        onBtnClick={handleLocationBtnClick}
+        onItemSelect={handleLocationSelect}
+      />
 
       <span className="custom-input__error"></span>
     </div>

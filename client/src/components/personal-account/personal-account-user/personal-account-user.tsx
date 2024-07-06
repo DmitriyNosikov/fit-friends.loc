@@ -4,7 +4,6 @@ import { useAppSelector } from '@client/src/hooks';
 import useAdditionalInfo from '@client/src/hooks/useAdditionalInfo';
 import Stub from '../../tools/stub/stub';
 
-import BackBtn from '../../back-btn/back-btn';
 import { getUserInfo } from '@client/src/store/slices/user-process/user-process.selectors';
 import Spinner from '../../tools/spinner/spinner';
 import PersonalAccountUserForm from '../personal-account-user-form/personal-account-user-form';
@@ -27,8 +26,6 @@ export default function PersonalAccountUser(): ReactElement {
           <div className="inner-page__wrapper">
             <h1 className="visually-hidden">Личный кабинет</h1>
             <section className="user-info">
-              <BackBtn />
-
               <PersonalAccountUserForm userInfo={userInfo} />
             </section>
 

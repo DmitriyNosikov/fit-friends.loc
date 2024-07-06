@@ -1,4 +1,4 @@
-import { Gender, Location, TrainingDuration, TrainingType, UserRole } from '@server/libs/types';
+import { Gender, Location, TrainingDuration, TrainingType, UserLevel, UserRole } from '@server/libs/types';
 
 export class AdditionalInfoRDO {
   gender!: Gender[];
@@ -6,4 +6,5 @@ export class AdditionalInfoRDO {
   trainingType!: TrainingType[];
   trainingDuration!: TrainingDuration[];
   roles!: UserRole[];
+  levels!: UserLevel[];
 };

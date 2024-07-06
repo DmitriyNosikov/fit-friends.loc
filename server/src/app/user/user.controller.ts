@@ -24,7 +24,7 @@ import { fillDTO } from '../libs/helpers';
 import { RequestWithUser } from './interfaces/request-with-user.interface';
 
 import { AdditionalInfoRDO, CreateUserDTO, LoggedUserRDO, LoginUserDTO, UpdateUserDTO, UserRDO } from '../../../../shared/user/';
-import { trainingDurationList, genderTypeList, locationList, trainingTypeList, userRolesList } from '@server/libs/types';
+import { trainingDurationList, genderTypeList, locationList, trainingTypeList, userRolesList, userLevelList } from '@server/libs/types';
 import { UserInterface } from './interfaces';
 import { UserMessage } from './user.constant';
 
@@ -57,6 +57,7 @@ export class UserController {
       trainingType: trainingTypeList,
       trainingDuration: trainingDurationList,
       roles: userRolesList,
+      levels: userLevelList
     };
   }
 

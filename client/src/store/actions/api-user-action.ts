@@ -31,28 +31,6 @@ const APIAction = {
 } as const;
 
 // ASYNC ACTIONS
-export const fetchAdditionalInfoAction = createAsyncThunk<AdditionalInfoRDO, void, AsyncOptions>(
-  APIAction.USER_GET_ADDITIONAL,
-  async (_arg, { dispatch, rejectWithValue, extra: api }) => {
-    dispatch(setDataLoadingStatus(true));
-
-    try {
-      const { data } = await api.get<AdditionalInfoRDO>(ApiRoute.GET_ADDITIONAL_INFO);
-
-      dispatch(setAdditionalInfo(data));
-
-      return data;
-    } catch(err) {
-      toast.warn(`Can't get additional info: ${err}`);
-
-      dispatch(setAdditionalInfo(null));
-      dispatch(setDataLoadingStatus(false));
-
-      return rejectWithValue(err);
-    }
-  }
-);
-
 // --- Auth
 //---------------------------------------------Return Payload AsyncOptions
 export const checkUserAuthAction = createAsyncThunk<void, void, AsyncOptions>(
@@ -225,6 +203,28 @@ export const fetchUserDetailInfoAction = createAsyncThunk<void, void, AsyncOptio
     } catch(err) {
       toast.warn(`Can't get user's detail info: ${err}`);
 
+      dispatch(setDataLoadingStatus(false));
+
+      return rejectWithValue(err);
+    }
+  }
+);
+
+export const fetchAdditionalInfoAction = createAsyncThunk<AdditionalInfoRDO, void, AsyncOptions>(
+  APIAction.USER_GET_ADDITIONAL,
+  async (_arg, { dispatch, rejectWithValue, extra: api }) => {
+    dispatch(setDataLoadingStatus(true));
+
+    try {
+      const { data } = await api.get<AdditionalInfoRDO>(ApiRoute.GET_ADDITIONAL_INFO);
+
+      dispatch(setAdditionalInfo(data));
+
+      return data;
+    } catch(err) {
+      toast.warn(`Can't get additional info: ${err}`);
+
+      dispatch(setAdditionalInfo(null));
       dispatch(setDataLoadingStatus(false));
 
       return rejectWithValue(err);

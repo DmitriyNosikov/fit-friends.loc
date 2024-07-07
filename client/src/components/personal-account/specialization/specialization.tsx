@@ -12,7 +12,7 @@ export default function Specialization({ trainingTypeList, usersTrainingType, fo
   return (
     <div className="user-info__section">
       <h2 className="user-info__title user-info__title--specialization">Специализация</h2>
-      <div className="specialization-checkbox user-info__specialization">
+      <div className="specialization-checkbox user-info__specialization" id="trainingType">
         {
           trainingTypeList.map((type) => {
             const isChecked = usersTrainingType.includes(type);
@@ -34,6 +34,7 @@ export default function Specialization({ trainingTypeList, usersTrainingType, fo
             )
           })
         }
+        <span className="custom-input__error"></span>
       </div>
     </div>
   )

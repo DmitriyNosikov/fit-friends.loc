@@ -11,12 +11,13 @@ import { registerUserAction } from '@client/src/store/actions/api-user-action';
 import RegistrationAvatar from '@client/src/components/registration/registration-avatar/registration-avatar';
 import RegistrationRole from '@client/src/components/registration/registration-role/registration-role';
 import RegistrationGender from '@client/src/components/registration/registration-gender/registration-gender';
-import { clearFieldError, validateFields } from '../../validation/registration-validation';
+import { clearFieldError, validateFields } from '../../validation/validation-tools';
 
 import { CreateUserDTO } from '@shared/user';
 import { useNavigate } from 'react-router-dom';
 import { AppRoute } from '@client/src/const';
 import CustomSelectBtn from '@client/src/components/custom-select-btn/custom-select-btn';
+import { registrationValidationSchema } from '@client/src/validation/registration-validation';
 
 export default function Registration() {
   useAdditionalInfo();
@@ -80,7 +81,7 @@ export default function Registration() {
       role: userRole,
     } as CreateUserDTO;
 
-    const isFormHasErrors = validateFields(userData);
+    const isFormHasErrors = validateFields<CreateUserDTO>(userData, registrationValidationSchema);
 
     if (isFormHasErrors) {
       toast.warn('Validation error. Please, correct marked fields and try send form again.');

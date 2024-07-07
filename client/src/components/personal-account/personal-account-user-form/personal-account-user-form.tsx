@@ -1,9 +1,11 @@
 import { ReactElement, useRef, useState } from 'react';
+import classNames from 'classnames';
+import { toast } from 'react-toastify';
 
 import { useAppDispatch, useAppSelector } from '@client/src/hooks';
 import { getAdditionalInfo } from '@client/src/store/slices/user-process/user-process.selectors';
 
-import { LoggedUserRDO } from '@shared/user';
+import { LoggedUserRDO, UpdateUserDTO } from '@shared/user';
 import { BASE_URL } from '@client/src/services/api';
 
 import { getAdaptedUserLevel } from '@client/src/utils/adapters';
@@ -12,8 +14,10 @@ import { areArraysEqual, getImgPreviewLink, upperCaseFirst } from '@client/src/u
 import Specialization from '../specialization/specialization';
 import CustomSelectBtn from '../../custom-select-btn/custom-select-btn';
 import { updateUserAction, uploadFileAction } from '@client/src/store/actions/api-user-action';
-import classNames from 'classnames';
-import { toast } from 'react-toastify';
+
+
+import { clearErrors, validateFields } from '@client/src/validation/validation-tools';
+import { personalAccountValidationSchema } from '@client/src/validation/personal-account-validation';
 
 const DEFAULT_AVATAR_URL = 'img/content/no-user-photo.png';
 
@@ -53,11 +57,17 @@ export default function PersonalAccountUserForm({ userInfo }: PersonalAccountUse
   let newUserAvatar: FormData | null = null;
 
   function editBtnClickHandler() {
-    setFormEditable(!formEditable);
+    const formState = !formEditable;
 
     if (formEditable) {
-      onSaveBtnClick();
+      const isFormValid = onSaveBtnClick();
+
+      if(!isFormValid) {
+        return;
+      }
     }
+
+    setFormEditable(formState);
   }
 
   function handleAvatarChange(e: React.ChangeEvent<HTMLInputElement>) {
@@ -120,6 +130,8 @@ export default function PersonalAccountUserForm({ userInfo }: PersonalAccountUse
   }
 
   function onSaveBtnClick() {
+    clearErrors();
+
     const updateUserData: Record<string, any> = {};
     const userSpecialization = document.querySelectorAll('.user-info__specialization .btn-checkbox input[type="checkbox"]:checked');
 
@@ -148,17 +160,28 @@ export default function PersonalAccountUserForm({ userInfo }: PersonalAccountUse
       if (!areArraysEqual(newSpecializations, trainingType)) {
         updateUserData['trainingType'] = newSpecializations;
       }
+    } else {
+      updateUserData['trainingType'] = [];
     }
 
     (userLocation && userLocation !== location) ? updateUserData['location'] = userLocation : '';
     (userGender && userGender !== gender) ? updateUserData['gender'] = userGender : '';
     (userLevel && userLevel !== level) ? updateUserData['level'] = userLevel : '';
 
-    if (updateUserData.length <= 0) {
-      return;
+    if (Object.keys(updateUserData).length <= 0) {
+      return true;
+    }
+
+    const isFormHasErrors = validateFields<UpdateUserDTO>(updateUserData, personalAccountValidationSchema);
+
+    if (isFormHasErrors) {
+      toast.warn('Validation error. Please, correct marked fields and try send form again.');
+      return false;
     }
 
     dispatch(updateUserAction(updateUserData));
+
+    return true;
   }
 
 
@@ -212,7 +235,7 @@ export default function PersonalAccountUserForm({ userInfo }: PersonalAccountUse
         </button>
         <div className="user-info__section">
           <h2 className="user-info__title">Обо мне</h2>
-          <div className="custom-input custom-input--readonly user-info__input">
+          <div className="custom-input custom-input--readonly user-info__input" id="name">
             <label>
               <span className="custom-input__label">Имя</span>
               <span className="custom-input__wrapper">
@@ -224,9 +247,10 @@ export default function PersonalAccountUserForm({ userInfo }: PersonalAccountUse
                   disabled={!formEditable}
                 />
               </span>
+              <span className="custom-input__error"></span>
             </label>
           </div>
-          <div className="custom-textarea custom-textarea--readonly user-info__textarea">
+          <div className="custom-textarea custom-textarea--readonly user-info__textarea" id="description">
             <label>
               <span className="custom-textarea__label">Описание</span>
               <textarea
@@ -236,6 +260,7 @@ export default function PersonalAccountUserForm({ userInfo }: PersonalAccountUse
                 ref={userDescription}
                 disabled={!formEditable}
               />
+              <span className="custom-input__error"></span>
             </label>
           </div>
         </div>

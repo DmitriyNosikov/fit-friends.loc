@@ -22,10 +22,6 @@ export default function PopularTrainings(): ReactElement {
     navigate(AppRoute.TRAININGS);
   }
 
-  if (isTrainingsLoading) {
-    return <Spinner />
-  }
-
   // Слайдер может содержать не более SPECIAL_FOR_YOU_MAX_SLIDES_COUNT слайдов
   let slides = trainings?.entities;
 
@@ -50,6 +46,11 @@ export default function PopularTrainings(): ReactElement {
         <div className="popular-trainings__wrapper">
           <div className="popular-trainings__title-wrapper">
             <h2 className="popular-trainings__title">Популярные тренировки</h2>
+
+            {
+              isTrainingsLoading && <Spinner />
+            }
+
             <button className="btn-flat popular-trainings__button" type="button" onClick={handleSeeAllBtnClick}>
               <span>Смотреть все</span>
               <svg width={14} height={10} aria-hidden="true">
@@ -79,7 +80,7 @@ export default function PopularTrainings(): ReactElement {
           </div>
 
           {
-            !trainings && <Stub />
+            !isTrainingsLoading && !trainings && <Stub />
           }
 
           {

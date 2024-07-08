@@ -16,7 +16,7 @@ import App from './components/app/app';
 import { checkUserAuthAction } from './store/actions/api-user-action';
 
 // Проверяем авторизацию пользователя
-// store.dispatch(checkUserAuthAction());
+store.dispatch(checkUserAuthAction());
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement

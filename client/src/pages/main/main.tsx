@@ -4,15 +4,12 @@ import PopularTrainings from '@client/src/components/popular-trainings/popular-t
 import { useAppDispatch } from '@client/src/hooks';
 import { useEffect } from 'react';
 import { fetchConvenientTrainingsAction, fetchWithDiscountTrainingsAction, fetchWithRatingTrainingsAction } from '@client/src/store/actions/api-training-action';
-import { checkUserAuthAction } from '@client/src/store/actions/api-user-action';
 
 export default function Main() {
   const dispatch = useAppDispatch();
 
   useEffect(() => {
     let isMounted = true;
-
-    dispatch(checkUserAuthAction());
 
     // Загружаем данные для всех блоков только в случае, если пользователь авторизован
     if (isMounted) {

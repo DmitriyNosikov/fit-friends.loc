@@ -16,5 +16,4 @@ export const personalAccountValidationSchema = Joi.object({
   trainingType: Joi.array()
     .min(UserValidation.TRAINING_TYPE.MIN_COUNT)
     .max(UserValidation.TRAINING_TYPE.MAX_COUNT)
-    .required()
 });

@@ -11,13 +11,7 @@ import {
 } from '../../types';
 import { TrainingInterface } from '../../../training/interfaces';
 import { AuthUserInterface } from '../../../user/interfaces';
-
-const ADMIN_USER_ID = "dg34gdf5-dfh4-gh46-wef4-gfl78gn5hfh5";
-const SERVICE_ID_ONE = "u8320e27-cb56-4c74-b633-kfd093d812n4";
-const SERVICE_ID_TWO = "b3110e27-df4g-j456-3gf4-d71d697f03e9";
-const SERVICE_ID_THREE = "md98229j-k4g7-hd94-k4cj-fj45f34gdf68";
-const SERVICE_ID_FOUR = "kf98229j-tgg7-hp92-hy5f-ht45f34gdf35";
-const SERVICE_ID_FIVE = "rt9825ki-68gt-st28-g8d9-2t545tggj723";
+import { randomUUID } from 'crypto';
 
 export async function getAdminUser(): Promise<AuthUserInterface> {
   const hasher = new BCryptHasher();
@@ -26,7 +20,7 @@ export async function getAdminUser(): Promise<AuthUserInterface> {
   // const passwordHash = "$2b$10$lN0OTYWz8V9Bl4UA/Pr5z.xCbLL63fQ71B/jtAV96yrwuDFtBJhhO";
 
   return {
-    id: ADMIN_USER_ID,
+    id: randomUUID(),
     email: "iron-man@starkindustries.it",
     name: "Tony",
     passwordHash: passwordHash,
@@ -44,12 +38,15 @@ export async function getUsers(): Promise<AuthUserInterface[]> {
   const hasher = new BCryptHasher();
   const password = "123456";
   const passwordHash = await hasher.getHash(password);
+  const users = [
+    await getAdminUser(),
 
-  return [
     {
+      id: randomUUID(),
       email: "test1@test.ru",
       name: "Alex",
       passwordHash,
+      avatar: "/client/public/img/content/avatars/users/photo-1.png",
       gender: GenderEnum.MALE,
       location: LocationEnum.PETROGRADSKAYA,
       role: UserRoleEnum.CLIENT,
@@ -59,9 +56,11 @@ export async function getUsers(): Promise<AuthUserInterface[]> {
       trainingType: trainingTypeList.slice(2)
     },
     {
+      id: randomUUID(),
       email: "test2@test.ru",
       name: "Maria",
       passwordHash,
+      avatar: "/client/public/img/content/avatars/users/photo-2.png",
       gender: GenderEnum.FEMALE,
       location: LocationEnum.UDELNAYA,
       role: UserRoleEnum.CLIENT,
@@ -71,9 +70,11 @@ export async function getUsers(): Promise<AuthUserInterface[]> {
       trainingType: trainingTypeList.slice(3)
     },
     {
+      id: randomUUID(),
       email: "test3@test.ru",
       name: "Rick",
       passwordHash,
+      avatar: "/client/public/img/content/avatars/users/photo-4.png",
       gender: GenderEnum.MALE,
       location: LocationEnum.ZVEZDNAYA,
       role: UserRoleEnum.CLIENT,
@@ -83,9 +84,11 @@ export async function getUsers(): Promise<AuthUserInterface[]> {
       trainingType: trainingTypeList
     },
     {
+      id: randomUUID(),
       email: "test4@test.ru",
       name: "Lina",
       passwordHash,
+      avatar: "/client/public/img/content/avatars/users/photo-3.png",
       gender: GenderEnum.FEMALE,
       location: LocationEnum.SPORTIVNAYA,
       role: UserRoleEnum.CLIENT,
@@ -94,18 +97,20 @@ export async function getUsers(): Promise<AuthUserInterface[]> {
       loseCaloriesLimit: 4800,
       trainingType: trainingTypeList.slice(4)
     },
-  ]
+  ];
+
+  return users;
 }
 
 export function getTrainings() {
   return [
     {
-      id: SERVICE_ID_ONE,
+      id: randomUUID(),
       title: "fitball",
       background: "img/content/thumbnails/training-01.jpg",
       userLevel: UserLevelEnum.NEWBIE,
       trainingType: TrainingTypeEnum.YOGA,
-      trainingDuration: TrainingDurationEnum.HALF_HOUR,
+      trainingDuration: TrainingDurationEnum.HOUR,
       price: 1000,
       calories: 1100,
       description: "Тренировка на фитболе — отличном тренажере для развития чувства баланса и равновесия, улучшения координации.",
@@ -116,7 +121,7 @@ export function getTrainings() {
       isSpecial: false
     },
     {
-      id: SERVICE_ID_TWO,
+      id: randomUUID(),
       title: "run, forrest",
       background: "img/content/thumbnails/training-02.jpg",
       userLevel: UserLevelEnum.REGULAR,
@@ -133,7 +138,7 @@ export function getTrainings() {
       isSpecial: true
     },
     {
-      id: SERVICE_ID_THREE,
+      id: randomUUID(),
       title: "full body stretch",
       background: "img/content/thumbnails/training-03.jpg",
       userLevel: UserLevelEnum.REGULAR,
@@ -150,12 +155,12 @@ export function getTrainings() {
       isSpecial: true
     },
     {
-      id: SERVICE_ID_FOUR,
+      id: randomUUID(),
       title: "devil's cindy",
       background: "img/content/thumbnails/training-04.jpg",
       userLevel: UserLevelEnum.PRO,
       trainingType: TrainingTypeEnum.CROSSFIT,
-      trainingDuration: TrainingDurationEnum.HOUR,
+      trainingDuration: TrainingDurationEnum.HOUR_AND_HALF,
       price: 2200,
       calories: 2700,
       description: "Знаменитый кроссфит комплекс. Синди — универсальная тренировка для развития функциональной силы.",
@@ -166,7 +171,7 @@ export function getTrainings() {
       isSpecial: false
     },
     {
-      id: SERVICE_ID_FIVE,
+      id: randomUUID(),
       title: "Suffer",
       background: "img/content/thumbnails/training-05.jpg",
       userLevel: UserLevelEnum.PRO,
@@ -185,16 +190,18 @@ export function getTrainings() {
   ];
 }
 
-export function getOrders() {
-  const trainings: TrainingInterface[] = getTrainings();
+export function getOrders(usersList: AuthUserInterface[], trainingsList: TrainingInterface[]) {
   const orders = [];
 
-  trainings.forEach((training) => {
-    const trainingsCount = Math.floor(Math.random() * 10);
+  trainingsList.forEach((training) => {
+    const trainingsCount = getRandomIntInclusive(0, 10);
     const totalPrice = training.price * trainingsCount;
 
+    const randomUserIdIndex = getRandomIntInclusive(0, usersList.length - 1);
+    const randomUserId = usersList[randomUserIdIndex].id;
+
     orders.push({
-      userId: ADMIN_USER_ID,
+      userId: randomUserId,
       type: "абонемент",
       serviceId: training.id,
       trainingsCount: trainingsCount,
@@ -205,4 +212,10 @@ export function getOrders() {
   });
 
   return orders;
+}
+
+function getRandomIntInclusive(min, max) {
+  const minCeiled = Math.ceil(min);
+  const maxFloored = Math.floor(max);
+  return Math.floor(Math.random() * (maxFloored - minCeiled + 1) + minCeiled);
 }

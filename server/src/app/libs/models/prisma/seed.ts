@@ -1,11 +1,9 @@
 import { PrismaClient } from '@prisma/client'
-import { getAdminUser, getOrders, getTrainings, getUsers } from './mock-data';
+import { getOrders, getTrainings, getUsers } from './mock-data';
 
 async function seedDB(prismaClient: PrismaClient) {
   // Add users
-  const admin = await getAdminUser();
   const users = await getUsers();
-  users.push(admin);
   await prismaClient.user.createMany({
     data: users
   });
@@ -17,7 +15,7 @@ async function seedDB(prismaClient: PrismaClient) {
   });
 
   // Add orders + balance
-  const orders = getOrders();
+  const orders = getOrders(users, trainings);
   for(const order of orders) {
     // Order
     await prismaClient.order.create({

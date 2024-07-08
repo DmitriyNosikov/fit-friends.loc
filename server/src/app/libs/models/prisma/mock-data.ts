@@ -1,6 +1,14 @@
 import { PaymentTypeEnum } from '../../../../../../shared/types/';
 import { BCryptHasher } from '../../helpers/hasher/bcrypt.hasher';
-import { GenderEnum, LocationEnum, TrainingDurationEnum, TrainingTypeEnum, trainingTypeList, UserLevelEnum, UserRoleEnum } from '../../types';
+import {
+  GenderEnum,
+  LocationEnum,
+  TrainingDurationEnum,
+  TrainingTypeEnum,
+  trainingTypeList,
+  UserLevelEnum,
+  UserRoleEnum
+} from '../../types';
 import { TrainingInterface } from '../../../training/interfaces';
 import { AuthUserInterface } from '../../../user/interfaces';
 
@@ -11,9 +19,11 @@ const SERVICE_ID_THREE = "md98229j-k4g7-hd94-k4cj-fj45f34gdf68";
 const SERVICE_ID_FOUR = "kf98229j-tgg7-hp92-hy5f-ht45f34gdf35";
 const SERVICE_ID_FIVE = "rt9825ki-68gt-st28-g8d9-2t545tggj723";
 
-export function getAdminUser(): AuthUserInterface {
-  // const password = "jarvis-123";
-  const passwordHash = "$2b$10$lN0OTYWz8V9Bl4UA/Pr5z.xCbLL63fQ71B/jtAV96yrwuDFtBJhhO";
+export async function getAdminUser(): Promise<AuthUserInterface> {
+  const hasher = new BCryptHasher();
+  const password = "jarvis-123";
+  const passwordHash = await hasher.getHash(password);;
+  // const passwordHash = "$2b$10$lN0OTYWz8V9Bl4UA/Pr5z.xCbLL63fQ71B/jtAV96yrwuDFtBJhhO";
 
   return {
     id: ADMIN_USER_ID,

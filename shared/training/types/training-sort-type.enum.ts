@@ -1,4 +1,4 @@
-export const TrainingSortType = {
+export const TrainingSortTypeEnum = {
   CREATED_AT: 'createdAt',
   PRICE: 'price',
   CALORIES: 'calories',
@@ -6,4 +6,4 @@ export const TrainingSortType = {
   TYPE: 'type',
 } as const;
 
-export type TrainingSortTypeEnum = (typeof TrainingSortType)[keyof typeof TrainingSortType];
+export type TrainingSortType = (typeof TrainingSortTypeEnum)[keyof typeof TrainingSortTypeEnum];

@@ -170,14 +170,14 @@ export class TrainingSearchQuery {
   public limit?: number = DefaultSearchParam.MAX_ITEMS_PER_PAGE;
 
   @Expose()
-  @IsIn(Object.values(TrainingSortType))
+  @IsIn(Object.values(TrainingSortTypeEnum))
   @IsOptional()
-  public sortType?: TrainingSortTypeEnum = DefaultSearchParam.SORT.TYPE;
+  public sortType?: TrainingSortType = DefaultSearchParam.SORT.TYPE;
 
   @Expose()
-  @IsIn(Object.values(SortDirection))
+  @IsIn(Object.values(SortDirectionEnum))
   @IsOptional()
-  public sortDirection?: SortDirectionEnum = DefaultSearchParam.SORT.DIRECTION;
+  public sortDirection?: SortDirection = DefaultSearchParam.SORT.DIRECTION;
 
   @Expose()
   @Transform(({ value }) => Number(value) || DefaultSearchParam.PAGE)

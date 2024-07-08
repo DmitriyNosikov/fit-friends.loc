@@ -17,7 +17,7 @@ export class TrainingReviewRepository extends BasePostgresRepository<TrainingRev
   constructor(
     entityFactory: TrainingReviewFactory,
     readonly dbClient: PrismaClientService
-  ){
+  ) {
     super(entityFactory, dbClient);
   }
 
@@ -26,26 +26,26 @@ export class TrainingReviewRepository extends BasePostgresRepository<TrainingRev
       where: { id: reviewId }
     });
 
-    if(!review) {
+    if (!review) {
       return null;
     }
 
-    const reviewEntity = this.createEntityFromDocument(review as unknown as TrainingReviewInterface);
+    const reviewEntity = this.getEntity(review);
 
     return reviewEntity;
   }
 
-  
+
   public async findByTrainingId(trainingId: string): Promise<TrainingReviewEntity[] | null> {
     const reviews = await this.dbClient.trainingReview.findMany({
       where: { trainingId }
     });
 
-    if(!reviews) {
+    if (!reviews) {
       return null;
     }
 
-    const reviewEntities = reviews.map((review) => this.createEntityFromDocument(review as unknown as TrainingReviewInterface));
+    const reviewEntities = reviews.map((review) => this.getEntity(review));
 
     return reviewEntities;
   }
@@ -68,11 +68,11 @@ export class TrainingReviewRepository extends BasePostgresRepository<TrainingRev
       this.getItemsCount(where)
     ]);
 
-    const itemsEntities = items.map((item) => this.createEntityFromDocument(item as unknown as TrainingReviewInterface));
+    const itemsEntities = items.map((item) => this.getEntity(item));
 
     return {
       entities: itemsEntities,
-      currentPage:  query?.page ?? 0,
+      currentPage: query?.page ?? 0,
       totalPages: this.calculateItemsPage(totalItemsCount, take),
       totalItems: totalItemsCount,
       itemsPerPage: take ?? totalItemsCount,
@@ -84,11 +84,11 @@ export class TrainingReviewRepository extends BasePostgresRepository<TrainingRev
       data: entity
     });
 
-    if(!review) {
+    if (!review) {
       return null;
     }
 
-    const reviewEntity = this.createEntityFromDocument(review as unknown as TrainingReviewInterface);
+    const reviewEntity = this.getEntity(review);
 
     return reviewEntity;
   }
@@ -102,11 +102,11 @@ export class TrainingReviewRepository extends BasePostgresRepository<TrainingRev
       data: { ...fieldsToUpdate }
     });
 
-    if(!updatedReview) {
+    if (!updatedReview) {
       return Promise.resolve(null);
     }
 
-    const reviewEntity = this.createEntityFromDocument(updatedReview as unknown as TrainingReviewInterface);
+    const reviewEntity = this.getEntity(updatedReview);
 
     return reviewEntity;
   }
@@ -125,7 +125,7 @@ export class TrainingReviewRepository extends BasePostgresRepository<TrainingRev
       },
     });
 
-    if(!review) {
+    if (!review) {
       return false;
     }
 
@@ -137,42 +137,46 @@ export class TrainingReviewRepository extends BasePostgresRepository<TrainingRev
       where: { id: reviewId }
     });
 
-    if(!review) {
+    if (!review) {
       return false;
     }
 
     return true;
   }
 
-    //////////////////// Вспомогательные методы поиска и пагинации ////////////////////
-    private getSearchFilters(query: BaseSearchQuery & TrainingIdPayload): TrainingReviewsSearchFilters {
-      const where: Prisma.TrainingReviewWhereInput = {};
-      const orderBy: Prisma.TrainingReviewOrderByWithRelationInput = {};
-  
-      if(query?.trainingId) {
-        where.trainingId = query.trainingId;
-      }
+  private getEntity(document): TrainingReviewEntity {
+    return this.createEntityFromDocument(document as unknown as TrainingReviewInterface);
+  }
 
-      // Сортировка и направление сортировки
-      const { key, value } = this.getSortKeyValue(query.sortType, query.sortDirection);
-  
-      orderBy[key] = value;
-  
-      return { where, orderBy };
+  //////////////////// Вспомогательные методы поиска и пагинации ////////////////////
+  private getSearchFilters(query: BaseSearchQuery & TrainingIdPayload): TrainingReviewsSearchFilters {
+    const where: Prisma.TrainingReviewWhereInput = {};
+    const orderBy: Prisma.TrainingReviewOrderByWithRelationInput = {};
+
+    if (query?.trainingId) {
+      where.trainingId = query.trainingId;
     }
-  
-    private getSortKeyValue(sortType: SortType, sortDirection: SortDirection) {
-      switch(sortType) {
-        case(SortTypeEnum.CREATED_AT): {
-          return { key: 'createdAt', value: sortDirection };
-        }
-        default: {
-          return { key: DefaultSearchParam.SORT.TYPE, value: DefaultSearchParam.SORT.DIRECTION };
-        }
+
+    // Сортировка и направление сортировки
+    const { key, value } = this.getSortKeyValue(query.sortType, query.sortDirection);
+
+    orderBy[key] = value;
+
+    return { where, orderBy };
+  }
+
+  private getSortKeyValue(sortType: SortType, sortDirection: SortDirection) {
+    switch (sortType) {
+      case (SortTypeEnum.CREATED_AT): {
+        return { key: 'createdAt', value: sortDirection };
+      }
+      default: {
+        return { key: DefaultSearchParam.SORT.TYPE, value: DefaultSearchParam.SORT.DIRECTION };
       }
     }
-  
-    private async getItemsCount(where: Prisma.TrainingReviewWhereInput): Promise<number> {
-      return this.dbClient.trainingReview.count({ where });
-    }
+  }
+
+  private async getItemsCount(where: Prisma.TrainingReviewWhereInput): Promise<number> {
+    return this.dbClient.trainingReview.count({ where });
+  }
 }

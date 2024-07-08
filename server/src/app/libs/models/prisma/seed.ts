@@ -36,6 +36,28 @@ async function seedDB(prismaClient: PrismaClient) {
     data: reviews
   })
 
+  // Recount trainings rating via reviews
+  for(const training of trainings) {
+    const reviews = await prismaClient.trainingReview.findMany({
+      where: { trainingId: training.id }
+    });
+
+    if(!reviews) {
+      continue;
+    }
+
+    const generalRating: number = reviews.reduce((accumulator, item) => {
+      return accumulator += item.rating;
+    }, 0);
+
+    const ratingAverage = Math.round(generalRating / reviews.length);
+
+    await prismaClient.training.update({
+      where: { id: training.id },
+      data: { rating: ratingAverage }
+    })
+  }
+
   console.info('🤘️ Database was filled');
 }
 

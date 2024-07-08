@@ -1,5 +1,5 @@
 import { PrismaClient } from '@prisma/client'
-import { getOrders, getTrainings, getUsers } from './mock-data';
+import { getOrders, getReviews, getTrainings, getUsers } from './mock-data';
 
 async function seedDB(prismaClient: PrismaClient) {
   // Add users
@@ -29,6 +29,12 @@ async function seedDB(prismaClient: PrismaClient) {
       }
     });
   }
+
+  // Add reviews
+  const reviews = getReviews(users, trainings);
+  await prismaClient.trainingReview.createMany({
+    data: reviews
+  })
 
   console.info('🤘️ Database was filled');
 }

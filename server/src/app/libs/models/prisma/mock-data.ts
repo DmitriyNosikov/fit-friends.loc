@@ -1,3 +1,4 @@
+import { randomUUID } from 'crypto';
 import { PaymentTypeEnum } from '../../../../../../shared/types/';
 import { BCryptHasher } from '../../helpers/hasher/bcrypt.hasher';
 import {
@@ -11,7 +12,7 @@ import {
 } from '../../types';
 import { TrainingInterface } from '../../../training/interfaces';
 import { AuthUserInterface } from '../../../user/interfaces';
-import { randomUUID } from 'crypto';
+import { TrainingReviewValidation } from '../../../training-review/training-review.constant';
 
 export async function getAdminUser(): Promise<AuthUserInterface> {
   const hasher = new BCryptHasher();
@@ -212,6 +213,47 @@ export function getOrders(usersList: AuthUserInterface[], trainingsList: Trainin
   });
 
   return orders;
+}
+
+const loremText = "Lorem Ipsum is simply dummy text of the printing and typesetting industry. \
+Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown \
+printer took a galley of type and scrambled it to make a type specimen book. It has survived \
+not only five centuries, but also the leap into electronic typesetting, remaining essentially \
+unchanged. It was popularised in the 1960s with the release of Letraset sheets containing \
+Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum."
+
+export function getReviews(
+  usersList: AuthUserInterface[],
+  trainingsList: TrainingInterface[],
+  reviewsCount: number = 10
+) {
+  const reviews = [];
+
+  for(let i = 0; i <= reviewsCount; i++) {
+    // User ID
+    const randomUserIdIndex = getRandomIntInclusive(0, usersList.length - 1);
+    const randomUserId = usersList[randomUserIdIndex].id;
+
+    // Training ID
+    const randomTrainingIdIndex = getRandomIntInclusive(0, trainingsList.length - 1);
+    const randomTrainingId = trainingsList[randomTrainingIdIndex].id;
+
+    // Review rating
+    const randomRating = getRandomIntInclusive(TrainingReviewValidation.RATING.MIN, TrainingReviewValidation.RATING.MAX);
+
+    // Review text
+    const loremStartIndex = getRandomIntInclusive(0, 20);
+    const loremLength = getRandomIntInclusive(TrainingReviewValidation.TEXT.MIN_LENGTH, loremText.length);
+
+    reviews.push({
+      userId: randomUserId,
+      trainingId: randomTrainingId,
+      rating: randomRating,
+      text: loremText.slice(loremStartIndex, loremLength)
+    });
+  }
+
+  return reviews;
 }
 
 function getRandomIntInclusive(min, max) {

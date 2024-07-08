@@ -11,7 +11,6 @@ export const redirect: Middleware<unknown, Reducer> =
     (next) =>
       (action: PayloadAction<string>) => {
         if(action.type === Action.REDIRECT) {
-          console.log('Попали в редирект: ', action.type);
           browserHistory.push(action.payload);
         }
 

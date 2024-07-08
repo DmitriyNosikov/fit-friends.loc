@@ -1,16 +1,31 @@
 import SpecialOffers from '@client/src/components/special-offers/special-offers';
 import SpecialForYou from '../../components/special-for-you/special-for-you';
 import PopularTrainings from '@client/src/components/popular-trainings/popular-trainings';
-
-import useWithRatingTrainingsList from '@client/src/hooks/useWithRatingTrainingsList';
-import useWithDiscountTrainingsList from '@client/src/hooks/useWithDiscountTrainingsList';
-import useConvenientTrainingsList from '@client/src/hooks/useConvenientTrainingsList';
+import { useAppDispatch } from '@client/src/hooks';
+import { useEffect } from 'react';
+import { fetchConvenientTrainingsAction, fetchWithDiscountTrainingsAction, fetchWithRatingTrainingsAction } from '@client/src/store/actions/api-training-action';
+import { checkUserAuthAction } from '@client/src/store/actions/api-user-action';
 
 export default function Main() {
-  // Загружаем данные для всех блоков
-  useConvenientTrainingsList();
-  useWithDiscountTrainingsList();
-  useWithRatingTrainingsList();
+  const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    let isMounted = true;
+
+    dispatch(checkUserAuthAction());
+
+    // Загружаем данные для всех блоков только в случае, если пользователь авторизован
+    if (isMounted) {
+      dispatch(fetchConvenientTrainingsAction());
+      dispatch(fetchWithDiscountTrainingsAction());
+      dispatch(fetchWithRatingTrainingsAction);
+    }
+
+    return () => {
+      isMounted = false;
+    }
+  }, [])
+
 
   return (
     <>

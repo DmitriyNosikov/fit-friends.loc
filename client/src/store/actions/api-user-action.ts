@@ -3,7 +3,7 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 import { toast } from 'react-toastify';
 
 import { setDataLoadingStatus } from '../slices/main-process/main-process';
-import { setAdditionalInfo, setUserInfoAction } from '../slices/user-process/user-process';
+import { setAdditionalInfo, setUserAuthStatus, setUserInfoAction } from '../slices/user-process/user-process';
 
 import { AdditionalInfoRDO, CreateUserDTO, LoggedUserRDO, LoginUserDTO, UpdateUserDTO } from '@shared/user';
 import { redirectToRoute } from '../middlewares/redirect-action';
@@ -12,7 +12,7 @@ import { redirectToRoute } from '../middlewares/redirect-action';
 import { AsyncOptions } from '@client/src/types/async-options.type';
 
 
-import { ApiRoute, AppRoute, Namespace } from '@client/src/const';
+import { ApiRoute, AppRoute, AuthorizationStatus, Namespace } from '@client/src/const';
 import { TokenPayload } from '@client/src/types/token-payload';
 import { deleteToken, setToken } from '@client/src/services/token';
 
@@ -38,18 +38,43 @@ export const checkUserAuthAction = createAsyncThunk<void, void, AsyncOptions>(
   async (_arg, { dispatch, extra: api }) => {
     dispatch(setDataLoadingStatus(true));
 
+    console.log('Проверяем авторизацию');
+
     try {
       await api.post<TokenPayload>(ApiRoute.CHECK_JWT_TOKEN);
 
-      dispatch(fetchUserDetailInfoAction())
+      // dispatch(fetchUserDetailInfoAction())
     } catch(error) {
       deleteToken();
 
-      dispatch(setUserInfoAction(null));
-      dispatch(redirectToRoute(AppRoute.LOGIN));
+      dispatch(setUserAuthStatus(AuthorizationStatus.NO_AUTH));
+      dispatch(redirectToRoute(AppRoute.INTRO));
     }
 
     dispatch(setDataLoadingStatus(false));
+  }
+);
+
+export const fetchUserDetailInfoAction = createAsyncThunk<void, void, AsyncOptions>(
+  APIAction.USER_GET_DETAIL,
+  async (
+    _, // AuthData
+    { dispatch, rejectWithValue, extra: api } // AsyncOptions
+  ) => {
+    dispatch(setDataLoadingStatus(true));
+
+    try {
+      const { data } = await api.get<LoggedUserRDO>(`${ApiRoute.USER_API}`);
+
+      dispatch(setUserInfoAction(data));
+      dispatch(setDataLoadingStatus(false));
+    } catch(err) {
+      toast.warn(`Can't get user's detail info: ${err}. Please, try to login again`);
+
+      dispatch(setDataLoadingStatus(false));
+
+      return rejectWithValue(err);
+    }
   }
 );
 
@@ -183,31 +208,6 @@ export const uploadFileAction = createAsyncThunk<string | unknown, FormData, Asy
 
         return rejectWithValue(err);
       }
-    }
-  }
-);
-
-export const fetchUserDetailInfoAction = createAsyncThunk<void, void, AsyncOptions>(
-  APIAction.USER_GET_DETAIL,
-  async (
-    _, // AuthData
-    { dispatch, rejectWithValue, extra: api } // AsyncOptions
-  ) => {
-    dispatch(setDataLoadingStatus(true));
-
-    try {
-      const { data } = await api.get<LoggedUserRDO>(`${ApiRoute.USER_API}`);
-
-      dispatch(setUserInfoAction(data));
-      dispatch(setDataLoadingStatus(false));
-    } catch(err) {
-      toast.warn(`Can't get user's detail info: ${err}. Please, try to login again`);
-
-      deleteToken();
-      dispatch(setDataLoadingStatus(false));
-      dispatch(redirectToRoute(AppRoute.INTRO));
-
-      return rejectWithValue(err);
     }
   }
 );

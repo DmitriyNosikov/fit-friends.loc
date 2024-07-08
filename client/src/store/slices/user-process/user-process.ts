@@ -2,7 +2,7 @@ import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 import { AdditionalInfoRDO, LoggedUserRDO } from '@shared/user/';
 import { checkUserAuthAction, loginUserAction } from '../../actions/api-user-action';
 
-import { AuthorizationStatus, Namespace } from '@client/src/const';
+import { AuthorizationStatus, AuthorizationStatusList, Namespace } from '@client/src/const';
 import { getToken } from '@client/src/services/token';
 
 export type UserProcess = {
@@ -10,6 +10,7 @@ export type UserProcess = {
   userInfo: LoggedUserRDO | null,
   additionalInfo: AdditionalInfoRDO | null
 };
+
 
 const initialState: UserProcess = {
   authorizationStatus: AuthorizationStatus.UNKNOWN,
@@ -26,6 +27,9 @@ export const userProcess = createSlice({
     },
     setAdditionalInfo: (state, action: PayloadAction<AdditionalInfoRDO | null>) => {
       state.additionalInfo = action.payload;
+    },
+    setUserAuthStatus: (state, action: PayloadAction<AuthorizationStatusList>) => {
+      state.authorizationStatus = action.payload;
     }
   },
   extraReducers(builder) {
@@ -53,4 +57,4 @@ export const userProcess = createSlice({
   },
 });
 
-export const { setUserInfoAction, setAdditionalInfo } = userProcess.actions;
+export const { setUserInfoAction, setAdditionalInfo, setUserAuthStatus } = userProcess.actions;

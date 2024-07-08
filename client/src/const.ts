@@ -58,6 +58,8 @@ export const AuthorizationStatus = {
   UNKNOWN: 'UNKNOWN',
 } as const;
 
+export type AuthorizationStatusList = (typeof AuthorizationStatus)[keyof typeof AuthorizationStatus];
+
 // API REQUEST STATUSES
 export const SEND_DATA_STATUS = {
   NONE: 'NONE',

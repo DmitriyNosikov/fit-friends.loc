@@ -121,10 +121,6 @@ export class TrainingReviewRepository extends BasePostgresRepository<TrainingRev
     });
   }
 
-  private getEntity(document): TrainingReviewEntity {
-    return this.createEntityFromDocument(document as unknown as TrainingReviewInterface);
-  }
-
   public async checkAccess(reviewId: string, userId: string) {
     const review = await this.dbClient.trainingReview.findFirst({
       where: {

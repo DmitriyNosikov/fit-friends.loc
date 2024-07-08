@@ -11,7 +11,7 @@ import { TrainingFactory } from './training.factory';
 
 import { DefaultSearchParam } from '@shared/types/search/base-search-query.type';
 import { TrainingSearchFilters, TrainingSearchQuery } from '@shared/training';
-import { SortDirectionEnum} from '@shared/types/sort/sort-direction.enum';
+import { SortDirection} from '@shared/types/sort/sort-direction.enum';
 import { TrainingSortType, TrainingSortTypeEnum } from '@shared/training';
 import { PaginationResult } from '@server/libs/interfaces';
 
@@ -280,18 +280,18 @@ export class TrainingRepository extends BasePostgresRepository<TrainingEntity, T
     }
   }
 
-  private getSortKeyValue(sortType: TrainingSortTypeEnum, sortDirection: SortDirectionEnum) {
+  private getSortKeyValue(sortType: TrainingSortType, sortDirection: SortDirection) {
     switch(sortType) {
-      case(TrainingSortType.CREATED_AT): {
+      case(TrainingSortTypeEnum.CREATED_AT): {
         return { key: 'createdAt', value: sortDirection };
       }
-      case(TrainingSortType.PRICE): {
+      case(TrainingSortTypeEnum.PRICE): {
         return { key: 'price', value: sortDirection };
       }
-      case(TrainingSortType.CALORIES): {
+      case(TrainingSortTypeEnum.CALORIES): {
         return { key: 'calories', value: sortDirection };
       }
-      case(TrainingSortType.RATING): {
+      case(TrainingSortTypeEnum.RATING): {
         return { key: 'rating', value: sortDirection };
       }
       default: {

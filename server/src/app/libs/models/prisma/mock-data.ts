@@ -1,62 +1,27 @@
-import { TrainingInterface } from '@server/training/interfaces/training.interface';
-import { AuthUserInterface } from '@server/user/interfaces';
+import { randomUUID } from 'crypto';
+import { PaymentTypeEnum } from '../../../../../../shared/types/';
+import { BCryptHasher } from '../../helpers/hasher/bcrypt.hasher';
+import {
+  GenderEnum,
+  LocationEnum,
+  TrainingDurationEnum,
+  TrainingTypeEnum,
+  trainingTypeList,
+  UserLevelEnum,
+  UserRoleEnum
+} from '../../types';
+import { TrainingInterface } from '../../../training/interfaces';
+import { AuthUserInterface } from '../../../user/interfaces';
+import { TrainingReviewValidation } from '../../../training-review/training-review.constant';
 
-const ADMIN_USER_ID = "dg34gdf5-dfh4-gh46-wef4-gfl78gn5hfh5";
-const SERVICE_ID_ONE = "u8320e27-cb56-4c74-b633-kfd093d812n4";
-const SERVICE_ID_TWO = "b3110e27-df4g-j456-3gf4-d71d697f03e9";
-const SERVICE_ID_THREE = "md98229j-k4g7-hd94-k4cj-fj45f34gdf68";
-const SERVICE_ID_FOUR = "kf98229j-tgg7-hp92-hy5f-ht45f34gdf35";
-
-const UserRoleEnum = {
-  ADMIN: 'admin',
-  CLIENT: 'client',
-  TRAINER: 'trainer'
-} as const;
-
-const UserLevelEnum = {
-  NEWBIE: 'новичок',
-  REGULAR: 'любитель',
-  PRO: 'профессионал',
-} as const;
-
-const TrainingTypeEnum = {
-  YOGA: 'йога',
-  RUNNING: 'бег',
-  BOX: 'бокс',
-  STRETCHING: 'стрейчинг',
-  CROSSFIT: 'кроссфит',
-  AEROBICS: 'аэробика',
-  PILATES: 'пилатес',
-} as const;
-
-type TrainingType = (typeof TrainingTypeEnum)[keyof typeof TrainingTypeEnum];
-const trainingTypeList: TrainingType[] = ['йога', 'бег', 'бокс', 'стрейчинг', 'кроссфит', 'аэробика', 'пилатес'];
-
-const TrainingDurationEnum = {
-  HALF_HOUR: '10-30',
-  HOUR: '30-50',
-  HOUR_AND_HALF: '50-80',
-  TWO_HOURS: '80-100',
-} as const;
-
-const GenderEnum = {
-  MALE: 'мужской',
-  FEMALE: 'женский',
-  NEVERMIND: 'неважно',
-} as const;
-
-const PaymentTypeEnum = {
-  VISA: 'visa',
-  MIR: 'mir',
-  UMONEY: 'umoney',
-} as const;
-
-export function getAdminUser(): AuthUserInterface {
-  // const password = "jarvis-123";
-  const passwordHash = "$2b$10$lN0OTYWz8V9Bl4UA/Pr5z.xCbLL63fQ71B/jtAV96yrwuDFtBJhhO";
+export async function getAdminUser(): Promise<AuthUserInterface> {
+  const hasher = new BCryptHasher();
+  const password = "jarvis-123";
+  const passwordHash = await hasher.getHash(password);;
+  // const passwordHash = "$2b$10$lN0OTYWz8V9Bl4UA/Pr5z.xCbLL63fQ71B/jtAV96yrwuDFtBJhhO";
 
   return {
-    id: ADMIN_USER_ID,
+    id: randomUUID(),
     email: "iron-man@starkindustries.it",
     name: "Tony",
     passwordHash: passwordHash,
@@ -70,15 +35,83 @@ export function getAdminUser(): AuthUserInterface {
   };
 }
 
+export async function getUsers(): Promise<AuthUserInterface[]> {
+  const hasher = new BCryptHasher();
+  const password = "123456";
+  const passwordHash = await hasher.getHash(password);
+  const users = [
+    await getAdminUser(),
+
+    {
+      id: randomUUID(),
+      email: "test1@test.ru",
+      name: "Alex",
+      passwordHash,
+      avatar: "/client/public/img/content/avatars/users/photo-1.png",
+      gender: GenderEnum.MALE,
+      location: LocationEnum.PETROGRADSKAYA,
+      role: UserRoleEnum.CLIENT,
+      level: UserLevelEnum.REGULAR,
+      dayCaloriesLimit: 2500,
+      loseCaloriesLimit: 3800,
+      trainingType: trainingTypeList.slice(2)
+    },
+    {
+      id: randomUUID(),
+      email: "test2@test.ru",
+      name: "Maria",
+      passwordHash,
+      avatar: "/client/public/img/content/avatars/users/photo-2.png",
+      gender: GenderEnum.FEMALE,
+      location: LocationEnum.UDELNAYA,
+      role: UserRoleEnum.CLIENT,
+      level: UserLevelEnum.NEWBIE,
+      dayCaloriesLimit: 1200,
+      loseCaloriesLimit: 5000,
+      trainingType: trainingTypeList.slice(3)
+    },
+    {
+      id: randomUUID(),
+      email: "test3@test.ru",
+      name: "Rick",
+      passwordHash,
+      avatar: "/client/public/img/content/avatars/users/photo-4.png",
+      gender: GenderEnum.MALE,
+      location: LocationEnum.ZVEZDNAYA,
+      role: UserRoleEnum.CLIENT,
+      level: UserLevelEnum.PRO,
+      dayCaloriesLimit: 4800,
+      loseCaloriesLimit: 3000,
+      trainingType: trainingTypeList
+    },
+    {
+      id: randomUUID(),
+      email: "test4@test.ru",
+      name: "Lina",
+      passwordHash,
+      avatar: "/client/public/img/content/avatars/users/photo-3.png",
+      gender: GenderEnum.FEMALE,
+      location: LocationEnum.SPORTIVNAYA,
+      role: UserRoleEnum.CLIENT,
+      level: UserLevelEnum.REGULAR,
+      dayCaloriesLimit: 2300,
+      loseCaloriesLimit: 4800,
+      trainingType: trainingTypeList.slice(4)
+    },
+  ];
+
+  return users;
+}
+
 export function getTrainings() {
   return [
     {
-      id: SERVICE_ID_ONE,
+      id: randomUUID(),
       title: "fitball",
       background: "img/content/thumbnails/training-01.jpg",
       userLevel: UserLevelEnum.NEWBIE,
-      trainingType: TrainingTypeEnum.STRETCHING,
-      trainingDuration: TrainingDurationEnum.HALF_HOUR,
+      trainingType: TrainingTypeEnum.YOGA,
+      trainingDuration: TrainingDurationEnum.HOUR,
       price: 1000,
       calories: 1100,
       description: "Тренировка на фитболе — отличном тренажере для развития чувства баланса и равновесия, улучшения координации.",
@@ -89,27 +122,28 @@ export function getTrainings() {
       isSpecial: false
     },
     {
-      id: SERVICE_ID_TWO,
+      id: randomUUID(),
       title: "run, forrest",
       background: "img/content/thumbnails/training-02.jpg",
       userLevel: UserLevelEnum.REGULAR,
       trainingType: TrainingTypeEnum.RUNNING,
       trainingDuration: TrainingDurationEnum.HALF_HOUR,
       price: 1500,
+      discount: 600,
       calories: 1450,
       description: "Узнайте правильную технику бега, развивайте выносливость и откройте для себя все секреты длительных пробежек.",
       gender: GenderEnum.MALE,
       video: "test/video/later.avi",
       trainersName: "Alexa",
       rating: 0,
-      isSpecial: false
+      isSpecial: true
     },
     {
-      id: SERVICE_ID_THREE,
+      id: randomUUID(),
       title: "full body stretch",
       background: "img/content/thumbnails/training-03.jpg",
       userLevel: UserLevelEnum.REGULAR,
-      trainingType: TrainingTypeEnum.RUNNING,
+      trainingType: TrainingTypeEnum.STRETCHING,
       trainingDuration: TrainingDurationEnum.TWO_HOURS,
       price: 2500,
       discount: 500,
@@ -122,12 +156,12 @@ export function getTrainings() {
       isSpecial: true
     },
     {
-      id: SERVICE_ID_FOUR,
+      id: randomUUID(),
       title: "devil's cindy",
-      background: "img/content/thumbnails/training-03.jpg",
+      background: "img/content/thumbnails/training-04.jpg",
       userLevel: UserLevelEnum.PRO,
       trainingType: TrainingTypeEnum.CROSSFIT,
-      trainingDuration: TrainingDurationEnum.HOUR,
+      trainingDuration: TrainingDurationEnum.HOUR_AND_HALF,
       price: 2200,
       calories: 2700,
       description: "Знаменитый кроссфит комплекс. Синди — универсальная тренировка для развития функциональной силы.",
@@ -135,21 +169,40 @@ export function getTrainings() {
       video: "test/video/later.avi",
       trainersName: "Cindy",
       rating: 0,
+      isSpecial: false
+    },
+    {
+      id: randomUUID(),
+      title: "Suffer",
+      background: "img/content/thumbnails/training-05.jpg",
+      userLevel: UserLevelEnum.PRO,
+      trainingType: TrainingTypeEnum.CROSSFIT,
+      trainingDuration: TrainingDurationEnum.TWO_HOURS,
+      price: 5000,
+      discount: 1200,
+      calories: 3800,
+      description: "Эта тренировка выжмет из вас все соки. Мощный, взрывной кроссфит-сплит для самых искушенных спортсменов",
+      gender: GenderEnum.MALE,
+      video: "test/video/later.avi",
+      trainersName: "Alex",
+      rating: 5,
       isSpecial: true
     }
   ];
 }
 
-export function getOrders() {
-  const trainings: TrainingInterface[] = getTrainings();
+export function getOrders(usersList: AuthUserInterface[], trainingsList: TrainingInterface[]) {
   const orders = [];
 
-  trainings.forEach((training) => {
-    const trainingsCount = Math.floor(Math.random() * 10);
+  trainingsList.forEach((training) => {
+    const trainingsCount = getRandomIntInclusive(0, 10);
     const totalPrice = training.price * trainingsCount;
 
+    const randomUserIdIndex = getRandomIntInclusive(0, usersList.length - 1);
+    const randomUserId = usersList[randomUserIdIndex].id;
+
     orders.push({
-      userId: ADMIN_USER_ID,
+      userId: randomUserId,
       type: "абонемент",
       serviceId: training.id,
       trainingsCount: trainingsCount,
@@ -160,4 +213,51 @@ export function getOrders() {
   });
 
   return orders;
+}
+
+const loremText = "Lorem Ipsum is simply dummy text of the printing and typesetting industry. \
+Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown \
+printer took a galley of type and scrambled it to make a type specimen book. It has survived \
+not only five centuries, but also the leap into electronic typesetting, remaining essentially \
+unchanged. It was popularised in the 1960s with the release of Letraset sheets containing \
+Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum."
+
+export function getReviews(
+  usersList: AuthUserInterface[],
+  trainingsList: TrainingInterface[],
+  reviewsCount: number = 10
+) {
+  const reviews = [];
+
+  for(let i = 0; i <= reviewsCount; i++) {
+    // User ID
+    const randomUserIdIndex = getRandomIntInclusive(0, usersList.length - 1);
+    const randomUserId = usersList[randomUserIdIndex].id;
+
+    // Training ID
+    const randomTrainingIdIndex = getRandomIntInclusive(0, trainingsList.length - 1);
+    const randomTrainingId = trainingsList[randomTrainingIdIndex].id;
+
+    // Review rating
+    const randomRating = getRandomIntInclusive(TrainingReviewValidation.RATING.MIN, TrainingReviewValidation.RATING.MAX);
+
+    // Review text
+    const loremStartIndex = getRandomIntInclusive(0, 20);
+    const loremLength = getRandomIntInclusive(TrainingReviewValidation.TEXT.MIN_LENGTH, loremText.length);
+
+    reviews.push({
+      userId: randomUserId,
+      trainingId: randomTrainingId,
+      rating: randomRating,
+      text: loremText.slice(loremStartIndex, loremLength)
+    });
+  }
+
+  return reviews;
+}
+
+function getRandomIntInclusive(min, max) {
+  const minCeiled = Math.ceil(min);
+  const maxFloored = Math.floor(max);
+  return Math.floor(Math.random() * (maxFloored - minCeiled + 1) + minCeiled);
 }

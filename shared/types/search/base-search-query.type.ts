@@ -7,8 +7,8 @@ export const DefaultSearchParam = {
   MAX_ITEMS_PER_PAGE: 50,
   PAGE: 1,
   SORT: {
-    TYPE: SortType.CREATED_AT,
-    DIRECTION: SortDirection.DESC
+    TYPE: SortTypeEnum.CREATED_AT,
+    DIRECTION: SortDirectionEnum.DESC
   }
 } as const;
 
@@ -26,14 +26,14 @@ export class BaseSearchQuery {
   public limit?: number = DefaultSearchParam.MAX_ITEMS_PER_PAGE;
 
   @Expose()
-  @IsIn(Object.values(SortType))
+  @IsIn(Object.values(SortTypeEnum))
   @IsOptional()
-  public sortType?: SortTypeEnum = DefaultSearchParam.SORT.TYPE;
+  public sortType?: SortType = DefaultSearchParam.SORT.TYPE;
 
   @Expose()
-  @IsIn(Object.values(SortDirection))
+  @IsIn(Object.values(SortDirectionEnum))
   @IsOptional()
-  public sortDirection?: SortDirectionEnum = DefaultSearchParam.SORT.DIRECTION;
+  public sortDirection?: SortDirection = DefaultSearchParam.SORT.DIRECTION;
 
   @Expose()
   @Transform(({ value }) => Number(value) || DefaultSearchParam.PAGE)

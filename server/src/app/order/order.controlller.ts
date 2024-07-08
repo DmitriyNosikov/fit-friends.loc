@@ -9,8 +9,8 @@ import { OrderService } from './order.service';
 import { OrderMessage } from './order.constant';
 
 import { BaseSearchQuery, DefaultSearchParam } from '@shared/types/search/base-search-query.type';
-import { SortType } from '@shared/types/sort/sort-type.enum';
-import { SortDirection } from '@shared/types/sort/sort-direction.enum';
+import { SortTypeEnum } from '@shared/types/sort/sort-type.enum';
+import { SortDirectionEnum } from '@shared/types/sort/sort-direction.enum';
 import { InjectUserIdInterceptor } from '@server/libs/interceptors/inject-user-id.interceptor';
 
 @ApiTags('orders')
@@ -58,14 +58,14 @@ export class OrderController {
   @ApiQuery({
     name: "sortType",
     description: `Sorting type. Default sort type: ${DefaultSearchParam.SORT.TYPE}`,
-    enum: SortType,
+    enum: SortTypeEnum,
     example: "createdAt",
     required: false
   })
   @ApiQuery({
     name: "sortDirection",
     description: `Sorting direction. Default direction: ${DefaultSearchParam.SORT.DIRECTION}`,
-    enum: SortDirection,
+    enum: SortDirectionEnum,
     example: " desc",
     required: false
   })

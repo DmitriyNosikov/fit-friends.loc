@@ -6,7 +6,7 @@ import { BasePostgresRepository } from '../libs/data-access';
 import { TrainingReviewInterface } from './interfaces';
 import { TrainingReviewFactory } from './training-reviews.factory';
 import { TrainingReviewEntity } from './training-review.entity';
-import { BaseSearchQuery, SortDirectionEnum, SortType, SortTypeEnum, TrainingIdPayload } from '@shared/types';
+import { BaseSearchQuery, SortDirection, SortType, SortTypeEnum, TrainingIdPayload } from '@shared/types';
 import { PaginationResult } from '@server/libs/interfaces';
 import { DefaultSearchParam } from '@shared/types/search/base-search-query.type';
 import { TrainingReviewsSearchFilters } from '@shared/training-review';
@@ -17,7 +17,7 @@ export class TrainingReviewRepository extends BasePostgresRepository<TrainingRev
   constructor(
     entityFactory: TrainingReviewFactory,
     readonly dbClient: PrismaClientService
-  ){
+  ) {
     super(entityFactory, dbClient);
   }
 
@@ -26,7 +26,7 @@ export class TrainingReviewRepository extends BasePostgresRepository<TrainingRev
       where: { id: reviewId }
     });
 
-    if(!review) {
+    if (!review) {
       return null;
     }
 
@@ -35,13 +35,13 @@ export class TrainingReviewRepository extends BasePostgresRepository<TrainingRev
     return reviewEntity;
   }
 
-  
+
   public async findByTrainingId(trainingId: string): Promise<TrainingReviewEntity[] | null> {
     const reviews = await this.dbClient.trainingReview.findMany({
       where: { trainingId }
     });
 
-    if(!reviews) {
+    if (!reviews) {
       return null;
     }
 
@@ -76,7 +76,7 @@ export class TrainingReviewRepository extends BasePostgresRepository<TrainingRev
 
     return {
       entities: itemsEntities,
-      currentPage:  query?.page ?? 0,
+      currentPage: query?.page ?? 0,
       totalPages: this.calculateItemsPage(totalItemsCount, take),
       totalItems: totalItemsCount,
       itemsPerPage: take ?? totalItemsCount,
@@ -88,7 +88,7 @@ export class TrainingReviewRepository extends BasePostgresRepository<TrainingRev
       data: entity
     });
 
-    if(!review) {
+    if (!review) {
       return null;
     }
 
@@ -106,7 +106,7 @@ export class TrainingReviewRepository extends BasePostgresRepository<TrainingRev
       data: { ...fieldsToUpdate }
     });
 
-    if(!updatedReview) {
+    if (!updatedReview) {
       return Promise.resolve(null);
     }
 
@@ -133,7 +133,7 @@ export class TrainingReviewRepository extends BasePostgresRepository<TrainingRev
       },
     });
 
-    if(!review) {
+    if (!review) {
       return false;
     }
 
@@ -145,42 +145,46 @@ export class TrainingReviewRepository extends BasePostgresRepository<TrainingRev
       where: { id: reviewId }
     });
 
-    if(!review) {
+    if (!review) {
       return false;
     }
 
     return true;
   }
 
-    //////////////////// Вспомогательные методы поиска и пагинации ////////////////////
-    private getSearchFilters(query: BaseSearchQuery & TrainingIdPayload): TrainingReviewsSearchFilters {
-      const where: Prisma.TrainingReviewWhereInput = {};
-      const orderBy: Prisma.TrainingReviewOrderByWithRelationInput = {};
-  
-      if(query?.trainingId) {
-        where.trainingId = query.trainingId;
-      }
+  private getEntity(document): TrainingReviewEntity {
+    return this.createEntityFromDocument(document as unknown as TrainingReviewInterface);
+  }
 
-      // Сортировка и направление сортировки
-      const { key, value } = this.getSortKeyValue(query.sortType, query.sortDirection);
-  
-      orderBy[key] = value;
-  
-      return { where, orderBy };
+  //////////////////// Вспомогательные методы поиска и пагинации ////////////////////
+  private getSearchFilters(query: BaseSearchQuery & TrainingIdPayload): TrainingReviewsSearchFilters {
+    const where: Prisma.TrainingReviewWhereInput = {};
+    const orderBy: Prisma.TrainingReviewOrderByWithRelationInput = {};
+
+    if (query?.trainingId) {
+      where.trainingId = query.trainingId;
     }
-  
-    private getSortKeyValue(sortType: SortTypeEnum, sortDirection: SortDirectionEnum) {
-      switch(sortType) {
-        case(SortType.CREATED_AT): {
-          return { key: 'createdAt', value: sortDirection };
-        }
-        default: {
-          return { key: DefaultSearchParam.SORT.TYPE, value: DefaultSearchParam.SORT.DIRECTION };
-        }
+
+    // Сортировка и направление сортировки
+    const { key, value } = this.getSortKeyValue(query.sortType, query.sortDirection);
+
+    orderBy[key] = value;
+
+    return { where, orderBy };
+  }
+
+  private getSortKeyValue(sortType: SortType, sortDirection: SortDirection) {
+    switch (sortType) {
+      case (SortTypeEnum.CREATED_AT): {
+        return { key: 'createdAt', value: sortDirection };
+      }
+      default: {
+        return { key: DefaultSearchParam.SORT.TYPE, value: DefaultSearchParam.SORT.DIRECTION };
       }
     }
-  
-    private async getItemsCount(where: Prisma.TrainingReviewWhereInput): Promise<number> {
-      return this.dbClient.trainingReview.count({ where });
-    }
+  }
+
+  private async getItemsCount(where: Prisma.TrainingReviewWhereInput): Promise<number> {
+    return this.dbClient.trainingReview.count({ where });
+  }
 }

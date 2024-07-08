@@ -137,8 +137,6 @@ export class TrainingReviewService {
 
     const ratingAverage = Math.round(generalRating / reviews.length);
 
-    console.log(`RATING INFO: ${generalRating} / ${reviews.length} = ${ratingAverage}`);
-
     return ratingAverage;
   }
 

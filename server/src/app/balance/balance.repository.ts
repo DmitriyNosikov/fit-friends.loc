@@ -9,7 +9,7 @@ import { BalanceInterface } from './interfaces/balance.interface';
 import { BalanceFactory } from './balance.factory';
 
 import { SortType, SortTypeEnum } from '@shared/types/sort/sort-type.enum';
-import { SortDirectionEnum } from '@shared/types/sort/sort-direction.enum';
+import { SortDirection } from '@shared/types/sort/sort-direction.enum';
 import { BaseSearchQuery, DefaultSearchParam } from '@shared/types/search/base-search-query.type';
 import { PaginationResult } from '@server/libs/interfaces';
 import { BalanceSearchFilters } from '@shared/balance';
@@ -197,9 +197,9 @@ export class BalanceRepository extends BasePostgresRepository<BalanceEntity, Bal
     return { where, orderBy };
   }
 
-  private getSortKeyValue(sortType: SortTypeEnum, sortDirection: SortDirectionEnum) {
+  private getSortKeyValue(sortType: SortType, sortDirection: SortDirection) {
     switch(sortType) {
-      case(SortType.CREATED_AT): {
+      case(SortTypeEnum.CREATED_AT): {
         return { key: 'createdAt', value: sortDirection };
       }
       default: {

@@ -13,7 +13,7 @@ import { BalanceMessage } from './balance.constant';
 
 import { PaginationResult } from '@server/libs/interfaces';
 import { BaseSearchQuery, DefaultSearchParam } from '@shared/types/search/base-search-query.type';
-import { SortDirection, SortType } from '@shared/types';
+import { SortDirectionEnum, SortTypeEnum } from '@shared/types';
 @ApiTags('balance')
 @Controller('balance')
 @UseGuards(JWTAuthGuard)
@@ -59,14 +59,14 @@ export class BalanceController {
   @ApiQuery({
     name: "sortType",
     description: `Sorting type. Default sort type: ${DefaultSearchParam.SORT.TYPE}`,
-    enum: SortType,
+    enum: SortTypeEnum,
     example: "createdAt",
     required: false
   })
   @ApiQuery({
     name: "sortDirection",
     description: `Sorting direction. Default direction: ${DefaultSearchParam.SORT.DIRECTION}`,
-    enum: SortDirection,
+    enum: SortDirectionEnum,
     example: " desc",
     required: false
   })

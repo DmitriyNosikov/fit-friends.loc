@@ -6,7 +6,7 @@ import { BasePostgresRepository } from '../libs/data-access';
 import { TrainingReviewInterface } from './interfaces';
 import { TrainingReviewFactory } from './training-reviews.factory';
 import { TrainingReviewEntity } from './training-review.entity';
-import { BaseSearchQuery, SortDirectionEnum, SortType, SortTypeEnum, TrainingIdPayload } from '@shared/types';
+import { BaseSearchQuery, SortDirection, SortType, SortTypeEnum, TrainingIdPayload } from '@shared/types';
 import { PaginationResult } from '@server/libs/interfaces';
 import { DefaultSearchParam } from '@shared/types/search/base-search-query.type';
 import { TrainingReviewsSearchFilters } from '@shared/training-review';
@@ -161,9 +161,9 @@ export class TrainingReviewRepository extends BasePostgresRepository<TrainingRev
       return { where, orderBy };
     }
   
-    private getSortKeyValue(sortType: SortTypeEnum, sortDirection: SortDirectionEnum) {
+    private getSortKeyValue(sortType: SortType, sortDirection: SortDirection) {
       switch(sortType) {
-        case(SortType.CREATED_AT): {
+        case(SortTypeEnum.CREATED_AT): {
           return { key: 'createdAt', value: sortDirection };
         }
         default: {

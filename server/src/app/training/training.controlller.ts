@@ -5,15 +5,15 @@ import {
   CreateTrainingRDO,
   UpdateTrainingDTO,
   TrainingSearchQuery,
-  TrainingSortType,
-  TrainingsWithPaginationRDO
+  TrainingsWithPaginationRDO,
+  TrainingSortTypeEnum
 } from '@shared/training';
 import { TrainingMessage } from './training.constant';
 import { TrainingService } from './training.service';
 import { fillDTO } from '@server/libs/helpers';
 import { JWTAuthGuard } from '@server/user/guards/jwt-auth.guard';
 import { DefaultSearchParam } from '@shared/types/search/base-search-query.type';
-import { SortDirection } from '@shared/types/sort/sort-direction.enum';
+import { SortDirectionEnum } from '@shared/types/sort/sort-direction.enum';
 import { genderTypeList, trainingTypeList } from '@server/libs/types';
 import { InjectUserIdInterceptor } from '@server/libs/interceptors/inject-user-id.interceptor';
 
@@ -119,14 +119,14 @@ export class TrainingController {
   @ApiQuery({
     name: "sortType",
     description: `Sorting type. Default sort type: ${DefaultSearchParam.SORT.TYPE}`,
-    enum: TrainingSortType,
+    enum: TrainingSortTypeEnum,
     example: "createdAt",
     required: false
   })
   @ApiQuery({
     name: "sortDirection",
     description: `Sorting direction. Default direction: ${DefaultSearchParam.SORT.DIRECTION}`,
-    enum: SortDirection,
+    enum: SortDirectionEnum,
     example: " desc",
     required: false
   })

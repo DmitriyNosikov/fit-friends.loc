@@ -17,14 +17,14 @@ export class CreateTrainingReviewDTO {
     example: 'g83h4y0943-nv934819843-jv934h8t-n923g48n9438',
   })
   @IsString()
-  userId: UserInterface['id'];
+  userId!: UserInterface['id'];
 
   @ApiProperty({
     description: 'Training id',
     example: 'g83h4y0943-nv934819843-jv934h8t-n923g48n9438',
   })
   @IsString()
-  trainingId: TrainingInterface['id'];
+  trainingId!: TrainingInterface['id'];
 
   @ApiProperty({
     description: 'Author`s training rate',
@@ -35,7 +35,7 @@ export class CreateTrainingReviewDTO {
   @Min(TrainingReviewValidation.RATING.MIN)
   @Max(TrainingReviewValidation.RATING.MAX)
   @IsInt()
-  rating: number;
+  rating!: number;
 
   @ApiProperty({
     description: 'Author review`s text',
@@ -44,5 +44,5 @@ export class CreateTrainingReviewDTO {
   @MinLength(TrainingReviewValidation.TEXT.MIN_LENGTH)
   @MaxLength(TrainingReviewValidation.TEXT.MAX_LENGTH)
   @IsString()
-  text: string;
+  text!: string;
 }

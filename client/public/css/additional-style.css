@@ -23,3 +23,7 @@
 .no-scroll {
   overflow: hidden;
 }
+
+.custom-select__text {
+  opacity: 1;
+}

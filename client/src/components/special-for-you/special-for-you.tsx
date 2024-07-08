@@ -6,7 +6,6 @@ import 'swiper/css';
 import 'swiper/css/bundle';
 
 import { useAppSelector } from '@client/src/hooks';
-import useConvenientTrainingsList from '@client/src/hooks/useConvenientTrainingsList';
 
 import {
   getConvenientTrainingsLoadingStatus,

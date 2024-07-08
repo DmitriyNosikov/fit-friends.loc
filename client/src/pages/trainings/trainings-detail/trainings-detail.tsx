@@ -1,5 +1,5 @@
 import BackBtn from '@client/src/components/back-btn/back-btn';
-import { ReactElement, useState } from 'react';
+import { ReactElement } from 'react';
 import TrainingsReviews from '../trainings-reviews/trainings-reviews';
 import { useAppDispatch, useAppSelector } from '@client/src/hooks';
 import { useParams } from 'react-router-dom';

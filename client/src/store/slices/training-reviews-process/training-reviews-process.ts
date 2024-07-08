@@ -23,7 +23,7 @@ export const trainingReviewsProcess = createSlice({
     },
 
     // Список тренировок
-    addTrainingReviewsAction: (state, action: PayloadAction<CreateTrainingReviewRDO | null>) => {
+    appendTrainingReviewsAction: (state, action: PayloadAction<CreateTrainingReviewRDO | null>) => {
       if(!action.payload) {
         return;
       }
@@ -48,5 +48,5 @@ export const trainingReviewsProcess = createSlice({
 
 export const {
   setTrainingReviewsAction,
-  addTrainingReviewsAction
+  appendTrainingReviewsAction
 } = trainingReviewsProcess.actions;

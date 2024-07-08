@@ -31,14 +31,14 @@ export class CreateTrainingReviewRDO {
     example: 'g83h4y0943-nv934819843-jv934h8t-n923g48n9438',
   })
   @Expose()
-  userId: UserInterface['id'];
+  userId!: UserInterface['id'];
 
   @ApiProperty({
     description: 'Training id',
     example: 'g83h4y0943-nv934819843-jv934h8t-n923g48n9438',
   })
   @Expose()
-  trainingId: TrainingInterface['id'];
+  trainingId!: TrainingInterface['id'];
 
   @ApiProperty({
     description: 'Author`s training rate',
@@ -47,12 +47,12 @@ export class CreateTrainingReviewRDO {
     maximum: TrainingReviewValidation.RATING.MAX
   })
   @Expose()
-  rating: number;
+  rating!: number;
 
   @ApiProperty({
     description: 'Author review`s text',
     example: 'it was amazing training',
   })
   @Expose()
-  text: String;
+  text!: String;
 }

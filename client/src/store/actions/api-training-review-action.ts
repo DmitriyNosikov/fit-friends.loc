@@ -1,13 +1,13 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { toast } from 'react-toastify';
 
-import { ApiRoute, AppRoute, Namespace } from '@client/src/const';
+import { ApiRoute, Namespace } from '@client/src/const';
 import { AsyncOptions } from '@client/src/types/async-options.type';
 
 
 import { setDataLoadingStatus } from '../slices/main-process/main-process';
-import { CreateTrainingReviewDTO, CreateTrainingReviewRDO, TrainingReviewsWithPaginationRDO } from '@shared/training-review';
-import { setTrainingReviewsAction } from '../slices/training-reviews-process/training-reviews-process';
+import { CreateTrainingReviewDTO, TrainingReviewsWithPaginationRDO } from '@shared/training-review';
+import { appendTrainingReviewsAction, setTrainingReviewsAction } from '../slices/training-reviews-process/training-reviews-process';
 
 const APITrainingPrefix = `[${Namespace.TRAINING_REVIEWS}-BACKEND]`;
 const APIAction = {
@@ -49,7 +49,7 @@ export const fetchTrainingReviewsAction = createAsyncThunk<void, TrainingId, Asy
 );
 
 export const addTrainingReviewsAction = createAsyncThunk<void, CreateTrainingReviewDTO, AsyncOptions>(
-  APIAction.TRAINING_REVIEW_FETCH_LIST,
+  APIAction.TRAINING_REVIEW_CREATE,
   async (
     reviewData,
     { dispatch, rejectWithValue, extra: api }
@@ -58,10 +58,11 @@ export const addTrainingReviewsAction = createAsyncThunk<void, CreateTrainingRev
 
     const trainingId = reviewData.trainingId;
 
+
     try {
       const { data } = await api.post<CreateTrainingReviewDTO>(`${ApiRoute.TRAINING_REVIEWS_API}/${trainingId}`, reviewData);
 
-      dispatch(addTrainingReviewsAction(data));
+      dispatch(appendTrainingReviewsAction(data));
       dispatch(setDataLoadingStatus(false));
 
     } catch(err) {

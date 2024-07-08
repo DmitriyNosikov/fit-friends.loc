@@ -10,15 +10,15 @@ export class UserEntity extends Entity implements StorableEntityInterface<AuthUs
   public createdAt?: Date;
   public updatedAt?: Date;
 
-  public email: string;
-  public name: string;
-  public passwordHash: string;
+  public email!: string;
+  public name!: string;
+  public passwordHash!: string;
   public role?: UserRole;
   public avatar?: string;
-  public gender: Gender;
+  public gender!: Gender;
   public birthDate?: Date;
   public description?: string;
-  public location: Location;
+  public location!: Location;
   public pageBackground?: string;
 
   public level?: UserLevel;

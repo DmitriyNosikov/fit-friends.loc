@@ -1,6 +1,6 @@
 import { TrainingSearchQuery } from '@shared/training';
 import { BaseSearchQuery } from '@shared/types';
-import { UserLevel, UserLevelEnum } from '@shared/types/user-level.enum';
+import { UserLevelEnum } from '@shared/types/user-level.enum';
 
 export function adaptQueryParams(queryString: BaseSearchQuery | TrainingSearchQuery) {
   let adaptedQueryString = '';

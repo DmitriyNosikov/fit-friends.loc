@@ -17,7 +17,7 @@ Content-Type: application/json
 {{authorization}}
 
 {
-  "email": "iron-man@stark.it",
+  "email": "iron-man22@stark.it",
   "name": "Tony",
   "password": "jarvis-123",
   "gender": "мужской",

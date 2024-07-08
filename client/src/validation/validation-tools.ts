@@ -5,6 +5,13 @@ const ERROR_CLASS = {
   TEXT_BOX: 'custom-input__error'
 }
 
+/**
+ * Для отображения текста ошибки, необходимо добавить <span className="custom-input__error"></span>
+ * в контейнер с валидируемым полем, а также добавить уникальный идентификатор id="" на контейнер с
+ * валидируемым полем. Название идентификатора должно быть равно соответствующему ключу в валидируемом
+ * объекте
+ */
+
 export function validateFields<T>(target: T, validationSchema: Joi.ObjectSchema<any>) {
   clearErrors();
 

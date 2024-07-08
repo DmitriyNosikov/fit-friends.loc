@@ -41,7 +41,7 @@ export const checkUserAuthAction = createAsyncThunk<void, void, AsyncOptions>(
     try {
       await api.post<TokenPayload>(ApiRoute.CHECK_JWT_TOKEN);
 
-      dispatch(fetchUserDetailInfoAction)
+      dispatch(fetchUserDetailInfoAction())
     } catch(error) {
       deleteToken();
 
@@ -201,9 +201,11 @@ export const fetchUserDetailInfoAction = createAsyncThunk<void, void, AsyncOptio
       dispatch(setUserInfoAction(data));
       dispatch(setDataLoadingStatus(false));
     } catch(err) {
-      toast.warn(`Can't get user's detail info: ${err}`);
+      toast.warn(`Can't get user's detail info: ${err}. Please, try to login again`);
 
+      deleteToken();
       dispatch(setDataLoadingStatus(false));
+      dispatch(redirectToRoute(AppRoute.INTRO));
 
       return rejectWithValue(err);
     }

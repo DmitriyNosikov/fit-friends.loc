@@ -58,6 +58,7 @@ export class TrainingReviewService {
     }
 
     const reviewEntity = this.trainingReviewFactory.create(dto);
+    console.log('REVIEW ENTITY: ', reviewEntity);
     const review  = await this.trainingReviewRepository.create(reviewEntity);
 
     // Пересчитываем рейтинг для тренировки

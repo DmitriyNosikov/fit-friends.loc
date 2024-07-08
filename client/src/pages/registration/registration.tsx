@@ -85,6 +85,8 @@ export default function Registration() {
 
     if (isFormHasErrors) {
       toast.warn('Validation error. Please, correct marked fields and try send form again.');
+
+      return;
     }
 
     dispatch(registerUserAction(userData))

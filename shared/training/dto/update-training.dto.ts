@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Gender, GenderEnum, TrainingType, TrainingTypeEnum, UserLevel, UserLevelEnum, genderTypeList, trainingTypeList, userLevelList } from '@server/libs/types';
-import { TrainingDuration, TrainingDurationEnum, trainingTimeList } from '@server/libs/types/training-duration.enum';
+import { TrainingDuration, TrainingDurationEnum, trainingDurationList } from '@shared/types/training-duration.enum';
 import { TrainingValidation } from '@server/training/training.constant';
 import {
     IsBoolean,
@@ -62,7 +62,7 @@ export class UpdateTrainingDTO {
     example: '10-30',
     enum: TrainingDurationEnum
   })
-  @IsIn(trainingTimeList)
+  @IsIn(trainingDurationList)
   @IsString()
   @IsOptional()
   trainingDuration?: TrainingDuration;
@@ -76,6 +76,15 @@ export class UpdateTrainingDTO {
   @IsNumber()
   @IsOptional()
   price?: number;
+
+  @ApiProperty({
+    description: 'Discount value',
+    example: 522,
+  })
+  @Min(TrainingValidation.PRICE.MIN)
+  @IsNumber()
+  @IsOptional()
+  discount?: number;
 
   @ApiProperty({
     description: 'Calories count to lose with this training',

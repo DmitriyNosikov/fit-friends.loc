@@ -9,7 +9,7 @@ import { OrderInterface } from './interfaces/order.interface';
 import { OrderFactory } from './order.factory';
 
 import { SortType, SortTypeEnum } from '@shared/types/sort/sort-type.enum';
-import { SortDirectionEnum } from '@shared/types/sort/sort-direction.enum';
+import { SortDirection } from '@shared/types/sort/sort-direction.enum';
 import { BaseSearchQuery, DefaultSearchParam } from '@shared/types/search/base-search-query.type';
 import { PaginationResult } from '@server/libs/interfaces';
 import { OrderSearchFilters } from '@shared/order';
@@ -162,9 +162,9 @@ export class OrderRepository extends BasePostgresRepository<OrderEntity, OrderIn
     return { where, orderBy };
   }
 
-  private getSortKeyValue(sortType: SortTypeEnum, sortDirection: SortDirectionEnum) {
+  private getSortKeyValue(sortType: SortType, sortDirection: SortDirection) {
     switch(sortType) {
-      case(SortType.CREATED_AT): {
+      case(SortTypeEnum.CREATED_AT): {
         return { key: 'createdAt', value: sortDirection };
       }
       default: {

@@ -128,6 +128,20 @@ export class BalanceService {
     return updatedBalance;
   }
 
+  public async countAvailableTrainings(userId: string) {
+    const userTrainings = await this.balanceRepository.getUserTrainingBalance(userId);
+
+    if(!userTrainings) {
+      throw new NotFoundException(BalanceMessage.ERROR.EMPTY_BALANCE);
+    }
+
+    const count = userTrainings.reduce((accumulator, training) => {
+      return accumulator += training.remainingTrainingsCount;
+    }, 0);
+
+    return count;
+  }
+
   // Вспомогательные методы
   public filterQuery(query: BaseSearchQuery) {
     const filteredQuery = fillDTO(BaseSearchQuery, query);

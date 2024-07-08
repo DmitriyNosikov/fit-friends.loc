@@ -17,6 +17,31 @@ export class FileVaultService {
     private readonly configService: ConfigService
   ) {}
 
+  public async saveFile(file: Express.Multer.File): Promise<string> {
+    try {
+      const uploadDirectoryPath = this.getUploadDirectoryPath();
+
+      const uniqFilename = `${getUniqFilenamePrefix()}-${file.originalname}`;
+      const filesDestination = this.getDestinationFilePath(uniqFilename); // Место хранения файлоа на сервере
+      const staticUrl = this.getStaticUrl(uniqFilename); // Ссылка на файл для внешних ресурсов (статика)
+
+      await ensureDir(uploadDirectoryPath);
+      await writeFile(filesDestination, file.buffer);
+
+      return staticUrl;
+    } catch (error) {
+      this.logger.error(`Error while saving file: ${error.message}`);
+      throw new Error(`Can't save file`);
+    }
+  }
+
+  private getStaticUrl(filename: string) {
+    const staticDirectory = this.configService.get<string>(`${ConfigEnvironment.APP}.${ConfigEnum.STATIC_SERVE_ROOT}`);
+    const staticUrl = join(staticDirectory, getCurrentDayTimeDirectory(), filename);
+
+    return staticUrl;
+  }
+
   private getUploadDirectoryPath(): string {
     const uploadDirectoryPath = this.configService.get<string>(`${ConfigEnvironment.APP}.${ConfigEnum.UPLOAD_DIRECTORY_PATH}`);
     const currentDateDirectory = getCurrentDayTimeDirectory();
@@ -25,22 +50,5 @@ export class FileVaultService {
 
   private getDestinationFilePath(filename: string): string {
     return join(this.getUploadDirectoryPath(), filename)
-  }
-
-  public async saveFile(file: Express.Multer.File): Promise<string> {
-    try {
-      const uploadDirectoryPath = this.getUploadDirectoryPath();
-
-      const uniqFilename = `${getUniqFilenamePrefix()}-${file.originalname}`;
-      const filesDestination = this.getDestinationFilePath(uniqFilename);
-
-      await ensureDir(uploadDirectoryPath);
-      await writeFile(filesDestination, file.buffer);
-
-      return filesDestination;
-    } catch (error) {
-      this.logger.error(`Error while saving file: ${error.message}`);
-      throw new Error(`Can't save file`);
-    }
   }
 }

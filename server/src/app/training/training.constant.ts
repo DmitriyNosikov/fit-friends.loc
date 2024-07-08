@@ -1,5 +1,9 @@
 import { MessagesType } from '@server/libs/types';
 
+export const TRAINING_DEFAULT = {
+  RATING: 0
+} as const;
+
 export const TrainingValidation = {
     TITLE: {
       MIN_LENGTH: 1,

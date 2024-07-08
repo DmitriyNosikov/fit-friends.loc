@@ -8,6 +8,7 @@ import { TrainingReviewFactory } from './training-reviews.factory';
 import { TrainingReviewRepository } from './training-review.repository';
 import { TrainingReviewMessage } from './training-review.constant';
 import { TrainingReviewEntity } from './training-review.entity';
+import { TrainingService } from '@server/training/training.service';
 
 
 
@@ -16,6 +17,8 @@ export class TrainingReviewService {
   constructor(
     private readonly trainingReviewFactory: TrainingReviewFactory,
     private readonly trainingReviewRepository: TrainingReviewRepository,
+
+    private readonly trainingService: TrainingService
   ) {}
   public async findById(reviewId: string): Promise<TrainingReviewEntity | null> {
     const existsReview = await this.trainingReviewRepository.findById(reviewId);
@@ -27,19 +30,39 @@ export class TrainingReviewService {
     return existsReview;
   }
 
+  public async findByTrainingId(trainingId: string): Promise<TrainingReviewEntity[] | null> {
+    const existsReviews = await this.trainingReviewRepository.findByTrainingId(trainingId);
+
+    if(!existsReviews) {
+      throw new NotFoundException(`Not fount any reviews for training ${trainingId}`);
+    }
+
+    return existsReviews;
+  }
+
   public async search(query?: BaseSearchQuery & TrainingIdPayload) {
     const reviews = await this.trainingReviewRepository.search(query);
 
     if(!reviews && query) {
-      throw new NotFoundException(`Can't find reviews by passed params " ${query}"`);
+      throw new NotFoundException(`Can't find reviews by passed params "${query}"`);
     }
 
     return reviews;
   }
 
   public async create(dto: CreateTrainingReviewDTO) {
+    const isTrainingExists = await this.trainingService.exists(dto.trainingId);
+
+    if(!isTrainingExists) {
+      throw new NotFoundException(`Training with id ${dto.trainingId} not found`);
+    }
+
     const reviewEntity = this.trainingReviewFactory.create(dto);
+    console.log('REVIEW ENTITY: ', reviewEntity);
     const review  = await this.trainingReviewRepository.create(reviewEntity);
+
+    // Пересчитываем рейтинг для тренировки
+    await this.updateTrainingRating(dto.trainingId);
 
     return review;
   }
@@ -56,18 +79,39 @@ export class TrainingReviewService {
 
     const updatedReview = await this.trainingReviewRepository.updateById(reviewId, fieldsToUpdate);
 
+    // Если рейтинг обновился - пересчитать его у тренировки
+    if(dto.rating) {
+      let trainingId = null;
+      
+      if(dto.trainingId) {
+        trainingId = dto.trainingId;
+      } else {
+        const existsReview = await this.trainingReviewRepository.findById(reviewId);
+
+        trainingId = existsReview.trainingId;
+      }
+
+      if(trainingId) {
+        // Пересчитываем рейтинг для тренировки
+        await this.updateTrainingRating(trainingId);
+      }
+    }
+
     return updatedReview;
   }
 
   
   public async delete(reviewId: string): Promise<void> {
-    const isReviewExists = await this.trainingReviewRepository.exists(reviewId);
+    const existsReview = await this.trainingReviewRepository.findById(reviewId);
 
-    if(!isReviewExists) {
+    if(!existsReview) {
       return;
     }
 
-    return await this.trainingReviewRepository.deleteById(reviewId);
+    await this.trainingReviewRepository.deleteById(reviewId);
+
+    // Пересчитываем рейтинг для тренировки
+    await this.updateTrainingRating(existsReview.trainingId);
   }
 
   //////////////////// Вспомогательные методы ////////////////////
@@ -79,5 +123,27 @@ export class TrainingReviewService {
     }
 
     return true;
+  }
+
+  public async recountRating(trainingId: string) {
+    const reviews = await this.trainingReviewRepository.findByTrainingId(trainingId);
+
+    if(!reviews || reviews.length <= 0) {
+      return;
+    }
+
+    const generalRating: number = reviews.reduce((accumulator, item) => {
+      return accumulator += item.rating;
+    }, 0);
+
+    const ratingAverage = Math.round(generalRating / reviews.length);
+
+    return ratingAverage;
+  }
+
+  public async updateTrainingRating(trainingId: string) {
+    const newRating = await this.recountRating(trainingId);
+
+    await this.trainingService.updateById(trainingId, { rating: newRating });
   }
 }

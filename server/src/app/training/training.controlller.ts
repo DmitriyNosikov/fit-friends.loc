@@ -1,20 +1,21 @@
-import { Body, Controller, Delete, Get, HttpStatus, Param, Patch, Post, Query, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpStatus, Param, Patch, Post, Query, UseGuards, UseInterceptors } from '@nestjs/common';
 import { ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import {
   CreateTrainingDTO,
   CreateTrainingRDO,
   UpdateTrainingDTO,
   TrainingSearchQuery,
-  TrainingSortType,
-  TrainingsWithPaginationRDO
+  TrainingsWithPaginationRDO,
+  TrainingSortTypeEnum
 } from '@shared/training';
 import { TrainingMessage } from './training.constant';
 import { TrainingService } from './training.service';
 import { fillDTO } from '@server/libs/helpers';
 import { JWTAuthGuard } from '@server/user/guards/jwt-auth.guard';
 import { DefaultSearchParam } from '@shared/types/search/base-search-query.type';
-import { SortDirection } from '@shared/types/sort/sort-direction.enum';
+import { SortDirectionEnum } from '@shared/types/sort/sort-direction.enum';
 import { genderTypeList, trainingTypeList } from '@server/libs/types';
+import { InjectUserIdInterceptor } from '@server/libs/interceptors/inject-user-id.interceptor';
 
 @ApiTags('trainings')
 @Controller('trainings')
@@ -38,6 +39,8 @@ export class TrainingController {
   }
 
   @Get('/')
+  @UseGuards(JWTAuthGuard)
+  @UseInterceptors(InjectUserIdInterceptor)
   @ApiOperation({ summary: 'Get trainings list by passed params (or without it)' })
   @ApiQuery({
     name: "title",
@@ -116,14 +119,14 @@ export class TrainingController {
   @ApiQuery({
     name: "sortType",
     description: `Sorting type. Default sort type: ${DefaultSearchParam.SORT.TYPE}`,
-    enum: TrainingSortType,
+    enum: TrainingSortTypeEnum,
     example: "createdAt",
     required: false
   })
   @ApiQuery({
     name: "sortDirection",
     description: `Sorting direction. Default direction: ${DefaultSearchParam.SORT.DIRECTION}`,
-    enum: SortDirection,
+    enum: SortDirectionEnum,
     example: " desc",
     required: false
   })
@@ -136,9 +139,93 @@ export class TrainingController {
     status: HttpStatus.NOT_FOUND,
     description: TrainingMessage.ERROR.NOT_FOUND
   })
-  public async index(@Query() query?: TrainingSearchQuery): Promise<TrainingsWithPaginationRDO | null> {
-    const preparedQuery = this.trainingService.filterQuery(query);
-    const documents = await this.trainingService.search(preparedQuery);
+  public async index(
+    @Body('userId') userId: string,
+    @Query() query?: TrainingSearchQuery
+  ): Promise<TrainingsWithPaginationRDO | null> {
+    const documents = await this.trainingService.search({ ...query, userId });
+
+    if(!documents.entities || documents.entities.length <= 0) {
+      return;
+    }
+
+    const trainings = {
+      ...documents,
+      entities: documents.entities.map((document) => document.toPOJO())
+    }
+
+    return trainings;
+  }
+
+  @Get('/convenient-trainings')
+  @UseGuards(JWTAuthGuard)
+  @UseInterceptors(InjectUserIdInterceptor)
+  @ApiOperation({ summary: 'Get convenient trainings for user by quiz params' })
+  @ApiResponse({
+    type: TrainingsWithPaginationRDO,
+    status: HttpStatus.OK,
+    description: TrainingMessage.SUCCESS.FOUND
+  })
+  @ApiResponse({
+    status: HttpStatus.NOT_FOUND,
+    description: TrainingMessage.ERROR.NOT_FOUND
+  })
+  public async getTrainingsForUser(@Body('userId') userId: string): Promise<TrainingsWithPaginationRDO | null> {
+    const documents = await this.trainingService.getTrainingsForUser(userId);
+
+    if(!documents.entities || documents.entities.length <= 0) {
+      return;
+    }
+
+    const convenientTrainings = {
+      ...documents,
+      entities: documents.entities.map((document) => document.toPOJO())
+    }
+
+    return convenientTrainings;
+  }
+
+  @Get('/with-discount')
+  @UseGuards(JWTAuthGuard)
+  @ApiOperation({ summary: 'Get trainings with discount' })
+  @ApiResponse({
+    type: TrainingsWithPaginationRDO,
+    status: HttpStatus.OK,
+    description: TrainingMessage.SUCCESS.FOUND
+  })
+  @ApiResponse({
+    status: HttpStatus.NOT_FOUND,
+    description: TrainingMessage.ERROR.NOT_FOUND
+  })
+  public async getTrainigsWithDiscount(): Promise<TrainingsWithPaginationRDO | null> {
+    const documents = await this.trainingService.getTrainingsWithDiscount();
+
+    if(!documents.entities || documents.entities.length <= 0) {
+      return;
+    }
+
+    const trainings = {
+      ...documents,
+      entities: documents.entities.map((document) => document.toPOJO())
+    }
+
+    return trainings;
+  }
+
+  @Get('/with-rating')
+  @UseGuards(JWTAuthGuard)
+  @ApiOperation({ summary: 'Get trainings with rating more than 0' })
+  @ApiResponse({
+    type: TrainingsWithPaginationRDO,
+    status: HttpStatus.OK,
+    description: TrainingMessage.SUCCESS.FOUND
+  })
+  @ApiResponse({
+    status: HttpStatus.NOT_FOUND,
+    description: TrainingMessage.ERROR.NOT_FOUND
+  })
+  public async getTrainigsWithRating(): Promise<TrainingsWithPaginationRDO | null> {
+    const documents = await this.trainingService.getTrainingsWithRating();
 
     if(!documents.entities || documents.entities.length <= 0) {
       return;

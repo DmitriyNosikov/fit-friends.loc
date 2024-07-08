@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger'
-import { DEFAULT_USER_ROLE, UserValidation } from '@server/user/user.constant';
+import { UserValidation } from '@server/user/user.constant';
 import { 
   Gender,
   GenderEnum,
@@ -13,10 +13,9 @@ import {
   UserLevelEnum,
   genderTypeList,
   locationList,
-  trainingTimeList,
+  trainingDurationList,
   trainingTypeList,
-  userLevelList,
-  userRolesList
+  userLevelList
 } from '@server/libs/types';
 import {
   ArrayMaxSize,
@@ -48,21 +47,19 @@ export class UpdateUserDTO {
   name?: string;
 
   @ApiProperty({
+    description: 'User email',
+    example: 'iron-man@starkindustries.it',
+  })
+  @IsEmail()
+  @IsOptional()
+  email?: string;
+
+  @ApiProperty({
     description: 'User avatar',
     example: 'some/interesting/avatar.jpg',
   })
   @IsOptional()
   avatar?: string;
-
-  // @ApiProperty({
-  //   description: 'User role',
-  //   example: 'admin',
-  //   enum: UserRoleEnum
-  // })
-  // @IsIn(userRolesList)
-  // @IsString()
-  // @IsOptional()
-  // role?: UserRole;
 
   @ApiProperty({
     description: 'User gender',
@@ -76,7 +73,7 @@ export class UpdateUserDTO {
 
   @ApiProperty({
     description: 'User birth date',
-    example: '26.09.1993',
+    example: '1993-09-26',
   })
   @IsDateString()
   @IsOptional()
@@ -90,7 +87,7 @@ export class UpdateUserDTO {
   @MinLength(UserValidation.DESCRIPTION.MIN_LENGTH)
   @IsString()
   @IsOptional()
-  description?: Date;
+  description?: string;
 
   @ApiProperty({
     description: 'User metro station',
@@ -131,17 +128,17 @@ export class UpdateUserDTO {
   @IsIn(trainingTypeList, { each: true })
   @IsString({ each: true })
   @IsOptional()
-  trainingType?: TrainingType;
+  trainingType?: TrainingType[];
 
   @ApiProperty({
     description: 'User training time periods (in minutes)',
     example: '10-30',
     enum: TrainingDurationEnum
   })
-  @IsIn(trainingTimeList)
+  @IsIn(trainingDurationList)
   @IsString()
   @IsOptional()
-  trainingTime?: TrainingDuration;
+  TrainingDuration?: TrainingDuration;
 
   @ApiProperty({
     description: 'User lose calories aim',
@@ -153,7 +150,7 @@ export class UpdateUserDTO {
   @Min(UserValidation.LOSE_CALORIES.MIN)
   @IsNumber()
   @IsOptional()
-  loseCalories?: number;
+  loseCaloriesLimit?: number;
 
   @ApiProperty({
     description: 'User calories per day limit',
@@ -165,7 +162,7 @@ export class UpdateUserDTO {
   @Min(UserValidation.DAY_CALORIES.MIN)
   @IsNumber()
   @IsOptional()
-  dayCalories?: number;
+  dayCaloriesLimit?: number;
 
   @ApiProperty({
     description: 'Is user ready to training',

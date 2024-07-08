@@ -2,10 +2,10 @@
 @port = 8000
 @baseUrl = http://{{host}}:{{port}}/api/balance
 
-@balanceId = e3772d69-748f-4958-9a1e-0f5611928c61
+@balanceId = 1e234900-14ae-4202-b3f8-61222d8676e4
 @serviceId = 62dd4f38-ab30-44a5-84df-04458c82596a
 @orderId = 201c2a72-d2a9-4b03-8ee1-0f4a5fa1d272
-@authorization = Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJkZzM0Z2RmNS1kZmg0LWdoNDYtd2VmNC1nZmw3OGduNWhmaDUiLCJlbWFpbCI6Imlyb24tbWFuQHN0YXJraW5kdXN0cmllcy5pdCIsIm5hbWUiOiJUb255Iiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzE5OTI5MjU2LCJleHAiOjE3MTk5MzAxNTZ9.6RvVDPJDNCJs9fLnH2Sy9l1SnI-rIGUZ0pxqKH3w8Io
+@authorization = Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJkZzM0Z2RmNS1kZmg0LWdoNDYtd2VmNC1nZmw3OGduNWhmaDUiLCJlbWFpbCI6Imlyb24tbWFuQHN0YXJraW5kdXN0cmllcy5pdCIsIm5hbWUiOiJUb255Iiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzIwMjA4NzY1LCJleHAiOjE3MjAyMDk2NjV9.s07HeFmOKhUdTf_JXVR-CzDArUyXZThhFVzL26KXwBg
 
 # Create new balance
 POST {{baseUrl}}/ HTTP/1.1
@@ -19,13 +19,13 @@ Content-Type: application/json
 ###
 
 # Get user balance
-GET {{baseUrl}}/?limit=20 HTTP/1.1
+GET {{baseUrl}}/?limit=30 HTTP/1.1
 Content-Type: application/json
 {{authorization}}
 ###
 
-# Get detail info about balance
-GET {{baseUrl}}/{{balanceId}} HTTP/1.1
+# Count user`s availible trainings count (balance)
+GET {{baseUrl}}/count HTTP/1.1
 Content-Type: application/json
 {{authorization}}
 ###
@@ -47,13 +47,13 @@ Content-Type: application/json
 ###
 
 # Decrease training balance
-PATCH {{baseUrl}}/decrease/{{serviceId}}/3 HTTP/1.1
+PATCH {{baseUrl}}/{{balanceId}}/decrease/1 HTTP/1.1
 Content-Type: application/json
 {{authorization}}
 ###
 
 # Increase training balance
-PATCH {{baseUrl}}/increase/{{serviceId}}/3 HTTP/1.1
+PATCH {{baseUrl}}/{{balanceId}}/increase/2 HTTP/1.1
 Content-Type: application/json
 {{authorization}}
 ###

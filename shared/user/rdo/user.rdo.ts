@@ -2,11 +2,12 @@ import { ApiProperty } from '@nestjs/swagger';
 import { TrainingType, UserLevel, UserRole } from '@server/libs/types';
 import { GenderEnum } from '@server/libs/types/gender.enum';
 import { Location, LocationEnum } from '@server/libs/types/location.enum';
-import { TrainingDuration, TrainingDurationEnum } from '@server/libs/types/training-duration.enum';
-import { TrainingTypeEnum } from '@server/libs/types/training-type.enum';
-import { UserLevelEnum } from '@server/libs/types/user-level.enum';
+import { TrainingDuration, TrainingDurationEnum } from '@shared/types/training-duration.enum';
+import { TrainingTypeEnum } from '@shared/types/training-type.enum';
+import { UserLevelEnum } from '@shared/types/user-level.enum';
 import { UserValidation } from '@server/user/user.constant';
 import { Expose } from 'class-transformer';
+
 export class UserRDO {
   @ApiProperty({
     description: 'Uniq user ID',
@@ -57,7 +58,7 @@ export class UserRDO {
     example: 'admin',
   })
   @Expose()
-  role: UserRole;
+  role!: UserRole;
 
   @ApiProperty({
     description: 'User gender',
@@ -65,7 +66,7 @@ export class UserRDO {
     enum: GenderEnum
   })
   @Expose()
-  gender!: number;
+  gender!: string;
 
   @ApiProperty({
     description: 'User birth date',
@@ -79,7 +80,7 @@ export class UserRDO {
     example: 'Some interesting profile description',
   })
   @Expose()
-  description!: Date;
+  description!: string;
 
   @ApiProperty({
     description: 'User metro station',
@@ -111,7 +112,7 @@ export class UserRDO {
     enum: TrainingTypeEnum
   })
   @Expose()
-  trainingType!: TrainingType;
+  trainingType!: TrainingType[];
 
   @ApiProperty({
     description: 'User training time periods (in minutes)',
@@ -119,7 +120,7 @@ export class UserRDO {
     enum: TrainingDurationEnum
   })
   @Expose()
-  trainingTime!: TrainingDuration;
+  trainingDuration!: TrainingDuration;
 
   @ApiProperty({
     description: 'User lose calories aim',
@@ -128,7 +129,7 @@ export class UserRDO {
     maximum: UserValidation.LOSE_CALORIES.MAX,
   })
   @Expose()
-  loseCalories!: Number;
+  loseCaloriesLimit!: number;
 
   @ApiProperty({
     description: 'User calories per day limit',
@@ -137,12 +138,12 @@ export class UserRDO {
     maximum: UserValidation.DAY_CALORIES.MAX,
   })
   @Expose()
-  dayCalories!: Number;
+  dayCaloriesLimit!: number;
 
   @ApiProperty({
     description: 'Is user ready to training',
     example: 'true',
   })
   @Expose()
-  isReadyToTraining!: Boolean;
+  isReadyToTraining!: boolean;
 }

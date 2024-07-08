@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Gender, GenderEnum, TrainingType, TrainingTypeEnum, UserLevel, UserLevelEnum, genderTypeList, trainingTypeList, userLevelList } from '@server/libs/types';
-import { TrainingDuration, TrainingDurationEnum, trainingTimeList } from '@server/libs/types/training-duration.enum';
+import { Gender, GenderEnum, TrainingType, TrainingTypeEnum, UserLevel, UserLevelEnum } from '@server/libs/types';
+import { TrainingDuration, TrainingDurationEnum } from '@shared/types/training-duration.enum';
 import { TrainingValidation } from '@server/training/training.constant';
 import { Expose } from 'class-transformer';
 
@@ -34,14 +34,14 @@ export class CreateTrainingRDO {
     maximum: TrainingValidation.TITLE.MAX_LENGTH,
   })
   @Expose()
-  title: string;
+  title!: string;
 
   @ApiProperty({
     description: 'User profile background. If not passed = User avatar',
     example: 'some/interesting/avatar.jpg',
   })
   @Expose()
-  background: string;
+  background!: string;
 
   @ApiProperty({
     description: 'Training level, that user have to have for this',
@@ -49,16 +49,15 @@ export class CreateTrainingRDO {
     enum: UserLevelEnum
   })
   @Expose()
-  userLevel: UserLevel;
+  userLevel!: UserLevel;
 
-  
   @ApiProperty({
     description: 'Training type',
     example: 'кроссфит',
     enum: TrainingTypeEnum
   })
   @Expose()
-  trainingType: TrainingType;
+  trainingType!: TrainingType;
 
   @ApiProperty({
     description: 'User training time periods (duration in minutes)',
@@ -66,7 +65,7 @@ export class CreateTrainingRDO {
     enum: TrainingDurationEnum
   })
   @Expose()
-  trainingDuration: TrainingDuration;
+  trainingDuration!: TrainingDuration;
 
   @ApiProperty({
     description: 'Training price',
@@ -74,7 +73,14 @@ export class CreateTrainingRDO {
     minimum: TrainingValidation.PRICE.MIN,
   })
   @Expose()
-  price: number;
+  price!: number;
+
+  @ApiProperty({
+    description: 'Discount value',
+    example: 522,
+  })
+  @Expose()
+  discount?: number;
 
   @ApiProperty({
     description: 'Calories count to lose with this training',
@@ -83,14 +89,14 @@ export class CreateTrainingRDO {
     maximum: TrainingValidation.CALORIES.MAX,
   })
   @Expose()
-  calories: number;
+  calories!: number;
 
   @ApiProperty({
     description: 'Training description',
     example: 'Some interesting training description',
   })
   @Expose()
-  description: string;
+  description!: string;
 
   @ApiProperty({
     description: 'Gender for who this training',
@@ -98,14 +104,14 @@ export class CreateTrainingRDO {
     enum: GenderEnum
   })
   @Expose()
-  gender: Gender;
+  gender!: Gender;
 
   @ApiProperty({
     description: 'Training video',
     example: 'some/interesting/video.avi',
   })
   @Expose()
-  video: string;
+  video!: string;
 
   
   @ApiProperty({
@@ -120,7 +126,7 @@ export class CreateTrainingRDO {
     example: 'Tony Stark',
   })
   @Expose()
-  trainersName: string;
+  trainersName!: string;
 
   @ApiProperty({
     description: 'Is special offer or simple training',

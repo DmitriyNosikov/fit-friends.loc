@@ -1,5 +1,5 @@
-export const SortType = {
+export const SortTypeEnum = {
   CREATED_AT: 'createdAt',
 } as const;
 
-export type SortTypeEnum = (typeof SortType)[keyof typeof SortType];
+export type SortType = (typeof SortTypeEnum)[keyof typeof SortTypeEnum];

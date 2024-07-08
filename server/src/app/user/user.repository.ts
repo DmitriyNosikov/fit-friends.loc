@@ -25,7 +25,7 @@ export class UserRepository extends BasePostgresRepository<UserEntity, UserInter
       return null;
     }
 
-    const userEntity = this.createEntityFromDocument(user as unknown as UserInterface);
+    const userEntity = this.getEntity(user);
 
     return userEntity;
   }
@@ -39,7 +39,7 @@ export class UserRepository extends BasePostgresRepository<UserEntity, UserInter
       return null;
     }
 
-    const userEntity = this.createEntityFromDocument(user as unknown as UserInterface);
+    const userEntity = this.getEntity(user);
 
     return userEntity;
   }
@@ -53,7 +53,7 @@ export class UserRepository extends BasePostgresRepository<UserEntity, UserInter
       return null;
     }
 
-    const newUser = this.createEntityFromDocument(user as unknown as UserInterface);
+    const newUser = this.getEntity(user);
 
     return newUser;
   }
@@ -71,7 +71,7 @@ export class UserRepository extends BasePostgresRepository<UserEntity, UserInter
       return Promise.resolve(null);
     }
 
-    const userEntity = this.createEntityFromDocument(updatedUser as unknown as UserInterface);
+    const userEntity = this.getEntity(updatedUser);
 
     return userEntity;
   }
@@ -107,5 +107,9 @@ export class UserRepository extends BasePostgresRepository<UserEntity, UserInter
     }
 
     return true;
+  }
+
+  private getEntity(document): UserEntity {
+    return this.createEntityFromDocument(document as unknown as UserInterface);
   }
 }

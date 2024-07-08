@@ -10,6 +10,7 @@ const BACKEND_API_URL = {
   LOAD_FILES: `${BASE_URL}/api/files`,
   GET_FILES: `${BASE_URL}/api/static`,
   TRAININGS: `${BASE_URL}/api/trainings`,
+  TRAINING_REVIEWS: `${BASE_URL}/api/training-reviews`,
 }
 export const ApiRoute = {
   USER_API: BACKEND_API_URL.USERS,
@@ -25,6 +26,8 @@ export const ApiRoute = {
   CONVENIENT_TRAININGS_API: `${BACKEND_API_URL.TRAININGS}/convenient-trainings`,
   WITH_DISCOUNT_TRAININGS_API: `${BACKEND_API_URL.TRAININGS}/with-discount`,
   WITH_RATING_TRAININGS_API: `${BACKEND_API_URL.TRAININGS}/with-rating`,
+
+  TRAINING_REVIEWS_API: BACKEND_API_URL.TRAINING_REVIEWS,
 } as const;
 
 // -- App
@@ -35,6 +38,7 @@ export const AppRoute = {
   REGISTRATION: '/registration',
   ACCOUNT: '/account',
   TRAININGS: '/trainings',
+  ORDERS: '/orders',
   PAGE_404: '/page404',
 } as const;
 
@@ -43,7 +47,8 @@ export const AppRoute = {
 export const Namespace = {
   MAIN: 'MAIN',
   USER: 'USER',
-  TRAINING: 'TRAINING'
+  TRAINING: 'TRAINING',
+  TRAINING_REVIEWS: 'TRAINING_REVIEWS'
 } as const;
 
 // USER AUTH STATUSES

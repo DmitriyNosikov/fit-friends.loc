@@ -19,3 +19,13 @@ export function getImgPreviewLink(img: File, onLoad?: Function) {
       onLoad(fileReader.result);
     })
 }
+
+
+export function setBodyScrollAvailable(isScrollAvailable: boolean) {
+  if(isScrollAvailable) {
+    document.body.classList.remove('no-scroll');
+    return;
+  }
+
+  document.body.classList.add('no-scroll');
+}

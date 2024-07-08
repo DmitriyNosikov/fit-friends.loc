@@ -2,11 +2,13 @@ import { Namespace } from '@client/src/const';
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 
 export type MainProcess = {
-  isDataLoading: boolean
+  isDataLoading: boolean,
+  isReviewPopupShowed: boolean,
 };
 
 const initialState: MainProcess = {
-  isDataLoading: false
+  isDataLoading: false,
+  isReviewPopupShowed: false
 };
 
 
@@ -16,8 +18,15 @@ export const mainProcess = createSlice({
   reducers: {
     setDataLoadingStatus: (state, action: PayloadAction<boolean>) => {
       state.isDataLoading = action.payload;
+    },
+
+    setReviewPopupShowing: (state, action: PayloadAction<boolean>) => {
+      state.isReviewPopupShowed = action.payload;
     }
   }
 });
 
-export const { setDataLoadingStatus } = mainProcess.actions;
+export const {
+  setDataLoadingStatus,
+  setReviewPopupShowing
+} = mainProcess.actions;

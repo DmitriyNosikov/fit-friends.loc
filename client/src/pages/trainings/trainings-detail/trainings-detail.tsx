@@ -1,25 +1,34 @@
 import BackBtn from '@client/src/components/back-btn/back-btn';
-import { ReactElement } from 'react';
+import { ReactElement, useState } from 'react';
 import TrainingsReviews from '../trainings-reviews/trainings-reviews';
-import { useAppSelector } from '@client/src/hooks';
+import { useAppDispatch, useAppSelector } from '@client/src/hooks';
 import { useParams } from 'react-router-dom';
 import { getTrainingItem, getTrainingItemLoadingStatus } from '@client/src/store/slices/training-process/training-process.selectors';
 import Spinner from '@client/src/components/tools/spinner/spinner';
 import useTrainingItem from '@client/src/hooks/useTrainingItem';
+import useTrainingReviewsList from '@client/src/hooks/useTrainingReviewsList';
+import { getTrainingReviewsList } from '@client/src/store/slices/training-reviews-process/training-process.selectors';
+
+import { setReviewPopupShowing } from '@client/src/store/slices/main-process/main-process';
+import { setBodyScrollAvailable } from '@client/src/utils/common';
 
 export default function TrainingsDetail(): ReactElement {
   const params = useParams();
   const trainingId = params.trainingId;
+  const dispatch = useAppDispatch();
 
   if (trainingId) {
     useTrainingItem(trainingId);
+    useTrainingReviewsList(trainingId)
   }
 
   const isTrainingLoading = useAppSelector(getTrainingItemLoadingStatus)
   const trainingItem = useAppSelector(getTrainingItem);
+  const trainingItemReviews = useAppSelector(getTrainingReviewsList);
 
   function handleLeaveReviewBtnClick() {
-
+    dispatch(setReviewPopupShowing(true));
+    setBodyScrollAvailable(false);
   }
 
   if (!trainingItem) {
@@ -27,7 +36,6 @@ export default function TrainingsDetail(): ReactElement {
   }
 
   const {
-    id,
     trainersName,
     title,
     description,
@@ -58,7 +66,9 @@ export default function TrainingsDetail(): ReactElement {
 
               <h2 className="reviews-side-bar__title">Отзывы</h2>
 
-              <TrainingsReviews />
+              {
+                trainingItemReviews && <TrainingsReviews reviewsList={trainingItemReviews.entities} />
+              }
 
               <button className="btn btn--medium reviews-side-bar__button" type="button" onClick={handleLeaveReviewBtnClick}>Оставить отзыв</button>
             </aside>
@@ -138,14 +148,8 @@ export default function TrainingsDetail(): ReactElement {
                 <div className="training-video__video">
                   <div className="training-video__thumbnail">
                     <picture>
-                      <source type="image/webp" srcSet="img/content/training-video/video-thumbnail.webp, img/content/training-video/video-thumbnail@2x.webp 2x" />
-                      <img
-                        src="img/content/training-video/video-thumbnail.png"
-                        srcSet="img/content/training-video/video-thumbnail@2x.png 2x"
-                        width={922}
-                        height={566}
-                        alt="Обложка видео"
-                      />
+                        <source type="image/webp" srcSet="img/content/training-video/video-thumbnail.webp, img/content/training-video/video-thumbnail@2x.webp 2x" />
+                        <img src="img/content/training-video/video-thumbnail.png" srcSet="img/content/training-video/video-thumbnail@2x.png 2x" width="922" height="566" alt="Обложка видео" />
                     </picture>
                   </div>
                   <button className="training-video__play-button btn-reset">

@@ -8,6 +8,8 @@ import { getUserInfo } from '@client/src/store/slices/user-process/user-process.
 import Spinner from '../../tools/spinner/spinner';
 import PersonalAccountUserForm from '../personal-account-user-form/personal-account-user-form';
 import PersonalAccountUserCalories from '../personal-account-user-calories/personal-account-user-calories';
+import { Link } from 'react-router-dom';
+import { AppRoute } from '@client/src/const';
 
 export default function PersonalAccountUser(): ReactElement {
   useAdditionalInfo();
@@ -59,14 +61,14 @@ export default function PersonalAccountUser(): ReactElement {
 
                   <Stub />
 
-                  <a className="thumbnail-link thumbnail-link--theme-light" href="#">
+                  <Link className="thumbnail-link thumbnail-link--theme-light" to={AppRoute.ORDERS}>
                     <div className="thumbnail-link__icon thumbnail-link__icon--theme-light">
                       <svg width={30} height={26} aria-hidden="true">
                         <use xlinkHref="#icon-shopping-cart" />
                       </svg>
                     </div>
                     <span className="thumbnail-link__text">Мои покупки</span>
-                  </a>
+                  </Link>
                 </div>
               </div>
             </div>

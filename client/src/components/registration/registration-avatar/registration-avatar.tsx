@@ -1,11 +1,11 @@
 import { getImgPreviewLink } from '@client/src/utils/common';
-import { useRef } from 'react';
+import { ReactElement, useRef } from 'react';
 
 type RegistrationAvatarProps = {
   onAvatarUpload: Function
 }
 
-export default function RegistrationAvatar({ onAvatarUpload }: RegistrationAvatarProps) {
+export default function RegistrationAvatar({ onAvatarUpload }: RegistrationAvatarProps): ReactElement {
   const userAvatar = useRef<HTMLInputElement>(null);
   const avatarContainer = document.querySelector('.input-load-avatar__btn');
 

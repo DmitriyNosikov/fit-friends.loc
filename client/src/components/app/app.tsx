@@ -14,6 +14,7 @@ import Intro from '@client/src/pages/intro/intro';
 import PersonalAccount from '../personal-account/personal-account';
 import TrainingsDetail from '../../pages/trainings/trainings-detail/trainings-detail';
 import TrainingsList from '@client/src/pages/trainings/trainings-list/trainings-list';
+import Orders from '@client/src/pages/orders/orders';
 
 // TODO: Нужен Helmet для смены заголовков
 
@@ -60,6 +61,12 @@ export default function App(): ReactElement {
         <Route path={`${AppRoute.TRAININGS}/:trainingId`} element={
           <PrivateRoute redirectTo={AppRoute.INTRO}>
             <TrainingsDetail />
+          </PrivateRoute>
+        }/>
+
+        <Route path={`${AppRoute.ORDERS}`} element={
+          <PrivateRoute redirectTo={AppRoute.INTRO}>
+            <Orders />
           </PrivateRoute>
         }/>
 

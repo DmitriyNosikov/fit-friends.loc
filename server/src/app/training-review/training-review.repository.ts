@@ -30,7 +30,7 @@ export class TrainingReviewRepository extends BasePostgresRepository<TrainingRev
       return null;
     }
 
-    const reviewEntity = this.createEntityFromDocument(review as unknown as TrainingReviewInterface);
+    const reviewEntity = this.getEntity(review);
 
     return reviewEntity;
   }
@@ -45,7 +45,7 @@ export class TrainingReviewRepository extends BasePostgresRepository<TrainingRev
       return null;
     }
 
-    const reviewEntities = reviews.map((review) => this.createEntityFromDocument(review as unknown as TrainingReviewInterface));
+    const reviewEntities = reviews.map((review) => this.getEntity(review));
 
     return reviewEntities;
   }
@@ -60,6 +60,10 @@ export class TrainingReviewRepository extends BasePostgresRepository<TrainingRev
       this.dbClient.trainingReview.findMany({
         where,
 
+        include: {
+          user: true
+        },
+
         // Pagination
         take,
         skip,
@@ -68,7 +72,7 @@ export class TrainingReviewRepository extends BasePostgresRepository<TrainingRev
       this.getItemsCount(where)
     ]);
 
-    const itemsEntities = items.map((item) => this.createEntityFromDocument(item as unknown as TrainingReviewInterface));
+    const itemsEntities = items.map((item) => this.getEntity(item));
 
     return {
       entities: itemsEntities,
@@ -88,7 +92,7 @@ export class TrainingReviewRepository extends BasePostgresRepository<TrainingRev
       return null;
     }
 
-    const reviewEntity = this.createEntityFromDocument(review as unknown as TrainingReviewInterface);
+    const reviewEntity = this.getEntity(review);
 
     return reviewEntity;
   }
@@ -106,7 +110,7 @@ export class TrainingReviewRepository extends BasePostgresRepository<TrainingRev
       return Promise.resolve(null);
     }
 
-    const reviewEntity = this.createEntityFromDocument(updatedReview as unknown as TrainingReviewInterface);
+    const reviewEntity = this.getEntity(updatedReview);
 
     return reviewEntity;
   }
@@ -115,6 +119,10 @@ export class TrainingReviewRepository extends BasePostgresRepository<TrainingRev
     await this.dbClient.trainingReview.delete({
       where: { id: reviewId }
     });
+  }
+
+  private getEntity(document): TrainingReviewEntity {
+    return this.createEntityFromDocument(document as unknown as TrainingReviewInterface);
   }
 
   public async checkAccess(reviewId: string, userId: string) {

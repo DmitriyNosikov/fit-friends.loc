@@ -6,11 +6,14 @@ import { Link, useLocation, useParams } from 'react-router-dom';
 export default function HeaderNav(): ReactElement {
   const location = useLocation();
   const params = useParams();
+
   const mainPages: string[] = [
     AppRoute.MAIN,
     AppRoute.TRAININGS,
     `${AppRoute.TRAININGS}/${params.trainingId}`
   ];
+
+  const personalAccountPages: string[] = [AppRoute.ACCOUNT, AppRoute.ORDERS];
 
   const mainClassName = classNames(
     'main-nav__link',
@@ -19,7 +22,7 @@ export default function HeaderNav(): ReactElement {
 
   const accountClassName = classNames(
     'main-nav__link',
-    { 'is-active': location.pathname === AppRoute.ACCOUNT }
+    { 'is-active': personalAccountPages.includes(location.pathname) }
   );
 
   return (

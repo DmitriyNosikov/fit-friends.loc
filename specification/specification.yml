@@ -7,6 +7,27 @@ paths:
       responses:
         "200":
           description: ""
+  /api/users/additional:
+    get:
+      operationId: UserController_getAdditionalInfo
+      summary: Return additional info about availible genders, locations, training
+        types and training durations
+      parameters: []
+      responses:
+        "200":
+          description: Additional info found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdditionalInfoRDO"
+        "500":
+          description: Can`t found additional info
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdditionalInfoRDO"
+      tags: &a1
+        - users
   /api/users/register:
     post:
       operationId: UserController_create
@@ -27,8 +48,7 @@ paths:
                 $ref: "#/components/schemas/UserRDO"
         "409":
           description: User with passed email already exists
-      tags: &a1
-        - users
+      tags: *a1
   /api/users/login:
     post:
       operationId: UserController_login
@@ -50,16 +70,11 @@ paths:
         "401":
           description: Incorrect user email/password
       tags: *a1
-  /api/users/{userId}:
+  /api/users:
     get:
       operationId: UserController_show
       summary: Get detail info about user
-      parameters:
-        - name: userId
-          required: true
-          in: path
-          schema:
-            type: string
+      parameters: []
       responses:
         "200":
           description: User found
@@ -73,18 +88,7 @@ paths:
     patch:
       operationId: UserController_updateUser
       summary: Update user info
-      parameters:
-        - name: userId
-          required: true
-          in: path
-          schema:
-            type: string
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/UpdateUserDTO"
+      parameters: []
       responses:
         "201":
           description: ""
@@ -96,6 +100,7 @@ paths:
           description: "Can`t update user. Possible reason: Object with fields to update
             are empty"
       tags: *a1
+  /api/users/{userId}:
     delete:
       operationId: UserController_deleteUser
       summary: Delete user
@@ -280,6 +285,51 @@ paths:
           description: Training title
           example: Run, Forest, run
           schema: {}
+      responses:
+        "200":
+          description: Training found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TrainingsWithPaginationRDO"
+        "404":
+          description: Training not found
+      tags: *a2
+  /api/trainings/convenient-trainings:
+    get:
+      operationId: TrainingController_getTrainingsForUser
+      summary: Get convenient trainings for user by quiz params
+      parameters: []
+      responses:
+        "200":
+          description: Training found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TrainingsWithPaginationRDO"
+        "404":
+          description: Training not found
+      tags: *a2
+  /api/trainings/with-discount:
+    get:
+      operationId: TrainingController_getTrainigsWithDiscount
+      summary: Get trainings with discount
+      parameters: []
+      responses:
+        "200":
+          description: Training found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TrainingsWithPaginationRDO"
+        "404":
+          description: Training not found
+      tags: *a2
+  /api/trainings/with-rating:
+    get:
+      operationId: TrainingController_getTrainigsWithRating
+      summary: Get trainings with rating more than 0
+      parameters: []
       responses:
         "200":
           description: Training found
@@ -660,26 +710,22 @@ paths:
         "404":
           description: Balance not found
       tags: *a5
-  /api/balance/{balanceId}:
+  /api/balance/count:
     get:
-      operationId: BalanceController_show
-      summary: Get balance detail info
-      parameters:
-        - name: balanceId
-          required: true
-          in: path
-          schema:
-            type: string
+      operationId: BalanceController_countBalance
+      summary: Get summary user`s balance
+      parameters: []
       responses:
         "200":
           description: Balance found
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/CreateBalanceRDO"
+                type: number
         "404":
           description: Balance not found
       tags: *a5
+  /api/balance/{balanceId}:
     patch:
       operationId: BalanceController_updateTraining
       summary: Update balance info
@@ -719,12 +765,12 @@ paths:
         "200":
           description: Balance has been successfully deleted
       tags: *a5
-  /api/balance/increase/{serviceId}/{amount}:
+  /api/balance/{balanceId}/increase/{amount}:
     patch:
       operationId: BalanceController_increaseBalance
       summary: Increase training balance by passed amount
       parameters:
-        - name: serviceId
+        - name: balanceId
           required: true
           in: path
           schema:
@@ -744,12 +790,12 @@ paths:
         "404":
           description: Balance not found
       tags: *a5
-  /api/balance/decrease/{serviceId}/{amount}:
+  /api/balance/{balanceId}/decrease/{amount}:
     patch:
       operationId: BalanceController_decreaseBalance
       summary: Decrease training balance by passed amount
       parameters:
-        - name: serviceId
+        - name: balanceId
           required: true
           in: path
           schema:
@@ -778,6 +824,9 @@ tags: []
 servers: []
 components:
   schemas:
+    AdditionalInfoRDO:
+      type: object
+      properties: {}
     CreateUserDTO:
       type: object
       properties:
@@ -792,7 +841,7 @@ components:
           description: User email
           example: iron-man@starkindustries.it
         avatar:
-          type: string
+          type: object
           description: User avatar
           example: some/interesting/avatar.jpg
         password:
@@ -821,7 +870,7 @@ components:
           format: date-time
           type: string
           description: User birth date
-          example: 26.09.1993
+          example: 1993-09-26
         description:
           format: date-time
           type: string
@@ -838,7 +887,7 @@ components:
             - звездная
             - спортивная
         pageBackground:
-          type: string
+          type: object
           description: User profile background. If not passed = User avatar
           example: some/interesting/avatar.jpg
         level:
@@ -870,13 +919,13 @@ components:
             - 30-50
             - 50-80
             - 80-100
-        loseCalories:
+        loseCaloriesLimit:
           type: number
           description: User lose calories aim
           example: 1000
           minimum: 1000
           maximum: 5000
-        dayCalories:
+        dayCaloriesLimit:
           type: number
           description: User calories per day limit
           example: "5000"
@@ -900,8 +949,8 @@ components:
         - level
         - trainingType
         - trainingDuration
-        - loseCalories
-        - dayCalories
+        - loseCaloriesLimit
+        - dayCaloriesLimit
         - isReadyToTraining
     UserRDO:
       type: object
@@ -952,7 +1001,6 @@ components:
           description: User birth date
           example: 26.09.1993
         description:
-          format: date-time
           type: string
           description: User profile description
           example: Some interesting profile description
@@ -990,7 +1038,7 @@ components:
             - кроссфит
             - аэробика
             - пилатес
-        trainingTime:
+        trainingDuration:
           type: string
           description: User training time periods (in minutes)
           example: 10-30
@@ -999,13 +1047,13 @@ components:
             - 30-50
             - 50-80
             - 80-100
-        loseCalories:
+        loseCaloriesLimit:
           type: number
           description: User lose calories aim
           example: "1000"
           minimum: 1000
           maximum: 5000
-        dayCalories:
+        dayCaloriesLimit:
           type: number
           description: User calories per day limit
           example: "5000"
@@ -1030,9 +1078,9 @@ components:
         - pageBackground
         - level
         - trainingType
-        - trainingTime
-        - loseCalories
-        - dayCalories
+        - trainingDuration
+        - loseCaloriesLimit
+        - dayCaloriesLimit
         - isReadyToTraining
     LoginUserDTO:
       type: object
@@ -1050,110 +1098,6 @@ components:
       required:
         - email
         - password
-    UpdateUserDTO:
-      type: object
-      properties:
-        name:
-          type: string
-          description: User name
-          example: Tony
-          minimum: 1
-          maximum: 15
-        avatar:
-          type: string
-          description: User avatar
-          example: some/interesting/avatar.jpg
-        gender:
-          type: string
-          description: User gender
-          example: мужской
-          enum:
-            - мужской
-            - женский
-            - неважно
-        birthDate:
-          format: date-time
-          type: string
-          description: User birth date
-          example: 26.09.1993
-        description:
-          format: date-time
-          type: string
-          description: User profile description
-          example: Some interesting profile description
-        location:
-          type: string
-          description: User metro station
-          example: звездная
-          enum:
-            - пионерская
-            - петроградская
-            - удельная
-            - звездная
-            - спортивная
-        pageBackground:
-          type: string
-          description: User profile background. If not passed = User avatar
-          example: some/interesting/avatar.jpg
-        level:
-          type: string
-          description: User training level
-          example: новичок
-          enum:
-            - новичок
-            - любитель
-            - профессионал
-        trainingType:
-          type: string
-          description: User trainings type
-          example: '["box", "crossfit", "running"]'
-          enum:
-            - йога
-            - бег
-            - бокс
-            - стрейчинг
-            - кроссфит
-            - аэробика
-            - пилатес
-        trainingTime:
-          type: string
-          description: User training time periods (in minutes)
-          example: 10-30
-          enum:
-            - 10-30
-            - 30-50
-            - 50-80
-            - 80-100
-        loseCalories:
-          type: number
-          description: User lose calories aim
-          example: "1000"
-          minimum: 1000
-          maximum: 5000
-        dayCalories:
-          type: number
-          description: User calories per day limit
-          example: "5000"
-          minimum: 1000
-          maximum: 5000
-        isReadyToTraining:
-          type: boolean
-          description: Is user ready to training
-          example: "true"
-      required:
-        - name
-        - avatar
-        - gender
-        - birthDate
-        - description
-        - location
-        - pageBackground
-        - level
-        - trainingType
-        - trainingTime
-        - loseCalories
-        - dayCalories
-        - isReadyToTraining
     CreateTrainingDTO:
       type: object
       properties:
@@ -1201,6 +1145,10 @@ components:
           description: Training price
           example: 1522
           minimum: 0
+        discount:
+          type: number
+          description: Discount value
+          example: 522
         calories:
           type: number
           description: Calories count to lose with this training
@@ -1244,6 +1192,7 @@ components:
         - trainingType
         - trainingDuration
         - price
+        - discount
         - calories
         - description
         - gender
@@ -1312,6 +1261,10 @@ components:
           description: Training price
           example: 1522
           minimum: 0
+        discount:
+          type: number
+          description: Discount value
+          example: 522
         calories:
           type: number
           description: Calories count to lose with this training
@@ -1356,6 +1309,7 @@ components:
         - trainingType
         - trainingDuration
         - price
+        - discount
         - calories
         - description
         - gender
@@ -1439,6 +1393,10 @@ components:
           description: Training price
           example: 1522
           minimum: 0
+        discount:
+          type: number
+          description: Discount value
+          example: 522
         calories:
           type: number
           description: Calories count to lose with this training
@@ -1480,6 +1438,7 @@ components:
         - trainingType
         - trainingDuration
         - price
+        - discount
         - calories
         - description
         - gender

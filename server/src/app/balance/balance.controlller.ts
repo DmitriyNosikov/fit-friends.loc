@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, HttpStatus, Param, Patch, Post, UseGuards, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpStatus, Param, Patch, Post, Query, UseGuards, UseInterceptors } from '@nestjs/common';
 import { ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 
 import { JWTAuthGuard } from '@server/user/guards/jwt-auth.guard';
@@ -12,11 +12,8 @@ import { BalanceMessage } from './balance.constant';
 
 
 import { PaginationResult } from '@server/libs/interfaces';
-import { DefaultSearchParam } from '@shared/types/search/base-search-query.type';
-import { SortDirection, SortType } from '@shared/types';
-
-
-
+import { BaseSearchQuery, DefaultSearchParam } from '@shared/types/search/base-search-query.type';
+import { SortDirectionEnum, SortTypeEnum } from '@shared/types';
 @ApiTags('balance')
 @Controller('balance')
 @UseGuards(JWTAuthGuard)
@@ -62,14 +59,14 @@ export class BalanceController {
   @ApiQuery({
     name: "sortType",
     description: `Sorting type. Default sort type: ${DefaultSearchParam.SORT.TYPE}`,
-    enum: SortType,
+    enum: SortTypeEnum,
     example: "createdAt",
     required: false
   })
   @ApiQuery({
     name: "sortDirection",
     description: `Sorting direction. Default direction: ${DefaultSearchParam.SORT.DIRECTION}`,
-    enum: SortDirection,
+    enum: SortDirectionEnum,
     example: " desc",
     required: false
   })
@@ -82,8 +79,15 @@ export class BalanceController {
     status: HttpStatus.NOT_FOUND,
     description: BalanceMessage.ERROR.NOT_FOUND
   })
-  public async index(@Body('userId') userId: string): Promise<PaginationResult<CreateBalanceRDO>> {
-    const trainingBalance = await this.balanceService.search({ userId });
+  public async index(
+    @Query() query: BaseSearchQuery,
+    @Body('userId') userId: string
+  ): Promise<PaginationResult<CreateBalanceRDO>> {
+    const searchQuery = {
+      ...query,
+      userId
+    };
+    const trainingBalance = await this.balanceService.search(searchQuery);
 
     const result = {
       ...trainingBalance,
@@ -93,10 +97,10 @@ export class BalanceController {
     return result;
   }
 
-  @Get(':balanceId')
-  @ApiOperation({ summary: 'Get balance detail info' })
+  @Get('/count')
+  @ApiOperation({ summary: 'Get summary user`s balance' })
   @ApiResponse({
-    type: CreateBalanceRDO,
+    type: Number,
     status: HttpStatus.OK,
     description: BalanceMessage.SUCCESS.FOUND
   })
@@ -104,13 +108,10 @@ export class BalanceController {
     status: HttpStatus.NOT_FOUND,
     description: BalanceMessage.ERROR.NOT_FOUND
   })
-  public async show(
-    @Param('balanceId') balanceId: string,
-    @Body('userId') userId: string
-  ): Promise<CreateBalanceRDO> {
-    const balanceDetail = await this.balanceService.getBalanceDetail(balanceId, userId);
+  public async countBalance(@Body('userId') userId: string): Promise<number> {
+    const trainingBalance = await this.balanceService.countAvailableTrainings(userId);
 
-    return fillDTO(CreateBalanceRDO, balanceDetail.toPOJO());
+    return trainingBalance;
   }
 
   @Patch(':balanceId')
@@ -147,7 +148,7 @@ export class BalanceController {
     await this.balanceService.deleteBalance(balanceId, userId);
   }
 
-  @Patch('increase/:serviceId/:amount')
+  @Patch('/:balanceId/increase/:amount')
   @ApiOperation({ summary: 'Increase training balance by passed amount' })
   @ApiResponse({
     type: CreateBalanceRDO,
@@ -159,17 +160,16 @@ export class BalanceController {
     description: BalanceMessage.ERROR.NOT_FOUND
   })
   public async increaseBalance(
-    @Param('serviceId') serviceId: string,
+    @Param('balanceId') balanceId: string,
     @Param('amount') amount: number,
     @Body('userId') userId: string
   ): Promise<CreateBalanceRDO> {
-    const balance = await this.balanceService.getUserBalanceByServiceId(serviceId, userId)
-    const newBalance = await this.balanceService.increaseTrainingBalance(balance.id, userId, amount);
+    const newBalance = await this.balanceService.increaseTrainingBalance(balanceId, userId, amount);
 
     return fillDTO(CreateBalanceRDO, newBalance.toPOJO());
   }
 
-  @Patch('decrease/:serviceId/:amount')
+  @Patch(':balanceId/decrease/:amount')
   @ApiOperation({ summary: 'Decrease training balance by passed amount' })
   @ApiResponse({
     type: CreateBalanceRDO,
@@ -181,12 +181,11 @@ export class BalanceController {
     description: BalanceMessage.ERROR.NOT_FOUND
   })
   public async decreaseBalance(
-    @Param('serviceId') serviceId: string,
+    @Param('balanceId') balanceId: string,
     @Param('amount') amount: number,
     @Body('userId') userId: string
   ): Promise<CreateBalanceRDO> {
-    const balance = await this.balanceService.getUserBalanceByServiceId(serviceId, userId)
-    const newBalance = await this.balanceService.decreaseTrainingBalance(balance.id, userId, amount);
+    const newBalance = await this.balanceService.decreaseTrainingBalance(balanceId, userId, amount);
 
     return fillDTO(CreateBalanceRDO, newBalance.toPOJO());
   }

@@ -3,9 +3,10 @@ import { TrainingController } from './training.controlller';
 import { TrainingService } from './training.service';
 import { TrainingFactory } from './training.factory';
 import { TrainingRepository } from './training.repository';
+import { UserModule } from '@server/user/user.module';
 
 @Module({
-    imports: [],
+    imports: [UserModule],
     controllers: [TrainingController],
     providers: [TrainingService, TrainingFactory, TrainingRepository],
     exports: [TrainingService]

@@ -1,6 +1,6 @@
-export const SortDirection = {
+export const SortDirectionEnum = {
   ASC: 'asc', // По возрастанию
   DESC: 'desc' // По убыванию
 } as const;
 
-export type SortDirectionEnum = (typeof SortDirection)[keyof typeof SortDirection];
+export type SortDirection = (typeof SortDirectionEnum)[keyof typeof SortDirectionEnum];

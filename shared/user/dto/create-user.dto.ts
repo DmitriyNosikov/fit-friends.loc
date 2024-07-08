@@ -2,10 +2,10 @@ import { ApiProperty } from '@nestjs/swagger';
 import { Location, UserRole, UserRoleEnum, userRolesList } from '@server/libs/types';
 import { Gender, GenderEnum, genderTypeList } from '@server/libs/types/gender.enum';
 import { LocationEnum, locationList } from '@server/libs/types/location.enum';
-import { TrainingDuration, TrainingDurationEnum, trainingTimeList } from '@server/libs/types/training-duration.enum';
-import { TrainingType, TrainingTypeEnum, trainingTypeList } from '@server/libs/types/training-type.enum';
-import { UserLevel, UserLevelEnum, userLevelList } from '@server/libs/types/user-level.enum';
-import { DEFAULT_USER_ROLE, UserValidation } from '@server/user/user.constant';
+import { TrainingDuration, TrainingDurationEnum, trainingDurationList } from '@shared/types/training-duration.enum';
+import { TrainingType, TrainingTypeEnum, trainingTypeList } from '@shared/types/training-type.enum';
+import { UserLevel, UserLevelEnum, userLevelList } from '@shared/types/user-level.enum';
+
 import {
   ArrayMaxSize,
   IsArray,
@@ -21,6 +21,7 @@ import {
   Min,
   MinLength
 } from 'class-validator';
+import { USER_DEFAULT, UserValidation } from '@server/user/user.constant';
 
 export class CreateUserDTO {
   @ApiProperty({
@@ -32,21 +33,21 @@ export class CreateUserDTO {
   @MaxLength(UserValidation.NAME.MAX_LENGTH)
   @MinLength(UserValidation.NAME.MIN_LENGTH)
   @IsString()
-  name: string;
+  name!: string;
 
   @ApiProperty({
     description: 'User email',
     example: 'iron-man@starkindustries.it',
   })
   @IsEmail()
-  email: string;
+  email!: string;
 
   @ApiProperty({
     description: 'User avatar',
     example: 'some/interesting/avatar.jpg',
   })
   @IsOptional()
-  avatar: string;
+  avatar!: FormData | string;
 
   @ApiProperty({
     description: 'User password',
@@ -57,7 +58,7 @@ export class CreateUserDTO {
   @MaxLength(UserValidation.PASSWORD.MAX_LENGTH)
   @MinLength(UserValidation.PASSWORD.MIN_LENGTH)
   @IsString()
-  password: string;
+  password!: string;
 
   @ApiProperty({
     description: 'User role',
@@ -67,7 +68,7 @@ export class CreateUserDTO {
   @IsIn(userRolesList)
   @IsString()
   @IsOptional()
-  role: UserRole = DEFAULT_USER_ROLE;
+  role?: UserRole = USER_DEFAULT.ROLE;
 
   @ApiProperty({
     description: 'User gender',
@@ -76,15 +77,15 @@ export class CreateUserDTO {
   })
   @IsIn(genderTypeList)
   @IsString()
-  gender: Gender;
+  gender!: Gender;
 
   @ApiProperty({
     description: 'User birth date',
-    example: '26.09.1993',
+    example: '1993-09-26',
   })
   @IsDateString()
   @IsOptional()
-  birthDate: Date;
+  birthDate?: Date;
 
   @ApiProperty({
     description: 'User profile description',
@@ -94,7 +95,7 @@ export class CreateUserDTO {
   @MinLength(UserValidation.DESCRIPTION.MIN_LENGTH)
   @IsString()
   @IsOptional()
-  description: Date;
+  description?: Date;
 
   @ApiProperty({
     description: 'User metro station',
@@ -103,7 +104,7 @@ export class CreateUserDTO {
   })
   @IsIn(locationList)
   @IsString()
-  location: Location;
+  location!: Location;
 
   @ApiProperty({
     description: 'User profile background. If not passed = User avatar',
@@ -111,7 +112,7 @@ export class CreateUserDTO {
   })
   @IsString()
   @IsOptional() // TODO: Должно быть обязательным для заполнения (будет реализовано вместе с загрузкой файлов)
-  pageBackground: string;
+  pageBackground?: FormData | string;
 
   // Опросник (TODO: все полня временно @IsOptional() пока не решим, где их оставить)
   @ApiProperty({
@@ -122,7 +123,7 @@ export class CreateUserDTO {
   @IsIn(userLevelList)
   @IsString()
   @IsOptional()
-  level: UserLevel;
+  level?: UserLevel = USER_DEFAULT.LEVEL;
 
   @ApiProperty({
     description: 'User trainings type',
@@ -134,17 +135,17 @@ export class CreateUserDTO {
   @IsIn(trainingTypeList, { each: true })
   @IsString({ each: true })
   @IsOptional()
-  trainingType: TrainingType;
+  trainingType?: TrainingType[] = USER_DEFAULT.TRAINING_TYPE;
 
   @ApiProperty({
     description: 'User training time periods (duration in minutes)',
     example: '10-30',
     enum: TrainingDurationEnum
   })
-  @IsIn(trainingTimeList)
+  @IsIn(trainingDurationList)
   @IsString()
   @IsOptional()
-  trainingDuration: TrainingDuration;
+  trainingDuration?: TrainingDuration;
 
   @ApiProperty({
     description: 'User lose calories aim',
@@ -156,7 +157,7 @@ export class CreateUserDTO {
   @Min(UserValidation.LOSE_CALORIES.MIN)
   @IsNumber()
   @IsOptional()
-  loseCalories: number;
+  loseCaloriesLimit?: number;
 
   @ApiProperty({
     description: 'User calories per day limit',
@@ -168,7 +169,7 @@ export class CreateUserDTO {
   @Min(UserValidation.DAY_CALORIES.MIN)
   @IsNumber()
   @IsOptional()
-  dayCalories: number;
+  dayCaloriesLimit?: number;
 
   @ApiProperty({
     description: 'Is user ready to training',
@@ -176,5 +177,5 @@ export class CreateUserDTO {
   })
   @IsBoolean()
   @IsOptional()
-  isReadyToTraining: boolean;
+  isReadyToTraining?: boolean = false;
 }

@@ -23,10 +23,14 @@ import { fillDTO } from '../libs/helpers';
 
 import { RequestWithUser } from './interfaces/request-with-user.interface';
 
-import { CreateUserDTO, LoggedUserRDO, LoginUserDTO, UpdateUserDTO, UserRDO } from '../../../../shared/user/';
+import { AdditionalInfoRDO, CreateUserDTO, LoggedUserRDO, LoginUserDTO, UpdateUserDTO, UserRDO } from '../../../../shared/user/';
+import { trainingDurationList, genderTypeList, locationList, trainingTypeList, userRolesList, userLevelList } from '@server/libs/types';
 import { UserInterface } from './interfaces';
 import { UserMessage } from './user.constant';
+
 import { UserService } from './user.service';
+import { UserIdPayload } from '@shared/types';
+
 
 @ApiTags('users')
 @Controller('users')
@@ -34,7 +38,28 @@ export class UserController {
   constructor(
     private readonly userService: UserService
   ){}
-
+  @Get('additional')
+  @ApiOperation({ summary: 'Return additional info about availible genders, locations, training types and training durations' })
+  @ApiResponse({
+    type: AdditionalInfoRDO,
+    status: HttpStatus.OK,
+    description: UserMessage.SUCCESS.ADDITIONAL
+  })
+  @ApiResponse({
+    type: AdditionalInfoRDO,
+    status: HttpStatus.INTERNAL_SERVER_ERROR,
+    description: UserMessage.ERROR.CANT_FOUND_ADDITIONAL
+  })
+  public async getAdditionalInfo(): Promise<AdditionalInfoRDO> {
+    return {
+      gender: genderTypeList,
+      location: locationList,
+      trainingType: trainingTypeList,
+      trainingDuration: trainingDurationList,
+      roles: userRolesList,
+      levels: userLevelList
+    };
+  }
 
   @Post('register')
   @ApiOperation({ summary: 'Register new user' })
@@ -79,8 +104,9 @@ export class UserController {
     return fillDTO(LoggedUserRDO, loggedUserWithPayload);
   }
 
-  @Get('/:userId')
+  @Get('/')
   @UseGuards(JWTAuthGuard)
+  @UseInterceptors(InjectUserIdInterceptor)
   @ApiOperation({ summary: 'Get detail info about user' })
   @ApiResponse({
     type: UserRDO,
@@ -91,13 +117,13 @@ export class UserController {
     status: HttpStatus.NOT_FOUND,
     description: UserMessage.ERROR.NOT_FOUND
   })
-  public async show(@Param('userId') userId: string): Promise<LoggedUserRDO> {
+  public async show(@Body('userId') userId: string): Promise<LoggedUserRDO> {
     const userDetail = await this.userService.getUserDetail(userId);
 
     return fillDTO(LoggedUserRDO, userDetail.toPOJO());
   }
 
-  @Patch(':userId')
+  @Patch('/')
   @UseGuards(JWTAuthGuard)
   @UseInterceptors(InjectUserIdInterceptor)
   @ApiOperation({ summary: 'Update user info' })
@@ -111,10 +137,9 @@ export class UserController {
     description: UserMessage.ERROR.CANT_UPDATE
   })
   public async updateUser(
-    @Param('userId') userId: string,
-    @Body() dto: UpdateUserDTO
+    @Body() dto: UpdateUserDTO & UserIdPayload
   ): Promise<UserRDO | null> {
-    const updatedUser = await this.userService.updateUser(userId, dto);
+    const updatedUser = await this.userService.updateUser(dto.userId, dto);
 
     return fillDTO(UserRDO, updatedUser.toPOJO());
   }

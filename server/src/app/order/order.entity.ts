@@ -5,7 +5,7 @@ import { UserInterface } from '@server/user/interfaces';
 import { OrderInterface } from './interfaces/order.interface';
 import { TrainingInterface } from '@server/training/interfaces/training.interface';
 
-import { PaymentType } from '@server/libs/types/payment-type.enum';
+import { PaymentType } from '@shared/types/payment-type.enum';
 import { OrderType } from '@server/libs/types';
 
 

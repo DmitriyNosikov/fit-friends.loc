@@ -6,9 +6,9 @@ GET https://jsonplaceholder.typicode.com/todos/1 HTTP/1.1
 Content-Type: application/json
 ###
 
-@authorization = Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIzYjA2NmZjZS0yMTljLTQzYmQtODNhYi02ZjBhNjFmMTAzYTMiLCJlbWFpbCI6Imlyb24tbWFuMkBzdGFya2luZHVzdHJpZXMuaXQiLCJuYW1lIjoiVG9ueSIsInJvbGUiOiJjbGllbnQiLCJpYXQiOjE3MTk4NDE1MzIsImV4cCI6MTcxOTg0MjQzMn0.XIo9LbxnWsAXZAYjPcYtL7O4yJhnhZ48LDsGaAjtTpI
-@trainingId = b3110e27-df4g-j456-3gf4-d71d697f03e9
-@reviewId = e99203b8-291e-400d-836d-b0f35ff4f5d8
+@authorization = Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJhZmZlMTFhYi1hZTFlLTQxNGQtOTE2Ny0zZjQzMzlmZDMyNjAiLCJlbWFpbCI6Imlyb24tbWFuQHN0YXJraW5kdXN0cmllcy5pdCIsIm5hbWUiOiJUb255Iiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzIwNDM4NjI4LCJleHAiOjE3MjA0Mzk1Mjh9.iP9XoSo7QzWX4iA8fKv6m8hZtLYa4u2ftihLhfG7kH4
+@trainingId = f0fca9d4-a641-4308-95e1-5b2b5bc8b1da
+@reviewId = 81179d69-e1cb-4b42-8631-db8e8c3b89ca
 
 GET {{baseUrl}}/{{trainingId}} HTTP/1.1
 Content-Type: application/json
@@ -20,7 +20,7 @@ Content-Type: application/json
 {{authorization}}
 
 {
-  "rating": 5,
+  "rating": 3,
   "text": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed finibus neque elit, quis rutrum turpis."
 }
 ###

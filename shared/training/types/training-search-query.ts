@@ -1,7 +1,16 @@
 import { DefaultSearchParam } from '@shared/types/search/base-search-query.type';
-import { IsNumber, Min, Max, IsString, IsIn, IsOptional, IsDateString } from 'class-validator';
+import { IsNumber, Min, Max, IsString, IsIn, IsOptional, IsDateString, IsBoolean } from 'class-validator';
 import { Expose, Transform } from 'class-transformer';
-import { Gender, TrainingType, genderTypeList, trainingTypeList } from '@server/libs/types';
+import {
+  Gender,
+  TrainingDuration,
+  TrainingType,
+  UserLevel,
+  genderTypeList,
+  trainingDurationList,
+  trainingTypeList,
+  userLevelList
+} from '@server/libs/types';
 import { TrainingValidation } from '@server/training/training.constant';
 import { TrainingSortType, TrainingSortTypeEnum } from './training-sort-type.enum';
 import { SortDirection, SortDirectionEnum } from '@shared/types';
@@ -28,6 +37,25 @@ export class TrainingSearchQuery {
   @IsString({ each: true })
   @IsOptional()
   public trainingType?: TrainingType | TrainingType[];
+
+  @Expose()
+  @Transform(({ value }) => {
+    if(value && !Array.isArray(value)) {
+      value = [value];
+    }
+
+    return value;
+  })
+  @IsIn(trainingDurationList, { each: true })
+  @IsString({ each: true })
+  @IsOptional()
+  public trainingDuration?: TrainingDuration | TrainingDuration[];
+
+  @Expose()
+  @IsIn(userLevelList)
+  @IsString()
+  @IsOptional()
+  public level?: UserLevel;
 
   @Expose()
   @IsIn(genderTypeList)
@@ -64,7 +92,7 @@ export class TrainingSearchQuery {
   })
   @IsNumber()
   @IsOptional()
-  public caloriesFrom?: number;
+  public dayCaloriesFrom?: number;
 
   @Expose()
   @Transform((field) => {
@@ -74,7 +102,7 @@ export class TrainingSearchQuery {
   })
   @IsNumber()
   @IsOptional()
-  public  caloriesTo?: number;
+  public  dayCaloriesTo?: number;
 
   @Expose()
   @Transform((field) => {
@@ -98,6 +126,34 @@ export class TrainingSearchQuery {
   @IsOptional()
   public ratingTo?: number;
 
+  @Expose()
+  @Transform((field) => {
+    if(field.value) {
+      if(field.value === 'false' || parseInt(field.value) <= 0) {
+        return false;
+      }
+
+      return !!field.value;
+    }
+  })
+  @IsBoolean()
+  @IsOptional()
+  public isSpecial?: boolean;
+
+  @Expose()
+  @Transform((field) => {
+    if(field.value) {
+      if(field.value === 'false' || parseInt(field.value) <= 0) {
+        return false;
+      }
+
+      return !!field.value;
+    }
+  })
+  @IsBoolean()
+  @IsOptional()
+  public withDiscount?: boolean;
+
   // TODO: Если extends от BaseSearchQuery - возникают проблемы с полем
   // SortType и несоответстием типов. По этой причине пока полностью переносим
   // все свойства из BaseSearchQuery до разрешения данной проблемы
@@ -114,14 +170,14 @@ export class TrainingSearchQuery {
   public limit?: number = DefaultSearchParam.MAX_ITEMS_PER_PAGE;
 
   @Expose()
-  @IsIn(Object.values(TrainingSortType))
+  @IsIn(Object.values(TrainingSortTypeEnum))
   @IsOptional()
-  public sortType?: TrainingSortTypeEnum = DefaultSearchParam.SORT.TYPE;
+  public sortType?: TrainingSortType = DefaultSearchParam.SORT.TYPE;
 
   @Expose()
-  @IsIn(Object.values(SortDirection))
+  @IsIn(Object.values(SortDirectionEnum))
   @IsOptional()
-  public sortDirection?: SortDirectionEnum = DefaultSearchParam.SORT.DIRECTION;
+  public sortDirection?: SortDirection = DefaultSearchParam.SORT.DIRECTION;
 
   @Expose()
   @Transform(({ value }) => Number(value) || DefaultSearchParam.PAGE)

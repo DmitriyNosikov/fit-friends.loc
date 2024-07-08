@@ -5,7 +5,7 @@ import { Expose } from 'class-transformer';
 
 import { OrderValidation } from '@server/order/order.constant';
 import { TrainingInterface } from '@server/training/interfaces/training.interface';
-import { PaymentType, PaymentTypeEnum } from '@server/libs/types/payment-type.enum';
+import { PaymentType, PaymentTypeEnum } from '@shared/types/payment-type.enum';
 import { UserInterface } from '@server/user/interfaces';
 
 export class CreateOrderRDO {

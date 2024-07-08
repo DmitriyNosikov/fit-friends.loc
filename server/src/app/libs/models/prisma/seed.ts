@@ -1,37 +1,61 @@
 import { PrismaClient } from '@prisma/client'
-import { getAdminUser, getOrders, getTrainings } from './mock-data';
+import { getOrders, getReviews, getTrainings, getUsers } from './mock-data';
 
 async function seedDB(prismaClient: PrismaClient) {
-  // Add default user (admin)
-  const admin = getAdminUser();
-  await prismaClient.user.create({
-    data: admin
+  // Add users
+  const users = await getUsers();
+  await prismaClient.user.createMany({
+    data: users
   });
 
   // Add trainings
   const trainings = getTrainings();
-  for(const training of trainings) {
-    await prismaClient.training.create({
-      data: training
+  await prismaClient.training.createMany({
+    data: trainings
+  });
+
+  // Add orders + balance
+  const orders = getOrders(users, trainings);
+  for(const order of orders) {
+    // Order
+    await prismaClient.order.create({
+      data: {
+        ...order,
+        balance: {
+          create: {
+            remainingTrainingsCount: order.trainingsCount,
+          }
+        }
+      }
     });
   }
 
-  // Add orders + balance
-  const orders = getOrders();
-  for(const order of orders) {
-    // Order
-    const createdOrder = await prismaClient.order.create({
-      data: order
+  // Add reviews
+  const reviews = getReviews(users, trainings);
+  await prismaClient.trainingReview.createMany({
+    data: reviews
+  })
+
+  // Recount trainings rating via reviews
+  for(const training of trainings) {
+    const reviews = await prismaClient.trainingReview.findMany({
+      where: { trainingId: training.id }
     });
 
-    // Balance
-    const balance = {
-      orderId: createdOrder.id,
-      remainingTrainingsCount: order.trainingsCount,
-    };
-    await prismaClient.balance.create({
-      data: balance
-    });
+    if(!reviews) {
+      continue;
+    }
+
+    const generalRating: number = reviews.reduce((accumulator, item) => {
+      return accumulator += item.rating;
+    }, 0);
+
+    const ratingAverage = Math.round(generalRating / reviews.length);
+
+    await prismaClient.training.update({
+      where: { id: training.id },
+      data: { rating: ratingAverage }
+    })
   }
 
   console.info('🤘️ Database was filled');

@@ -1,6 +1,15 @@
-import { MessagesType, UserRoleEnum } from '../libs/types/';
+import { MessagesType, UserLevelEnum, UserRoleEnum, trainingTypeList } from '@server/libs/types';
 
-export const DEFAULT_USER_ROLE = UserRoleEnum.CLIENT;
+
+export const USER_DEFAULT = {
+  ROLE: UserRoleEnum.CLIENT,
+  CALORIES: {
+    MALE: 3300,
+    FEMALE: 2300
+  },
+  TRAINING_TYPE: trainingTypeList.slice(0, 3),
+  LEVEL: UserLevelEnum.REGULAR
+} as const;
 
 export const UserValidation = {
   NAME: {
@@ -38,6 +47,7 @@ export const UserMessage: MessagesType = {
     CANT_UPDATE: 'Can`t update user. Possible reason: Object with fields to update are empty',
     CANT_UPDATE_USER: 'Sorry, you can update only yourself.',
     CANT_CREATE_TOKENS: 'Can`t get get a new access/refresh tokens',
+    CANT_FOUND_ADDITIONAL: 'Can`t found additional info',
   },
   SUCCESS: {
     LOGGED_IN: 'User logged in',
@@ -46,5 +56,6 @@ export const UserMessage: MessagesType = {
 
     FOUND: 'User found',
     DELETED: 'User has been successfully deleted',
+    ADDITIONAL: 'Additional info found'
   },
 } as const;

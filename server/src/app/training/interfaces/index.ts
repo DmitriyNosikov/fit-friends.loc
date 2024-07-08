@@ -1,0 +1,1 @@
+export { TrainingInterface } from './training.interface';

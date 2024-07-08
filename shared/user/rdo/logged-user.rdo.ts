@@ -18,5 +18,5 @@ export class LoggedUserRDO extends UserRDO implements TokenInterface{
     example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpFVCJ9.eyJ1c2VySWQiOiI2NjM4ZDIzZDgyNGQ3ZTdkNzQ3NzNjYmIiLCJlbWFpbCI6Imlyb24tbWFuM0BzdGFya2luZHVzdHJpZXMuaXQiLCJmaXJzdG5hbWUiOiJUb255IiwibGFzdG5hbWUiOiJTdGFyazEyMyIsImlhdCI6MTcxNTAwMDYyMCwiZXhwIjoxNzE1MDAwOTIwfQ.TgH1861ix-vw6XGtoCLfDymnH_9yQIYp0Z3m7TT3jxY'
   })
   @Expose()
-  public refreshToken: string;
+  public refreshToken!: string;
 }

@@ -1,4 +1,4 @@
-import { ReactElement } from 'react';
+import { ReactElement, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
@@ -25,12 +25,25 @@ export default function PopupReview({ onClose }: PopupReviewProps): ReactElement
   const trainingId = params.trainingId
   const userInfo = useAppSelector(getUserInfo);
 
-  const sendBtn = document.querySelector('.popup__button_send') as HTMLButtonElement;
-  const closeBtn = document.querySelector('.popup__button_close') as HTMLButtonElement;
+  let sendBtn: HTMLButtonElement | null = null;
+  let closeBtn: HTMLButtonElement | null = null;
 
-  initPopup();
+  useEffect(() => {
+    let isMounted = true;
+
+    if(isMounted) {
+      initPopup();
+    }
+
+    return () => {
+      isMounted = false;
+    }
+  });
 
   function initPopup() {
+    sendBtn = document.querySelector('.popup__button_send') as HTMLButtonElement;
+    closeBtn = document.querySelector('.popup__button_close') as HTMLButtonElement;
+
     document.addEventListener('keydown', handleEscapeKeydown);
     document.addEventListener('keydown', handleTabKeydown);
   }
@@ -67,12 +80,12 @@ export default function PopupReview({ onClose }: PopupReviewProps): ReactElement
 
     if(isCloseBtn && e.shiftKey) {
       e.preventDefault();
-      sendBtn.focus();
+      sendBtn?.focus();
     }
 
     if(isSendBtn && !e.shiftKey) {
       e.preventDefault();
-      closeBtn.focus();
+      closeBtn?.focus();
     }
   }
 
@@ -84,7 +97,7 @@ export default function PopupReview({ onClose }: PopupReviewProps): ReactElement
     closePopup();
   }
 
-  function handleFormSubmit() {
+  function handleReviewSubmit() {
     if (!userInfo || !trainingId) {
       return;
     }
@@ -194,7 +207,7 @@ export default function PopupReview({ onClose }: PopupReviewProps): ReactElement
             </div>
           </div>
           <div className="popup__button">
-            <button className="btn popup__button_send" type="button" onClick={handleFormSubmit} tabIndex={9}>Продолжить</button>
+            <button className="btn popup__button_send" type="button" onClick={handleReviewSubmit} tabIndex={9}>Продолжить</button>
           </div>
         </div>
       </div>

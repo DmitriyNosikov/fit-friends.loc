@@ -41,7 +41,7 @@ export const checkUserAuthAction = createAsyncThunk<void, void, AsyncOptions>(
     try {
       await api.post<TokenPayload>(ApiRoute.CHECK_JWT_TOKEN);
 
-      // dispatch(fetchUserDetailInfoAction())
+      dispatch(fetchUserDetailInfoAction())
     } catch(error) {
       deleteToken();
 

@@ -1,10 +1,12 @@
 import { useEffect } from 'react';
-import { useAppDispatch } from '.';
+import { useAppDispatch, useAppSelector } from '.';
 import { fetchWithDiscountTrainingsAction } from '../store/actions/api-training-action';
+import { getTrainingsWithDiscount } from '../store/slices/training-process/training-process.selectors';
 
 
 export default function useWithDiscountTrainingsList() {
   const dispatch = useAppDispatch();
+  const trainingsWithDiscount = useAppSelector(getTrainingsWithDiscount)
 
   useEffect(() => {
     let isMounted = true;
@@ -17,4 +19,6 @@ export default function useWithDiscountTrainingsList() {
       isMounted = false;
     };
   }, []);
+
+  return trainingsWithDiscount;
 }

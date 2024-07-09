@@ -8,14 +8,16 @@ import 'swiper/css/bundle';
 
 import { AppRoute, POPULAR_MAX_SLIDES_COUNT } from '@client/src/const';
 import { useAppSelector } from '@client/src/hooks';
-import { getTrainingsWithRating, getWithRatingTrainingsLoadingStatus } from '@client/src/store/slices/training-process/training-process.selectors';
+import {  getWithRatingTrainingsLoadingStatus } from '@client/src/store/slices/training-process/training-process.selectors';
+import useWithRatingTrainingsList from '@client/src/hooks/useWithRatingTrainingsList';
+
 import Spinner from '../tools/spinner/spinner';
 import PopularTrainingsItem from './popular-trainings-item/popular-trainings-item';
 import Stub from '../tools/stub/stub';
 
 export default function PopularTrainings(): ReactElement {
   const navigate = useNavigate();
-  const trainings = useAppSelector(getTrainingsWithRating);
+  const trainings = useWithRatingTrainingsList();
   const isTrainingsLoading = useAppSelector(getWithRatingTrainingsLoadingStatus);
 
   function handleSeeAllBtnClick() {
@@ -46,11 +48,6 @@ export default function PopularTrainings(): ReactElement {
         <div className="popular-trainings__wrapper">
           <div className="popular-trainings__title-wrapper">
             <h2 className="popular-trainings__title">Популярные тренировки</h2>
-
-            {
-              isTrainingsLoading && <Spinner />
-            }
-
             <button className="btn-flat popular-trainings__button" type="button" onClick={handleSeeAllBtnClick}>
               <span>Смотреть все</span>
               <svg width={14} height={10} aria-hidden="true">
@@ -80,7 +77,11 @@ export default function PopularTrainings(): ReactElement {
           </div>
 
           {
-            !isTrainingsLoading && !trainings && <Stub />
+            isTrainingsLoading && <Spinner />
+          }
+
+          {
+            !trainings && <Stub />
           }
 
           {

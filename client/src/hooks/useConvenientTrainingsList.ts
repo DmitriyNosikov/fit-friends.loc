@@ -1,10 +1,12 @@
 import { useEffect } from 'react';
-import { useAppDispatch } from '.';
+import { useAppDispatch, useAppSelector } from '.';
 import { fetchConvenientTrainingsAction } from '../store/actions/api-training-action';
+import { getUserConvenientTrainings } from '../store/slices/training-process/training-process.selectors';
 
 
 export default function useConvenientTrainingsList() {
   const dispatch = useAppDispatch();
+  const convenientTrainings = useAppSelector(getUserConvenientTrainings);
 
   useEffect(() => {
     let isMounted = true;
@@ -17,4 +19,6 @@ export default function useConvenientTrainingsList() {
       isMounted = false;
     };
   }, []);
+
+  return convenientTrainings;
 }

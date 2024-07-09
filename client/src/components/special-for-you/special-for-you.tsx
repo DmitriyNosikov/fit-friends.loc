@@ -1,4 +1,4 @@
-import { ReactElement } from 'react';
+import { ReactElement, useEffect } from 'react';
 
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation } from 'swiper/modules';
@@ -9,8 +9,8 @@ import { useAppSelector } from '@client/src/hooks';
 
 import {
   getConvenientTrainingsLoadingStatus,
-  getUserConvenientTrainings
 } from '@client/src/store/slices/training-process/training-process.selectors';
+import useConvenientTrainingsList from '@client/src/hooks/useConvenientTrainingsList';
 
 import Spinner from '../tools/spinner/spinner';
 import SpecialForYouItem from './special-for-you-item/special-for-you-item';
@@ -18,7 +18,7 @@ import Stub from '../tools/stub/stub';
 import { SPECIAL_FOR_YOU_MAX_SLIDES_COUNT } from '@client/src/const';
 
 export default function SpecialForYou(): ReactElement {
-  const convenientTrainings = useAppSelector(getUserConvenientTrainings);
+  const convenientTrainings = useConvenientTrainingsList();
   const isTrainingsLoading = useAppSelector(getConvenientTrainingsLoadingStatus);
 
   // Слайдер может содержать не более SPECIAL_FOR_YOU_MAX_SLIDES_COUNT слайдов

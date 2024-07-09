@@ -6,13 +6,16 @@ import 'swiper/css';
 import 'swiper/css/bundle';
 
 import { useAppSelector } from '@client/src/hooks';
-import { getTrainingsWithDiscount, getWithDiscountTrainingsLoadingStatus } from '@client/src/store/slices/training-process/training-process.selectors';
+import { getWithDiscountTrainingsLoadingStatus } from '@client/src/store/slices/training-process/training-process.selectors';
+import useWithDiscountTrainingsList from '@client/src/hooks/useWithDiscountTrainingsList';
+
 import Spinner from '../tools/spinner/spinner';
 import { SPECIAL_OFFERS_MAX_SLIDES_COUNT } from '@client/src/const';
 import SpecialOffersItem from './special-offers-item/special-offers-item';
+import Stub from '../tools/stub/stub';
 
 export default function SpecialOffers(): ReactElement {
-  const trainings = useAppSelector(getTrainingsWithDiscount);
+  const trainings = useWithDiscountTrainingsList();
   const isTrainingsLoading = useAppSelector(getWithDiscountTrainingsLoadingStatus);
 
   // Слайдер может содержать не более SPECIAL_FOR_YOU_MAX_SLIDES_COUNT слайдов
@@ -47,6 +50,10 @@ export default function SpecialOffers(): ReactElement {
           !isTrainingsLoading &&
           <div className="special-offers__wrapper">
             <h2 className="visually-hidden">Специальные предложения</h2>
+
+            {
+              !trainings && <Stub />
+            }
 
             <ul className="special-offers__list">
               <Swiper
@@ -84,28 +91,7 @@ export default function SpecialOffers(): ReactElement {
               </Swiper>
             </ul>
 
-            <div className="thumbnail-spec-gym">
-              <div className="thumbnail-spec-gym__image">
-                <picture>
-                  <source
-                    type="image/webp"
-                    srcSet="img/content/thumbnails/nearest-gym-01.webp, img/content/thumbnails/nearest-gym-01@2x.webp 2x"
-                  />
-                  <img
-                    src="img/content/thumbnails/nearest-gym-01.jpg"
-                    srcSet="img/content/thumbnails/nearest-gym-01@2x.jpg 2x"
-                    width={330}
-                    height={190}
-                    alt=""
-                  />
-                </picture>
-              </div>
-              <div className="thumbnail-spec-gym__header">
-                <h3 className="thumbnail-spec-gym__title" style={{ textAlign: 'center' }}>
-                  Скоро здесь появится что - то полезное
-                </h3>
-              </div>
-            </div>
+            <Stub />
           </div>
         }
       </div>

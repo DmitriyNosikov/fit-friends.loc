@@ -109,9 +109,12 @@ export class TrainingService {
 
   public async getTrainingsForUser(userId: string) {
     const userInfo = await this.userService.findById(userId);
-    const { trainingType, trainingDuration, level, dayCaloriesLimit } = userInfo;
-
-    const searchQuery = { trainingType, trainingDuration, level, dayCaloriesTo: dayCaloriesLimit };
+    const searchQuery = {
+      trainingType: userInfo.trainingType,
+      trainingDuration: userInfo.trainingDuration,
+      level: userInfo.level,
+      dayCaloriesTo: userInfo.dayCaloriesLimit
+    };
     const filteredQuery = this.filterQuery(searchQuery);
 
     const convenientTrainings = await this.trainingRepository.getTrainingsForUser(filteredQuery);

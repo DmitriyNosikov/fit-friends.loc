@@ -147,11 +147,10 @@ export default function PopupReview({ onClose }: PopupReviewProps): ReactElement
             </svg>
           </button>
         </div>
-        <div className="popup__content popup__content--feedback">
+        <div className="popup__content popup__content--feedback" >
           <h3 className="popup__feedback-title">Оцените тренировку</h3>
-          <div>
-
-            <ul className="popup__rate-list" id="rating">
+          <div id="rating">
+            <ul className="popup__rate-list">
               <li className="popup__rate-item">
                 <div className="popup__rate-item-wrap">
                   <label tabIndex={2}>
@@ -187,7 +186,7 @@ export default function PopupReview({ onClose }: PopupReviewProps): ReactElement
               <li className="popup__rate-item">
                 <div className="popup__rate-item-wrap">
                   <label tabIndex={6}>
-                    <input type="radio" name="оценка тренировки" aria-label="оценка 5." defaultValue={7} defaultChecked />
+                    <input type="radio" name="оценка тренировки" aria-label="оценка 5." defaultValue={5} defaultChecked />
                     <span className="popup__rate-number">5</span>
                   </label>
                 </div>

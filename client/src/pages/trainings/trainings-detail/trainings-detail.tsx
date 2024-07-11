@@ -1,7 +1,7 @@
 import BackBtn from '@client/src/components/back-btn/back-btn';
 import { ReactElement, useState } from 'react';
-import TrainingsReviews from '../trainings-reviews/trainings-reviews';
-import { useAppDispatch, useAppSelector } from '@client/src/hooks';
+import TrainingsReviews from '../../../components/trainings/trainings-reviews/trainings-reviews';
+import { useAppSelector } from '@client/src/hooks';
 import { useParams } from 'react-router-dom';
 import { getTrainingItem, getTrainingItemLoadingStatus } from '@client/src/store/slices/training-process/training-process.selectors';
 import Spinner from '@client/src/components/tools/spinner/spinner';

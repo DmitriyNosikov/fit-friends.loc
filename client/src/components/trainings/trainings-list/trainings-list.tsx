@@ -8,9 +8,9 @@ import { getTrainingsList, getTrainingsListLoadingStatus } from '@client/src/sto
 import useSearchTrainings from '@client/src/hooks/useSearchTrainings';
 import { searchTrainings } from '@client/src/store/actions/api-training-action';
 
-import Spinner from '../../../components/tools/spinner/spinner';
-import TrainingsFilter from '../../../components/trainings/trainings-filter/trainings-filter';
-import TrainingsListItem from '../../../components/trainings/trainings-list-item/trainings-list-item';
+import Spinner from '../../tools/spinner/spinner';
+import TrainingsFilter from '../trainings-filter/trainings-filter';
+import TrainingsListItem from '../trainings-list-item/trainings-list-item';
 
 const MAX_TRAININGS_PER_PAGE = 6;
 

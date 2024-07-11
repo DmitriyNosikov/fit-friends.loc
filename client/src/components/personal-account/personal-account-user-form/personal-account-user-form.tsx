@@ -18,8 +18,7 @@ import { updateUserAction, uploadFileAction } from '@client/src/store/actions/ap
 
 import { clearErrors, validateFields } from '@client/src/validation/validation-tools';
 import { personalAccountValidationSchema } from '@client/src/validation/personal-account-validation';
-
-const DEFAULT_AVATAR_URL = 'img/content/no-user-photo.png';
+import { DEFAULT_AVATAR_URL } from '@client/src/const';
 
 type PersonalAccountUserFormProps = {
   userInfo: LoggedUserRDO

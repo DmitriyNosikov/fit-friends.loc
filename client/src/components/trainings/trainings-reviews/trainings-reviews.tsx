@@ -1,3 +1,5 @@
+import { DEFAULT_AVATAR_URL } from '@client/src/const';
+import { BASE_URL } from '@client/src/services/api';
 import { CreateTrainingReviewRDO } from '@shared/training-review';
 import { ReactElement } from 'react';
 
@@ -10,17 +12,19 @@ export default function TrainingsReviews({ reviewsList }: TrainingsReviewsProps)
     <ul className="reviews-side-bar__list">
       {
         reviewsList && reviewsList.map((review) => {
-          const { userId, rating, text } = review;
+          const { userInfo, rating, text } = review;
+
+          const userAvatar = userInfo?.avatar ?? userInfo?.avatar ? `${BASE_URL}${userInfo?.avatar}` : DEFAULT_AVATAR_URL;
+
           return (
             <li className="reviews-side-bar__item" key={review.id}>
               <div className="review">
                 <div className="review__user-info">
                   <div className="review__user-photo">
                     <picture>
-                      <source type="image/webp" srcSet="/img/content/avatars/users/photo-1.webp, /img/content/avatars/users/photo-1@2x.webp 2x" />
-                      <img src="/img/content/avatars/users/photo-1.png" srcSet="/img/content/avatars/users/photo-1@2x.png 2x" width={64} height={64} alt="Изображение пользователя" />
+                      <img src={userAvatar} srcSet={userAvatar} width={64} height={64} alt="Изображение пользователя" />
                     </picture>
-                  </div><span className="review__user-name">{userId}</span>
+                  </div><span className="review__user-name">{userInfo?.name}</span>
                   <div className="review__rating">
                     <svg width={16} height={16} aria-hidden="true">
                       <use xlinkHref="#icon-star" />

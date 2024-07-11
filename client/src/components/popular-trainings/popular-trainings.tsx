@@ -19,6 +19,7 @@ export default function PopularTrainings(): ReactElement {
   const navigate = useNavigate();
   const trainings = useWithRatingTrainingsList();
   const isTrainingsLoading = useAppSelector(getWithRatingTrainingsLoadingStatus);
+  console.log('Render: PopularTrainings, ', isTrainingsLoading)
 
   function handleSeeAllBtnClick() {
     navigate(AppRoute.TRAININGS);

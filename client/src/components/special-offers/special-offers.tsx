@@ -17,6 +17,7 @@ import Stub from '../tools/stub/stub';
 export default function SpecialOffers(): ReactElement {
   const trainings = useWithDiscountTrainingsList();
   const isTrainingsLoading = useAppSelector(getWithDiscountTrainingsLoadingStatus);
+  console.log('Render: SpecialOffers, ', isTrainingsLoading)
 
   // Слайдер может содержать не более SPECIAL_FOR_YOU_MAX_SLIDES_COUNT слайдов
   let slides = trainings?.entities;

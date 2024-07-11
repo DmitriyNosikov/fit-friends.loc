@@ -60,7 +60,7 @@ export class TrainingRepository extends BasePostgresRepository<TrainingEntity, T
 
     return {
       entities: itemsEntities,
-      currentPage:  query?.page ?? 0,
+      currentPage:  query?.page ?? 1,
       totalPages: this.calculateItemsPage(totalItemsCount, take),
       totalItems: totalItemsCount,
       itemsPerPage: take ?? totalItemsCount,

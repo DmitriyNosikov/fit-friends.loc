@@ -53,7 +53,7 @@ export const fetchTrainingsAction = createAsyncThunk<void, void, AsyncOptions>(
 );
 
 // Загрузка тренировок, подходящих по параметрам для пользователя
-export const fetchConvenientTrainingsAction = createAsyncThunk<void, void, AsyncOptions>(
+export const fetchConvenientTrainingsAction = createAsyncThunk<TrainingsWithPaginationRDO, void, AsyncOptions>(
   APIAction.TRAININGS_FETCH_CONVENIENT,
   async (_arg, { dispatch, rejectWithValue, extra: api }) => {
     dispatch(setDataLoadingStatus(true));
@@ -63,6 +63,8 @@ export const fetchConvenientTrainingsAction = createAsyncThunk<void, void, Async
 
       dispatch(setConvenientTrainingsAction(data));
       dispatch(setDataLoadingStatus(false));
+
+      return data;
 
     } catch(err) {
       toast.warn('Can`t load your convenient trainings. Please, refresh page or try again later')

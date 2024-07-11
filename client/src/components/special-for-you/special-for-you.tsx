@@ -20,6 +20,7 @@ import { SPECIAL_FOR_YOU_MAX_SLIDES_COUNT } from '@client/src/const';
 export default function SpecialForYou(): ReactElement {
   const convenientTrainings = useConvenientTrainingsList();
   const isTrainingsLoading = useAppSelector(getConvenientTrainingsLoadingStatus);
+  console.log('Render: SpecialForYou, ', isTrainingsLoading);
 
   // Слайдер может содержать не более SPECIAL_FOR_YOU_MAX_SLIDES_COUNT слайдов
   let slides = convenientTrainings?.entities;

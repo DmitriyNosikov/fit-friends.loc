@@ -1507,6 +1507,10 @@ components:
           type: string
           description: Author review`s text
           example: it was amazing training
+        userInfo:
+          description: Review`s author additional info
+          allOf:
+            - $ref: "#/components/schemas/UserRDO"
       required:
         - id
         - createdAt
@@ -1515,6 +1519,7 @@ components:
         - trainingId
         - rating
         - text
+        - userInfo
     UpdateTrainingReviewDTO:
       type: object
       properties:

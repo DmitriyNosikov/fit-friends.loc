@@ -75,7 +75,7 @@ export class TrainingReviewController {
 
     const reviews = {
       ...documents,
-      entities: documents.entities.map((document) => document.toPOJO())
+      entities: documents.entities.map((document) => fillDTO(CreateTrainingReviewRDO, document.toPOJO()))
     }
 
     return reviews;

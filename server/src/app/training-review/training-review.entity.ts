@@ -35,6 +35,10 @@ export class TrainingReviewEntity extends Entity implements StorableEntityInterf
     this.rating = review.rating;
     this.text = review.text;
 
+    // Храним доп. инфу о юзере в свойстве userInfo вместо user
+    // т.к. из за того, что призма строит зависимости и выводит сущности сама,
+    // в ее типах уже хранится свойство user для создания зависимостей, и мы
+    // не можем использовать его в своих целях
     this.userInfo = review.user;
   }
 

@@ -3,7 +3,7 @@ import { TrainingReviewValidation } from '@server/training-review/training-revie
 import { TrainingInterface } from '@server/training/interfaces/training.interface';
 import { UserInterface } from '@server/user/interfaces';
 import { UserRDO } from '@shared/user';
-import { Expose } from 'class-transformer';
+import { Expose, Type } from 'class-transformer';
 
 export class CreateTrainingReviewRDO {
   @ApiProperty({
@@ -61,5 +61,6 @@ export class CreateTrainingReviewRDO {
     description: 'Review`s author additional info',
   })
   @Expose()
+  @Type(() => UserRDO)
   userInfo?: UserRDO;
 }

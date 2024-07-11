@@ -49,6 +49,10 @@ export default function PopupReview({ onClose }: PopupReviewProps): ReactElement
   }
 
   function closePopup() {
+    if(onClose) {
+      onClose();
+    }
+
     setBodyScrollAvailable(true);
 
     document.removeEventListener('keydown', handleEscapeKeydown)
@@ -90,10 +94,6 @@ export default function PopupReview({ onClose }: PopupReviewProps): ReactElement
   }
 
   function handleClosePopupBtnClick() {
-    if(onClose) {
-      onClose();
-    }
-
     closePopup();
   }
 

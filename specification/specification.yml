@@ -340,6 +340,21 @@ paths:
         "404":
           description: Training not found
       tags: *a2
+  /api/trainings/filter-params:
+    get:
+      operationId: TrainingController_getTrainingFIlterParams
+      summary: Get params for training filter
+      parameters: []
+      responses:
+        "200":
+          description: Training found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TrainingFilterParamsRDO"
+        "404":
+          description: Training not found
+      tags: *a2
   /api/trainings/{trainingId}:
     get:
       operationId: TrainingController_show
@@ -1346,6 +1361,20 @@ components:
         - currentPage
         - itemsPerPage
         - entities
+    TrainingFilterParamsRDO:
+      type: object
+      properties:
+        price:
+          type: object
+          description: Training min/max price
+          example: "price: {       min: 1800;      max: 2900;    }"
+        calories:
+          type: object
+          description: Training min/max calories
+          example: "price: {       min: 2100;      max: 3300;    }"
+      required:
+        - price
+        - calories
     UpdateTrainingDTO:
       type: object
       properties:

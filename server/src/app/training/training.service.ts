@@ -190,6 +190,43 @@ export class TrainingService {
     return sortedTrainings;
   }
 
+  public async getTrainingFilterParams() {
+    const trainingsList = await this.trainingRepository.findAll();
+
+    if(!trainingsList) {
+      return;
+    }
+
+    const pricesList = [];
+    const caloriesList = [];
+
+    trainingsList.forEach((training) => {
+      const { price, calories } = training;
+      
+      if(!pricesList.includes(price)) {
+        pricesList.push(price);
+      }
+
+      if(!caloriesList.includes(calories)) {
+        caloriesList.push(calories);
+      }
+    });
+    
+    const filterParams = {
+      price: {
+        min: Math.min(...pricesList),
+        max: Math.max(...pricesList),
+      },
+
+      calories: {
+        min: Math.min(...caloriesList),
+        max: Math.max(...caloriesList),
+      },
+    }
+
+    return filterParams;
+  }
+
   public async exists(trainingId: string): Promise<boolean> {
     const isTrainingExists = await this.trainingRepository.exists(trainingId);
 

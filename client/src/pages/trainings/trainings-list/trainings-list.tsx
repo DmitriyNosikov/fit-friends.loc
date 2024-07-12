@@ -1,30 +1,29 @@
 import { ReactElement } from 'react';
 
-import { TrainingSearchQuery } from '@shared/training';
+import { TrainingSearchQuery, TrainingsWithPaginationRDO } from '@shared/training';
 
 import { useAppDispatch, useAppSelector } from '@client/src/hooks';
-import { getTrainingsList, getTrainingsListLoadingStatus } from '@client/src/store/slices/training-process/training-process.selectors';
+import {  getTrainingsListLoadingStatus } from '@client/src/store/slices/training-process/training-process.selectors';
 
 import useSearchTrainings from '@client/src/hooks/useSearchTrainings';
 import { searchTrainings } from '@client/src/store/actions/api-training-action';
 
-import Spinner from '../../tools/spinner/spinner';
-import TrainingsFilter from '../trainings-filter/trainings-filter';
-import TrainingsListItem from '../trainings-list-item/trainings-list-item';
+import Spinner from '../../../components/tools/spinner/spinner';
+import TrainingsFilter from '../../../components/trainings/trainings-filter/trainings-filter';
+import TrainingsListItem from '../../../components/trainings/trainings-list-item/trainings-list-item';
+
 
 const MAX_TRAININGS_PER_PAGE = 6;
 
 export default function TrainingsList(): ReactElement {
-  const dispatch = useAppDispatch();
-  const trainingsList = useAppSelector(getTrainingsList);
-  const isTrainingsLoadings = useAppSelector(getTrainingsListLoadingStatus);
-
   let searchQuery: TrainingSearchQuery = {
     page: 1,
     limit: MAX_TRAININGS_PER_PAGE
   };
 
-  useSearchTrainings(searchQuery);
+  const dispatch = useAppDispatch();
+  const trainingsList = useSearchTrainings(searchQuery);
+  const isTrainingsLoadings = useAppSelector(getTrainingsListLoadingStatus);
 
   if(isTrainingsLoadings) {
     return <Spinner />;
@@ -54,8 +53,6 @@ export default function TrainingsList(): ReactElement {
     && currentPage !== trainingsList?.totalPages;
 
   const isBackToBeginBtnVisible = trainingsList.entities.length > MAX_TRAININGS_PER_PAGE;
-
-  console.log('LENGTH: ', trainingsList.entities.length, isBackToBeginBtnVisible);
 
   return (
     <section className="inner-page">

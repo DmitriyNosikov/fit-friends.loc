@@ -25,6 +25,17 @@ export class TrainingRepository extends BasePostgresRepository<TrainingEntity, T
     super(entityFactory, dbClient);
   }
 
+  public async findAll(): Promise<TrainingEntity[] | null> {
+    const trainings = await this.dbClient.training.findMany();
+
+    if(!trainings) {
+      return null;
+    }
+
+    const trainingEntities = trainings.map((training) => this.getEntity(training));
+
+    return trainingEntities;
+  }
 
   public async findById(trainingId: string): Promise<TrainingEntity | null> {
     const training = await this.dbClient.training.findFirst({

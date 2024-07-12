@@ -1,7 +1,22 @@
 import { ReactElement } from 'react';
 import BackBtn from '../../back-btn/back-btn';
+import useTrainingFilterParams from '@client/src/hooks/useTrainingFilterParams';
+import { TrainingValidation } from '@server/training/training.constant';
+import TrainingsDurationList from '../trainings-duration-list/trainings-duration-list';
 
-export default function TrainingsFilter(): ReactElement {
+export default function TrainingsFilter(): ReactElement | undefined {
+  const filterParams = useTrainingFilterParams();
+
+  if(!filterParams) {
+    return;
+  }
+
+  const { price, calories } = filterParams;
+
+  function handleDurationChange(durationRanges: string[]) {
+    console.log('durationRanges: ', durationRanges);
+  }
+
   return (
     <div className="my-training-form">
       <h2 className="visually-hidden">Мои тренировки Фильтр</h2>
@@ -15,11 +30,11 @@ export default function TrainingsFilter(): ReactElement {
             <h4 className="my-training-form__block-title">Цена, ₽</h4>
             <div className="filter-price">
               <div className="filter-price__input-text filter-price__input-text--min">
-                <input type="number" id="text-min" name="text-min" defaultValue={0} />
+                <input type="number" id="text-min" name="text-min" defaultValue={price.min} />
                 <label htmlFor="text-min">от</label>
               </div>
               <div className="filter-price__input-text filter-price__input-text--max">
-                <input type="number" id="text-max" name="text-max" defaultValue={3200} />
+                <input type="number" id="text-max" name="text-max" defaultValue={price.max} />
                 <label htmlFor="text-max">до</label>
               </div>
             </div>
@@ -37,11 +52,11 @@ export default function TrainingsFilter(): ReactElement {
             <h4 className="my-training-form__block-title">Калории</h4>
             <div className="filter-calories">
               <div className="filter-calories__input-text filter-calories__input-text--min">
-                <input type="number" id="text-min-cal" name="text-min-cal" />
+                <input type="number" id="text-min-cal" name="text-min-cal" defaultValue={calories.min}/>
                 <label htmlFor="text-min-cal">от</label>
               </div>
               <div className="filter-calories__input-text filter-calories__input-text--max">
-                <input type="number" id="text-max-cal" name="text-max-cal" />
+                <input type="number" id="text-max-cal" name="text-max-cal" defaultValue={calories.max}/>
                 <label htmlFor="text-max-cal">до</label>
               </div>
             </div>
@@ -62,56 +77,13 @@ export default function TrainingsFilter(): ReactElement {
                 <div className="filter-raiting__bar"><span className="visually-hidden">Полоса прокрутки</span></div>
               </div>
               <div className="filter-raiting__control">
-                <button className="filter-raiting__min-toggle"><span className="visually-hidden">Минимальное значение</span></button><span>0</span>
-                <button className="filter-raiting__max-toggle"><span className="visually-hidden">Максимальное значение</span></button><span>5</span>
+                <button className="filter-raiting__min-toggle"><span className="visually-hidden">Минимальное значение</span></button><span>{TrainingValidation.RATING.MIN}</span>
+                <button className="filter-raiting__max-toggle"><span className="visually-hidden">Максимальное значение</span></button><span>{TrainingValidation.RATING.MAX}</span>
               </div>
             </div>
           </div>
-          <div className="my-training-form__block my-training-form__block--duration">
-            <h4 className="my-training-form__block-title">Длительность</h4>
-            <ul className="my-training-form__check-list">
-              <li className="my-training-form__check-list-item">
-                <div className="custom-toggle custom-toggle--checkbox">
-                  <label>
-                    <input type="checkbox" defaultValue="duration-1" name="duration" /><span className="custom-toggle__icon">
-                      <svg width={9} height={6} aria-hidden="true">
-                        <use xlinkHref="#arrow-check" />
-                      </svg></span><span className="custom-toggle__label">10 мин - 30 мин</span>
-                  </label>
-                </div>
-              </li>
-              <li className="my-training-form__check-list-item">
-                <div className="custom-toggle custom-toggle--checkbox">
-                  <label>
-                    <input type="checkbox" defaultValue="duration-1" name="duration" defaultChecked /><span className="custom-toggle__icon">
-                      <svg width={9} height={6} aria-hidden="true">
-                        <use xlinkHref="#arrow-check" />
-                      </svg></span><span className="custom-toggle__label">30 мин - 50 мин</span>
-                  </label>
-                </div>
-              </li>
-              <li className="my-training-form__check-list-item">
-                <div className="custom-toggle custom-toggle--checkbox">
-                  <label>
-                    <input type="checkbox" defaultValue="duration-1" name="duration" /><span className="custom-toggle__icon">
-                      <svg width={9} height={6} aria-hidden="true">
-                        <use xlinkHref="#arrow-check" />
-                      </svg></span><span className="custom-toggle__label">50 мин - 80 мин</span>
-                  </label>
-                </div>
-              </li>
-              <li className="my-training-form__check-list-item">
-                <div className="custom-toggle custom-toggle--checkbox">
-                  <label>
-                    <input type="checkbox" defaultValue="duration-1" name="duration" /><span className="custom-toggle__icon">
-                      <svg width={9} height={6} aria-hidden="true">
-                        <use xlinkHref="#arrow-check" />
-                      </svg></span><span className="custom-toggle__label">80 мин - 100 мин</span>
-                  </label>
-                </div>
-              </li>
-            </ul>
-          </div>
+
+          <TrainingsDurationList onChange={handleDurationChange}/>
         </form>
       </div>
     </div>

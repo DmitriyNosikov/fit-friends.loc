@@ -6,7 +6,8 @@ import {
   UpdateTrainingDTO,
   TrainingSearchQuery,
   TrainingsWithPaginationRDO,
-  TrainingSortTypeEnum
+  TrainingSortTypeEnum,
+  TrainingFilterParamsRDO
 } from '@shared/training';
 import { TrainingMessage } from './training.constant';
 import { TrainingService } from './training.service';
@@ -237,6 +238,28 @@ export class TrainingController {
     }
 
     return trainings;
+  }
+
+  @Get('/filter-params')
+  @UseGuards(JWTAuthGuard)
+  @ApiOperation({ summary: 'Get params for training filter' })
+  @ApiResponse({
+    type: TrainingFilterParamsRDO,
+    status: HttpStatus.OK,
+    description: TrainingMessage.SUCCESS.FOUND
+  })
+  @ApiResponse({
+    status: HttpStatus.NOT_FOUND,
+    description: TrainingMessage.ERROR.NOT_FOUND
+  })
+  public async getTrainingFIlterParams(): Promise<TrainingFilterParamsRDO | null> {
+    const filterParams = await this.trainingService.getTrainingFilterParams();
+
+    if(!filterParams) {
+      return;
+    }
+
+    return filterParams;
   }
 
   @Get(':trainingId')

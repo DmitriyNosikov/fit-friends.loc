@@ -1,6 +1,6 @@
 import { Namespace } from '@client/src/const';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { CreateTrainingRDO, TrainingsWithPaginationRDO } from '@shared/training';
+import { CreateTrainingRDO, TrainingFilterParamsRDO, TrainingsWithPaginationRDO } from '@shared/training';
 
 import { fetchConvenientTrainingsAction, fetchTrainingItemAction, fetchTrainingsAction, fetchWithDiscountTrainingsAction, fetchWithRatingTrainingsAction } from '../../actions/api-training-action';
 
@@ -10,6 +10,8 @@ export type TrainingProcess = {
   paginatedWithDiscountTrainings: TrainingsWithPaginationRDO | null,
   paginatedWithRatingTrainings: TrainingsWithPaginationRDO | null,
   trainingItem: CreateTrainingRDO | null,
+
+  filterParams: TrainingFilterParamsRDO | null,
 
   isTrainingsLoading: boolean,
   isTrainingsItemLoading: boolean,
@@ -24,6 +26,8 @@ const initialState: TrainingProcess = {
   paginatedWithDiscountTrainings: null,
   paginatedWithRatingTrainings: null,
   trainingItem: null,
+
+  filterParams: null,
 
   isTrainingsLoading: false,
   isTrainingsItemLoading: false,
@@ -71,6 +75,11 @@ export const trainingProcess = createSlice({
     // Тренировки с рейтингом больше 0
     setWithRatingTrainingsAction: (state, action: PayloadAction<TrainingsWithPaginationRDO | null>) => {
       state.paginatedWithRatingTrainings = action.payload;
+    },
+
+    // Установка базовых парамтеров фильтра (цена и калории) исходя из имеющихся тренировок
+    setTrainingFilterParamsAction: (state, action: PayloadAction<TrainingFilterParamsRDO | null>) => {
+      state.filterParams = action.payload;
     },
 
     // При обновлении какой либо тренировки. ее нужно обновить во всех списках
@@ -198,6 +207,7 @@ export const {
   setWithDiscountTrainingsAction,
   setWithRatingTrainingsAction,
   setTrainingItemAction,
+  setTrainingFilterParamsAction,
   updateTrainingsListAction,
   deleteTrainingItemStateAction
 } = trainingProcess.actions;

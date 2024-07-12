@@ -1,10 +1,12 @@
 import { useEffect } from 'react';
-import { useAppDispatch } from '.';
+import { useAppDispatch, useAppSelector } from '.';
 import { fetchAdditionalInfoAction } from '../store/actions/api-user-action';
+import { getAdditionalInfo } from '../store/slices/user-process/user-process.selectors';
 
 
 export default function useAdditionalInfo() {
   const dispatch = useAppDispatch();
+  const additionalInfo = useAppSelector(getAdditionalInfo);
 
   useEffect(() => {
     let isMounted = true;
@@ -17,4 +19,6 @@ export default function useAdditionalInfo() {
       isMounted = false;
     };
   }, []);
+
+  return additionalInfo;
 }

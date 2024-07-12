@@ -2,10 +2,9 @@ import { useRef, useState } from 'react';
 import { toast } from 'react-toastify';
 import dayjs from 'dayjs';
 
-import { useAppDispatch, useAppSelector } from '@client/src/hooks';
+import { useAppDispatch } from '@client/src/hooks';
 import useAdditionalInfo from '@client/src/hooks/useAdditionalInfo';
 
-import { getAdditionalInfo } from '@client/src/store/slices/user-process/user-process.selectors';
 import { registerUserAction } from '@client/src/store/actions/api-user-action';
 
 import RegistrationAvatar from '@client/src/components/registration/registration-avatar/registration-avatar';
@@ -20,13 +19,11 @@ import CustomSelectBtn from '@client/src/components/custom-select-btn/custom-sel
 import { registrationValidationSchema } from '@client/src/validation/registration-validation';
 
 export default function Registration() {
-  useAdditionalInfo();
-
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
   const maxBirthDate = dayjs().format('YYYY-MM-DD');
-  const additionalInfo = useAppSelector(getAdditionalInfo);
+  const additionalInfo = useAdditionalInfo();
   const gender = additionalInfo?.gender;
   const location = additionalInfo?.location;
   const roles = additionalInfo?.roles;

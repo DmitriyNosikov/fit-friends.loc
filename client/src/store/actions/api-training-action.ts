@@ -4,10 +4,10 @@ import { toast } from 'react-toastify';
 import { ApiRoute, AppRoute, Namespace } from '@client/src/const';
 import { AsyncOptions } from '@client/src/types/async-options.type';
 
-import { CreateTrainingRDO, TrainingSearchQuery, TrainingsWithPaginationRDO } from '@shared/training';
+import { CreateTrainingRDO, TrainingFilterParamsRDO, TrainingSearchQuery, TrainingsWithPaginationRDO } from '@shared/training';
 
 import { setDataLoadingStatus } from '../slices/main-process/main-process';
-import { appendTrainingsAction, deleteTrainingItemStateAction, setConvenientTrainingsAction, setTrainingItemAction, setTrainingsAction, setWithDiscountTrainingsAction, setWithRatingTrainingsAction, updateTrainingsListAction,  } from '../slices/training-process/training-process';
+import { appendTrainingsAction, deleteTrainingItemStateAction, setConvenientTrainingsAction, setTrainingFilterParamsAction, setTrainingItemAction, setTrainingsAction, setWithDiscountTrainingsAction, setWithRatingTrainingsAction, updateTrainingsListAction,  } from '../slices/training-process/training-process';
 import { redirectToRoute } from '../middlewares/redirect-action';
 
 const APITrainingPrefix = `[${Namespace.TRAINING}-BACKEND]`;
@@ -25,6 +25,7 @@ const APIAction = {
 
   PAGINATION_GET_PAGE: `${APITrainingPrefix}/get-pagination-page`,
   SEARCH: `${APITrainingPrefix}/search`,
+  FILTER_GET_PARAMS: `${APITrainingPrefix}/get-filter-params`,
 } as const;
 
 // ASYNC ACTIONS
@@ -217,11 +218,11 @@ type SearchPayload = {
   appendItems?: boolean
 };
 
-export const searchTrainings = createAsyncThunk<void, SearchPayload, AsyncOptions>(
+export const searchTrainings = createAsyncThunk<TrainingsWithPaginationRDO, SearchPayload, AsyncOptions>(
   APIAction.SEARCH,
   async (
     { searchQuery, appendItems },
-    {dispatch, extra: api}
+    {dispatch, rejectWithValue, extra: api}
   ) => {
     dispatch(setDataLoadingStatus(true));
 
@@ -245,7 +246,8 @@ export const searchTrainings = createAsyncThunk<void, SearchPayload, AsyncOption
       if(!appendItems) {
         dispatch(setTrainingsAction(data));
 
-        return;
+        dispatch(setDataLoadingStatus(false));
+        return data;
       }
 
       // Если передан параметр appendItems, это значит
@@ -255,10 +257,36 @@ export const searchTrainings = createAsyncThunk<void, SearchPayload, AsyncOption
       // полученные от сервера (для возможности дозагрузить
       // тренить тренировки по кнопке "Показать еще")
       dispatch(appendTrainingsAction(data));
+
+      dispatch(setDataLoadingStatus(false));
+      return data;
     } catch(err) {
       toast.error(`Can't get trainings. Error: ${err}`);
-    }
 
-    dispatch(setDataLoadingStatus(false));
+      dispatch(setDataLoadingStatus(false));
+      return rejectWithValue(err);
+    }
+  }
+);
+
+// Получение базовых параметров фильтра исходя из имеющихся тренировок
+export const fetchTrainingFilterParams = createAsyncThunk<TrainingFilterParamsRDO, void, AsyncOptions>(
+  APIAction.FILTER_GET_PARAMS,
+  async (_arg, { dispatch, rejectWithValue, extra: api }) => {
+    dispatch(setDataLoadingStatus(true));
+
+    try {
+      const { data } = await api.get<TrainingFilterParamsRDO>(`${ApiRoute.FILTER_PARAMS}`);
+
+      dispatch(setTrainingFilterParamsAction(data));
+
+      return data;
+    } catch(err) {
+      toast.error(`Cant't get params for training filter. Error: ${err}`);
+
+      dispatch(setDataLoadingStatus(false));
+
+      return rejectWithValue(err);
+    }
   }
 );

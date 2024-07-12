@@ -3,6 +3,7 @@ import BackBtn from '../../back-btn/back-btn';
 import useTrainingFilterParams from '@client/src/hooks/useTrainingFilterParams';
 import { TrainingValidation } from '@server/training/training.constant';
 import TrainingsDurationList from '../trainings-duration-list/trainings-duration-list';
+import RangeSlider from '../../tools/range-slider/range-slider';
 
 export default function TrainingsFilter(): ReactElement | undefined {
   const filterParams = useTrainingFilterParams();
@@ -25,6 +26,9 @@ export default function TrainingsFilter(): ReactElement | undefined {
         <BackBtn />
 
         <h3 className="my-training-form__title">фильтры</h3>
+
+        <RangeSlider range={{ min: 10, max: 100 } }/>
+
         <form className="my-training-form__form">
           <div className="my-training-form__block my-training-form__block--price">
             <h4 className="my-training-form__block-title">Цена, ₽</h4>

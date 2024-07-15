@@ -48,23 +48,27 @@ export default function FilterRangeItem({
     ON_CHANGE: onChange ? debounce(onChange, Timeout.CHANGE_RANGE) : null,
   };
 
-  function handleRangeChange(value: string[]) {
+  function handleRangeChange(value: number[]) {
     if(!showInputs || !minField.current || !maxField.current) {
       return;
     }
 
     let [newMin, newMax] = value;
 
-    if(newMin && parseInt(newMin) !== startValue) {
+    if(newMin === startValue && newMax === endValue) {
+      return;
+    }
+
+    if(newMin !== startValue) {
       Debounce.SET_START_VALUE(newMin)
     }
 
-    if(newMax && parseInt(newMax) !== endValue) {
+    if(newMax !== endValue) {
       Debounce.SET_END_VALUE(newMax)
     }
 
-    minField.current.value = newMin;
-    maxField.current.value = newMax;
+    minField.current.value = String(newMin);
+    maxField.current.value = String(newMax);
 
     if(Debounce.ON_CHANGE) {
       Debounce.ON_CHANGE(value);
@@ -130,7 +134,7 @@ export default function FilterRangeItem({
                 type="number"
                 name="text-min"
                 defaultValue={startValue}
-                onChange={Debounce.HANDLE_START_VALUE_INPUT}
+                onInput={Debounce.HANDLE_START_VALUE_INPUT}
                 ref={minField}
 
                 min={min}
@@ -143,7 +147,7 @@ export default function FilterRangeItem({
                 type="number"
                 name="text-max"
                 defaultValue={endValue}
-                onChange={Debounce.HANDLE_END_VALUE_INPUT}
+                onInput={Debounce.HANDLE_END_VALUE_INPUT}
                 ref={maxField}
 
                 min={min + 1}

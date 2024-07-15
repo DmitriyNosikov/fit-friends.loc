@@ -58,6 +58,8 @@ export default function RangeSlider({
         connect={true}
 
         onUpdate={handleUpdate}
+
+        pips={}
       />
     </div>
   )

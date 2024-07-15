@@ -9,6 +9,7 @@ import { CreateTrainingRDO, TrainingFilterParamsRDO, TrainingSearchQuery, Traini
 import { setDataLoadingStatus } from '../slices/main-process/main-process';
 import { appendTrainingsAction, deleteTrainingItemStateAction, setConvenientTrainingsAction, setTrainingFilterParamsAction, setTrainingItemAction, setTrainingsAction, setWithDiscountTrainingsAction, setWithRatingTrainingsAction, updateTrainingsListAction,  } from '../slices/training-process/training-process';
 import { redirectToRoute } from '../middlewares/redirect-action';
+import { adaptQueryParams } from '@client/src/utils/adapters';
 
 const APITrainingPrefix = `[${Namespace.TRAINING}-BACKEND]`;
 const APIAction = {
@@ -218,7 +219,7 @@ type SearchPayload = {
   appendItems?: boolean
 };
 
-export const searchTrainings = createAsyncThunk<TrainingsWithPaginationRDO, SearchPayload, AsyncOptions>(
+export const searchTrainingsAction = createAsyncThunk<TrainingsWithPaginationRDO, SearchPayload, AsyncOptions>(
   APIAction.SEARCH,
   async (
     { searchQuery, appendItems },
@@ -229,8 +230,7 @@ export const searchTrainings = createAsyncThunk<TrainingsWithPaginationRDO, Sear
     let url = `${ApiRoute.TRAININGS_API}`;
 
     if(searchQuery && Object.keys(searchQuery).length > 0) {
-      const searchParams = new URLSearchParams(searchQuery as Record<string, string>);
-      const queryString = searchParams.toString();
+      const queryString = adaptQueryParams(searchQuery as Record<string, unknown>);
 
       url += `?${queryString}`;
     }

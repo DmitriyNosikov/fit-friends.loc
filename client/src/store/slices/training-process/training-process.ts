@@ -2,7 +2,7 @@ import { Namespace } from '@client/src/const';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { CreateTrainingRDO, TrainingFilterParamsRDO, TrainingsWithPaginationRDO } from '@shared/training';
 
-import { fetchConvenientTrainingsAction, fetchTrainingItemAction, fetchTrainingsAction, fetchWithDiscountTrainingsAction, fetchWithRatingTrainingsAction } from '../../actions/api-training-action';
+import { fetchConvenientTrainingsAction, fetchTrainingItemAction, fetchTrainingsAction, fetchWithDiscountTrainingsAction, fetchWithRatingTrainingsAction, searchTrainingsAction } from '../../actions/api-training-action';
 
 export type TrainingProcess = {
   paginatedTrainings: TrainingsWithPaginationRDO | null,
@@ -153,6 +153,18 @@ export const trainingProcess = createSlice({
       .addCase(fetchTrainingsAction.rejected, (state) => {
         state.isTrainingsLoading = false;
       })
+
+       // Search trainings
+      // .addCase(searchTrainingsAction.pending, (state) => {
+      //   state.isTrainingsLoading = true;
+      // })
+      // .addCase(searchTrainingsAction.fulfilled, (state) => {
+      //   state.isTrainingsLoading = false;
+      // })
+      // .addCase(searchTrainingsAction.rejected, (state) => {
+      //   state.isTrainingsLoading = false;
+      // })
+
 
       // Training item
       .addCase(fetchTrainingItemAction.pending, (state) => {

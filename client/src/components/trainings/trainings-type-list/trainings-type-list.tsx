@@ -21,8 +21,6 @@ export default function TrainigsTypeList({ onChange }: TrainigsTypeListProps): R
   const typesList = additionalInfo.trainingType;
 
   function handleTypeChange(checkedItems: string[]) {
-    console.log('TYPE CHECKED ITEMS: ', checkedItems);
-
     if(onChange) {
       onChange(checkedItems);
     }

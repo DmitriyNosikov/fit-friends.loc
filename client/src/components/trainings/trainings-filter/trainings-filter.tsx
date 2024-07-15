@@ -6,33 +6,98 @@ import useTrainingFilterParams from '@client/src/hooks/useTrainingFilterParams';
 import BackBtn from '../../back-btn/back-btn';
 import RangeSlider from '../../tools/range-slider/range-slider';
 import TrainigsTypeList from '../trainings-type-list/trainings-type-list';
-import CaloriesFilter from '../../calories-filter/calories-filter';
 import FilterRangeItem from '../../tools/filter-range-item/filter-range-item';
+import { TrainingSearchQuery } from '@shared/training';
+import { debounce } from '@client/src/utils/common';
+import { useAppDispatch } from '@client/src/hooks';
+import { searchTrainingsAction } from '@client/src/store/actions/api-training-action';
+
+const CHANGE_FILTER_TIMEOUT = 800;
+
+export const SortDirectionEnum = {
+  ASC: 'asc', // По возрастанию
+  DESC: 'desc', // По убыванию
+  FREE: 'free', // Специальный фильтр по бесплатным тренировкам
+} as const;
 
 export default function TrainingsFilter(): ReactElement | undefined {
-  const filterParams = useTrainingFilterParams();
+  const dispatch = useAppDispatch();
+  const baseFilterParams = useTrainingFilterParams();
 
-  if (!filterParams) {
+  if (!baseFilterParams) {
     return;
   }
 
-  const { price, calories } = filterParams;
+  const { price, calories } = baseFilterParams;
 
+  const filterParams = {
+    priceFrom: price.min,
+    priceTo: price.max,
+    trainingType: [] as string[],
+    dayCaloriesFrom: calories.min,
+    dayCaloriesTo: calories.max,
+    ratingFrom: Number(TrainingValidation.RATING.MIN),
+    ratingTo: Number(TrainingValidation.RATING.MAX),
+    sortDirection: String(SortDirectionEnum.DESC)
+  }
+
+  const debouncedChangeFilterHandler = debounce(handleFilterChange, CHANGE_FILTER_TIMEOUT);
 
   function handlePriceChange(priceRanges: string[]) {
-    console.log('PRICES: ', priceRanges);
+    const [priseFrom, priceTo] = priceRanges;
+
+    filterParams.priceFrom = parseInt(priseFrom);
+    filterParams.priceTo = parseInt(priceTo);
+
+    debouncedChangeFilterHandler(filterParams);
   }
 
   function handleCaloriesChange(caloriesRanges: string[]) {
-    console.log('CALORIES: ', caloriesRanges);
+    const [caloriesFrom, caloriesTo] = caloriesRanges;
+
+    filterParams.dayCaloriesFrom = parseInt(caloriesFrom);
+    filterParams.dayCaloriesTo = parseInt(caloriesTo);
+
+    debouncedChangeFilterHandler(filterParams);
   }
 
   function handleRatingChange(ratingRanges: string[]) {
-    console.log('RATING: ', ratingRanges);
+    const [ratingFrom, ratingTo] = ratingRanges;
+
+    filterParams.ratingFrom = parseInt(ratingFrom);
+    filterParams.ratingTo = parseInt(ratingTo);
+
+    debouncedChangeFilterHandler(filterParams);
   }
 
-  function handleTypeChange() {
+  function handleTypeChange(typesList: string[]) {
+    filterParams.trainingType = typesList;
 
+    debouncedChangeFilterHandler(filterParams);
+  }
+
+  function handleSortTypeChange(e: React.FormEvent<HTMLDivElement>) {
+    const target = e.target as HTMLInputElement;
+
+    if(!target.value) {
+      return;
+    }
+
+    const sortDirection = target.value;
+
+    filterParams.sortDirection = sortDirection;
+
+    if(sortDirection === SortDirectionEnum.FREE) {
+      filterParams.priceFrom = 0;
+      filterParams.priceTo = 0;
+      filterParams.sortDirection = SortDirectionEnum.DESC;
+    }
+
+    debouncedChangeFilterHandler(filterParams);
+  }
+
+  function handleFilterChange(filterParams: TrainingSearchQuery) {
+    dispatch(searchTrainingsAction({ searchQuery: filterParams }));
   }
 
   return (
@@ -92,17 +157,20 @@ export default function TrainingsFilter(): ReactElement | undefined {
 
           <TrainigsTypeList onChange={handleTypeChange} />
 
-          <div className="gym-catalog-form__block gym-catalog-form__block--sort">
+          <div className="gym-catalog-form__block gym-catalog-form__block--sort" onChange={handleSortTypeChange}>
             <h4 className="gym-catalog-form__title gym-catalog-form__title--sort">Сортировка</h4>
             <div className="btn-radio-sort gym-catalog-form__radio">
               <label>
-                <input type="radio" name="sort" defaultChecked /><span className="btn-radio-sort__label">Дешевле</span>
+                <input type="radio" name="sort" defaultValue={SortDirectionEnum.DESC} defaultChecked />
+                <span className="btn-radio-sort__label">Дешевле</span>
               </label>
               <label>
-                <input type="radio" name="sort" /><span className="btn-radio-sort__label">Дороже</span>
+                <input type="radio" name="sort" defaultValue={SortDirectionEnum.ASC} />
+                <span className="btn-radio-sort__label">Дороже</span>
               </label>
               <label>
-                <input type="radio" name="sort" /><span className="btn-radio-sort__label">Бесплатные</span>
+                <input type="radio" name="sort" defaultValue={SortDirectionEnum.FREE} />
+                <span className="btn-radio-sort__label">Бесплатные</span>
               </label>
             </div>
           </div>

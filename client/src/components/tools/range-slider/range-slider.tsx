@@ -30,18 +30,21 @@ export default function RangeSlider({
   function handleUpdate(value: string[]) {
     if(value.length > 1) {
       const [min, max] = value;
+      const parsedMin = parseInt(min)
+      const parsedMax = parseInt(max)
 
       if(onUpdateMin) {
-        onUpdateMin(min);
+        onUpdateMin(parsedMin);
       }
 
       if(onUpdateMax) {
-        onUpdateMax(max);
+        onUpdateMax(parsedMax);
       }
     }
 
     if(onUpdate) {
-      onUpdate(value);
+      const result = value.map((item) => parseInt(item));
+      onUpdate(result);
     }
   }
 

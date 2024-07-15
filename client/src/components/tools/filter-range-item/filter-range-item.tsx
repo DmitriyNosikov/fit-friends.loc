@@ -6,7 +6,7 @@ import { debounce } from '@client/src/utils/common';
 const Timeout = {
   CHANGE_RANGE: 300,
   CHANGE_INPUT: 800,
-}
+} as const;
 
 type FilterRangeItemProps = {
   title: string,
@@ -87,8 +87,11 @@ export default function FilterRangeItem({
     }
 
     if(newStartValue) {
-      console.log('NEW START: ', newStartValue);
       setStartValue(newStartValue);
+
+      if(minField.current) {
+        minField.current.value = String(newStartValue);
+      }
     }
   }
 
@@ -108,8 +111,11 @@ export default function FilterRangeItem({
     }
 
     if(newEndValue) {
-      console.log('NEW END: ', newEndValue);
       setEndValue(newEndValue);
+
+      if(maxField.current) {
+        maxField.current.value = String(newEndValue);
+      }
     }
   }
 

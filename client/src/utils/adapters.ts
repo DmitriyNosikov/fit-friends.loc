@@ -1,13 +1,15 @@
-import { TrainingSearchQuery } from '@shared/training';
-import { BaseSearchQuery } from '@shared/types';
 import { UserLevelEnum } from '@shared/types/user-level.enum';
 
-export function adaptQueryParams(queryString: BaseSearchQuery | TrainingSearchQuery) {
+export function adaptQueryParams(queryString: Record<string, unknown>) {
   let adaptedQueryString = '';
   let tempStorage: string[] = [];
 
   for(const [key, value] of Object.entries(queryString)) {
-    if((key === 'type' || key === 'stringsCount') && Array.isArray(value)) {
+    if(Array.isArray(value) && value.length <= 0) {
+      continue;
+    }
+
+    if(Array.isArray(value)) {
       tempStorage.push(getUrlStringFromArray(key, value));
     } else {
       tempStorage.push(`${key}=${value}`);

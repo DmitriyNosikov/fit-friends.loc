@@ -7,12 +7,44 @@ type RangeSliderProps = {
     min: number,
     max: number;
   },
-  start?: number,
+  start?: number | number[],
   step?: number,
 
+  onUpdate?: Function,
+  onUpdateMin?: Function,
+  onUpdateMax?: Function,
+
+  sliderRef?: unknown
 };
 
-export default function RangeSlider({ range, start = 0, step = 1 }: RangeSliderProps): ReactElement {
+export default function RangeSlider({
+  range,
+  start = [range.min, range.max],
+  step = 1,
+
+  onUpdate,
+  onUpdateMin,
+  onUpdateMax
+}: RangeSliderProps): ReactElement {
+
+  function handleUpdate(value: string[]) {
+    if(value.length > 1) {
+      const [min, max] = value;
+
+      if(onUpdateMin) {
+        onUpdateMin(min);
+      }
+
+      if(onUpdateMax) {
+        onUpdateMax(max);
+      }
+    }
+
+    if(onUpdate) {
+      onUpdate(value);
+    }
+  }
+
   return (
     <div className="range-slider">
       <Nouislider
@@ -20,7 +52,9 @@ export default function RangeSlider({ range, start = 0, step = 1 }: RangeSliderP
         range={range}
         step={step}
 
-        connect
+        connect={true}
+
+        onUpdate={handleUpdate}
       />
     </div>
   )

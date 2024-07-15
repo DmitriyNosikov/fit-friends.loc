@@ -32,7 +32,7 @@
 .range-slider .noUi-horizontal .noUi-handle {
   width: 16px;
   height: 16px;
-  background-color: #333;
+  background-color: #121212;
   border-radius: 50%;
   -webkit-transition: .3s ease;
   -o-transition: .3s ease;
@@ -45,12 +45,28 @@
 }
 
 .range-slider .noUi-handle:before,
-.range-slider .noUi-handle:after{
+.range-slider .noUi-handle:after,
+.filter-range__bar{
   display: none;
+}
+
+.range-slider .noUi-horizontal .noUi-origin:last-child .noUi-handle {
+  right: -2px;
+}
+
+.range-slider .noUi-horizontal .noUi-handle {
+  top: -8px;
+  /* right: -8px; */
 }
 
 .range-slider .noUi-target {
   width: 312px;
   height: 1px;
   background-color: #aeaeae;
+  border: none;
+}
+
+
+.range-slider .noUi-connect {
+  background-color: #121212;
 }

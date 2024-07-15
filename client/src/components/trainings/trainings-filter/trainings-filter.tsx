@@ -1,21 +1,38 @@
 import { ReactElement } from 'react';
-import BackBtn from '../../back-btn/back-btn';
-import useTrainingFilterParams from '@client/src/hooks/useTrainingFilterParams';
+
 import { TrainingValidation } from '@server/training/training.constant';
-import TrainingsDurationList from '../trainings-duration-list/trainings-duration-list';
+import useTrainingFilterParams from '@client/src/hooks/useTrainingFilterParams';
+
+import BackBtn from '../../back-btn/back-btn';
 import RangeSlider from '../../tools/range-slider/range-slider';
+import TrainigsTypeList from '../trainings-type-list/trainings-type-list';
+import CaloriesFilter from '../../calories-filter/calories-filter';
+import FilterRangeItem from '../../tools/filter-range-item/filter-range-item';
 
 export default function TrainingsFilter(): ReactElement | undefined {
   const filterParams = useTrainingFilterParams();
 
-  if(!filterParams) {
+  if (!filterParams) {
     return;
   }
 
   const { price, calories } = filterParams;
 
-  function handleDurationChange(durationRanges: string[]) {
-    console.log('durationRanges: ', durationRanges);
+
+  function handlePriceChange(priceRanges: string[]) {
+    console.log('PRICES: ', priceRanges);
+  }
+
+  function handleCaloriesChange(caloriesRanges: string[]) {
+    console.log('CALORIES: ', caloriesRanges);
+  }
+
+  function handleRatingChange(ratingRanges: string[]) {
+    console.log('RATING: ', ratingRanges);
+  }
+
+  function handleTypeChange() {
+
   }
 
   return (
@@ -27,67 +44,68 @@ export default function TrainingsFilter(): ReactElement | undefined {
 
         <h3 className="my-training-form__title">фильтры</h3>
 
-        <RangeSlider range={{ min: 10, max: 100 } }/>
-
         <form className="my-training-form__form">
-          <div className="my-training-form__block my-training-form__block--price">
-            <h4 className="my-training-form__block-title">Цена, ₽</h4>
-            <div className="filter-price">
-              <div className="filter-price__input-text filter-price__input-text--min">
-                <input type="number" id="text-min" name="text-min" defaultValue={price.min} />
-                <label htmlFor="text-min">от</label>
-              </div>
-              <div className="filter-price__input-text filter-price__input-text--max">
-                <input type="number" id="text-max" name="text-max" defaultValue={price.max} />
-                <label htmlFor="text-max">до</label>
-              </div>
-            </div>
-            <div className="filter-range">
-              <div className="filter-range__scale">
-                <div className="filter-range__bar"><span className="visually-hidden">Полоса прокрутки</span></div>
-              </div>
-              <div className="filter-range__control">
-                <button className="filter-range__min-toggle"><span className="visually-hidden">Минимальное значение</span></button>
-                <button className="filter-range__max-toggle"><span className="visually-hidden">Максимальное значение</span></button>
-              </div>
-            </div>
-          </div>
-          <div className="my-training-form__block my-training-form__block--calories">
-            <h4 className="my-training-form__block-title">Калории</h4>
-            <div className="filter-calories">
-              <div className="filter-calories__input-text filter-calories__input-text--min">
-                <input type="number" id="text-min-cal" name="text-min-cal" defaultValue={calories.min}/>
-                <label htmlFor="text-min-cal">от</label>
-              </div>
-              <div className="filter-calories__input-text filter-calories__input-text--max">
-                <input type="number" id="text-max-cal" name="text-max-cal" defaultValue={calories.max}/>
-                <label htmlFor="text-max-cal">до</label>
-              </div>
-            </div>
-            <div className="filter-range">
-              <div className="filter-range__scale">
-                <div className="filter-range__bar"><span className="visually-hidden">Полоса прокрутки</span></div>
-              </div>
-              <div className="filter-range__control">
-                <button className="filter-range__min-toggle"><span className="visually-hidden">Минимальное значение</span></button>
-                <button className="filter-range__max-toggle"><span className="visually-hidden">Максимальное значение</span></button>
-              </div>
-            </div>
-          </div>
+          <FilterRangeItem
+            title='Цена, ₽'
+            min={price.min}
+            max={price.max}
+
+            containerClassName='gym-catalog-form__block--price'
+            fieldsContainerClassName='filter-price'
+            minFieldClassName='filter-price__input-text filter-price__input-text--min'
+            maxFieldClassName='filter-price__input-text filter-price__input-text--max'
+
+            onChange={handlePriceChange}
+          />
+
+          <FilterRangeItem
+            title='Калории'
+            min={calories.min}
+            max={calories.max}
+
+            containerClassName='gym-catalog-form__block--calories'
+            fieldsContainerClassName='filter-calories'
+            minFieldClassName='filter-calories__input-text filter-calories__input-text--min'
+            maxFieldClassName='filter-calories__input-text filter-calories__input-text--max'
+
+            onChange={handleCaloriesChange}
+          />
+
           <div className="my-training-form__block my-training-form__block--raiting">
             <h4 className="my-training-form__block-title">Рейтинг</h4>
             <div className="filter-raiting">
               <div className="filter-raiting__scale">
                 <div className="filter-raiting__bar"><span className="visually-hidden">Полоса прокрутки</span></div>
               </div>
+
+              <RangeSlider
+                range={{ min: TrainingValidation.RATING.MIN, max: TrainingValidation.RATING.MAX }}
+                onUpdate={handleRatingChange}
+              />
+
               <div className="filter-raiting__control">
-                <button className="filter-raiting__min-toggle"><span className="visually-hidden">Минимальное значение</span></button><span>{TrainingValidation.RATING.MIN}</span>
-                <button className="filter-raiting__max-toggle"><span className="visually-hidden">Максимальное значение</span></button><span>{TrainingValidation.RATING.MAX}</span>
+                <span>{TrainingValidation.RATING.MIN}</span>
+                <span>{TrainingValidation.RATING.MAX}</span>
               </div>
             </div>
           </div>
 
-          <TrainingsDurationList onChange={handleDurationChange}/>
+          <TrainigsTypeList onChange={handleTypeChange} />
+
+          <div className="gym-catalog-form__block gym-catalog-form__block--sort">
+            <h4 className="gym-catalog-form__title gym-catalog-form__title--sort">Сортировка</h4>
+            <div className="btn-radio-sort gym-catalog-form__radio">
+              <label>
+                <input type="radio" name="sort" defaultChecked /><span className="btn-radio-sort__label">Дешевле</span>
+              </label>
+              <label>
+                <input type="radio" name="sort" /><span className="btn-radio-sort__label">Дороже</span>
+              </label>
+              <label>
+                <input type="radio" name="sort" /><span className="btn-radio-sort__label">Бесплатные</span>
+              </label>
+            </div>
+          </div>
         </form>
       </div>
     </div>

@@ -2,9 +2,12 @@ import { ReactElement } from 'react';
 
 import useAdditionalInfo from '@client/src/hooks/useAdditionalInfo';
 
-import TrainingsDurationListItem from '../trainings-duration-list-item/trainings-duration-list-item';
+import CheckboxList from '../../tools/checkbox-list/checkbox-list';
 
-const CHANGE_DURATION_TIMEOUT = 800;
+const CLASS_LIST = {
+  CHECKBOX_CONTAINER: 'my-training-form__block--duration',
+  CHECKBOX_ITEM: 'my-training-form__check-list-item',
+} as const;
 
 type TrainingsDurationListProps = {
   onChange?: Function
@@ -18,49 +21,32 @@ export default function TrainingsDurationList({ onChange }: TrainingsDurationLis
   }
 
   const durationList = additionalInfo.trainingDuration;
-  const durationListContainer = document.querySelector('.my-training-form__block--duration');
 
-  let changeDurationTimer: NodeJS.Timeout | null = null;
+  function handleDurationChange(checkedItems: string[]) {
+    console.log('DURATION CHECKED ITEMS: ', checkedItems);
 
-  function handleDurationChange(e: React.FormEvent<HTMLUListElement>) {
-    const target = e.target;
-
-    if ('type' in target && target.type !== 'checkbox') {
-      return;
+    if(onChange) {
+      onChange(checkedItems);
     }
-
-    if (changeDurationTimer) {
-      clearTimeout(changeDurationTimer);
-    }
-
-    changeDurationTimer = setTimeout(() => {
-      const checkedDurationCheckboxes: NodeListOf<HTMLInputElement> | undefined = durationListContainer?.querySelectorAll('input[type="checkbox"]:checked');
-
-      if (onChange && checkedDurationCheckboxes) {
-        const checkedDurations: string[] = [];
-
-        checkedDurationCheckboxes.forEach((checkbox) => {
-          if ('value' in checkbox) {
-            checkedDurations.push(checkbox.value);
-          }
-        });
-
-        onChange(checkedDurations);
-      }
-    }, CHANGE_DURATION_TIMEOUT)
   }
+
+  function itemModifier(item: string) {
+    const [durationMin, durationMax] = item.split('-');
+    return`${durationMin} мин - ${durationMax} мин`;
+  }
+
 
   return (
     <div className="my-training-form__block my-training-form__block--duration">
       <h4 className="my-training-form__block-title">Длительность</h4>
 
-      <ul className="my-training-form__check-list" onChange={handleDurationChange}>
-        {
-          durationList.map((duration) => {
-            return <TrainingsDurationListItem durationRange={duration} key={duration} />
-          })
-        }
-      </ul>
+      <CheckboxList
+        itemsList={durationList}
+        listContainerClassName={CLASS_LIST.CHECKBOX_CONTAINER}
+        listItemClassName={CLASS_LIST.CHECKBOX_ITEM}
+        onChangeHandler={handleDurationChange}
+        itemModifier={itemModifier}
+      />
     </div>
   )
 }

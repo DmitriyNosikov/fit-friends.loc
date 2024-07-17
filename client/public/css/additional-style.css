@@ -70,3 +70,8 @@
 .range-slider .noUi-connect {
   background-color: #121212;
 }
+
+
+.training-video__thumbnail video {
+  width: 100%;
+}

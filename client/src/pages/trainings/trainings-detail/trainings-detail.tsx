@@ -1,22 +1,28 @@
-import BackBtn from '@client/src/components/back-btn/back-btn';
+
 import { ReactElement, useState } from 'react';
-import TrainingsReviews from '../../../components/trainings/trainings-reviews/trainings-reviews';
+
 import { useAppSelector } from '@client/src/hooks';
 import { useParams } from 'react-router-dom';
-import { getTrainingItem, getTrainingItemLoadingStatus } from '@client/src/store/slices/training-process/training-process.selectors';
-import Spinner from '@client/src/components/tools/spinner/spinner';
 import useTrainingItem from '@client/src/hooks/useTrainingItem';
 import useTrainingReviewsList from '@client/src/hooks/useTrainingReviewsList';
-import { getTrainingReviewsList } from '@client/src/store/slices/training-reviews-process/training-process.selectors';
 
+import { getTrainingItem, getTrainingItemLoadingStatus } from '@client/src/store/slices/training-process/training-process.selectors';
+import { getTrainingReviewsList } from '@client/src/store/slices/training-reviews-process/training-process.selectors';
 import { setBodyScrollAvailable } from '@client/src/utils/common';
-import PopupReview from '@client/src/components/popup-review/popup-review';
+
+import Spinner from '@client/src/components/tools/spinner/spinner';
+import BackBtn from '@client/src/components/back-btn/back-btn';
+import TrainingsVideoPlayer from '@client/src/components/trainings/trainings-video-player/trainings-video-player';
+import TrainingsReviews from '../../../components/trainings/trainings-reviews/trainings-reviews';
 import Popup from '@client/src/components/popup/popup';
+import PopupReview from '@client/src/components/popup/popup-review/popup-review';
+import PopupBuy from '@client/src/components/popup/popup-buy/popup-buy';
 
 export default function TrainingsDetail(): ReactElement {
   const params = useParams();
   const trainingId = params.trainingId;
-  const [isModalOpened, setIsModalOpened] = useState(false);
+  const [isReviewModalOpened, setIsReviewModalOpened] = useState(false);
+  const [isBuyModalOpened, setIsBuyModalOpened] = useState(false);
 
   if (trainingId) {
     useTrainingItem(trainingId);
@@ -28,7 +34,12 @@ export default function TrainingsDetail(): ReactElement {
   const trainingItemReviews = useAppSelector(getTrainingReviewsList);
 
   function handleLeaveReviewBtnClick() {
-    setIsModalOpened(true);
+    setIsReviewModalOpened(true);
+    setBodyScrollAvailable(false);
+  }
+
+  function handleBuyBtnClick() {
+    setIsBuyModalOpened(true);
     setBodyScrollAvailable(false);
   }
 
@@ -52,9 +63,21 @@ export default function TrainingsDetail(): ReactElement {
 
   return (
     <>
-      <Popup isOpened={isModalOpened}>
-        <PopupReview onClose={() => setIsModalOpened(false)} />
-      </Popup>
+      <Popup
+        title='Оставить отзыв'
+        PopupContentComponent={PopupReview}
+
+        isOpened={isReviewModalOpened}
+        onClose={() => setIsReviewModalOpened(false)}
+      />
+
+      <Popup
+        title='Купить тренировку'
+        PopupContentComponent={PopupBuy}
+
+        isOpened={isBuyModalOpened}
+        onClose={() => setIsBuyModalOpened(false)}
+      />
 
       <section className="inner-page">
         <div className="container">
@@ -136,6 +159,7 @@ export default function TrainingsDetail(): ReactElement {
                             </li>
                           </ul>
                         </div>
+
                         <div className="training-info__price-wrapper">
                           <div className="training-info__input training-info__input--price">
                             <label><span className="training-info__label">Стоимость</span>
@@ -143,32 +167,14 @@ export default function TrainingsDetail(): ReactElement {
                             </label>
                             <div className="training-info__error">Введите число</div>
                           </div>
-                          <button className="btn training-info__buy" type="button">Купить</button>
+                          <button className="btn training-info__buy" type="button" onClick={handleBuyBtnClick}>Купить</button>
                         </div>
                       </div>
                     </form>
                   </div>
                 </div>
-                <div className="training-video">
-                  <h2 className="training-video__title">Видео</h2>
-                  <div className="training-video__video">
-                    <div className="training-video__thumbnail">
-                      <picture>
-                        <source type="image/webp" srcSet="/img/content/training-video/video-thumbnail.webp, /img/content/training-video/video-thumbnail@2x.webp 2x" />
-                        <img src="/img/content/training-video/video-thumbnail.png" srcSet="/img/content/training-video/video-thumbnail@2x.png 2x" width="922" height="566" alt="Обложка видео" />
-                      </picture>
-                    </div>
-                    <button className="training-video__play-button btn-reset">
-                      <svg width={18} height={30} aria-hidden="true">
-                        <use xlinkHref="#icon-arrow" />
-                      </svg>
-                    </button>
-                  </div>
-                  <div className="training-video__buttons-wrapper">
-                    <button className="btn training-video__button training-video__button--start" type="button" disabled>Приступить</button>
-                    <button className="btn training-video__button training-video__button--stop" type="button">Закончить</button>
-                  </div>
-                </div>
+
+                <TrainingsVideoPlayer videoURL='' />
               </div>
             </div>
           }

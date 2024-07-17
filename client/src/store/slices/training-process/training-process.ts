@@ -155,15 +155,15 @@ export const trainingProcess = createSlice({
       })
 
        // Search trainings
-      // .addCase(searchTrainingsAction.pending, (state) => {
-      //   state.isTrainingsLoading = true;
-      // })
-      // .addCase(searchTrainingsAction.fulfilled, (state) => {
-      //   state.isTrainingsLoading = false;
-      // })
-      // .addCase(searchTrainingsAction.rejected, (state) => {
-      //   state.isTrainingsLoading = false;
-      // })
+      .addCase(searchTrainingsAction.pending, (state) => {
+        state.isTrainingsLoading = true;
+      })
+      .addCase(searchTrainingsAction.fulfilled, (state) => {
+        state.isTrainingsLoading = false;
+      })
+      .addCase(searchTrainingsAction.rejected, (state) => {
+        state.isTrainingsLoading = false;
+      })
 
 
       // Training item

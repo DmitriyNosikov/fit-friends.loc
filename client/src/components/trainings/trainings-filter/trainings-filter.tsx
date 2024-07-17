@@ -1,4 +1,4 @@
-import { ReactElement } from 'react';
+import { ReactElement, useEffect } from 'react';
 
 import { TrainingValidation } from '@server/training/training.constant';
 import useTrainingFilterParams from '@client/src/hooks/useTrainingFilterParams';
@@ -44,7 +44,6 @@ export default function TrainingsFilter(): ReactElement | undefined {
   const debouncedChangeFilterHandler = debounce(handleFilterChange, CHANGE_FILTER_TIMEOUT);
 
   function handlePriceChange(priceRanges: string[]) {
-    console.log('1: ', priceRanges);
     const [priseFrom, priceTo] = priceRanges;
 
     filterParams.priceFrom = parseInt(priseFrom);
@@ -54,7 +53,6 @@ export default function TrainingsFilter(): ReactElement | undefined {
   }
 
   function handleCaloriesChange(caloriesRanges: string[]) {
-    console.log('2: ', caloriesRanges);
     const [caloriesFrom, caloriesTo] = caloriesRanges;
 
     filterParams.dayCaloriesFrom = parseInt(caloriesFrom);
@@ -64,7 +62,6 @@ export default function TrainingsFilter(): ReactElement | undefined {
   }
 
   function handleRatingChange(ratingRanges: string[]) {
-    console.log('3: ', ratingRanges);
     const [ratingFrom, ratingTo] = ratingRanges;
 
     filterParams.ratingFrom = parseInt(ratingFrom);
@@ -74,7 +71,6 @@ export default function TrainingsFilter(): ReactElement | undefined {
   }
 
   function handleTypeChange(typesList: string[]) {
-    console.log('4: ', typesList);
     filterParams.trainingType = typesList;
 
     debouncedChangeFilterHandler(filterParams);
@@ -101,7 +97,6 @@ export default function TrainingsFilter(): ReactElement | undefined {
   }
 
   function handleFilterChange(filterParams: TrainingSearchQuery) {
-    console.log('Filter: ', filterParams);
     dispatch(searchTrainingsAction({ searchQuery: filterParams }));
   }
 

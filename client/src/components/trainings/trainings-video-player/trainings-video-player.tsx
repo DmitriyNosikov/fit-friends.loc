@@ -1,3 +1,4 @@
+import classNames from 'classnames';
 import { ReactElement, useState } from 'react';
 
 type TrainingsVideoPlayerProps = {
@@ -34,8 +35,17 @@ export default function TrainingsVideoPlayer({
         </div>
 
         {
-          videoURL && !isPlaying &&
-          <button className="training-video__play-button btn-reset" onClick={handlePlayBtnClick}>
+          !isPlaying &&
+          <button
+            className={
+              classNames(
+                'training-video__play-button btn-reset',
+                { 'is-disabled': !videoURL }
+              )
+            }
+
+            onClick={handlePlayBtnClick}
+          >
             <svg width={18} height={30} aria-hidden="true">
               <use xlinkHref="#icon-arrow" />
             </svg>

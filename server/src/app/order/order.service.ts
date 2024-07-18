@@ -37,7 +37,7 @@ export class OrderService {
     const orders = await this.orderRepository.search(query);
 
     if(!orders && query) {
-      throw new NotFoundException(`Can't find products by passed params " ${query}"`);
+      throw new NotFoundException(`Can't find orders by passed params " ${query}"`);
     }
 
     return orders;

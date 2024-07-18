@@ -5,13 +5,11 @@ import { JWTAuthGuard } from '@server/user/guards/jwt-auth.guard';
 import { InjectUserIdInterceptor } from '@server/libs/interceptors/inject-user-id.interceptor';
 
 import { fillDTO } from '@server/libs/helpers';
-import { CreateBalanceDTO, CreateBalanceRDO, UpdateBalanceDTO } from '@shared/balance';
+import { BalancesWithPaginationRDO, CreateBalanceDTO, CreateBalanceRDO, UpdateBalanceDTO } from '@shared/balance';
 
 import { BalanceService } from './balance.service';
 import { BalanceMessage } from './balance.constant';
 
-
-import { PaginationResult } from '@server/libs/interfaces';
 import { BaseSearchQuery, DefaultSearchParam } from '@shared/types/search/base-search-query.type';
 import { SortDirectionEnum, SortTypeEnum } from '@shared/types';
 @ApiTags('balance')
@@ -82,7 +80,7 @@ export class BalanceController {
   public async index(
     @Query() query: BaseSearchQuery,
     @Body('userId') userId: string
-  ): Promise<PaginationResult<CreateBalanceRDO>> {
+  ): Promise<BalancesWithPaginationRDO> {
     const searchQuery = {
       ...query,
       userId

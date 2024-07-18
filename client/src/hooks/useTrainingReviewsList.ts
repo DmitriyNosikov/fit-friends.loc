@@ -1,10 +1,12 @@
 import { useEffect } from 'react';
-import { useAppDispatch } from '.';
+import { useAppDispatch, useAppSelector } from '.';
 import { fetchTrainingReviewsAction } from '../store/actions/api-training-review-action';
+import { getTrainingReviewsList } from '../store/slices/training-reviews-process/training-process.selectors';
 
 
 export default function useTrainingReviewsList(trainingId: string) {
   const dispatch = useAppDispatch();
+  const trainingReviews = useAppSelector(getTrainingReviewsList);
 
   useEffect(() => {
     let isMounted = true;
@@ -17,4 +19,6 @@ export default function useTrainingReviewsList(trainingId: string) {
       isMounted = false;
     };
   }, []);
+
+  return trainingReviews;
 }

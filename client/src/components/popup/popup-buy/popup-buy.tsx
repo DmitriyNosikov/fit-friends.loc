@@ -8,8 +8,8 @@ export default function PopupBuy({ }: PopupBuyProps): ReactElement {
       <div className="popup__product">
         <div className="popup__product-image">
           <picture>
-            <source type="image/webp" srcSet="img/content/popup/popup-energy.webp, img/content/popup/popup-energy@2x.webp 2x" />
-            <img src="img/content/popup/popup-energy.jpg" srcSet="img/content/popup/popup-energy@2x.jpg 2x" width={98} height={80} />
+            <source type="image/webp" srcSet="/img/content/popup/popup-energy.webp, /img/content/popup/popup-energy@2x.webp 2x" />
+            <img src="/img/content/popup/popup-energy.jpg" srcSet="/img/content/popup/popup-energy@2x.jpg 2x" width={98} height={80} />
           </picture>
         </div>
         <div className="popup__product-info">
@@ -19,7 +19,7 @@ export default function PopupBuy({ }: PopupBuyProps): ReactElement {
         <div className="popup__product-quantity">
           <p className="popup__quantity">Количество</p>
           <div className="input-quantity">
-            <button className="btn-icon btn-icon--quantity" type="button" aria-label="minus">
+            <button className="btn-icon btn-icon--quantity" type="button" aria-label="minus" tabIndex={2}>
               <svg width={12} height={12} aria-hidden="true">
                 <use xlinkHref="#icon-minus" />
               </svg>
@@ -29,7 +29,7 @@ export default function PopupBuy({ }: PopupBuyProps): ReactElement {
                 <input type="text" defaultValue={5} size={2} readOnly />
               </label>
             </div>
-            <button className="btn-icon btn-icon--quantity" type="button" aria-label="plus">
+            <button className="btn-icon btn-icon--quantity" type="button" aria-label="plus" tabIndex={3}>
               <svg width={12} height={12} aria-hidden="true">
                 <use xlinkHref="#icon-plus" />
               </svg>
@@ -42,7 +42,7 @@ export default function PopupBuy({ }: PopupBuyProps): ReactElement {
         <ul className="payment-method__list">
           <li className="payment-method__item">
             <div className="btn-radio-image">
-              <label>
+              <label tabIndex={4}>
                 <input type="radio" name="payment-purchases" aria-label="Visa." defaultChecked /><span className="btn-radio-image__image">
                   <svg width={58} height={20} aria-hidden="true">
                     <use xlinkHref="#visa-logo" />
@@ -52,7 +52,7 @@ export default function PopupBuy({ }: PopupBuyProps): ReactElement {
           </li>
           <li className="payment-method__item">
             <div className="btn-radio-image">
-              <label>
+              <label tabIndex={5}>
                 <input type="radio" name="payment-purchases" aria-label="Мир." /><span className="btn-radio-image__image">
                   <svg width={66} height={20} aria-hidden="true">
                     <use xlinkHref="#mir-logo" />
@@ -62,7 +62,7 @@ export default function PopupBuy({ }: PopupBuyProps): ReactElement {
           </li>
           <li className="payment-method__item">
             <div className="btn-radio-image">
-              <label>
+              <label tabIndex={6}>
                 <input type="radio" name="payment-purchases" aria-label="Iomoney." /><span className="btn-radio-image__image">
                   <svg width={106} height={24} aria-hidden="true">
                     <use xlinkHref="#iomoney-logo" />
@@ -80,7 +80,7 @@ export default function PopupBuy({ }: PopupBuyProps): ReactElement {
         <p className="popup__total-price">4&nbsp;000&nbsp;₽</p>
       </div>
       <div className="popup__button">
-        <button className="btn" type="button">Купить</button>
+        <button className="btn popup__button_send" type="button" tabIndex={7} autoFocus>Купить</button>
       </div>
     </div>
   )

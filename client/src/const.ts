@@ -12,6 +12,8 @@ const BACKEND_API_URL = {
   GET_FILES: `${BASE_URL}/api/static`,
   TRAININGS: `${BASE_URL}/api/trainings`,
   TRAINING_REVIEWS: `${BASE_URL}/api/training-reviews`,
+  ORDERS: `${BASE_URL}/api/orders`,
+  BALANCE: `${BASE_URL}/api/balance`,
 }
 export const ApiRoute = {
   USER_API: BACKEND_API_URL.USERS,
@@ -30,6 +32,10 @@ export const ApiRoute = {
   FILTER_PARAMS: `${BACKEND_API_URL.TRAININGS}/filter-params`,
 
   TRAINING_REVIEWS_API: BACKEND_API_URL.TRAINING_REVIEWS,
+
+  ORDERS_API: BACKEND_API_URL.ORDERS,
+
+  BALANCE_API: BACKEND_API_URL.BALANCE,
 } as const;
 
 // -- App
@@ -50,7 +56,9 @@ export const Namespace = {
   MAIN: 'MAIN',
   USER: 'USER',
   TRAINING: 'TRAINING',
-  TRAINING_REVIEWS: 'TRAINING_REVIEWS'
+  TRAINING_REVIEWS: 'TRAINING_REVIEWS',
+  ORDER: 'ORDER',
+  BALANCE: 'BALANCE'
 } as const;
 
 // USER AUTH STATUSES

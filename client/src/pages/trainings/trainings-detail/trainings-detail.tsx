@@ -18,20 +18,20 @@ import Popup from '@client/src/components/popup/popup';
 import PopupReview from '@client/src/components/popup/popup-review/popup-review';
 import PopupBuy from '@client/src/components/popup/popup-buy/popup-buy';
 
-export default function TrainingsDetail(): ReactElement {
+export default function TrainingsDetail(): ReactElement | undefined {
   const params = useParams();
   const trainingId = params.trainingId;
+
+  if(!trainingId) {
+    return;
+  }
+
   const [isReviewModalOpened, setIsReviewModalOpened] = useState(false);
   const [isBuyModalOpened, setIsBuyModalOpened] = useState(false);
 
-  if (trainingId) {
-    useTrainingItem(trainingId);
-    useTrainingReviewsList(trainingId)
-  }
-
   const isTrainingLoading = useAppSelector(getTrainingItemLoadingStatus)
-  const trainingItem = useAppSelector(getTrainingItem);
-  const trainingItemReviews = useAppSelector(getTrainingReviewsList);
+  const trainingItem = useTrainingItem(trainingId);
+  const trainingItemReviews = useTrainingReviewsList(trainingId)
 
   function handleLeaveReviewBtnClick() {
     setIsReviewModalOpened(true);

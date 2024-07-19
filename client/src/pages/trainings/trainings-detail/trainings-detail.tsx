@@ -6,8 +6,7 @@ import { useParams } from 'react-router-dom';
 import useTrainingItem from '@client/src/hooks/useTrainingItem';
 import useTrainingReviewsList from '@client/src/hooks/useTrainingReviewsList';
 
-import { getTrainingItem, getTrainingItemLoadingStatus } from '@client/src/store/slices/training-process/training-process.selectors';
-import { getTrainingReviewsList } from '@client/src/store/slices/training-reviews-process/training-process.selectors';
+import { getTrainingItemLoadingStatus } from '@client/src/store/slices/training-process/training-process.selectors';
 import { setBodyScrollAvailable } from '@client/src/utils/common';
 
 import Spinner from '@client/src/components/tools/spinner/spinner';
@@ -74,6 +73,10 @@ export default function TrainingsDetail(): ReactElement | undefined {
       <Popup
         title='Купить тренировку'
         PopupContentComponent={PopupBuy}
+        PopupContentComponentProps={{
+          trainingId: trainingItem.id,
+          trainingPrice: trainingItem.price,
+        }}
 
         isOpened={isBuyModalOpened}
         onClose={() => setIsBuyModalOpened(false)}

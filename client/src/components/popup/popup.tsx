@@ -7,12 +7,13 @@ import PopupPortal from './popup-portal/popup-portal';
 type PopupProps = {
   title: string,
   PopupContentComponent: any,
+  PopupContentComponentProps?: any,
 
   isOpened?: boolean,
   onClose?: Function
 };
 
-export default function Popup({ title, PopupContentComponent, isOpened = false, onClose }: PopupProps): ReactElement {
+export default function Popup({ title, PopupContentComponent, PopupContentComponentProps, isOpened = false, onClose }: PopupProps): ReactElement {
   let sendBtn: HTMLButtonElement | null = null;
   let closeBtn: HTMLButtonElement | null = null;
 
@@ -100,7 +101,7 @@ export default function Popup({ title, PopupContentComponent, isOpened = false, 
             </button>
           </div>
 
-          <PopupContentComponent onClose={onClose} />
+          <PopupContentComponent onClose={onClose} {...PopupContentComponentProps}/>
         </div>
       </section>
     </PopupPortal>

@@ -23,7 +23,9 @@ export default function PopupBuy({ trainingId, trainingPrice, onClose }: PopupBu
   const [trainingsCount, setTrainingsCount] = useState(INITIAL_TRAININGS_COUNT);
 
   function handleCountChange(count: number) {
-    setTotalPrice(trainingPrice * count);
+    const calculatedTotalPrice = trainingPrice * count;
+
+    setTotalPrice(calculatedTotalPrice);
     setTrainingsCount(count);
   }
 

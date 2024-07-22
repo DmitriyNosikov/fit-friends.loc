@@ -1,4 +1,4 @@
-import { ReactElement, useState } from 'react';
+import { ReactElement, useEffect, useState } from 'react';
 
 const INITIAL_COUNT = 1;
 
@@ -13,6 +13,18 @@ export default function Counter({ initialCount, inputAvailable, onChange }: Coun
   const [count, setCount] = useState(startCount);
   const isInputAvailable = inputAvailable ?? false;
 
+  useEffect(() => {
+    let isMounted = true;
+
+    if(isMounted) {
+      handleCountChange(count);
+    }
+
+    return () => {
+      isMounted = false;
+    }
+  }, [count])
+
   function handleCountChange(count: number) {
     if(onChange) {
       onChange(count);
@@ -21,14 +33,16 @@ export default function Counter({ initialCount, inputAvailable, onChange }: Coun
 
   function handleIncrementClick() {
     setCount((count) => count + 1);
-
-    handleCountChange(count + 1);
   }
 
   function handleDecrementClick() {
-    setCount((count) => count - 1);
+    setCount((count) => {
+      let newCount = count - 1;
 
-    handleCountChange(count - 1);
+      newCount = (newCount <= 0) ? 1 : newCount;
+
+      return newCount
+    });
   }
 
   return (

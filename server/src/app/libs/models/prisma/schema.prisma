@@ -22,7 +22,7 @@ datasource db {
 enum PaymentType {
   visa
   mir
-  umoney
+  iomoney
 }
 
 //////////////////// USERS ////////////////////

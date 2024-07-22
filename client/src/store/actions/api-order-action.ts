@@ -5,6 +5,7 @@ import { setDataLoadingStatus } from '../slices/main-process/main-process';
 import { CreateOrderDTO, CreateOrderRDO, OrdersWithPaginationRDO } from '@shared/order';
 import { setOrdersAction, updateOrdersAction } from '../slices/order-process/order-process';
 import { toast } from 'react-toastify';
+import { adaptPaymentType } from '@client/src/utils/adapters';
 
 const APIOrderPrefix = `[${Namespace.ORDER}-BACKEND]`;
 const APIAction = {
@@ -45,8 +46,13 @@ export const createOrderAction = createAsyncThunk<CreateOrderRDO, CreateOrderDTO
   ) => {
     dispatch(setDataLoadingStatus(true));
 
+    const adaptedOrderData = {
+      ...orderData,
+      paymentType: adaptPaymentType(orderData.paymentType)
+    };
+
     try {
-      const { data } = await api.post<CreateOrderRDO>(ApiRoute.ORDERS_API, orderData);
+      const { data } = await api.post<CreateOrderRDO>(ApiRoute.ORDERS_API, adaptedOrderData);
 
       dispatch(updateOrdersAction(data));
       dispatch(setDataLoadingStatus(false));

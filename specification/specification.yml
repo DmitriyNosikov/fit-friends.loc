@@ -1601,7 +1601,7 @@ components:
           enum:
             - visa
             - mir
-            - umoney
+            - iomoney
         userId:
           type: object
           description: User ID
@@ -1660,7 +1660,7 @@ components:
           enum:
             - visa
             - mir
-            - umoney
+            - iomoney
         userId:
           type: object
           description: User ID
@@ -1710,7 +1710,7 @@ components:
           enum:
             - visa
             - mir
-            - umoney
+            - iomoney
         userId:
           type: object
           description: User ID

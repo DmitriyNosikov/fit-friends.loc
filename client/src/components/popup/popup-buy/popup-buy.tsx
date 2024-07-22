@@ -1,18 +1,30 @@
 import { ReactElement, useState } from 'react'
 import PaymentMethod from '../../payment-method/payment-method';
 import Counter from '../../counter/counter';
+import { CreateOrderDTO } from '@shared/order';
+import { PaymentType } from '@shared/types';
+import { useAppDispatch } from '@client/src/hooks';
+import { createOrderAction } from '@client/src/store/actions/api-order-action';
+import { toast } from 'react-toastify';
+
+const INITIAL_TRAININGS_COUNT = 1;
 
 type PopupBuyProps = {
   trainingId: string,
-  trainingPrice: number
+  trainingPrice: number,
+  onClose?: Function
 };
 
-export default function PopupBuy({ trainingId, trainingPrice }: PopupBuyProps): ReactElement {
+export default function PopupBuy({ trainingId, trainingPrice, onClose }: PopupBuyProps): ReactElement {
+  const dispatch = useAppDispatch();
+
   const [totalPrice, setTotalPrice] = useState(trainingPrice);
   const [paymentType, setPaymentType] = useState('visa');
+  const [trainingsCount, setTrainingsCount] = useState(INITIAL_TRAININGS_COUNT);
 
   function handleCountChange(count: number) {
     setTotalPrice(trainingPrice * count);
+    setTrainingsCount(count);
   }
 
   function handleChangePaymentType(type: string) {
@@ -20,7 +32,25 @@ export default function PopupBuy({ trainingId, trainingPrice }: PopupBuyProps): 
   }
 
   function handleSendBtnClick() {
-    console.log('Id: ', trainingId, ' total price: ', totalPrice, ' payment type: ', paymentType);
+    const orderData: CreateOrderDTO = {
+      type: 'абонемент',
+      paymentType: paymentType as PaymentType,
+      serviceId: trainingId,
+      trainingsCount
+    };
+
+    dispatch(createOrderAction(orderData))
+      .then((result) => {
+        if ('error' in result) {
+          return;
+        }
+
+        toast.success('Trainings has been successfully bought');
+
+        if(onClose) {
+          onClose();
+        }
+      });
   }
 
   return (
@@ -37,7 +67,7 @@ export default function PopupBuy({ trainingId, trainingPrice }: PopupBuyProps): 
           <p className="popup__product-price">{trainingPrice} ₽</p>
         </div>
 
-        <Counter onChange={handleCountChange} />
+        <Counter initialCount={INITIAL_TRAININGS_COUNT} onChange={handleCountChange} />
       </div>
 
       <PaymentMethod

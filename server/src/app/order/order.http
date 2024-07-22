@@ -3,7 +3,7 @@
 @baseUrl = http://{{host}}:{{port}}/api/orders
 
 @orderId = 201c2a72-d2a9-4b03-8ee1-0f4a5fa1d272
-@authorization = Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJmNzhkYWRjNi01OTAzLTQwNzktOTNhMy0yNTdkMGE0NTk1MmUiLCJlbWFpbCI6Imlyb24tbWFuQHN0YXJraW5kdXN0cmllcy5pdCIsIm5hbWUiOiJUb255Iiwicm9sZSI6ImNsaWVudCIsImlhdCI6MTcxOTA5MjgzMiwiZXhwIjoxNzE5MDkzNzMyfQ.L-UNTbo9DlSaURasSl9rRh6RZ3k4HqXggRiGDwnHNSE
+@authorization = Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJhMjk4OGVmMS02OGEwLTQ0Y2EtYjQ2ZS1hYjQ0NGY1NGYwNmUiLCJlbWFpbCI6Imlyb24tbWFuQHN0YXJraW5kdXN0cmllcy5pdCIsIm5hbWUiOiJUb255Iiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzIxNjU3OTU0LCJleHAiOjE3MjE2NTg4NTR9.eAp-vOuAvFrEwSr0HSWEgB8xPE0pgZTVhCSXnHPHNT0
 
 # Create new order
 POST {{baseUrl}}/ HTTP/1.1
@@ -14,7 +14,7 @@ Content-Type: application/json
   "type": "абонемент",
   "serviceId": "b3110e27-cb56-4c74-b633-d71d697f03e9",
   "trainingsCount": 5,
-  "paymentType": "mir"
+  "paymentType": "iomoney"
 }
 ###
 

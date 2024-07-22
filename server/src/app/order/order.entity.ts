@@ -8,17 +8,12 @@ import { TrainingInterface } from '@server/training/interfaces/training.interfac
 import { PaymentType } from '@shared/types/payment-type.enum';
 import { OrderType } from '@server/libs/types';
 
-
-export const TRAINING_DEFAULT = {
-  RATING: 0,
-} as const;
-
 export class OrderEntity extends Entity implements StorableEntityInterface<OrderInterface> {
   public createdAt?: Date;
   public updatedAt?: Date;
 
   public type: OrderType;
-  public serviceId: TrainingInterface['id'];
+  public serviceId: string;
   public price: TrainingInterface['price'];
   public trainingsCount: number;
   public totalPrice: number;

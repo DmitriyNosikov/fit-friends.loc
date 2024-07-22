@@ -3,10 +3,6 @@ import { StorableEntityInterface } from '@server/libs/interfaces';
 import { BalanceInterface } from './interfaces/balance.interface';
 import { OrderInterface } from '@server/order/interfaces/order.interface';
 
-export const TRAINING_DEFAULT = {
-  RATING: 0,
-} as const;
-
 export class BalanceEntity extends Entity implements StorableEntityInterface<BalanceInterface> {
   public createdAt?: Date;
   public updatedAt?: Date;

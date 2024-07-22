@@ -7,7 +7,6 @@ import {
 } from 'class-validator';
 
 import { OrderValidation } from '@server/order/order.constant';
-import { TrainingInterface } from '@server/training/interfaces/training.interface';
 import { OrderInterface } from '@server/order/interfaces';
 
 export class CreateBalanceDTO {

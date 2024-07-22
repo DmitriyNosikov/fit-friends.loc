@@ -12,7 +12,7 @@ import {
 
 import { OrderValidation } from '@server/order/order.constant';
 import { TrainingInterface } from '@server/training/interfaces/training.interface';
-import { PaymentType, PaymentTypeEnum } from '@shared/types/payment-type.enum';
+import { PaymentType, PaymentTypeEnum, paymentTypeList } from '@shared/types/payment-type.enum';
 import { UserInterface } from '@server/user/interfaces';
 
 export class UpdateOrderDTO {
@@ -67,6 +67,7 @@ export class UpdateOrderDTO {
     example: 'mir',
     enum: PaymentTypeEnum
   })
+  @IsIn(paymentTypeList)
   @IsString()
   @IsOptional()
   paymentType?: PaymentType;

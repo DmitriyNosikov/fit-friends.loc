@@ -58,3 +58,8 @@ export function getAdaptedUserLevel(level: string) {
 
   return userLevel;
 }
+
+
+export function adaptPaymentType(type: string) {
+  return (type === 'мир') ? 'mir' : type;
+}

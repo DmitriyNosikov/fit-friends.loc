@@ -3,12 +3,6 @@ import { StorableEntityInterface } from '@server/libs/interfaces';
 import { TrainingInterface } from './interfaces/training.interface';
 import { Gender, TrainingDuration, TrainingType, UserLevel } from '@server/libs/types';
 
-
-export const TRAINING_DEFAULT = {
-  RATING: 0,
-
-} as const;
-
 export class TrainingEntity extends Entity implements StorableEntityInterface<TrainingInterface> {
   public createdAt?: Date;
   public updatedAt?: Date;

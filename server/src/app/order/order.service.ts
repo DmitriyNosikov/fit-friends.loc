@@ -45,7 +45,7 @@ export class OrderService {
   }
 
   public async create(dto: CreateOrderDTO) {
-    const { price, totalPrice } = await this.countPricesByTraining(dto.serviceId, dto.trainingsCount);
+    const { price, totalPrice } = await this.countPricesByTraining(dto.trainingId, dto.trainingsCount);
     const createOrderDTO = {
       ...dto,
       price,
@@ -76,8 +76,8 @@ export class OrderService {
     let price = order.price;
     let totalPrice = order.totalPrice;
 
-    if(fieldsToUpdate.serviceId) {
-      const { price: newPrice, totalPrice: newTotalPrice } = await this.countPricesByTraining(fieldsToUpdate.serviceId, trainingsCount);
+    if(fieldsToUpdate.trainingId) {
+      const { price: newPrice, totalPrice: newTotalPrice } = await this.countPricesByTraining(fieldsToUpdate.trainingId, trainingsCount);
       price = newPrice;
       totalPrice = newTotalPrice;
     }
@@ -109,8 +109,8 @@ export class OrderService {
   }
 
   //////////////////// Вспомогательные методы ////////////////////
-  private async countPricesByTraining(serviceId: string, trainingsCount: number) {
-    const training = await this.trainingService.findById(serviceId);
+  private async countPricesByTraining(trainingId: string, trainingsCount: number) {
+    const training = await this.trainingService.findById(trainingId);
     const price = training.price;
     const totalPrice = price * trainingsCount;
 

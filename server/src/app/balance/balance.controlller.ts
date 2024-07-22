@@ -107,7 +107,7 @@ export class BalanceController {
     description: BalanceMessage.ERROR.NOT_FOUND
   })
   public async countBalance(@Body('userId') userId: string): Promise<number> {
-    const trainingBalance = await this.balanceService.countAvailableTrainings(userId);
+    const trainingBalance = await this.balanceService.countAllAvailableTrainings(userId);
 
     return trainingBalance;
   }

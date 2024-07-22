@@ -12,7 +12,7 @@ Content-Type: application/json
 
 {
   "type": "абонемент",
-  "serviceId": "b3110e27-cb56-4c74-b633-d71d697f03e9",
+  "trainingId": "b3110e27-cb56-4c74-b633-d71d697f03e9",
   "trainingsCount": 5,
   "paymentType": "iomoney"
 }

@@ -13,7 +13,7 @@ export class OrderEntity extends Entity implements StorableEntityInterface<Order
   public updatedAt?: Date;
 
   public type: OrderType;
-  public serviceId: string;
+  public trainingId: TrainingInterface['id'];
   public price: TrainingInterface['price'];
   public trainingsCount: number;
   public totalPrice: number;
@@ -35,7 +35,7 @@ export class OrderEntity extends Entity implements StorableEntityInterface<Order
     this.updatedAt = order.updatedAt;
 
     this.type = order.type;
-    this.serviceId = order.serviceId;
+    this.trainingId = order.trainingId;
     this.price = order.price;
     this.trainingsCount = order.trainingsCount;
     this.totalPrice = order.totalPrice;
@@ -50,7 +50,7 @@ export class OrderEntity extends Entity implements StorableEntityInterface<Order
       updatedAt: this.updatedAt,
 
       type: this.type,
-      serviceId: this.serviceId,
+      trainingId: this.trainingId,
       price: this.price,
       trainingsCount: this.trainingsCount,
       totalPrice: this.totalPrice,

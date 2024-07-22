@@ -154,7 +154,7 @@ export class OrderRepository extends BasePostgresRepository<OrderEntity, OrderIn
     }
 
     if(query?.trainingId) {
-      where.serviceId = query.trainingId;
+      where.trainingId = query.trainingId;
     }
 
     // Сортировка и направление сортировки

@@ -204,7 +204,7 @@ export function getOrders(usersList: AuthUserInterface[], trainingsList: Trainin
     orders.push({
       userId: randomUserId,
       type: "абонемент",
-      serviceId: training.id,
+      trainingId: training.id,
       trainingsCount: trainingsCount,
       paymentType: PaymentTypeEnum.MIR,
       price: training.price,

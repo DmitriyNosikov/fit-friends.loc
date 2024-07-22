@@ -202,8 +202,8 @@ export function getOrders(usersList: AuthUserInterface[], trainingsList: Trainin
     const randomUserId = usersList[randomUserIdIndex].id;
 
     orders.push({
-      userId: randomUserId,
       type: "абонемент",
+      userId: randomUserId,
       trainingId: training.id,
       trainingsCount: trainingsCount,
       paymentType: PaymentTypeEnum.MIR,

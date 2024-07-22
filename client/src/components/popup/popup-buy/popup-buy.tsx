@@ -37,7 +37,7 @@ export default function PopupBuy({ trainingId, trainingPrice, onClose }: PopupBu
     const orderData: CreateOrderDTO = {
       type: 'абонемент',
       paymentType: paymentType as PaymentType,
-      serviceId: trainingId,
+      trainingId,
       trainingsCount
     };
 

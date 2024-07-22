@@ -19,14 +19,18 @@ async function seedDB(prismaClient: PrismaClient) {
   for(const order of orders) {
     // Order
     await prismaClient.order.create({
-      data: {
-        ...order,
-        balance: {
-          create: {
-            remainingTrainingsCount: order.trainingsCount,
-          }
-        }
-      }
+      data: order
+    });
+
+    // Balance
+    const balance = {
+      userId: order.userId,
+      trainingId: order.trainingId,
+      remainingTrainingsCount: order.trainingsCount
+    };
+    
+    await prismaClient.balance.create({
+      data: balance
     });
   }
 

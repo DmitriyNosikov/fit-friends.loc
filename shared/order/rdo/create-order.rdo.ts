@@ -43,7 +43,7 @@ export class CreateOrderRDO {
     example: 'd61ef04e-295a-41cb-a230-7e9e4570f14b',
   })
   @Expose()
-  serviceId: TrainingInterface['id'];
+  trainingId: TrainingInterface['id'];
 
   @ApiProperty({
     description: 'Training price on create order moment',

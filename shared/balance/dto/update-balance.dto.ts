@@ -9,25 +9,24 @@ import {
 
 import { OrderValidation } from '@server/order/order.constant';
 import { TrainingInterface } from '@server/training/interfaces/training.interface';
-import { OrderInterface } from '@server/order/interfaces';
 import { UserInterface } from '@server/user/interfaces';
 
 export class UpdateBalanceDTO {
+  @ApiProperty({
+    description: 'User ID',
+    example: 'd61ef04e-295a-41cb-a230-7e9e4570f14b',
+  })
+  @IsString()
+  @IsOptional()
+  userId?: UserInterface['id'];
+
   @ApiProperty({
     description: 'Training ID',
     example: 'd61ef04e-295a-41cb-a230-7e9e4570f14b',
   })
   @IsString()
   @IsOptional()
-  serviceId?: TrainingInterface['id'];
-
-  @ApiProperty({
-    description: 'Order ID',
-    example: 'd61ef04e-295a-41cb-a230-7e9e4570f14b',
-  })
-  @IsString()
-  @IsOptional()
-  orderId?: OrderInterface['id'];
+  trainingId?: TrainingInterface['id'];
 
   @ApiProperty({
     description: 'Remaining trainings count',
@@ -40,12 +39,4 @@ export class UpdateBalanceDTO {
   @IsNumber()
   @IsOptional()
   remainingTrainingsCount?: number;
-
-  @ApiProperty({
-    description: 'User ID',
-    example: 'd61ef04e-295a-41cb-a230-7e9e4570f14b',
-  })
-  @IsString()
-  @IsOptional()
-  userId?: UserInterface['id'];
 }

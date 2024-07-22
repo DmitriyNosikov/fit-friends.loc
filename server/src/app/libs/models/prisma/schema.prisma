@@ -90,12 +90,12 @@ model Order {
   updatedAt               DateTime?   @updatedAt @map("updated_at")
 
   type                    String
+  userId                  String      @map("user_id")
   trainingId              String      @map("training_id")
   price                   Int
   trainingsCount          Int         @map("trainings_count")
   totalPrice              Int         @map("total_price")
   paymentType             PaymentType @map("payment_type")
-  userId                  String      @map("user_id")
 
   training Training @relation(fields: [trainingId], references: [id], onDelete: Cascade)
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)

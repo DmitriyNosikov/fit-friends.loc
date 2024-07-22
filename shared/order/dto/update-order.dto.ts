@@ -32,7 +32,7 @@ export class UpdateOrderDTO {
   })
   @IsString()
   @IsOptional()
-  serviceId?: TrainingInterface['id'];
+  trainingId?: TrainingInterface['id'];
 
   @ApiProperty({
     description: 'Training price on create order moment',

@@ -1,5 +1,5 @@
 
-import { ReactElement, useState } from 'react';
+import { ReactElement, useEffect, useState } from 'react';
 
 import { useAppSelector } from '@client/src/hooks';
 import { useParams } from 'react-router-dom';
@@ -16,6 +16,7 @@ import TrainingsReviews from '../../../components/trainings/trainings-reviews/tr
 import Popup from '@client/src/components/popup/popup';
 import PopupReview from '@client/src/components/popup/popup-review/popup-review';
 import PopupBuy from '@client/src/components/popup/popup-buy/popup-buy';
+import useOrdersByTrainingId from '@client/src/hooks/useOrdersByTrainingId';
 
 export default function TrainingsDetail(): ReactElement | undefined {
   const params = useParams();
@@ -31,6 +32,9 @@ export default function TrainingsDetail(): ReactElement | undefined {
   const isTrainingLoading = useAppSelector(getTrainingItemLoadingStatus)
   const trainingItem = useTrainingItem(trainingId);
   const trainingItemReviews = useTrainingReviewsList(trainingId)
+  const userOrdersByTraining = useOrdersByTrainingId(trainingId);
+  const isUserBougthTraining = userOrdersByTraining?.entities && userOrdersByTraining.entities.length > 0;
+
 
   function handleLeaveReviewBtnClick() {
     setIsReviewModalOpened(true);
@@ -50,6 +54,7 @@ export default function TrainingsDetail(): ReactElement | undefined {
     trainersName,
     title,
     description,
+    video,
     rating,
     trainingType,
     trainingDuration,
@@ -148,7 +153,7 @@ export default function TrainingsDetail(): ReactElement | undefined {
                             </label>
                           </div>
                           <ul className="training-info__list">
-                            <li className="training-info__item">
+                            <li className="training-info__item">p
                               <div className="hashtag hashtag--white"><span>#{trainingType}</span></div>
                             </li>
                             <li className="training-info__item">
@@ -177,7 +182,7 @@ export default function TrainingsDetail(): ReactElement | undefined {
                   </div>
                 </div>
 
-                <TrainingsVideoPlayer videoURL='' />
+                <TrainingsVideoPlayer videoURL={video} isBeginBtnDisabled={!isUserBougthTraining} />
               </div>
             </div>
           }

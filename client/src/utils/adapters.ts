@@ -1,5 +1,17 @@
 import { UserLevelEnum } from '@shared/types/user-level.enum';
 
+export function createSearchURL<T extends Record<string, unknown>>(baseURL: string, searchQuery?: T) {
+  let url = baseURL;
+
+  if(searchQuery && Object.keys(searchQuery).length > 0) {
+    const queryString = adaptQueryParams(searchQuery as Record<string, unknown>);
+
+    url += `?${queryString}`;
+  }
+
+  return url;
+}
+
 export function adaptQueryParams(queryString: Record<string, unknown>) {
   let adaptedQueryString = '';
   let tempStorage: string[] = [];

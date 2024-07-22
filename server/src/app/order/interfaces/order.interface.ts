@@ -12,5 +12,5 @@ export interface OrderInterface extends CreatedUpdatedDatesInterface {
   trainingsCount: number;
   totalPrice: number;
   paymentType: PaymentType;
-  userId: UserInterface['id'];
+  userId?: UserInterface['id'];
 }

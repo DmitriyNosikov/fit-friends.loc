@@ -75,3 +75,8 @@
 .training-video__thumbnail video {
   width: 100%;
 }
+
+
+.training-video__button--stop {
+  display: block;
+}

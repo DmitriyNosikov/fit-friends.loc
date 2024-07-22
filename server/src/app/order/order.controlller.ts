@@ -2,7 +2,7 @@ import { Body, Controller, Delete, Get, HttpStatus, Param, Patch, Post, Query, U
 import { ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { CreateOrderDTO, UpdateOrderDTO, CreateOrderRDO, OrdersWithPaginationRDO } from '@shared/order';
 
-import { fillDTO, filterQuery } from '@server/libs/helpers';
+import { fillDTO } from '@server/libs/helpers';
 import { JWTAuthGuard } from '@server/user/guards/jwt-auth.guard';
 
 import { OrderService } from './order.service';
@@ -73,9 +73,8 @@ export class OrderController {
     @Body('userId') userId,
     @Query() query?: BaseSearchQuery
   ): Promise<OrdersWithPaginationRDO | null> {
-    const preparedQuery = filterQuery(query);
     const documents = await this.orderService.search({
-      ...preparedQuery,
+      ...query,
       userId
     });
 

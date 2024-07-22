@@ -4,16 +4,50 @@ import { ReactElement, useState } from 'react';
 type TrainingsVideoPlayerProps = {
   videoURL: string,
   thumbnailURL?: string,
+  isBeginBtnDisabled?: boolean
 };
 
 export default function TrainingsVideoPlayer({
   videoURL,
-  thumbnailURL = '/img/content/training-video/video-thumbnail.png'
-}: TrainingsVideoPlayerProps): ReactElement {
+  thumbnailURL = '/img/content/training-video/video-thumbnail.png',
+  isBeginBtnDisabled = true
+}: TrainingsVideoPlayerProps): ReactElement | undefined {
+  if(!videoURL) {
+    return;
+  }
+
   const [isPlaying, setIsPlaying] = useState(false);
+  const [playBtnDisabled, setPlayBtnDisabled] = useState(true);
+
+  const beginBtn = document.querySelector('.training-video__button--start');
+  const finishBtn = document.querySelector('.training-video__button--stop');
+
 
   function handlePlayBtnClick() {
     setIsPlaying(true);
+  }
+
+  function handleBeginBtnClick() {
+    if(!beginBtn || !finishBtn) {
+      return;
+    }
+
+    beginBtn.classList.add('visually-hidden');
+    finishBtn.classList.remove('visually-hidden');
+
+    setPlayBtnDisabled(false);
+  }
+
+  function handleFinishBtnClick() {
+    if(!beginBtn || !finishBtn) {
+      return;
+    }
+
+    finishBtn.classList.add('visually-hidden');
+    beginBtn.classList.remove('visually-hidden');
+
+    setPlayBtnDisabled(true);
+    setIsPlaying(false);
   }
 
   return (
@@ -30,7 +64,7 @@ export default function TrainingsVideoPlayer({
           }
 
           {
-            isPlaying && <video src={videoURL} controls />
+            isPlaying && <video src={videoURL} controls autoPlay/>
           }
         </div>
 
@@ -40,7 +74,7 @@ export default function TrainingsVideoPlayer({
             className={
               classNames(
                 'training-video__play-button btn-reset',
-                { 'is-disabled': !videoURL }
+                { 'is-disabled': playBtnDisabled }
               )
             }
 
@@ -54,8 +88,17 @@ export default function TrainingsVideoPlayer({
       </div>
 
       <div className="training-video__buttons-wrapper">
-        <button className="btn training-video__button training-video__button--start" type="button" disabled>Приступить</button>
-        <button className="btn training-video__button training-video__button--stop" type="button">Закончить</button>
+        <button
+          className="btn training-video__button training-video__button--start"
+          type="button"
+          disabled={isBeginBtnDisabled}
+          onClick={handleBeginBtnClick}
+          >Приступить</button>
+        <button
+          className="btn training-video__button training-video__button--stop visually-hidden"
+          type="button"
+          onClick={handleFinishBtnClick}
+          >Закончить</button>
       </div>
     </div>
   )

@@ -3,13 +3,13 @@ import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/co
 import { OrderRepository } from './order.repository';
 import { OrderFactory } from './order.factory';
 
-import { CreateOrderDTO, UpdateOrderDTO } from '@shared/order';
+import { CreateOrderDTO, OrderSearchQuery, UpdateOrderDTO } from '@shared/order';
 import { OrderMessage } from './order.constant';
 import { OrderEntity } from './order.entity';
 import { TrainingService } from '@server/training/training.service';
-import { BaseSearchQuery, UserIdPayload } from '@shared/types';
 import { BalanceService } from '../balance/balance.service';
 import { CreateBalanceDTO } from '@shared/balance';
+import { fillDTO, omitUndefined } from '@server/libs/helpers';
 
 @Injectable()
 export class OrderService {
@@ -33,8 +33,9 @@ export class OrderService {
     return order;
   }
 
-  public async search(query?: BaseSearchQuery & UserIdPayload) {
-    const orders = await this.orderRepository.search(query);
+  public async search(query?: OrderSearchQuery) {
+    const preparedQuery = this.filterQuery(query);
+    const orders = await this.orderRepository.search(preparedQuery);
 
     if(!orders && query) {
       throw new NotFoundException(`Can't find orders by passed params " ${query}"`);
@@ -124,5 +125,12 @@ export class OrderService {
     }
 
     return true;
+  }
+
+  public filterQuery(query: OrderSearchQuery) {
+    const filteredQuery = fillDTO(OrderSearchQuery, query);
+    const omitedQuery = omitUndefined(filteredQuery as Record<string, unknown>);
+
+    return omitedQuery;
   }
 }

@@ -1,6 +1,6 @@
 import { ReactElement } from 'react';
 
-import useAdditionalInfo from '@client/src/hooks/useAdditionalInfo';
+import useFetchAdditionalInfo from '@client/src/hooks/useFetchAdditionalInfo';
 
 import CheckboxList from '../../tools/checkbox-list/checkbox-list';
 
@@ -14,7 +14,7 @@ type TrainingsDurationListProps = {
 };
 
 export default function TrainingsDurationList({ onChange }: TrainingsDurationListProps): ReactElement | undefined {
-  const additionalInfo = useAdditionalInfo();
+  const additionalInfo = useFetchAdditionalInfo();
 
   if (!additionalInfo) {
     return;

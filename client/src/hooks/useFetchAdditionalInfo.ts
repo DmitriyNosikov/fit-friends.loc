@@ -4,7 +4,7 @@ import { fetchAdditionalInfoAction } from '../store/actions/api-user-action';
 import { getAdditionalInfo } from '../store/slices/user-process/user-process.selectors';
 
 
-export default function useAdditionalInfo() {
+export default function useFetchAdditionalInfo() {
   const dispatch = useAppDispatch();
   const additionalInfo = useAppSelector(getAdditionalInfo);
 

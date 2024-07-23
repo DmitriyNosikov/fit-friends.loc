@@ -4,7 +4,7 @@ import { fetchTrainingItemAction } from '../store/actions/api-training-action';
 import { getTrainingItem } from '../store/slices/training-process/training-process.selectors';
 
 
-export default function useTrainingItem(trainingId: string) {
+export default function useFetchTrainingItem(trainingId: string) {
   const dispatch = useAppDispatch();
   const trainingItem = useAppSelector(getTrainingItem);
 

@@ -3,7 +3,7 @@ import { toast } from 'react-toastify';
 import dayjs from 'dayjs';
 
 import { useAppDispatch } from '@client/src/hooks';
-import useAdditionalInfo from '@client/src/hooks/useAdditionalInfo';
+import useFetchAdditionalInfo from '@client/src/hooks/useFetchAdditionalInfo';
 
 import { registerUserAction } from '@client/src/store/actions/api-user-action';
 
@@ -18,12 +18,13 @@ import { AppRoute } from '@client/src/const';
 import CustomSelectBtn from '@client/src/components/custom-select-btn/custom-select-btn';
 import { registrationValidationSchema } from '@client/src/validation/registration-validation';
 
+
 export default function Registration() {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
   const maxBirthDate = dayjs().format('YYYY-MM-DD');
-  const additionalInfo = useAdditionalInfo();
+  const additionalInfo = useFetchAdditionalInfo();
   const gender = additionalInfo?.gender;
   const location = additionalInfo?.location;
   const roles = additionalInfo?.roles;

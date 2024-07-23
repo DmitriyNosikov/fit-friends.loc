@@ -1,7 +1,7 @@
 import { ReactElement } from 'react';
 
 import { useAppSelector } from '@client/src/hooks';
-import useAdditionalInfo from '@client/src/hooks/useAdditionalInfo';
+import useFetchAdditionalInfo from '@client/src/hooks/useFetchAdditionalInfo';
 import Stub from '../../tools/stub/stub';
 
 import { getUserInfo } from '@client/src/store/slices/user-process/user-process.selectors';
@@ -12,7 +12,7 @@ import { Link } from 'react-router-dom';
 import { AppRoute } from '@client/src/const';
 
 export default function PersonalAccountUser(): ReactElement {
-  useAdditionalInfo();
+  useFetchAdditionalInfo();
 
   const userInfo = useAppSelector(getUserInfo);
 

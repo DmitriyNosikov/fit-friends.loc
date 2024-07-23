@@ -1,10 +1,12 @@
 
-import { ReactElement, useEffect, useState } from 'react';
+import { ReactElement, useState } from 'react';
 
 import { useAppSelector } from '@client/src/hooks';
 import { useParams } from 'react-router-dom';
-import useTrainingItem from '@client/src/hooks/useTrainingItem';
-import useTrainingReviewsList from '@client/src/hooks/useTrainingReviewsList';
+
+import useFetchOrdersByTrainingId from '@client/src/hooks/useFetchOrdersByTrainingId';
+import useFetchTrainingItem from '@client/src/hooks/useFetchTrainingItem';
+import useFetchTrainingReviewsList from '@client/src/hooks/useFetchTrainingReviewsList';
 
 import { getTrainingItemLoadingStatus } from '@client/src/store/slices/training-process/training-process.selectors';
 import { setBodyScrollAvailable } from '@client/src/utils/common';
@@ -16,7 +18,7 @@ import TrainingsReviews from '../../../components/trainings/trainings-reviews/tr
 import Popup from '@client/src/components/popup/popup';
 import PopupReview from '@client/src/components/popup/popup-review/popup-review';
 import PopupBuy from '@client/src/components/popup/popup-buy/popup-buy';
-import useOrdersByTrainingId from '@client/src/hooks/useOrdersByTrainingId';
+
 
 export default function TrainingsDetail(): ReactElement | undefined {
   const params = useParams();
@@ -30,10 +32,10 @@ export default function TrainingsDetail(): ReactElement | undefined {
   const [isBuyModalOpened, setIsBuyModalOpened] = useState(false);
 
   const isTrainingLoading = useAppSelector(getTrainingItemLoadingStatus)
-  const trainingItem = useTrainingItem(trainingId);
-  const trainingItemReviews = useTrainingReviewsList(trainingId)
-  const userOrdersByTraining = useOrdersByTrainingId(trainingId);
-  const isUserBougthTraining = userOrdersByTraining?.entities && userOrdersByTraining.entities.length > 0;
+  const trainingItem = useFetchTrainingItem(trainingId);
+  const trainingItemReviews = useFetchTrainingReviewsList(trainingId)
+  const userOrdersByTraining = useFetchOrdersByTrainingId(trainingId);
+  const isUserBoughtTraining = userOrdersByTraining?.entities && userOrdersByTraining.entities.length > 0;
 
 
   function handleLeaveReviewBtnClick() {
@@ -47,7 +49,7 @@ export default function TrainingsDetail(): ReactElement | undefined {
   }
 
   if (!trainingItem) {
-    return <></>;
+    return;
   }
 
   const {
@@ -170,7 +172,8 @@ export default function TrainingsDetail(): ReactElement | undefined {
 
                         <div className="training-info__price-wrapper">
                           <div className="training-info__input training-info__input--price">
-                            <label><span className="training-info__label">Стоимость</span>
+                            <label>
+                              <span className="training-info__label">Стоимость</span>
                               <input type="text" name="price" defaultValue={`${trainingPrice} ₽`} disabled />
                             </label>
                             <div className="training-info__error">Введите число</div>
@@ -182,7 +185,7 @@ export default function TrainingsDetail(): ReactElement | undefined {
                   </div>
                 </div>
 
-                <TrainingsVideoPlayer videoURL={video} isBeginBtnDisabled={!isUserBougthTraining} />
+                <TrainingsVideoPlayer videoURL={video} isBeginBtnDisabled={!isUserBoughtTraining} />
               </div>
             </div>
           }

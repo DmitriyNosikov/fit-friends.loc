@@ -1,10 +1,10 @@
 import { useEffect } from 'react';
 import { useAppDispatch, useAppSelector } from '.';
-import { fetchOrdersAction } from '../store/actions/api-order-action';
+import { searchOrdersAction } from '../store/actions/api-order-action';
 import { getOrdersList } from '../store/slices/order-process/order-process.selectors';
 
 
-export default function useOrdersList() {
+export default function useFetchOrdersByTrainingId(trainingId: string) {
   const dispatch = useAppDispatch();
   const orders = useAppSelector(getOrdersList);
 
@@ -12,7 +12,7 @@ export default function useOrdersList() {
     let isMounted = true;
 
     if(isMounted) {
-      dispatch(fetchOrdersAction()); // Список заказов пользователя
+      dispatch(searchOrdersAction({ trainingId })); // Список заказов пользователя
     }
 
     return () => {

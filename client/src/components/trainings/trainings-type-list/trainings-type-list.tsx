@@ -1,4 +1,4 @@
-import useAdditionalInfo from '@client/src/hooks/useAdditionalInfo';
+import useFetchAdditionalInfo from '@client/src/hooks/useFetchAdditionalInfo';
 import { ReactElement } from 'react';
 import CheckboxList from '../../tools/checkbox-list/checkbox-list';
 
@@ -12,7 +12,7 @@ type TrainigsTypeListProps = {
 };
 
 export default function TrainigsTypeList({ onChange }: TrainigsTypeListProps): ReactElement | undefined {
-  const additionalInfo = useAdditionalInfo();
+  const additionalInfo = useFetchAdditionalInfo();
 
   if (!additionalInfo) {
     return;

@@ -5,7 +5,7 @@ import { TrainingFilterParamsRDO } from '@shared/training';
 import { getTrainingFilterParams } from '../store/slices/training-process/training-process.selectors';
 
 
-export default function useTrainingFilterParams(): TrainingFilterParamsRDO | null {
+export default function useFetchTrainingFilterParams(): TrainingFilterParamsRDO | null {
   const dispatch = useAppDispatch();
   const filterParams = useAppSelector(getTrainingFilterParams);
 

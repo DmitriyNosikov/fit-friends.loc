@@ -3,7 +3,7 @@ import { useAppDispatch } from '.';
 import { fetchTrainingsAction } from '../store/actions/api-training-action';
 
 
-export default function useTrainingsList() {
+export default function useFetchTrainingsList() {
   const dispatch = useAppDispatch();
 
   useEffect(() => {

@@ -1732,10 +1732,15 @@ components:
           example: 15
           minimum: 1
           maximum: 50
+        hasTrainingStarted:
+          type: boolean
+          description: Whether the user has started training
+          example: "false"
       required:
         - userId
         - trainingId
         - remainingTrainingsCount
+        - hasTrainingStarted
     CreateBalanceRDO:
       type: object
       properties:
@@ -1757,23 +1762,23 @@ components:
           type: object
           description: Training ID
           example: d61ef04e-295a-41cb-a230-7e9e4570f14b
-        orderId:
-          type: object
-          description: Order ID
-          example: d61ef04e-295a-41cb-a230-7e9e4570f14b
         remainingTrainingsCount:
           type: number
           description: Remaining trainings count
           example: 15
           minimum: 1
           maximum: 50
+        hasTrainingStarted:
+          type: boolean
+          description: Whether the user has started training
+          example: "false"
       required:
         - id
         - createdAt
         - updatedAt
         - trainingId
-        - orderId
         - remainingTrainingsCount
+        - hasTrainingStarted
     ChangeBalanceDTO:
       type: object
       properties:

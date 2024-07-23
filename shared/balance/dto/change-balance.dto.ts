@@ -2,12 +2,9 @@ import { ApiProperty } from '@nestjs/swagger';
 import {
   IsNumber,
   IsString,
-  Max,
-  Min,
   IsOptional
 } from 'class-validator';
 
-import { OrderValidation } from '@server/order/order.constant';
 import { TrainingInterface } from '@server/training/interfaces/training.interface';
 import { UserInterface } from '@server/user/interfaces';
 
@@ -32,5 +29,5 @@ export class ChangeBalanceDTO {
     example: 15,
   })
   @IsNumber()
-  amount?: number;
+  amount: number;
 }

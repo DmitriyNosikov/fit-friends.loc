@@ -4,7 +4,7 @@ import { fetchConvenientTrainingsAction } from '../store/actions/api-training-ac
 import { getUserConvenientTrainings } from '../store/slices/training-process/training-process.selectors';
 
 
-export default function useConvenientTrainingsList() {
+export default function useFetchConvenientTrainingsList() {
   const dispatch = useAppDispatch();
   const convenientTrainings = useAppSelector(getUserConvenientTrainings);
 

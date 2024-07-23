@@ -1,7 +1,7 @@
 import { ReactElement, useEffect } from 'react';
 
 import { TrainingValidation } from '@server/training/training.constant';
-import useTrainingFilterParams from '@client/src/hooks/useTrainingFilterParams';
+import useFetchTrainingFilterParams from '@client/src/hooks/useFetchTrainingFilterParams';
 
 import BackBtn from '../../back-btn/back-btn';
 import RangeSlider from '../../tools/range-slider/range-slider';
@@ -22,7 +22,7 @@ export const SortDirectionEnum = {
 
 export default function TrainingsFilter(): ReactElement | undefined {
   const dispatch = useAppDispatch();
-  const baseFilterParams = useTrainingFilterParams();
+  const baseFilterParams = useFetchTrainingFilterParams();
 
   if (!baseFilterParams) {
     return;

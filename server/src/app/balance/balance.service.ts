@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 
 import { fillDTO, omitUndefined } from '@server/libs/helpers';
 
@@ -34,7 +34,7 @@ export class BalanceService {
     const balance = await this.balanceRepository.findUserBalanceByTrainingId(userId, trainingId);
 
     if (!balance) {
-      throw new NotFoundException(BalanceMessage.ERROR.NOT_FOUND);
+      throw new NotFoundException(`${BalanceMessage.ERROR.NOT_FOUND}. Training ID: ${trainingId}`);
     }
 
     return balance;
@@ -69,8 +69,10 @@ export class BalanceService {
     // уже существует баланс соответствующей тренировки, нам необходимо
     // изменять его через метод обновления
     if(existsBalance) {
-      throw new BadRequestException(`Balance for training ${trainingId} and user ${userId} already exists. 
-        You can only change balance, but not create new with same training & user's IDs`);
+        // Вместо создания нового баланса - дополняем существующий
+        const updatedBalance = await this.increaseTrainingBalance(existsBalance.trainingId, userId, dto.remainingTrainingsCount);
+
+        return updatedBalance;
     }
 
     const balanceEntity = this.balanceFactory.create(dto);
@@ -98,31 +100,31 @@ export class BalanceService {
   }
 
   public async decreaseTrainingBalance(
-    balanceId: string,
+    trainingId: string,
     userId: string,
     amount: number
   ) {
-    const updatedBalance = await this.changeTrainingBalance(balanceId, userId, amount, false);
+    const updatedBalance = await this.changeTrainingBalance(trainingId, userId, amount, false);
 
     return updatedBalance;
   }
 
   public async increaseTrainingBalance(
-    balanceId: string,
+    trainingId: string,
     userId: string,
     amount: number) {
-    const updatedBalance = await this.changeTrainingBalance(balanceId, userId, amount, true);
+    const updatedBalance = await this.changeTrainingBalance(trainingId, userId, amount, true);
 
     return updatedBalance;
   }
 
   public async changeTrainingBalance(
-    balanceId: string,
+    trainingId: string,
     userId: string,
     amount: number, // На сколько изменять баланс
     increase: boolean = false // Увеличивать баланс (true) / Уменьшать баланс (false)
   ): Promise<BalanceEntity> {
-    const balance = await this.getBalanceDetail(balanceId, userId);
+    const balance = await this.getUserBalanceByTrainingId(userId, trainingId);
     let newBalance = 0;
 
     if (increase) {
@@ -135,7 +137,7 @@ export class BalanceService {
       newBalance = 0;
     }
 
-    const updatedBalance = await this.balanceRepository.changeTrainingBalance(balanceId, newBalance);
+    const updatedBalance = await this.balanceRepository.changeBalance(balance.id, newBalance);
 
     return updatedBalance;
   }

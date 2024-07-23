@@ -56,7 +56,8 @@ export class OrderService {
     const order = await this.orderRepository.create(orderEntity);
 
     const balanceData: CreateBalanceDTO = {
-      orderId: order.id,
+      trainingId: order.trainingId,
+      userId: order.userId,
       remainingTrainingsCount: order.trainingsCount
     };
     await this.balanceService.create(balanceData)

@@ -9,7 +9,7 @@ export class FileExtValidationPipe implements PipeTransform {
     const fileExtension = extension(value.mimetype);
 
     console.log('File to upload: ', value);
-    // Неправильно определяется расширение, т.к. mime-type всегдаЖ text/plain - TODO: Исправить
+    // Неправильно определяется расширение, т.к. mime-type всегда: text/plain - TODO: Исправить
     console.log('Extension: ', fileExtension);
     console.log('File Metadata: ', metadata);
 

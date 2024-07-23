@@ -740,6 +740,48 @@ paths:
         "404":
           description: Balance not found
       tags: *a5
+  /api/balance/increase:
+    patch:
+      operationId: BalanceController_increaseBalance
+      summary: Increase training balance by passed amount
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ChangeBalanceDTO"
+      responses:
+        "200":
+          description: Balance found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreateBalanceRDO"
+        "404":
+          description: Balance not found
+      tags: *a5
+  /api/balance/decrease:
+    patch:
+      operationId: BalanceController_decreaseBalance
+      summary: Decrease training balance by passed amount
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ChangeBalanceDTO"
+      responses:
+        "200":
+          description: Balance found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreateBalanceRDO"
+        "404":
+          description: Balance not found
+      tags: *a5
   /api/balance/{balanceId}:
     patch:
       operationId: BalanceController_updateTraining
@@ -779,56 +821,6 @@ paths:
       responses:
         "200":
           description: Balance has been successfully deleted
-      tags: *a5
-  /api/balance/{balanceId}/increase/{amount}:
-    patch:
-      operationId: BalanceController_increaseBalance
-      summary: Increase training balance by passed amount
-      parameters:
-        - name: balanceId
-          required: true
-          in: path
-          schema:
-            type: string
-        - name: amount
-          required: true
-          in: path
-          schema:
-            type: number
-      responses:
-        "200":
-          description: Balance found
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/CreateBalanceRDO"
-        "404":
-          description: Balance not found
-      tags: *a5
-  /api/balance/{balanceId}/decrease/{amount}:
-    patch:
-      operationId: BalanceController_decreaseBalance
-      summary: Decrease training balance by passed amount
-      parameters:
-        - name: balanceId
-          required: true
-          in: path
-          schema:
-            type: string
-        - name: amount
-          required: true
-          in: path
-          schema:
-            type: number
-      responses:
-        "200":
-          description: Balance found
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/CreateBalanceRDO"
-        "404":
-          description: Balance not found
       tags: *a5
 info:
   title: The "Fit-Friends" service
@@ -1584,7 +1576,7 @@ components:
           example: абонемент
           enum:
             - абонемент
-        serviceId:
+        trainingId:
           type: object
           description: Training ID
           example: d61ef04e-295a-41cb-a230-7e9e4570f14b
@@ -1608,7 +1600,7 @@ components:
           example: d61ef04e-295a-41cb-a230-7e9e4570f14b
       required:
         - type
-        - serviceId
+        - trainingId
         - trainingsCount
         - paymentType
         - userId
@@ -1635,7 +1627,7 @@ components:
           example: абонемент
           enum:
             - абонемент
-        serviceId:
+        trainingId:
           type: object
           description: Training ID
           example: d61ef04e-295a-41cb-a230-7e9e4570f14b
@@ -1670,7 +1662,7 @@ components:
         - createdAt
         - updatedAt
         - type
-        - serviceId
+        - trainingId
         - price
         - trainingsCount
         - totalPrice
@@ -1685,7 +1677,7 @@ components:
           example: абонемент
           enum:
             - абонемент
-        serviceId:
+        trainingId:
           type: object
           description: Training ID
           example: d61ef04e-295a-41cb-a230-7e9e4570f14b
@@ -1717,7 +1709,7 @@ components:
           example: d61ef04e-295a-41cb-a230-7e9e4570f14b
       required:
         - type
-        - serviceId
+        - trainingId
         - price
         - trainingsCount
         - totalPrice
@@ -1726,9 +1718,13 @@ components:
     CreateBalanceDTO:
       type: object
       properties:
-        orderId:
+        userId:
           type: object
-          description: Order ID
+          description: User ID
+          example: d61ef04e-295a-41cb-a230-7e9e4570f14b
+        trainingId:
+          type: object
+          description: Training ID
           example: d61ef04e-295a-41cb-a230-7e9e4570f14b
         remainingTrainingsCount:
           type: number
@@ -1737,7 +1733,8 @@ components:
           minimum: 1
           maximum: 50
       required:
-        - orderId
+        - userId
+        - trainingId
         - remainingTrainingsCount
     CreateBalanceRDO:
       type: object
@@ -1756,7 +1753,7 @@ components:
           type: string
           description: Updated at date
           example: 2024-04-26 13:02:24.847
-        serviceId:
+        trainingId:
           type: object
           description: Training ID
           example: d61ef04e-295a-41cb-a230-7e9e4570f14b
@@ -1774,19 +1771,38 @@ components:
         - id
         - createdAt
         - updatedAt
-        - serviceId
+        - trainingId
         - orderId
         - remainingTrainingsCount
-    UpdateBalanceDTO:
+    ChangeBalanceDTO:
       type: object
       properties:
-        serviceId:
+        trainingId:
           type: object
           description: Training ID
           example: d61ef04e-295a-41cb-a230-7e9e4570f14b
-        orderId:
+        userId:
           type: object
-          description: Order ID
+          description: User ID
+          example: d61ef04e-295a-41cb-a230-7e9e4570f14b
+        amount:
+          type: number
+          description: How much trainings you want to add/remove from balance
+          example: 15
+      required:
+        - trainingId
+        - userId
+        - amount
+    UpdateBalanceDTO:
+      type: object
+      properties:
+        userId:
+          type: object
+          description: User ID
+          example: d61ef04e-295a-41cb-a230-7e9e4570f14b
+        trainingId:
+          type: object
+          description: Training ID
           example: d61ef04e-295a-41cb-a230-7e9e4570f14b
         remainingTrainingsCount:
           type: number
@@ -1794,12 +1810,7 @@ components:
           example: 15
           minimum: 1
           maximum: 50
-        userId:
-          type: object
-          description: User ID
-          example: d61ef04e-295a-41cb-a230-7e9e4570f14b
       required:
-        - serviceId
-        - orderId
-        - remainingTrainingsCount
         - userId
+        - trainingId
+        - remainingTrainingsCount

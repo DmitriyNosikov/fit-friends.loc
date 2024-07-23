@@ -5,7 +5,7 @@ import { JWTAuthGuard } from '@server/user/guards/jwt-auth.guard';
 import { InjectUserIdInterceptor } from '@server/libs/interceptors/inject-user-id.interceptor';
 
 import { fillDTO } from '@server/libs/helpers';
-import { BalancesWithPaginationRDO, CreateBalanceDTO, CreateBalanceRDO, UpdateBalanceDTO } from '@shared/balance';
+import { BalancesWithPaginationRDO, ChangeBalanceDTO, CreateBalanceDTO, CreateBalanceRDO, UpdateBalanceDTO } from '@shared/balance';
 
 import { BalanceService } from './balance.service';
 import { BalanceMessage } from './balance.constant';
@@ -29,9 +29,9 @@ export class BalanceController {
     description: BalanceMessage.SUCCESS.CREATED
   })
   public async create(@Body() dto: CreateBalanceDTO) {
-    const newBalance = await this.balanceService.create(dto);
+    const balance = await this.balanceService.create(dto);
 
-    return fillDTO(CreateBalanceDTO, newBalance.toPOJO());
+    return fillDTO(CreateBalanceRDO, balance.toPOJO());
   }
 
   @Get('')
@@ -112,6 +112,42 @@ export class BalanceController {
     return trainingBalance;
   }
 
+  @Patch('/increase')
+  @ApiOperation({ summary: 'Increase training balance by passed amount' })
+  @ApiResponse({
+    type: CreateBalanceRDO,
+    status: HttpStatus.OK,
+    description: BalanceMessage.SUCCESS.FOUND
+  })
+  @ApiResponse({
+    status: HttpStatus.NOT_FOUND,
+    description: BalanceMessage.ERROR.NOT_FOUND
+  })
+  public async increaseBalance( @Body() dto: ChangeBalanceDTO ): Promise<CreateBalanceRDO> {
+    const { trainingId, userId, amount } = dto;
+    const newBalance = await this.balanceService.increaseTrainingBalance(trainingId, userId, amount);
+
+    return fillDTO(CreateBalanceRDO, newBalance.toPOJO());
+  }
+
+  @Patch('/decrease')
+  @ApiOperation({ summary: 'Decrease training balance by passed amount' })
+  @ApiResponse({
+    type: CreateBalanceRDO,
+    status: HttpStatus.OK,
+    description: BalanceMessage.SUCCESS.FOUND
+  })
+  @ApiResponse({
+    status: HttpStatus.NOT_FOUND,
+    description: BalanceMessage.ERROR.NOT_FOUND
+  })
+  public async decreaseBalance( @Body() dto: ChangeBalanceDTO ): Promise<CreateBalanceRDO> {
+    const { trainingId, userId, amount } = dto;
+    const newBalance = await this.balanceService.decreaseTrainingBalance(trainingId, userId, amount);
+
+    return fillDTO(CreateBalanceRDO, newBalance.toPOJO());
+  }
+
   @Patch(':balanceId')
   @ApiOperation({ summary: 'Update balance info' })
   @ApiResponse({
@@ -132,7 +168,6 @@ export class BalanceController {
     return fillDTO(CreateBalanceRDO, updatedBalance.toPOJO());
   }
 
-  
   @Delete(':balanceId')
   @ApiOperation({ summary: 'Delete balance' })
   @ApiResponse({
@@ -144,47 +179,5 @@ export class BalanceController {
     @Body('userId') userId: string,
   ): Promise<void> {
     await this.balanceService.deleteBalance(balanceId, userId);
-  }
-
-  @Patch('/:balanceId/increase/:amount')
-  @ApiOperation({ summary: 'Increase training balance by passed amount' })
-  @ApiResponse({
-    type: CreateBalanceRDO,
-    status: HttpStatus.OK,
-    description: BalanceMessage.SUCCESS.FOUND
-  })
-  @ApiResponse({
-    status: HttpStatus.NOT_FOUND,
-    description: BalanceMessage.ERROR.NOT_FOUND
-  })
-  public async increaseBalance(
-    @Param('balanceId') balanceId: string,
-    @Param('amount') amount: number,
-    @Body('userId') userId: string
-  ): Promise<CreateBalanceRDO> {
-    const newBalance = await this.balanceService.increaseTrainingBalance(balanceId, userId, amount);
-
-    return fillDTO(CreateBalanceRDO, newBalance.toPOJO());
-  }
-
-  @Patch(':balanceId/decrease/:amount')
-  @ApiOperation({ summary: 'Decrease training balance by passed amount' })
-  @ApiResponse({
-    type: CreateBalanceRDO,
-    status: HttpStatus.OK,
-    description: BalanceMessage.SUCCESS.FOUND
-  })
-  @ApiResponse({
-    status: HttpStatus.NOT_FOUND,
-    description: BalanceMessage.ERROR.NOT_FOUND
-  })
-  public async decreaseBalance(
-    @Param('balanceId') balanceId: string,
-    @Param('amount') amount: number,
-    @Body('userId') userId: string
-  ): Promise<CreateBalanceRDO> {
-    const newBalance = await this.balanceService.decreaseTrainingBalance(balanceId, userId, amount);
-
-    return fillDTO(CreateBalanceRDO, newBalance.toPOJO());
   }
 }

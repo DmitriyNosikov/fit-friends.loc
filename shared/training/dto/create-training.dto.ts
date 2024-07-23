@@ -77,7 +77,8 @@ export class CreateTrainingDTO {
   })
   @Min(TrainingValidation.PRICE.MIN)
   @IsNumber()
-  discount!: number;
+  @IsOptional()
+  discount?: number;
 
   @ApiProperty({
     description: 'Calories count to lose with this training',

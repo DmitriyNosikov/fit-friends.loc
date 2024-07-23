@@ -23,8 +23,6 @@ export default function TrainingsDurationList({ onChange }: TrainingsDurationLis
   const durationList = additionalInfo.trainingDuration;
 
   function handleDurationChange(checkedItems: string[]) {
-    console.log('DURATION CHECKED ITEMS: ', checkedItems);
-
     if(onChange) {
       onChange(checkedItems);
     }

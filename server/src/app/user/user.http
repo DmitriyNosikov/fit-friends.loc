@@ -30,15 +30,15 @@ Content-Type: application/json
 POST  {{baseUrl}}/login/ HTTP/1.1
 Content-Type: application/json
 
-# {
-#   "email": "iron-man@starkindustries.it",
-#   "password": "jarvis-123"
-# }
-
 {
-  "email": "test@yandex.ru",
-  "password": "123456"
+  "email": "iron-man@starkindustries.it",
+  "password": "jarvis-123"
 }
+
+# {
+#   "email": "test@yandex.ru",
+#   "password": "123456"
+# }
 ###
 
 # Check JWT Token & get token payload

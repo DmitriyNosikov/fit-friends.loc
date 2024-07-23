@@ -11,6 +11,7 @@ export class BalanceEntity extends Entity implements StorableEntityInterface<Bal
   public trainingId: TrainingInterface['id']
   public userId: UserInterface['id']
   public remainingTrainingsCount: number;
+  public hasTrainingStarted: boolean;
 
   constructor(balance?: BalanceInterface) {
     super();
@@ -29,6 +30,7 @@ export class BalanceEntity extends Entity implements StorableEntityInterface<Bal
     this.trainingId = balance.trainingId;
     this.userId = balance.userId;
     this.remainingTrainingsCount = balance.remainingTrainingsCount;
+    this.hasTrainingStarted = balance.hasTrainingStarted;
   }
 
   toPOJO(): BalanceInterface {
@@ -40,6 +42,7 @@ export class BalanceEntity extends Entity implements StorableEntityInterface<Bal
       trainingId: this.trainingId,
       userId: this.userId,
       remainingTrainingsCount: this.remainingTrainingsCount,
+      hasTrainingStarted: this.hasTrainingStarted,
     };
   }
 }

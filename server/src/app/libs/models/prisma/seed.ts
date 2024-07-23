@@ -26,7 +26,8 @@ async function seedDB(prismaClient: PrismaClient) {
     const balance = {
       userId: order.userId,
       trainingId: order.trainingId,
-      remainingTrainingsCount: order.trainingsCount
+      remainingTrainingsCount: order.trainingsCount,
+      hasTrainingStarted: Math.random() < 0.5 // Random boolean
     };
     
     await prismaClient.balance.create({

@@ -2,10 +2,10 @@
 @port = 8000
 @baseUrl = http://{{host}}:{{port}}/api/balance
 
-@balanceId = 905fae0b-d0ed-4fad-bab3-a8ec6c8b9090
-@trainingId = 62dd4f38-ab30-44a5-84df-04458c82596a
+@balanceId = 74b554be-8dd9-4d81-a63b-060446369439
+@trainingId = d87708e2-7ed3-45c3-87d3-1fd116010270
 @orderId = 201c2a72-d2a9-4b03-8ee1-0f4a5fa1d272
-@authorization = Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2ZDRkYzliMC00OTk4LTQ4YTAtYTYwMi03YWE0NThmNDMzODgiLCJlbWFpbCI6Imlyb24tbWFuQHN0YXJraW5kdXN0cmllcy5pdCIsIm5hbWUiOiJUb255Iiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzIxNzQzNjEwLCJleHAiOjE3MjE3NDQ1MTB9.apeJ1lcj08eogUhSq5RIH24XQYozD44893N9QW74W8Q
+@authorization = Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJiYTZiYzBmMy00M2I2LTQ3NmEtYWYzMC0wMmQ5ZTlmZmQ5YjgiLCJlbWFpbCI6Imlyb24tbWFuQHN0YXJraW5kdXN0cmllcy5pdCIsIm5hbWUiOiJUb255Iiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzIxNzQ1MTU0LCJleHAiOjE3MjE3NDYwNTR9.-v0hn-KPnpFW8iWW0xm4YIyfgEqCvIy4uPRSY_aUylM
 
 # Create new balance
 POST {{baseUrl}}/ HTTP/1.1
@@ -36,7 +36,7 @@ Content-Type: application/json
 {{authorization}}
 
 {
-  "remainingTrainingsCount": 10
+  "remainingTrainingsCount": 2
 }
 ###
 
@@ -52,7 +52,7 @@ Content-Type: application/json
 {{authorization}}
 
 {
-  "trainingId": "573eeb95-d518-476b-8f58-fcba4879a732",
+  "trainingId": "d87708e2-7ed3-45c3-87d3-1fd116010270",
   "amount": 1
 }
 ###
@@ -63,7 +63,7 @@ Content-Type: application/json
 {{authorization}}
 
 {
-  "trainingId": "573eeb95-d518-476b-8f58-fcba4879a732",
+  "trainingId": "d87708e2-7ed3-45c3-87d3-1fd116010270",
   "amount": 1
 }
 ###

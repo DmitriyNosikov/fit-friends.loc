@@ -7,4 +7,5 @@ export interface BalanceInterface extends CreatedUpdatedDatesInterface {
   trainingId: TrainingInterface['id'];
   userId?: UserInterface['id'];
   remainingTrainingsCount: number;
+  hasTrainingStarted?: boolean;
 }

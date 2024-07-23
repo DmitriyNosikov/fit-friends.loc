@@ -112,6 +112,8 @@ model Balance {
   userId                  String      @map("user_id")
   remainingTrainingsCount Int         @map("remaining_trainings_count")
 
+  hasTrainingStarted      Boolean     @map("has_training_started")
+
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
   training Training @relation(fields: [trainingId], references: [id], onDelete: Cascade)
 

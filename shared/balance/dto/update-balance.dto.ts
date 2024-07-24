@@ -4,7 +4,8 @@ import {
   IsString,
   Max,
   Min,
-  IsOptional
+  IsOptional,
+  IsBoolean
 } from 'class-validator';
 
 import { OrderValidation } from '@server/order/order.constant';
@@ -39,4 +40,12 @@ export class UpdateBalanceDTO {
   @IsNumber()
   @IsOptional()
   remainingTrainingsCount?: number;
+
+  @ApiProperty({
+    description: 'Whether the user has started training',
+    example: 'false',
+  })
+  @IsBoolean()
+  @IsOptional()
+  hasTrainingStarted?: boolean = false;
 }

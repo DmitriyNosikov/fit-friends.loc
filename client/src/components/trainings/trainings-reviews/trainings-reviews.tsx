@@ -1,10 +1,9 @@
 import { DEFAULT_AVATAR_URL } from '@client/src/const';
-import { BASE_URL } from '@client/src/services/api';
 import { CreateTrainingReviewRDO } from '@shared/training-review';
 import { ReactElement } from 'react';
 
 type TrainingsReviewsProps = {
-  reviewsList: CreateTrainingReviewRDO[]
+  reviewsList: CreateTrainingReviewRDO[],
 }
 
 export default function TrainingsReviews({ reviewsList }: TrainingsReviewsProps): ReactElement {
@@ -13,8 +12,6 @@ export default function TrainingsReviews({ reviewsList }: TrainingsReviewsProps)
       {
         reviewsList && reviewsList.map((review) => {
           const { userInfo, rating, text } = review;
-
-          console.log(userInfo);
 
           // const userAvatar = userInfo?.avatar ?? userInfo?.avatar ? `${BASE_URL}${userInfo?.avatar}` : DEFAULT_AVATAR_URL; // Заготовка под загрузку аватарки с сервера
           const userAvatar = userInfo?.avatar ? userInfo?.avatar : DEFAULT_AVATAR_URL;

@@ -1815,7 +1815,12 @@ components:
           example: 15
           minimum: 1
           maximum: 50
+        hasTrainingStarted:
+          type: boolean
+          description: Whether the user has started training
+          example: "false"
       required:
         - userId
         - trainingId
         - remainingTrainingsCount
+        - hasTrainingStarted

@@ -30,7 +30,7 @@ export class BalanceEntity extends Entity implements StorableEntityInterface<Bal
     this.trainingId = balance.trainingId;
     this.userId = balance.userId;
     this.remainingTrainingsCount = balance.remainingTrainingsCount;
-    this.hasTrainingStarted = balance.hasTrainingStarted;
+    this.hasTrainingStarted = balance.hasTrainingStarted ?? false;
   }
 
   toPOJO(): BalanceInterface {

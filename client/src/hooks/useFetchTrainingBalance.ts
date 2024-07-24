@@ -1,12 +1,12 @@
 import { useEffect } from 'react';
 import { useAppDispatch, useAppSelector } from '.';
 import { fetchBalanceAction } from '../store/actions/api-balance-action';
-import { getOrdersList } from '../store/slices/order-process/order-process.selectors';
+import { getBalanceList } from '../store/slices/balance-process/balance-process.selectors';
 
 
 export default function useFetchTrainingBalance() {
   const dispatch = useAppDispatch();
-  const balance = useAppSelector(getOrdersList);
+  const balance = useAppSelector(getBalanceList);
 
   useEffect(() => {
     let isMounted = true;

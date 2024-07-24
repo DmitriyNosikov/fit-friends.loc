@@ -7,7 +7,7 @@ Content-Type: application/json
 ###
 
 @trainingId = b3110e27-df4g-j456-3gf4-d71d697f03e9
-@authorization = Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJkNWY0NjE4YS0yM2E3LTQ2YTgtYWQxNi0wNzMyZDgzNTJhMTIiLCJlbWFpbCI6Imlyb24tbWFuQHN0YXJraW5kdXN0cmllcy5pdCIsIm5hbWUiOiJUb255Iiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzIwNzkxOTQxLCJleHAiOjE3MjA3OTI4NDF9.-T3yfq17tRoT6awa8ndO4U09-9iskP_DGsaPoSGr3UE
+@authorization = Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJmYTRmZjhmYS1lNjkwLTRlZGItOWNmYS0wMDEyYWNjNGNjOTUiLCJlbWFpbCI6Imlyb24tbWFuQHN0YXJraW5kdXN0cmllcy5pdCIsIm5hbWUiOiJUb255Iiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzIxODI1NzA0LCJleHAiOjE3MjE4MjY2MDR9.EMk7lJhi5JlnV4XCTPbDZ5C3o0ehlqtdhlchs4T4juk
 
 # /////////////////////////////// CREATE ///////////////////////////////
 # Create new training
@@ -25,8 +25,7 @@ Content-Type: application/json
   "description": "impossible crossfit training for real beasts",
   "gender": "мужской",
   "video": "add/video/later.avi",
-  "trainersName": "Evil",
-  "isSpecial": true
+  "trainersName": "Evil"
 }
 ###
 

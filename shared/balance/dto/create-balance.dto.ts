@@ -44,5 +44,5 @@ export class CreateBalanceDTO {
   })
   @IsBoolean()
   @IsOptional()
-  hasTrainingStarted?: boolean = false;
+  hasTrainingStarted?: boolean;
 }

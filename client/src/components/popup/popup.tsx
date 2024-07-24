@@ -101,7 +101,7 @@ export default function Popup({ title, PopupContentComponent, PopupContentCompon
             </button>
           </div>
 
-          <PopupContentComponent onClose={onClose} {...PopupContentComponentProps}/>
+          <PopupContentComponent onClose={closePopup} {...PopupContentComponentProps}/>
         </div>
       </section>
     </PopupPortal>

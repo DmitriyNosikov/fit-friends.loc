@@ -4,7 +4,6 @@ import { ReactElement, useState } from 'react';
 import { useAppSelector } from '@client/src/hooks';
 import { useParams } from 'react-router-dom';
 
-import useFetchOrdersByTrainingId from '@client/src/hooks/useFetchOrdersByTrainingId';
 import useFetchTrainingItem from '@client/src/hooks/useFetchTrainingItem';
 import useFetchTrainingReviewsList from '@client/src/hooks/useFetchTrainingReviewsList';
 
@@ -18,13 +17,14 @@ import TrainingsReviews from '../../../components/trainings/trainings-reviews/tr
 import Popup from '@client/src/components/popup/popup';
 import PopupReview from '@client/src/components/popup/popup-review/popup-review';
 import PopupBuy from '@client/src/components/popup/popup-buy/popup-buy';
+import useFetchTrainingBalance from '@client/src/hooks/useFetchTrainingBalance';
 
 
 export default function TrainingsDetail(): ReactElement | undefined {
   const params = useParams();
   const trainingId = params.trainingId;
 
-  if(!trainingId) {
+  if (!trainingId) {
     return;
   }
 
@@ -34,9 +34,11 @@ export default function TrainingsDetail(): ReactElement | undefined {
   const isTrainingLoading = useAppSelector(getTrainingItemLoadingStatus)
   const trainingItem = useFetchTrainingItem(trainingId);
   const trainingItemReviews = useFetchTrainingReviewsList(trainingId)
-  const userOrdersByTraining = useFetchOrdersByTrainingId(trainingId);
-  const isUserBoughtTraining = userOrdersByTraining?.entities && userOrdersByTraining.entities.length > 0;
 
+  const userBalance = useFetchTrainingBalance();
+  const currentTrainingBalance = userBalance?.entities && userBalance.entities.find((item) => item.trainingId === trainingId);
+  const isBeginBtnActive = currentTrainingBalance && currentTrainingBalance.remainingTrainingsCount > 0;
+  const isUserCanLeaveReview = currentTrainingBalance && currentTrainingBalance.hasTrainingStarted;
 
   function handleLeaveReviewBtnClick() {
     setIsReviewModalOpened(true);
@@ -109,7 +111,10 @@ export default function TrainingsDetail(): ReactElement | undefined {
                   trainingItemReviews && <TrainingsReviews reviewsList={trainingItemReviews.entities} />
                 }
 
-                <button className="btn btn--medium reviews-side-bar__button" type="button" onClick={handleLeaveReviewBtnClick}>Оставить отзыв</button>
+                {
+                  isUserCanLeaveReview &&
+                  <button className="btn btn--medium reviews-side-bar__button" type="button" onClick={handleLeaveReviewBtnClick}>Оставить отзыв</button>
+                }
               </aside>
               <div className="training-card">
                 <div className="training-info">
@@ -185,7 +190,7 @@ export default function TrainingsDetail(): ReactElement | undefined {
                   </div>
                 </div>
 
-                <TrainingsVideoPlayer videoURL={video} isBeginBtnDisabled={!isUserBoughtTraining} />
+                <TrainingsVideoPlayer videoURL={video} isBeginBtnDisabled={!isBeginBtnActive} />
               </div>
             </div>
           }

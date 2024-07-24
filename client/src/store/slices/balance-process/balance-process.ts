@@ -40,4 +40,4 @@ export const balanceProcess = createSlice({
 });
 
 
-export const { setBalanceAction } = balanceProcess.actions;
+export const { setBalanceAction, updateBalanceAction } = balanceProcess.actions;

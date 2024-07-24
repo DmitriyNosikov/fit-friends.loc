@@ -70,6 +70,9 @@ export const fetchUserDetailInfoAction = createAsyncThunk<void, void, AsyncOptio
       toast.warn(`Can't get user's detail info: ${err}. Please, try to login again`);
 
       dispatch(setDataLoadingStatus(false));
+      deleteToken();
+      dispatch(setUserAuthStatus(AuthorizationStatus.NO_AUTH));
+      dispatch(redirectToRoute(AppRoute.INTRO));
 
       return rejectWithValue(err);
     }

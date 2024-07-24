@@ -14,7 +14,10 @@ export default function TrainingsReviews({ reviewsList }: TrainingsReviewsProps)
         reviewsList && reviewsList.map((review) => {
           const { userInfo, rating, text } = review;
 
-          const userAvatar = userInfo?.avatar ?? userInfo?.avatar ? `${BASE_URL}${userInfo?.avatar}` : DEFAULT_AVATAR_URL;
+          console.log(userInfo);
+
+          // const userAvatar = userInfo?.avatar ?? userInfo?.avatar ? `${BASE_URL}${userInfo?.avatar}` : DEFAULT_AVATAR_URL; // Заготовка под загрузку аватарки с сервера
+          const userAvatar = userInfo?.avatar ? userInfo?.avatar : DEFAULT_AVATAR_URL;
 
           return (
             <li className="reviews-side-bar__item" key={review.id}>

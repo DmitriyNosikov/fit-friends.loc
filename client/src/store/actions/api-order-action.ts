@@ -6,6 +6,8 @@ import { CreateOrderDTO, CreateOrderRDO, OrderSearchQuery, OrdersWithPaginationR
 import { setOrdersAction, updateOrdersAction } from '../slices/order-process/order-process';
 import { toast } from 'react-toastify';
 import { adaptPaymentType, createSearchURL } from '@client/src/utils/adapters';
+import { fetchCurrentTrainingBalance } from './api-balance-action';
+
 
 const APIOrderPrefix = `[${Namespace.ORDER}-BACKEND]`;
 const APIAction = {
@@ -57,11 +59,12 @@ export const createOrderAction = createAsyncThunk<CreateOrderRDO, CreateOrderDTO
       const { data } = await api.post<CreateOrderRDO>(ApiRoute.ORDERS_API, adaptedOrderData);
 
       dispatch(updateOrdersAction(data));
+      dispatch(fetchCurrentTrainingBalance({ trainingId: data.trainingId as string }));
       dispatch(setDataLoadingStatus(false));
 
       return data;
     } catch(err) {
-      toast.warn(`Can't create order: ${err}`);
+      toast.warn(`Can't create order and update balance: ${err}`);
 
       dispatch(setDataLoadingStatus(false));
 

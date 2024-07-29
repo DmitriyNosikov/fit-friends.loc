@@ -6,6 +6,7 @@ import { PaymentType } from '@shared/types';
 import { useAppDispatch } from '@client/src/hooks';
 import { createOrderAction } from '@client/src/store/actions/api-order-action';
 import { toast } from 'react-toastify';
+import { changeBalance } from '@client/src/store/actions/api-balance-action';
 
 const INITIAL_TRAININGS_COUNT = 1;
 
@@ -13,9 +14,10 @@ type PopupBuyProps = {
   trainingId: string,
   trainingPrice: number,
   onClose?: Function
+  onSuccess?: Function
 };
 
-export default function PopupBuy({ trainingId, trainingPrice, onClose }: PopupBuyProps): ReactElement {
+export default function PopupBuy({ trainingId, trainingPrice, onClose, onSuccess }: PopupBuyProps): ReactElement {
   const dispatch = useAppDispatch();
 
   const [totalPrice, setTotalPrice] = useState(trainingPrice);
@@ -41,6 +43,8 @@ export default function PopupBuy({ trainingId, trainingPrice, onClose }: PopupBu
       trainingsCount
     };
 
+    console.log('ORDER DATA: ', orderData);
+
     dispatch(createOrderAction(orderData))
       .then((result) => {
         if ('error' in result) {
@@ -48,6 +52,10 @@ export default function PopupBuy({ trainingId, trainingPrice, onClose }: PopupBu
         }
 
         toast.success('Trainings has been successfully bought');
+
+        if(onSuccess) {
+          onSuccess();
+        }
 
         if(onClose) {
           onClose();

@@ -4,11 +4,13 @@ import { BalancesWithPaginationRDO, CreateBalanceRDO } from '@shared/balance';
 
 export type BalanceProcess = {
   paginatedBalance: BalancesWithPaginationRDO | null,
+  currentTrainingBalance: CreateBalanceRDO | null,
 
   isBalanceLoading: boolean
 }
 
 const initialState: BalanceProcess = {
+  currentTrainingBalance: null,
   paginatedBalance: null,
 
   isBalanceLoading: false
@@ -20,6 +22,10 @@ export const balanceProcess = createSlice({
   reducers: {
     setBalanceAction: (state, action: PayloadAction<BalancesWithPaginationRDO | null>) => {
       state.paginatedBalance = action.payload;
+    },
+
+    setCurrentTrainingBalanceAction: (state, action: PayloadAction<CreateBalanceRDO | null>) => {
+      state.currentTrainingBalance = action.payload;
     },
 
     updateBalanceAction: (state, action: PayloadAction<CreateBalanceRDO>) => {
@@ -40,4 +46,8 @@ export const balanceProcess = createSlice({
 });
 
 
-export const { setBalanceAction, updateBalanceAction } = balanceProcess.actions;
+export const {
+  setBalanceAction,
+  setCurrentTrainingBalanceAction,
+  updateBalanceAction
+} = balanceProcess.actions;

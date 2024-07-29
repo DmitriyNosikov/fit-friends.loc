@@ -17,8 +17,8 @@ import TrainingsReviews from '../../../components/trainings/trainings-reviews/tr
 import Popup from '@client/src/components/popup/popup';
 import PopupReview from '@client/src/components/popup/popup-review/popup-review';
 import PopupBuy from '@client/src/components/popup/popup-buy/popup-buy';
-import useFetchTrainingBalance from '@client/src/hooks/useFetchTrainingBalance';
-import { decreaseBalance } from '@client/src/store/actions/api-balance-action';
+import useFetchCurrentTrainingBalance from '@client/src/hooks/useFetchCurrentTrainingBalance';
+import { changeBalance } from '@client/src/store/actions/api-balance-action';
 
 
 export default function TrainingsDetail(): ReactElement | undefined {
@@ -37,11 +37,11 @@ export default function TrainingsDetail(): ReactElement | undefined {
   const trainingItem = useFetchTrainingItem(trainingId);
   const trainingItemReviews = useFetchTrainingReviewsList(trainingId)
 
-  const userBalance = useFetchTrainingBalance();
-  const currentTrainingBalance = userBalance?.entities && userBalance.entities.find((item) => item.trainingId === trainingId);
+  const currentTrainingBalance = useFetchCurrentTrainingBalance(trainingId);
 
-  const [isBeginBtnActive, setIsBeginBtnActive]  = useState(currentTrainingBalance && currentTrainingBalance.remainingTrainingsCount > 0);
+  const [isBeginBtnDisabled, setIsBeginBtnDisabled]  = useState(!currentTrainingBalance || currentTrainingBalance.remainingTrainingsCount <= 0);
   const [isUserCanLeaveReview, setIsUserCanLeaveReview]  = useState( currentTrainingBalance && currentTrainingBalance.hasTrainingStarted);
+
 
   function handleLeaveReviewBtnClick() {
     setIsReviewModalOpened(true);
@@ -53,15 +53,20 @@ export default function TrainingsDetail(): ReactElement | undefined {
     setBodyScrollAvailable(false);
   }
 
+  function handleSuccessPurchase() {
+    setIsBeginBtnDisabled(false);
+  }
+
   function handleBeginBtnClick() {
     if(!trainingId) {
       return;
     }
 
-    dispatch(decreaseBalance({ trainingId }))
+    dispatch(changeBalance({ trainingId, increase: false }))
       .then(() => {
-        if(currentTrainingBalance && currentTrainingBalance?.remainingTrainingsCount - 1 <= 0) {
-          setIsBeginBtnActive(false);
+        console.log('currentTrainingBalance: ', currentTrainingBalance);
+        if(currentTrainingBalance && currentTrainingBalance?.remainingTrainingsCount <= 0) {
+          setIsBeginBtnDisabled(true);
         }
 
         setIsUserCanLeaveReview(true);
@@ -107,6 +112,7 @@ export default function TrainingsDetail(): ReactElement | undefined {
 
         isOpened={isBuyModalOpened}
         onClose={() => setIsBuyModalOpened(false)}
+        onSuccess={handleSuccessPurchase}
       />
 
       <section className="inner-page">
@@ -201,14 +207,14 @@ export default function TrainingsDetail(): ReactElement | undefined {
                             </label>
                             <div className="training-info__error">Введите число</div>
                           </div>
-                          <button className="btn training-info__buy" type="button" onClick={handleBuyBtnClick}>Купить</button>
+                          <button className="btn training-info__buy" type="button" onClick={handleBuyBtnClick} disabled={!isBeginBtnDisabled}>Купить</button>
                         </div>
                       </div>
                     </form>
                   </div>
                 </div>
 
-                <TrainingsVideoPlayer videoURL={video} isBeginBtnDisabled={!isBeginBtnActive} onBeginClick={handleBeginBtnClick} />
+                <TrainingsVideoPlayer videoURL={video} isBeginBtnDisabled={isBeginBtnDisabled} onBeginClick={handleBeginBtnClick} />
               </div>
             </div>
           }

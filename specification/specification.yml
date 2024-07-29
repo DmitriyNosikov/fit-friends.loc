@@ -725,6 +725,24 @@ paths:
         "404":
           description: Balance not found
       tags: *a5
+  /api/balance/by-training/{trainingId}:
+    get:
+      operationId: BalanceController_getUserBalance
+      summary: Get user`s balance by training id
+      parameters:
+        - name: trainingId
+          required: true
+          in: query
+          schema:
+            type: string
+      responses:
+        "201":
+          description: Balance has been successfully created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreateBalanceDTO"
+      tags: *a5
   /api/balance/count:
     get:
       operationId: BalanceController_countBalance

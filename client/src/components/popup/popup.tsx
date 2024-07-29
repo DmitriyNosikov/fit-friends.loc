@@ -10,10 +10,20 @@ type PopupProps = {
   PopupContentComponentProps?: any,
 
   isOpened?: boolean,
-  onClose?: Function
+  onClose?: Function,
+  onSuccess?: Function,
+  onFailed?: Function,
 };
 
-export default function Popup({ title, PopupContentComponent, PopupContentComponentProps, isOpened = false, onClose }: PopupProps): ReactElement {
+export default function Popup({
+  title,
+  PopupContentComponent,
+  PopupContentComponentProps,
+  isOpened = false,
+  onClose,
+  onSuccess,
+  onFailed
+}: PopupProps): ReactElement {
   let sendBtn: HTMLButtonElement | null = null;
   let closeBtn: HTMLButtonElement | null = null;
 
@@ -101,7 +111,7 @@ export default function Popup({ title, PopupContentComponent, PopupContentCompon
             </button>
           </div>
 
-          <PopupContentComponent onClose={closePopup} {...PopupContentComponentProps}/>
+          <PopupContentComponent onClose={closePopup} onSuccess={onSuccess} onFailed={onFailed}  {...PopupContentComponentProps}/>
         </div>
       </section>
     </PopupPortal>

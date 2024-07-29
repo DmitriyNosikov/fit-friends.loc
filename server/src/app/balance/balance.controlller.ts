@@ -12,6 +12,7 @@ import { BalanceMessage } from './balance.constant';
 
 import { BaseSearchQuery, DefaultSearchParam } from '@shared/types/search/base-search-query.type';
 import { SortDirectionEnum, SortTypeEnum } from '@shared/types';
+
 @ApiTags('balance')
 @Controller('balance')
 @UseGuards(JWTAuthGuard)
@@ -93,6 +94,23 @@ export class BalanceController {
     };
 
     return result;
+  }
+
+  @Get('by-training/:trainingId')
+  @ApiOperation({ summary: 'Get user`s balance by training id' })
+  @ApiResponse({
+    type: CreateBalanceDTO,
+    status: HttpStatus.CREATED,
+    description: BalanceMessage.SUCCESS.CREATED
+  })
+  public async getUserBalance(
+    @Query('trainingId') trainingId: string,
+    @Body('userId') userId: string
+  ) {
+    
+    const balance = await this.balanceService.getUserBalanceByTrainingId(userId, trainingId);
+
+    return fillDTO(CreateBalanceRDO, balance.toPOJO());
   }
 
   @Get('/count')

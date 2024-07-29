@@ -784,7 +784,7 @@ paths:
       tags: *a5
   /api/balance/{balanceId}:
     patch:
-      operationId: BalanceController_updateTraining
+      operationId: BalanceController_update
       summary: Update balance info
       parameters:
         - name: balanceId

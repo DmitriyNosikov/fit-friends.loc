@@ -35,7 +35,7 @@ export const ApiRoute = {
 
   ORDERS_API: BACKEND_API_URL.ORDERS,
 
-  BALANCE_API: BACKEND_API_URL.BALANCE,
+  BALANCE_API: BACKEND_API_URL.BALANCE
 } as const;
 
 // -- App

@@ -25,11 +25,11 @@ export const balanceProcess = createSlice({
     updateBalanceAction: (state, action: PayloadAction<CreateBalanceRDO>) => {
       const updatedBalance = action.payload;
 
-      if(!state.paginatedBalance) {
+      if(!state.paginatedBalance || !state.paginatedBalance.entities) {
         return;
       }
 
-      state.paginatedBalance.entities
+      state.paginatedBalance.entities = state.paginatedBalance.entities
         .map((balance) => (balance.id === updatedBalance.id)
           ? updatedBalance
           : balance)

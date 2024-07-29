@@ -1,7 +1,7 @@
 
 import { ReactElement, useState } from 'react';
 
-import { useAppSelector } from '@client/src/hooks';
+import { useAppDispatch, useAppSelector } from '@client/src/hooks';
 import { useParams } from 'react-router-dom';
 
 import useFetchTrainingItem from '@client/src/hooks/useFetchTrainingItem';
@@ -18,11 +18,13 @@ import Popup from '@client/src/components/popup/popup';
 import PopupReview from '@client/src/components/popup/popup-review/popup-review';
 import PopupBuy from '@client/src/components/popup/popup-buy/popup-buy';
 import useFetchTrainingBalance from '@client/src/hooks/useFetchTrainingBalance';
+import { decreaseBalance } from '@client/src/store/actions/api-balance-action';
 
 
 export default function TrainingsDetail(): ReactElement | undefined {
   const params = useParams();
   const trainingId = params.trainingId;
+  const dispatch = useAppDispatch();
 
   if (!trainingId) {
     return;
@@ -37,8 +39,9 @@ export default function TrainingsDetail(): ReactElement | undefined {
 
   const userBalance = useFetchTrainingBalance();
   const currentTrainingBalance = userBalance?.entities && userBalance.entities.find((item) => item.trainingId === trainingId);
-  const isBeginBtnActive = currentTrainingBalance && currentTrainingBalance.remainingTrainingsCount > 0;
-  const isUserCanLeaveReview = currentTrainingBalance && currentTrainingBalance.hasTrainingStarted;
+
+  const [isBeginBtnActive, setIsBeginBtnActive]  = useState(currentTrainingBalance && currentTrainingBalance.remainingTrainingsCount > 0);
+  const [isUserCanLeaveReview, setIsUserCanLeaveReview]  = useState( currentTrainingBalance && currentTrainingBalance.hasTrainingStarted);
 
   function handleLeaveReviewBtnClick() {
     setIsReviewModalOpened(true);
@@ -48,6 +51,21 @@ export default function TrainingsDetail(): ReactElement | undefined {
   function handleBuyBtnClick() {
     setIsBuyModalOpened(true);
     setBodyScrollAvailable(false);
+  }
+
+  function handleBeginBtnClick() {
+    if(!trainingId) {
+      return;
+    }
+
+    dispatch(decreaseBalance({ trainingId }))
+      .then(() => {
+        if(currentTrainingBalance && currentTrainingBalance?.remainingTrainingsCount - 1 <= 0) {
+          setIsBeginBtnActive(false);
+        }
+
+        setIsUserCanLeaveReview(true);
+      })
   }
 
   if (!trainingItem) {
@@ -190,7 +208,7 @@ export default function TrainingsDetail(): ReactElement | undefined {
                   </div>
                 </div>
 
-                <TrainingsVideoPlayer videoURL={video} isBeginBtnDisabled={!isBeginBtnActive} />
+                <TrainingsVideoPlayer videoURL={video} isBeginBtnDisabled={!isBeginBtnActive} onBeginClick={handleBeginBtnClick} />
               </div>
             </div>
           }

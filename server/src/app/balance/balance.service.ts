@@ -124,20 +124,25 @@ export class BalanceService {
     amount: number, // На сколько изменять баланс
     increase: boolean = false // Увеличивать баланс (true) / Уменьшать баланс (false)
   ): Promise<BalanceEntity> {
+    const newAmount = amount ?? 1;
     const balance = await this.getUserBalanceByTrainingId(userId, trainingId);
     let newBalance = 0;
 
     if (increase) {
-      newBalance = balance.remainingTrainingsCount + amount;
+      newBalance = balance.remainingTrainingsCount + newAmount;
     } else {
-      newBalance = balance.remainingTrainingsCount - amount;
+      newBalance = balance.remainingTrainingsCount - newAmount;
     }
 
     if (newBalance < 0) {
       newBalance = 0;
     }
 
-    const updatedBalance = await this.balanceRepository.changeBalance(balance.id, newBalance);
+    // Если баланс уменьшается и тренировка ище не была начата ни разу
+    // т.е. пользователь впервые приступает к тренировке после покупки
+    const hasTrainingStarted = !increase && !balance.hasTrainingStarted || undefined;
+
+    const updatedBalance = await this.balanceRepository.changeBalance(balance.id, newBalance, hasTrainingStarted);
 
     return updatedBalance;
   }

@@ -4,13 +4,15 @@ import { ReactElement, useState } from 'react';
 type TrainingsVideoPlayerProps = {
   videoURL: string,
   thumbnailURL?: string,
-  isBeginBtnDisabled?: boolean
+  isBeginBtnDisabled?: boolean,
+  onBeginClick?: Function
 };
 
 export default function TrainingsVideoPlayer({
   videoURL,
   thumbnailURL = '/img/content/training-video/video-thumbnail.png',
-  isBeginBtnDisabled = true
+  isBeginBtnDisabled = true,
+  onBeginClick
 }: TrainingsVideoPlayerProps): ReactElement | undefined {
   if(!videoURL) {
     return;
@@ -30,6 +32,10 @@ export default function TrainingsVideoPlayer({
   function handleBeginBtnClick() {
     if(!beginBtn || !finishBtn) {
       return;
+    }
+
+    if(onBeginClick) {
+      onBeginClick();
     }
 
     beginBtn.classList.add('visually-hidden');

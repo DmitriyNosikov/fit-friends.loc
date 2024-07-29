@@ -159,7 +159,7 @@ export class BalanceController {
     status: HttpStatus.BAD_REQUEST,
     description: BalanceMessage.ERROR.CANT_UPDATE
   })
-  public async updateTraining(
+  public async update(
     @Param('balanceId') balanceId: string,
     @Body() dto: UpdateBalanceDTO
   ): Promise<CreateBalanceRDO | null> {

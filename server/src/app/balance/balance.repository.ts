@@ -127,11 +127,14 @@ export class BalanceRepository extends BasePostgresRepository<BalanceEntity, Bal
     return remainingTrainings;
   }
 
-  public async changeBalance(balanceId: string, balance: number) {
+  public async changeBalance(balanceId: string, balance: number, hasTrainingStarted: boolean) {
     // Обновляем баланс
     const updatedOrder = await this.dbClient.balance.update({
       where: { id: balanceId },
-      data: { remainingTrainingsCount: balance }
+      data: {
+        remainingTrainingsCount: balance,
+        hasTrainingStarted
+      }
     });
 
     const orderWithUpdatedBalance = this.createEntityFromDocument(updatedOrder as unknown as BalanceInterface);

@@ -13,5 +13,5 @@ export const store = configureStore({
         extraArgument: api,
       },
     })
-    .concat(redirect), // Подключаем свою Middleware для редиректа из AsynkThunk
+    .concat(redirect), // Подключаем свою Middleware для редиректа из AsynсThunk
 });

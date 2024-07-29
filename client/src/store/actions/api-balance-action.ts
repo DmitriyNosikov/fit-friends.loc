@@ -5,13 +5,14 @@ import { toast } from 'react-toastify';
 
 import { setDataLoadingStatus } from '../slices/main-process/main-process';
 import { setBalanceAction, updateBalanceAction } from '../slices/balance-process/balance-process';
-import { BalancesWithPaginationRDO, CreateBalanceRDO, UpdateBalanceDTO } from '@shared/balance';
+import { BalancesWithPaginationRDO, ChangeBalanceDTO, CreateBalanceRDO, UpdateBalanceDTO } from '@shared/balance';
 
 const APIBalancePrefix = `[${Namespace.BALANCE}-BACKEND]`;
 const APIAction = {
   BALANCE_FETCH_LIST: `${APIBalancePrefix}/list`,
 
   BALANCE_UPDATE: `${APIBalancePrefix}/update`,
+  BALANCE_DECREASE: `${APIBalancePrefix}/decrease`
 } as const;
 
 export const fetchBalanceAction = createAsyncThunk<void, void, AsyncOptions>(
@@ -63,6 +64,37 @@ export const updateBalance = createAsyncThunk<CreateBalanceRDO, UpdateBalanceDTO
       return data;
     } catch(err) {
       toast.error(`Can't update balance: ${err}`);
+
+      dispatch(setDataLoadingStatus(false));
+
+      return rejectWithValue(err);
+    }
+  }
+);
+
+type TrainingId = {
+  trainingId: string
+}
+
+export const decreaseBalance = createAsyncThunk<CreateBalanceRDO, ChangeBalanceDTO & TrainingId, AsyncOptions>(
+  APIAction.BALANCE_DECREASE,
+  async (
+    changeBalanceData,
+    { dispatch, rejectWithValue, extra: api } // AsyncOptions
+  ) => {
+    dispatch(setDataLoadingStatus(true));
+
+    try {
+    const { data } = await api.patch<CreateBalanceRDO>(`${ApiRoute.BALANCE_API}/decrease`, changeBalanceData);
+      console.log('NEW BALANCE: ', data);
+      dispatch(updateBalanceAction(data));
+      dispatch(setDataLoadingStatus(false));
+
+      toast.success(`Balance has been decreased. Remaining trainings count: ${data.remainingTrainingsCount}`);
+
+      return data;
+    } catch(err) {
+      toast.error(`Can't decrease balance: ${err}`);
 
       dispatch(setDataLoadingStatus(false));
 

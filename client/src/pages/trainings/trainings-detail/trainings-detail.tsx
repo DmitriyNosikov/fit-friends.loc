@@ -5,7 +5,6 @@ import { useAppDispatch, useAppSelector } from '@client/src/hooks';
 import { useParams } from 'react-router-dom';
 
 import useFetchTrainingItem from '@client/src/hooks/useFetchTrainingItem';
-import useFetchTrainingReviewsList from '@client/src/hooks/useFetchTrainingReviewsList';
 
 import { getTrainingItemLoadingStatus } from '@client/src/store/slices/training-process/training-process.selectors';
 import { setBodyScrollAvailable } from '@client/src/utils/common';
@@ -31,15 +30,13 @@ export default function TrainingsDetail(): ReactElement | undefined {
     return;
   }
 
-  const [isReviewModalOpened, setIsReviewModalOpened] = useState(false);
-  const [isBuyModalOpened, setIsBuyModalOpened] = useState(false);
-
-  const isTrainingLoading = useAppSelector(getTrainingItemLoadingStatus)
   const trainingItem = useFetchTrainingItem(trainingId);
-  const trainingItemReviews = useFetchTrainingReviewsList(trainingId)
-
   const currentTrainingBalance = useFetchCurrentTrainingBalance(trainingId);
 
+  const isTrainingLoading = useAppSelector(getTrainingItemLoadingStatus)
+
+  const [isReviewModalOpened, setIsReviewModalOpened] = useState(false);
+  const [isBuyModalOpened, setIsBuyModalOpened] = useState(false);
   const [isBeginBtnDisabled, setIsBeginBtnDisabled]  = useState(!currentTrainingBalance || currentTrainingBalance.remainingTrainingsCount <= 0);
   const [isUserCanLeaveReview, setIsUserCanLeaveReview]  = useState( currentTrainingBalance && currentTrainingBalance.hasTrainingStarted);
 
@@ -100,27 +97,6 @@ export default function TrainingsDetail(): ReactElement | undefined {
 
   return (
     <>
-      <Popup
-        title='Оставить отзыв'
-        PopupContentComponent={PopupReview}
-
-        isOpened={isReviewModalOpened}
-        onClose={() => setIsReviewModalOpened(false)}
-      />
-
-      <Popup
-        title='Купить тренировку'
-        PopupContentComponent={PopupBuy}
-        PopupContentComponentProps={{
-          trainingId: trainingItem.id,
-          trainingPrice: trainingItem.price,
-        }}
-
-        isOpened={isBuyModalOpened}
-        onClose={() => setIsBuyModalOpened(false)}
-        onSuccess={handleSuccessPurchase}
-      />
-
       <section className="inner-page">
         <div className="container">
           {
@@ -137,9 +113,8 @@ export default function TrainingsDetail(): ReactElement | undefined {
 
                 <h2 className="reviews-side-bar__title">Отзывы</h2>
 
-                {
-                  trainingItemReviews && <TrainingsReviews reviewsList={trainingItemReviews.entities} />
-                }
+                {/* FIXME: При добавлении отзыва они сортируются в неверной последовательности */}
+                <TrainingsReviews trainingId={trainingId} />
 
                 {
                   isUserCanLeaveReview &&
@@ -178,6 +153,7 @@ export default function TrainingsDetail(): ReactElement | undefined {
                             </label>
                           </div>
                         </div>
+                        {/* FIXME: Не обновляется рейтинг (вазуально) при добавлении отзыва */}
                         <div className="training-info__rating-wrapper">
                           <div className="training-info__input training-info__input--rating">
                             <label>
@@ -226,6 +202,27 @@ export default function TrainingsDetail(): ReactElement | undefined {
           }
         </div>
       </section>
+
+      <Popup
+        title='Оставить отзыв'
+        PopupContentComponent={PopupReview}
+
+        isOpened={isReviewModalOpened}
+        onClose={() => setIsReviewModalOpened(false)}
+      />
+
+      <Popup
+        title='Купить тренировку'
+        PopupContentComponent={PopupBuy}
+        PopupContentComponentProps={{
+          trainingId: trainingItem.id,
+          trainingPrice: trainingItem.price,
+        }}
+
+        isOpened={isBuyModalOpened}
+        onClose={() => setIsBuyModalOpened(false)}
+        onSuccess={handleSuccessPurchase}
+      />
     </>
   )
 }

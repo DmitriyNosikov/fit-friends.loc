@@ -78,6 +78,8 @@ export class TrainingReviewController {
       entities: documents.entities.map((document) => fillDTO(CreateTrainingReviewRDO, document.toPOJO()))
     }
 
+    console.log('REVIEWS: ', reviews);
+
     return reviews;
   }
 

@@ -16,7 +16,7 @@ const APIAction = {
   TRAINING_REVIEW_FETCH_ITEM: `${APITrainingPrefix}/item`,
 
   TRAINING_REVIEW_CREATE: `${APITrainingPrefix}/create`,
-  TRAINING_EVIEW_UPDATE: `${APITrainingPrefix}/update`,
+  TRAINING_REVIEW_UPDATE: `${APITrainingPrefix}/update`,
   TRAINING_REVIEW_DELETE: `${APITrainingPrefix}/delete`,
 } as const;
 

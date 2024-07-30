@@ -1,20 +1,48 @@
 import { DEFAULT_AVATAR_URL } from '@client/src/const';
-import { CreateTrainingReviewRDO } from '@shared/training-review';
+import useFetchTrainingReviewsList from '@client/src/hooks/useFetchTrainingReviewsList';
 import { ReactElement } from 'react';
+import Spinner from '../../tools/spinner/spinner';
+import { BASE_URL } from '@client/src/services/api';
 
 type TrainingsReviewsProps = {
-  reviewsList: CreateTrainingReviewRDO[],
+  trainingId: string;
 }
 
-export default function TrainingsReviews({ reviewsList }: TrainingsReviewsProps): ReactElement {
+export default function TrainingsReviews({ trainingId }: TrainingsReviewsProps): ReactElement {
+  const trainingItemReviews = useFetchTrainingReviewsList(trainingId);
+
+  if(!trainingItemReviews?.entities) {
+    return <Spinner />
+  }
+
+  const reviewsList = [...trainingItemReviews.entities].sort((a, b) => {
+    if(!a.createdAt || !b.createdAt) {
+      return 0;
+    }
+
+    const dateA = new Date(a.createdAt);
+    const dateB = new Date(b.createdAt);
+
+    return dateB.getTime() - dateA.getTime();
+  });
+
+  console.log('REVIEWS: ', reviewsList);
+
   return (
     <ul className="reviews-side-bar__list">
       {
         reviewsList && reviewsList.map((review) => {
           const { userInfo, rating, text } = review;
 
-          // const userAvatar = userInfo?.avatar ?? userInfo?.avatar ? `${BASE_URL}${userInfo?.avatar}` : DEFAULT_AVATAR_URL; // Заготовка под загрузку аватарки с сервера
-          const userAvatar = userInfo?.avatar ? userInfo?.avatar : DEFAULT_AVATAR_URL;
+          const avatarImg = userInfo?.avatar;
+
+          const userAvatar = avatarImg
+            ? avatarImg.startsWith('/static') // Путь к загруженным на сервер аватаркам начинается с /static
+              ? `${BASE_URL}${avatarImg}` // Для аватарок, загруженных на сервер юзерами
+              : avatarImg // Для моковых изображений, которыя "захардкожены" в сидировании
+            : DEFAULT_AVATAR_URL; // Если аватарки нет вобще
+
+          console.log('User avatar: ', userAvatar);
 
           return (
             <li className="reviews-side-bar__item" key={review.id}>

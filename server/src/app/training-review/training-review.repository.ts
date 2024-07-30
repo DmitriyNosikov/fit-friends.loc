@@ -85,7 +85,11 @@ export class TrainingReviewRepository extends BasePostgresRepository<TrainingRev
 
   public async create(entity: TrainingReviewEntity): Promise<TrainingReviewEntity | null> {
     const review = await this.dbClient.trainingReview.create({
-      data: entity
+      data: entity,
+
+      include: {
+        user: true
+      }
     });
 
     if (!review) {

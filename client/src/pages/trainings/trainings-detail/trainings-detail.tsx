@@ -1,5 +1,5 @@
 
-import { ReactElement, useState } from 'react';
+import { ReactElement, useEffect, useLayoutEffect, useState } from 'react';
 
 import { useAppDispatch, useAppSelector } from '@client/src/hooks';
 import { useParams } from 'react-router-dom';
@@ -31,15 +31,19 @@ export default function TrainingsDetail(): ReactElement | undefined {
   }
 
   const trainingItem = useFetchTrainingItem(trainingId);
-  const currentTrainingBalance = useFetchCurrentTrainingBalance(trainingId);
+  const balance = useFetchCurrentTrainingBalance(trainingId);
 
   const isTrainingLoading = useAppSelector(getTrainingItemLoadingStatus)
 
   const [isReviewModalOpened, setIsReviewModalOpened] = useState(false);
   const [isBuyModalOpened, setIsBuyModalOpened] = useState(false);
-  const [isBeginBtnDisabled, setIsBeginBtnDisabled]  = useState(!currentTrainingBalance || currentTrainingBalance.remainingTrainingsCount <= 0);
-  const [isUserCanLeaveReview, setIsUserCanLeaveReview]  = useState( currentTrainingBalance && currentTrainingBalance.hasTrainingStarted);
+  const [isBeginBtnDisabled, setIsBeginBtnDisabled]  = useState(false);
+  const [isUserCanLeaveReview, setIsUserCanLeaveReview]  = useState(false);
 
+  useEffect(() => {
+    setIsBeginBtnDisabled(!balance || balance.remainingTrainingsCount <= 0);
+    setIsUserCanLeaveReview(balance !== null && balance.hasTrainingStarted);
+  }, [balance])
 
   function handleLeaveReviewBtnClick() {
     setIsReviewModalOpened(true);
@@ -113,7 +117,6 @@ export default function TrainingsDetail(): ReactElement | undefined {
 
                 <h2 className="reviews-side-bar__title">Отзывы</h2>
 
-                {/* FIXME: При добавлении отзыва они сортируются в неверной последовательности */}
                 <TrainingsReviews trainingId={trainingId} />
 
                 {

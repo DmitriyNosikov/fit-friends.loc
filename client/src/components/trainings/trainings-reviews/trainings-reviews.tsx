@@ -26,8 +26,6 @@ export default function TrainingsReviews({ trainingId }: TrainingsReviewsProps):
     return dateB.getTime() - dateA.getTime();
   });
 
-  console.log('REVIEWS: ', reviewsList);
-
   return (
     <ul className="reviews-side-bar__list">
       {
@@ -40,9 +38,7 @@ export default function TrainingsReviews({ trainingId }: TrainingsReviewsProps):
             ? avatarImg.startsWith('/static') // Путь к загруженным на сервер аватаркам начинается с /static
               ? `${BASE_URL}${avatarImg}` // Для аватарок, загруженных на сервер юзерами
               : avatarImg // Для моковых изображений, которыя "захардкожены" в сидировании
-            : DEFAULT_AVATAR_URL; // Если аватарки нет вобще
-
-          console.log('User avatar: ', userAvatar);
+            : DEFAULT_AVATAR_URL; // Если аватарки нет
 
           return (
             <li className="reviews-side-bar__item" key={review.id}>

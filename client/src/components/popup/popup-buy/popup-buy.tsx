@@ -43,8 +43,6 @@ export default function PopupBuy({ trainingId, trainingPrice, onClose, onSuccess
       trainingsCount
     };
 
-    console.log('ORDER DATA: ', orderData);
-
     dispatch(createOrderAction(orderData))
       .then((result) => {
         if ('error' in result) {

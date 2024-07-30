@@ -19,6 +19,7 @@ import PopupReview from '@client/src/components/popup/popup-review/popup-review'
 import PopupBuy from '@client/src/components/popup/popup-buy/popup-buy';
 import useFetchCurrentTrainingBalance from '@client/src/hooks/useFetchCurrentTrainingBalance';
 import { changeBalance } from '@client/src/store/actions/api-balance-action';
+import { CreateBalanceRDO } from '@shared/balance';
 
 
 export default function TrainingsDetail(): ReactElement | undefined {
@@ -63,9 +64,14 @@ export default function TrainingsDetail(): ReactElement | undefined {
     }
 
     dispatch(changeBalance({ trainingId, increase: false }))
-      .then(() => {
-        console.log('currentTrainingBalance: ', currentTrainingBalance);
-        if(currentTrainingBalance && currentTrainingBalance?.remainingTrainingsCount <= 0) {
+      .then((result) => {
+        const payload = result.payload as CreateBalanceRDO;
+
+        if(!payload) {
+          return;
+        }
+
+        if(payload.remainingTrainingsCount <= 0) {
           setIsBeginBtnDisabled(true);
         }
 

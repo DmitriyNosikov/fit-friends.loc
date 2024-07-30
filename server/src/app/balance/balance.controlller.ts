@@ -104,10 +104,9 @@ export class BalanceController {
     description: BalanceMessage.SUCCESS.CREATED
   })
   public async getUserBalance(
-    @Query('trainingId') trainingId: string,
+    @Param('trainingId') trainingId: string,
     @Body('userId') userId: string
   ) {
-    
     const balance = await this.balanceService.getUserBalanceByTrainingId(userId, trainingId);
 
     return fillDTO(CreateBalanceRDO, balance.toPOJO());

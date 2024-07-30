@@ -146,7 +146,7 @@ export const fetchTrainingItemAction = createAsyncThunk<void, TrainingId, AsyncO
   }
 );
 
-// Обноелвние тренировки
+// Обновление тренировки
 export const updateTrainingItemAction = createAsyncThunk<void, Partial<CreateTrainingRDO>, AsyncOptions>(
   APIAction.TRAININGS_UPDATE,
   async (

@@ -60,6 +60,10 @@ export class OrderRepository extends BasePostgresRepository<OrderEntity, OrderIn
       this.dbClient.order.findMany({
         where,
 
+        include: {
+          training: true
+        },
+
         // Pagination
         take,
         skip,
@@ -81,7 +85,11 @@ export class OrderRepository extends BasePostgresRepository<OrderEntity, OrderIn
 
   public async create(entity: OrderEntity): Promise<OrderEntity | null> {
     const order = await this.dbClient.order.create({
-      data: entity
+      data: entity,
+       
+      include: {
+        training: true
+      }
     });
 
     if (!order) {

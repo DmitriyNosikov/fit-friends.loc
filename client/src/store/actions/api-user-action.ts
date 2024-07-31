@@ -38,6 +38,8 @@ export const checkUserAuthAction = createAsyncThunk<void, void, AsyncOptions>(
   async (_arg, { dispatch, extra: api }) => {
     dispatch(setDataLoadingStatus(true));
 
+    console.log('Check user auth status');
+
     try {
       await api.post<TokenPayload>(ApiRoute.CHECK_JWT_TOKEN);
 

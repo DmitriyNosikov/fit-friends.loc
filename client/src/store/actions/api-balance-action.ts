@@ -67,6 +67,7 @@ export const fetchCurrentTrainingBalance = createAsyncThunk<CreateBalanceRDO, Tr
     } catch(err) {
       toast.info('Can`t find your training balance. Possibly you haven`t bought it yet')
 
+      dispatch(setCurrentTrainingBalanceAction(null));
       dispatch(setDataLoadingStatus(false));
 
       return rejectWithValue(err);

@@ -41,6 +41,7 @@ export default function TrainingsDetail(): ReactElement | undefined {
   const [isUserCanLeaveReview, setIsUserCanLeaveReview]  = useState(false);
 
   useEffect(() => {
+    console.log('BALANCE: ', balance);
     setIsBeginBtnDisabled(!balance || balance.remainingTrainingsCount <= 0);
     setIsUserCanLeaveReview(balance !== null && balance.hasTrainingStarted);
   }, [balance])
@@ -76,7 +77,9 @@ export default function TrainingsDetail(): ReactElement | undefined {
           setIsBeginBtnDisabled(true);
         }
 
-        setIsUserCanLeaveReview(true);
+        if(payload.hasTrainingStarted) {
+          setIsUserCanLeaveReview(true);
+        }
       })
   }
 

@@ -14,7 +14,7 @@ import { AsyncOptions } from '@client/src/types/async-options.type';
 
 import { ApiRoute, AppRoute, AuthorizationStatus, Namespace } from '@client/src/const';
 import { TokenPayload } from '@client/src/types/token-payload';
-import { deleteToken, setToken } from '@client/src/services/token';
+import { deleteToken, REFRESH_TOKEN_KEY, setToken } from '@client/src/services/token';
 
 
 
@@ -141,13 +141,14 @@ export const loginUserAction = createAsyncThunk<void, LoginUserDTO, AsyncOptions
         ApiRoute.LOGIN,
         { email, password }
       );
-      const { accessToken } = data;
+      const { accessToken, refreshToken } = data;
 
       if(!accessToken) {
         throw new Error('Didn`t get access token from server. Please, try again later.');
       }
 
       setToken(accessToken);
+      setToken(refreshToken, REFRESH_TOKEN_KEY);
 
       dispatch(setUserInfoAction(data));
       dispatch(setDataLoadingStatus(false));

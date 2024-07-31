@@ -4,7 +4,7 @@ import { searchOrdersAction } from '../store/actions/api-order-action';
 import { getOrdersList } from '../store/slices/order-process/order-process.selectors';
 
 
-export default function useFetchOrdersByTrainingId(trainingId: string) {
+export default function useFetchUserBalance(trainingId: string) {
   const dispatch = useAppDispatch();
   const orders = useAppSelector(getOrdersList);
 

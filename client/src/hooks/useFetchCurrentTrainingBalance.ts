@@ -12,7 +12,7 @@ export default function useFetchCurrentTrainingBalance(trainingId: string) {
     let isMounted = true;
 
     if(isMounted) {
-      dispatch(fetchCurrentTrainingBalance({ trainingId })); // Баланс ntreotq тренировокb пользователя
+      dispatch(fetchCurrentTrainingBalance({ trainingId })); // Баланс тренировки пользователя
     }
 
     return () => {

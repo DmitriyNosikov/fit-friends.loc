@@ -85,7 +85,7 @@ export class OrderRepository extends BasePostgresRepository<OrderEntity, OrderIn
 
   public async create(entity: OrderEntity): Promise<OrderEntity | null> {
     const order = await this.dbClient.order.create({
-      data: entity,
+      data: entity as OrderEntity,
        
       include: {
         training: true

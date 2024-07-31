@@ -1,7 +1,12 @@
 import BackBtn from '@client/src/components/back-btn/back-btn';
+import useFetchOrdersList from '@client/src/hooks/useFetchOrdersList';
 import { ReactElement } from 'react';
 
 export default function Orders(): ReactElement {
+  const orders = useFetchOrdersList();
+
+  console.log('Orders: ', orders);
+
   return (
     <section className="my-orders">
       <div className="container">

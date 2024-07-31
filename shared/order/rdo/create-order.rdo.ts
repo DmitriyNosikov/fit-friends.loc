@@ -1,12 +1,13 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { OrderType, OrderTypeEnum } from '@server/libs/types';
 
-import { Expose } from 'class-transformer';
+import { Expose, Type } from 'class-transformer';
 
 import { OrderValidation } from '@server/order/order.constant';
 import { TrainingInterface } from '@server/training/interfaces/training.interface';
 import { PaymentType, PaymentTypeEnum } from '@shared/types/payment-type.enum';
 import { UserInterface } from '@server/user/interfaces';
+import { CreateTrainingRDO } from '@shared/training';
 
 export class CreateOrderRDO {
   @ApiProperty({
@@ -82,4 +83,12 @@ export class CreateOrderRDO {
   })
   @Expose()
   userId?: UserInterface['id'];
+
+  
+  @ApiProperty({
+    description: 'Review`s author additional info',
+  })
+  @Expose()
+  @Type(() => CreateTrainingRDO)
+  trainingInfo?: CreateTrainingRDO;
 }

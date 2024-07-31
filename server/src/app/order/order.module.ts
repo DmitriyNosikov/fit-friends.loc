@@ -3,7 +3,7 @@ import { OrderService } from './order.service';
 import { OrderFactory } from './order.factory';
 import { OrderRepository } from './order.repository';
 import { TrainingModule } from '@server/training/training.module';
-import { OrderController } from './order.controlller';
+import { OrderController } from './order.controller';
 import { BalanceModule } from '../balance/balance.module';
 
 @Module({

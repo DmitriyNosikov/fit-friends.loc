@@ -16,14 +16,14 @@ export class OrderEntity extends Entity implements StorableEntityInterface<Order
   public updatedAt?: Date;
 
   public type: OrderType;
+  public userId: UserInterface['id'];
   public trainingId: TrainingInterface['id'];
   public price: TrainingInterface['price'];
   public trainingsCount: number;
   public totalPrice: number;
   public paymentType: PaymentType;
-  public userId: UserInterface['id'];
 
-  public training?: TrainingInterface;
+  public trainingInfo?: TrainingInterface;
 
   constructor(order?: OrderInterface) {
     super();
@@ -40,31 +40,31 @@ export class OrderEntity extends Entity implements StorableEntityInterface<Order
     this.updatedAt = order.updatedAt;
 
     this.type = order.type;
+    this.userId = order.userId;
     this.trainingId = order.trainingId;
     this.price = order.price;
     this.trainingsCount = order.trainingsCount;
     this.totalPrice = order.totalPrice;
     this.paymentType = order.paymentType;
-    this.userId = order.userId;
 
-    this.training = order.training;
+    this.trainingInfo = order.training;
   }
 
-  toPOJO(): OrderInterface & TrainingInfo {
+  toPOJO(): OrderInterface & { trainingInfo: TrainingInterface } {
     return {
       id: this.id,
       createdAt: this.createdAt,
       updatedAt: this.updatedAt,
 
       type: this.type,
+      userId: this.userId,
       trainingId: this.trainingId,
       price: this.price,
       trainingsCount: this.trainingsCount,
       totalPrice: this.totalPrice,
       paymentType: this.paymentType,
-      userId: this.userId,
 
-      training: this.training
+      trainingInfo: this.trainingInfo
     };
   }
 }

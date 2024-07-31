@@ -732,7 +732,7 @@ paths:
       parameters:
         - name: trainingId
           required: true
-          in: query
+          in: path
           schema:
             type: string
       responses:
@@ -1675,6 +1675,10 @@ components:
           type: object
           description: User ID
           example: d61ef04e-295a-41cb-a230-7e9e4570f14b
+        trainingInfo:
+          description: Review`s author additional info
+          allOf:
+            - $ref: "#/components/schemas/CreateTrainingRDO"
       required:
         - id
         - createdAt
@@ -1686,6 +1690,7 @@ components:
         - totalPrice
         - paymentType
         - userId
+        - trainingInfo
     UpdateOrderDTO:
       type: object
       properties:

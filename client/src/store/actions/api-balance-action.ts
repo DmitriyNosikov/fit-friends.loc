@@ -52,7 +52,7 @@ export const fetchBalanceAction = createAsyncThunk<void, void, AsyncOptions>(
 export const fetchCurrentTrainingBalance = createAsyncThunk<CreateBalanceRDO, TrainingId, AsyncOptions>(
   APIAction.BALANCE_BY_TRAINING,
   async (
-    trainingId,
+    { trainingId },
     { dispatch, rejectWithValue, extra: api }
   ) => {
     dispatch(setDataLoadingStatus(true));
@@ -65,7 +65,7 @@ export const fetchCurrentTrainingBalance = createAsyncThunk<CreateBalanceRDO, Tr
 
       return data;
     } catch(err) {
-      toast.warn('Can`t load your training balance. Please, refresh page or try again later')
+      toast.info('Can`t find your training balance. Possibly you haven`t bought it yet')
 
       dispatch(setDataLoadingStatus(false));
 

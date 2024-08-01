@@ -7,7 +7,7 @@ Content-Type: application/json
 ###
 
 @userId = 61f2e83e-5b2b-407e-9004-516914ad3ad7
-@authorization = Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIwNTY5N2IxYS1jMDI3LTQ5OWItYTAyZS1jMzMyOGY4MzMzYTIiLCJlbWFpbCI6Imlyb24tbWFuQHN0YXJraW5kdXN0cmllcy5pdCIsIm5hbWUiOiJUb255Iiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzIyNDM3Njg1LCJleHAiOjE3MjI0Mzg1ODV9.6q_MT1AuxL4udX5-yUoUulMOh5a9QGkZa-_QQ-pQiSo
+@authorization = Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIwNTY5N2IxYS1jMDI3LTQ5OWItYTAyZS1jMzMyOGY4MzMzYTIiLCJlbWFpbCI6Imlyb24tbWFuQHN0YXJraW5kdXN0cmllcy5pdCIsIm5hbWUiOiJUb255Iiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzIyNDQxMDE3LCJleHAiOjE3MjI0NDE5MTd9.iN12e5loILcTbjyHx_0Mz73koj8lBHjv1O6bFKuQj30
 @refresh = Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIwNTY5N2IxYS1jMDI3LTQ5OWItYTAyZS1jMzMyOGY4MzMzYTIiLCJlbWFpbCI6Imlyb24tbWFuQHN0YXJraW5kdXN0cmllcy5pdCIsIm5hbWUiOiJUb255Iiwicm9sZSI6ImFkbWluIiwidG9rZW5JZCI6IjdlMDE0ZjQ0LTg0M2ItNDc3ZS1hY2VkLTIyODAwZDI2OGFhZiIsImlhdCI6MTcyMjQzNzY4NSwiZXhwIjoxNzIyNDM4NTg1fQ._DudEzkZl9ZjgGi4Ee4X-B0rZBknHPzYDPeOf_emuDY
 
 # /////////////////////////////////// AUTNENTICATION ///////////////////////////////////

@@ -1,16 +1,97 @@
-import { CreateOrderRDO } from '@shared/order'
+import { CreateOrderRDO, OrderSearchQuery } from '@shared/order'
+
+import { ITEMS_PER_PAGE } from '@client/src/const';
+
+import Stub from '../../tools/stub/stub';
 import OrdersListItem from '../orders-list-item/orders-list-item'
 
+import useSearchOrders from '@client/src/hooks/useSearchOrders';
+import { useAppDispatch } from '@client/src/hooks';
+import { searchOrdersAction } from '@client/src/store/actions/api-order-action';
+
+export const OrdersSortTypeEnum = {
+  TOTAL_PRICE: 'totalPrice',
+  TRAININGS_COUNT: 'trainingsCount'
+} as const;
+
+export type OrdersSortTypeList = (typeof OrdersSortTypeEnum)[keyof typeof OrdersSortTypeEnum];
+
 type OrdersListProps = {
-  orders: CreateOrderRDO[]
+  sortBy: OrdersSortTypeList
 }
 
-export default function OrdersList({ orders }: OrdersListProps) {
+const START_PAGE = 1;
+
+export default function OrdersList({ sortBy }: OrdersListProps) {
+  let searchQuery: OrderSearchQuery = {
+    page: START_PAGE,
+    limit: ITEMS_PER_PAGE
+  };
+
+  const dispatch = useAppDispatch();
+  const orders = useSearchOrders(searchQuery);
+  const orderEntities = orders?.entities;
+
+  if (!orderEntities) {
+    return <Stub />
+  }
+
+  const isShowMoreBtnVisible = orders?.totalPages
+    && orders?.totalPages > START_PAGE
+    && orders.currentPage !== orders?.totalPages;
+
+  function handleShowMoreBtnClick() {
+    if (!orders || !orders.currentPage) {
+      return;
+    };
+
+    let currentPage = orders.currentPage;
+
+    searchQuery = {
+      page: ++currentPage,
+      limit: ITEMS_PER_PAGE
+    };
+
+    dispatch(searchOrdersAction({ searchQuery, appendItems: true }));
+  }
+
+  function handleBackToBeginBtnClick() {
+    searchQuery = {
+      page: START_PAGE,
+      limit: ITEMS_PER_PAGE
+    };
+
+    dispatch(searchOrdersAction({ searchQuery }));
+  }
+
+  const sort = {
+    [OrdersSortTypeEnum.TOTAL_PRICE]: (items: CreateOrderRDO[]) =>
+      [...items].sort((a, b) => b.totalPrice - a.totalPrice),
+    [OrdersSortTypeEnum.TRAININGS_COUNT]: (items: CreateOrderRDO[]) =>
+      [...items].sort((a, b) => b.trainingsCount - a.trainingsCount),
+  };
+
+  const sortedOrders = sort[sortBy](orderEntities);
+
   return (
-    <ul className="my-orders__list">
-      {
-        orders && orders.map((order) => <OrdersListItem order={order} key={order.id}/>)
-      }
-    </ul>
+    <>
+      <ul className="my-orders__list">
+        {
+          sortedOrders && sortedOrders.map((order) => <OrdersListItem order={order} key={order.id} />)
+        }
+      </ul>
+
+      <div className="show-more my-orders__show-more">
+        {
+          isShowMoreBtnVisible &&
+          <button className="btn show-more__button show-more__button--more" type="button" onClick={handleShowMoreBtnClick}>Показать еще</button>
+        }
+<button className="btn show-more__button show-more__button--to-top" type="button" onClick={handleBackToBeginBtnClick}>Вернуться в начало</button>
+        {
+          orders.entities.length > ITEMS_PER_PAGE &&
+          <button className="btn show-more__button show-more__button--to-top" type="button" onClick={handleBackToBeginBtnClick}>Вернуться в начало</button>
+        }
+      </div>
+    </>
   )
 }

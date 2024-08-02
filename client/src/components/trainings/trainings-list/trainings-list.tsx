@@ -1,5 +1,7 @@
 import { ReactElement } from 'react';
 
+import { ITEMS_PER_PAGE } from '@client/src/const';
+
 import { useAppDispatch, useAppSelector } from '@client/src/hooks';
 import useSearchTrainings from '@client/src/hooks/useSearchTrainings';
 import { searchTrainingsAction } from '@client/src/store/actions/api-training-action';
@@ -10,17 +12,21 @@ import TrainingsListItem from '../trainings-list-item/trainings-list-item';
 import Stub from '../../tools/stub/stub';
 import Spinner from '../../tools/spinner/spinner';
 
-const MAX_TRAININGS_PER_PAGE = 6;
+const START_PAGE = 1;
 
 export default function TrainingsList(): ReactElement {
   let searchQuery: TrainingSearchQuery = {
-    page: 1,
-    limit: MAX_TRAININGS_PER_PAGE
+    page: START_PAGE,
+    limit: ITEMS_PER_PAGE
   };
 
   const dispatch = useAppDispatch();
   const trainingsList = useSearchTrainings(searchQuery);
   const isTrainingsLoadings = useAppSelector(getTrainingsListLoadingStatus);
+
+  const isShowMoreBtnVisible = trainingsList?.totalPages
+    && trainingsList?.totalPages > START_PAGE
+    && trainingsList.currentPage !== trainingsList?.totalPages;
 
   function handleShowMoreBtnClick() {
     if (!trainingsList || !trainingsList.currentPage) {
@@ -31,15 +37,20 @@ export default function TrainingsList(): ReactElement {
 
     searchQuery = {
       page: ++currentPage,
-      limit: MAX_TRAININGS_PER_PAGE
+      limit: ITEMS_PER_PAGE
     };
 
     dispatch(searchTrainingsAction({ searchQuery, appendItems: true }));
   }
 
-  const isShowMoreBtnVisible = trainingsList?.totalPages
-    && trainingsList?.totalPages > 1
-    && trainingsList.currentPage !== trainingsList?.totalPages;
+  function handleBackToBeginBtnClick() {
+    searchQuery = {
+      page: START_PAGE,
+      limit: ITEMS_PER_PAGE
+    };
+
+    dispatch(searchTrainingsAction({ searchQuery }));
+  }
 
   return (
     <div className="inner-page__content">
@@ -81,8 +92,8 @@ export default function TrainingsList(): ReactElement {
             <button className="btn show-more__button show-more__button--more" type="button" onClick={handleShowMoreBtnClick}>Показать еще</button>
           }
           {
-            trainingsList && (trainingsList.entities.length > MAX_TRAININGS_PER_PAGE) &&
-            <button className="btn show-more__button show-more__button--to-top" type="button">Вернуться в начало</button>
+            trainingsList && (trainingsList.entities.length > ITEMS_PER_PAGE) &&
+            <button className="btn show-more__button show-more__button--to-top" type="button" onClick={handleBackToBeginBtnClick}>Вернуться в начало</button>
           }
         </div>
       </div>

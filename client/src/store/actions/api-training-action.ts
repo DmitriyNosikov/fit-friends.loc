@@ -9,7 +9,7 @@ import { CreateTrainingRDO, TrainingFilterParamsRDO, TrainingSearchQuery, Traini
 import { setDataLoadingStatus } from '../slices/main-process/main-process';
 import { appendTrainingsAction, deleteTrainingItemStateAction, setConvenientTrainingsAction, setTrainingFilterParamsAction, setTrainingItemAction, setTrainingsAction, setWithDiscountTrainingsAction, setWithRatingTrainingsAction, updateTrainingsListAction,  } from '../slices/training-process/training-process';
 import { redirectToRoute } from '../middlewares/redirect-action';
-import { adaptQueryParams } from '@client/src/utils/adapters';
+import { createSearchURL } from '@client/src/utils/adapters';
 
 const APITrainingPrefix = `[${Namespace.TRAINING}-BACKEND]`;
 const APIAction = {
@@ -227,20 +227,14 @@ export const searchTrainingsAction = createAsyncThunk<TrainingsWithPaginationRDO
   ) => {
     dispatch(setDataLoadingStatus(true));
 
-    let url = `${ApiRoute.TRAININGS_API}`;
-
-    if(searchQuery && Object.keys(searchQuery).length > 0) {
-      const queryString = adaptQueryParams(searchQuery as Record<string, unknown>);
-
-      url += `?${queryString}`;
-    }
+    let url = createSearchURL(ApiRoute.TRAININGS_API, searchQuery as Record<string, unknown>);
 
     // Запрашиваем данные с сервера
     try {
       const { data } = await api.get<TrainingsWithPaginationRDO>(url);
 
       if(!data) {
-        toast.warn('No products found by passed filter');
+        toast.info('No products found by passed filter');
       }
 
       if(!appendItems) {

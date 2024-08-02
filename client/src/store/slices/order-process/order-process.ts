@@ -22,6 +22,18 @@ export const orderProcess = createSlice({
       state.paginatedOrders = action.payload;
     },
 
+    // Добавление заказов при нажатии а кнопку "Показать еще"
+    appendOrdersAction: (state, action: PayloadAction<OrdersWithPaginationRDO | null>) => {
+      const addingOrders = action.payload;
+
+      if(!state.paginatedOrders || !addingOrders) {
+        return;
+      }
+
+      addingOrders?.entities.forEach((item) => state.paginatedOrders?.entities.push(item));
+      state.paginatedOrders.currentPage = addingOrders.currentPage; // Обновляем текущую страницу
+    },
+
     updateOrdersAction: (state, action: PayloadAction<CreateOrderRDO>) => {
       const updatedOrder = action.payload;
 
@@ -42,5 +54,6 @@ export const orderProcess = createSlice({
 
 export const {
   setOrdersAction,
+  appendOrdersAction,
   updateOrdersAction
 } = orderProcess.actions;

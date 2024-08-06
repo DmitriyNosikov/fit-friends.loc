@@ -1,15 +1,13 @@
-import { CreateOrderRDO, OrderSearchQuery } from '@shared/order'
-
 import { ITEMS_PER_PAGE } from '@client/src/const';
 
 import Stub from '../../tools/stub/stub';
 import PurchasesListItem from '../purchases-list-item/purchases-list-item';
 
-import useSearchOrders from '@client/src/hooks/useSearchOrders';
 import { useAppDispatch } from '@client/src/hooks';
-import { searchOrdersAction } from '@client/src/store/actions/api-order-action';
-import useFetchTrainingBalance from '@client/src/hooks/useFetchTrainingBalance';
+import useSearchBalance from '@client/src/hooks/useSearchBalance';
 import { CreateBalanceRDO } from '@shared/balance';
+import { BaseSearchQuery } from '@shared/types';
+import { searchBalanceAction } from '@client/src/store/actions/api-balance-action';
 
 const START_PAGE = 1;
 
@@ -17,14 +15,15 @@ type PurchasesListProps = {
   showOnlyActive?: boolean;
 }
 
+
 export default function PurchasesList({ showOnlyActive }: PurchasesListProps) {
-  let searchQuery: OrderSearchQuery = {
+  let searchQuery: BaseSearchQuery = {
     page: START_PAGE,
     limit: ITEMS_PER_PAGE
   };
 
   const dispatch = useAppDispatch();
-  const purchases = useFetchTrainingBalance();
+  const purchases = useSearchBalance(searchQuery);
   const purchasesEntities = purchases?.entities;
   const filteredPurchases = (showOnlyActive && purchasesEntities)
     ? [...purchasesEntities].filter((purchase: CreateBalanceRDO) => purchase.remainingTrainingsCount > 0)
@@ -50,7 +49,7 @@ export default function PurchasesList({ showOnlyActive }: PurchasesListProps) {
       limit: ITEMS_PER_PAGE
     };
 
-    dispatch(searchOrdersAction({ searchQuery, appendItems: true }));
+    dispatch(searchBalanceAction({ searchQuery, appendItems: true }));
   }
 
   function handleBackToBeginBtnClick() {
@@ -59,7 +58,7 @@ export default function PurchasesList({ showOnlyActive }: PurchasesListProps) {
       limit: ITEMS_PER_PAGE
     };
 
-    dispatch(searchOrdersAction({ searchQuery }));
+    dispatch(searchBalanceAction({ searchQuery }));
   }
 
   return (

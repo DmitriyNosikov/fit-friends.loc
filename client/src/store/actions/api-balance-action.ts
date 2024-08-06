@@ -4,8 +4,10 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 import { toast } from 'react-toastify';
 
 import { setDataLoadingStatus } from '../slices/main-process/main-process';
-import { setBalanceAction, setCurrentTrainingBalanceAction, updateBalanceAction } from '../slices/balance-process/balance-process';
+import { appendBalanceAction, setBalanceAction, setCurrentTrainingBalanceAction, updateBalanceAction } from '../slices/balance-process/balance-process';
 import { BalancesWithPaginationRDO, ChangeBalanceDTO, CreateBalanceRDO, UpdateBalanceDTO } from '@shared/balance';
+import { BaseSearchQuery } from '@shared/types';
+import { createSearchURL } from '@client/src/utils/adapters';
 
 const APIBalancePrefix = `[${Namespace.BALANCE}-BACKEND]`;
 const APIAction = {
@@ -13,7 +15,10 @@ const APIAction = {
   BALANCE_BY_TRAINING: `${APIBalancePrefix}/balance-by-training`,
 
   BALANCE_UPDATE: `${APIBalancePrefix}/update`,
-  BALANCE_CHANGE: `${APIBalancePrefix}/change`
+  BALANCE_CHANGE: `${APIBalancePrefix}/change`,
+
+  SEARCH: `${APIBalancePrefix}/search`,
+  PAGINATION_GET_PAGE: `${APIBalancePrefix}/get-pagination-page`,
 } as const;
 
 type BalanceId = {
@@ -136,5 +141,73 @@ export const changeBalance = createAsyncThunk<CreateBalanceRDO, ChangeBalance, A
 
       return rejectWithValue(err);
     }
+  }
+);
+
+
+type SearchPayload = {
+  searchQuery?: BaseSearchQuery,
+  appendItems?: boolean
+};
+
+export const searchBalanceAction = createAsyncThunk<BalancesWithPaginationRDO, SearchPayload, AsyncOptions>(
+  APIAction.SEARCH,
+  async (
+    { searchQuery, appendItems },
+    {dispatch, rejectWithValue, extra: api}
+  ) => {
+    dispatch(setDataLoadingStatus(true));
+
+    let url = createSearchURL(ApiRoute.BALANCE_API, searchQuery as Record<string, unknown>);
+
+    // Запрашиваем данные с сервера
+    try {
+      const { data } = await api.get<BalancesWithPaginationRDO>(url);
+
+      if(!data) {
+        toast.info('No products found by passed filter');
+      }
+
+      if(!appendItems) {
+        dispatch(setBalanceAction(data));
+
+        dispatch(setDataLoadingStatus(false));
+        return data;
+      }
+
+      dispatch(appendBalanceAction(data));
+
+      dispatch(setDataLoadingStatus(false));
+
+      return data;
+    } catch(err) {
+      toast.error(`Can't get balance. Error: ${err}`);
+
+      dispatch(setDataLoadingStatus(false));
+      return rejectWithValue(err);
+    }
+  }
+);
+
+// Пагинация
+type PageNumber = number;
+
+export const getPaginationPage = createAsyncThunk<void, PageNumber, AsyncOptions>(
+  APIAction.PAGINATION_GET_PAGE,
+  async (
+    pageNumber,
+    { dispatch, extra: api }
+  ) => {
+    dispatch(setDataLoadingStatus(true));
+
+    try {
+      const { data } = await api.get<BalancesWithPaginationRDO>(`${ApiRoute.BALANCE_API}/?page=${pageNumber}`);
+
+      dispatch(appendBalanceAction(data));
+    } catch(err) {
+      toast.error(`Cant't get pagination page ${pageNumber}. Error: ${err}`);
+    }
+
+    dispatch(setDataLoadingStatus(false));
   }
 );

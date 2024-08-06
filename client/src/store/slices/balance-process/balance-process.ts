@@ -28,6 +28,18 @@ export const balanceProcess = createSlice({
       state.currentTrainingBalance = action.payload;
     },
 
+    // Добавление балансов при нажатии а кнопку "Показать еще"
+    appendBalanceAction: (state, action: PayloadAction<BalancesWithPaginationRDO | null>) => {
+      const addingBalance = action.payload;
+
+      if(!state.paginatedBalance || !addingBalance) {
+        return;
+      }
+
+      addingBalance?.entities.forEach((item) => state.paginatedBalance?.entities.push(item));
+      state.paginatedBalance.currentPage = addingBalance.currentPage; // Обновляем текущую страницу
+    },
+
     updateBalanceAction: (state, action: PayloadAction<CreateBalanceRDO>) => {
       const updatedBalance = action.payload;
 
@@ -49,5 +61,6 @@ export const balanceProcess = createSlice({
 export const {
   setBalanceAction,
   setCurrentTrainingBalanceAction,
+  appendBalanceAction,
   updateBalanceAction
 } = balanceProcess.actions;

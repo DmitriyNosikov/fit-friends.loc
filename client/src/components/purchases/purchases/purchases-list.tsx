@@ -3,49 +3,47 @@ import { CreateOrderRDO, OrderSearchQuery } from '@shared/order'
 import { ITEMS_PER_PAGE } from '@client/src/const';
 
 import Stub from '../../tools/stub/stub';
-import OrdersListItem from '../orders-list-item/orders-list-item'
+import PurchasesListItem from '../purchases-list-item/purchases-list-item';
 
 import useSearchOrders from '@client/src/hooks/useSearchOrders';
 import { useAppDispatch } from '@client/src/hooks';
 import { searchOrdersAction } from '@client/src/store/actions/api-order-action';
-
-export const OrdersSortTypeEnum = {
-  TOTAL_PRICE: 'totalPrice',
-  TRAININGS_COUNT: 'trainingsCount'
-} as const;
-
-export type OrdersSortTypeList = (typeof OrdersSortTypeEnum)[keyof typeof OrdersSortTypeEnum];
-
-type OrdersListProps = {
-  sortBy: OrdersSortTypeList
-}
+import useFetchTrainingBalance from '@client/src/hooks/useFetchTrainingBalance';
+import { CreateBalanceRDO } from '@shared/balance';
 
 const START_PAGE = 1;
 
-export default function OrdersList({ sortBy }: OrdersListProps) {
+type PurchasesListProps = {
+  showOnlyActive?: boolean;
+}
+
+export default function PurchasesList({ showOnlyActive }: PurchasesListProps) {
   let searchQuery: OrderSearchQuery = {
     page: START_PAGE,
     limit: ITEMS_PER_PAGE
   };
 
   const dispatch = useAppDispatch();
-  const orders = useSearchOrders(searchQuery);
-  const orderEntities = orders?.entities;
+  const purchases = useFetchTrainingBalance();
+  const purchasesEntities = purchases?.entities;
+  const filteredPurchases = (showOnlyActive && purchasesEntities)
+    ? [...purchasesEntities].filter((purchase: CreateBalanceRDO) => purchase.remainingTrainingsCount > 0)
+    : purchasesEntities;
 
-  if (!orderEntities) {
+  if (!filteredPurchases || filteredPurchases.length <= 0) {
     return <Stub />
   }
 
-  const isShowMoreBtnVisible = orders?.totalPages
-    && orders?.totalPages > START_PAGE
-    && orders.currentPage !== orders?.totalPages;
+  const isShowMoreBtnVisible = purchases?.totalPages
+    && purchases?.totalPages > START_PAGE
+    && purchases.currentPage !== purchases?.totalPages;
 
   function handleShowMoreBtnClick() {
-    if (!orders || !orders.currentPage) {
+    if (!purchases || !purchases.currentPage) {
       return;
     };
 
-    let currentPage = orders.currentPage;
+    let currentPage = purchases.currentPage;
 
     searchQuery = {
       page: ++currentPage,
@@ -64,31 +62,22 @@ export default function OrdersList({ sortBy }: OrdersListProps) {
     dispatch(searchOrdersAction({ searchQuery }));
   }
 
-  const sort = {
-    [OrdersSortTypeEnum.TOTAL_PRICE]: (items: CreateOrderRDO[]) =>
-      [...items].sort((a, b) => b.totalPrice - a.totalPrice),
-    [OrdersSortTypeEnum.TRAININGS_COUNT]: (items: CreateOrderRDO[]) =>
-      [...items].sort((a, b) => b.trainingsCount - a.trainingsCount),
-  };
-
-  const sortedOrders = sort[sortBy](orderEntities);
-
   return (
     <>
-      <ul className="my-orders__list">
+      <ul className="my-purchases__list">
         {
-          sortedOrders && sortedOrders.map((order) => <OrdersListItem order={order} key={order.id} />)
+          filteredPurchases && filteredPurchases.map((purchase) => <PurchasesListItem purchase={purchase} key={purchase.id} />)
         }
       </ul>
 
-      <div className="show-more my-orders__show-more">
+      <div className="show-more my-purchases__show-more">
         {
           isShowMoreBtnVisible &&
           <button className="btn show-more__button show-more__button--more" type="button" onClick={handleShowMoreBtnClick}>Показать еще</button>
         }
 
         {
-          orderEntities.length > ITEMS_PER_PAGE &&
+          filteredPurchases.length > ITEMS_PER_PAGE &&
           <button className="btn show-more__button show-more__button--to-top" type="button" onClick={handleBackToBeginBtnClick}>Вернуться в начало</button>
         }
       </div>

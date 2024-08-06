@@ -26,10 +26,11 @@ export default function OrdersListItem({ order }: OrdersListItemProps) {
         <div className="thumbnail-training__inner">
           <div className="thumbnail-training__image">
             <picture>
-              <img src={background} width={330} height={190} alt="" />
+              <img src={background} width={330} height={190} alt={title} />
             </picture>
           </div>
-          <p className="thumbnail-training__price"><span className="thumbnail-training__price-value">{ price }</span><span>₽</span>
+          <p className="thumbnail-training__price">
+            <span className="thumbnail-training__price-value">{ price }</span><span>₽</span>
           </p>
           <h2 className="thumbnail-training__title">{ title }</h2>
           <div className="thumbnail-training__info">

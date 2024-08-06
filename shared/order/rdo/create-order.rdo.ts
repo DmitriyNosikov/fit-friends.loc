@@ -86,7 +86,7 @@ export class CreateOrderRDO {
 
   
   @ApiProperty({
-    description: 'Review`s author additional info',
+    description: 'Orders training additional info',
   })
   @Expose()
   @Type(() => CreateTrainingRDO)

@@ -49,6 +49,7 @@ export const AppRoute = {
   ACCOUNT: '/account',
   TRAININGS: '/trainings',
   ORDERS: '/orders',
+  PURCHASES: '/purchases',
   PAGE_404: '/page404',
 } as const;
 

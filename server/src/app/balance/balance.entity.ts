@@ -4,6 +4,9 @@ import { BalanceInterface } from './interfaces/balance.interface';
 import { TrainingInterface } from '@server/training/interfaces';
 import { UserInterface } from '@server/user/interfaces';
 
+type TrainingInfo = {
+  training?: TrainingInterface
+};
 export class BalanceEntity extends Entity implements StorableEntityInterface<BalanceInterface> {
   public createdAt?: Date;
   public updatedAt?: Date;
@@ -13,12 +16,14 @@ export class BalanceEntity extends Entity implements StorableEntityInterface<Bal
   public remainingTrainingsCount: number;
   public hasTrainingStarted: boolean;
 
+  public trainingInfo?: TrainingInterface;
+
   constructor(balance?: BalanceInterface) {
     super();
     this.populate(balance);
   }
 
-  populate(balance: BalanceInterface) {
+  populate(balance: BalanceInterface & TrainingInfo) {
     if (!balance) {
       return;
     }
@@ -31,9 +36,11 @@ export class BalanceEntity extends Entity implements StorableEntityInterface<Bal
     this.userId = balance.userId;
     this.remainingTrainingsCount = balance.remainingTrainingsCount;
     this.hasTrainingStarted = balance.hasTrainingStarted ?? false;
+
+    this.trainingInfo = balance.training;
   }
 
-  toPOJO(): BalanceInterface {
+  toPOJO(): BalanceInterface & { trainingInfo: TrainingInterface } {
     return {
       id: this.id,
       createdAt: this.createdAt,
@@ -43,6 +50,8 @@ export class BalanceEntity extends Entity implements StorableEntityInterface<Bal
       userId: this.userId,
       remainingTrainingsCount: this.remainingTrainingsCount,
       hasTrainingStarted: this.hasTrainingStarted,
+
+      trainingInfo: this.trainingInfo
     };
   }
 }

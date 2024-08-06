@@ -19,6 +19,8 @@ import PopupBuy from '@client/src/components/popup/popup-buy/popup-buy';
 import useFetchCurrentTrainingBalance from '@client/src/hooks/useFetchCurrentTrainingBalance';
 import { changeBalance } from '@client/src/store/actions/api-balance-action';
 import { CreateBalanceRDO } from '@shared/balance';
+import { getUserInfo } from '@client/src/store/slices/user-process/user-process.selectors';
+import { UserRoleEnum } from '@shared/types/user-roles.enum';
 
 
 export default function TrainingsDetail(): ReactElement | undefined {
@@ -30,6 +32,7 @@ export default function TrainingsDetail(): ReactElement | undefined {
     return;
   }
 
+  const userInfo = useAppSelector(getUserInfo);
   const trainingItem = useFetchTrainingItem(trainingId);
   const balance = useFetchCurrentTrainingBalance(trainingId);
 
@@ -41,9 +44,8 @@ export default function TrainingsDetail(): ReactElement | undefined {
   const [isUserCanLeaveReview, setIsUserCanLeaveReview]  = useState(false);
 
   useEffect(() => {
-    console.log('BALANCE: ', balance);
     setIsBeginBtnDisabled(!balance || balance.remainingTrainingsCount <= 0);
-    setIsUserCanLeaveReview(balance !== null && balance.hasTrainingStarted);
+    setIsUserCanLeaveReview(userInfo?.role === UserRoleEnum.CLIENT && balance !== null && balance.hasTrainingStarted);
   }, [balance])
 
   function handleLeaveReviewBtnClick() {

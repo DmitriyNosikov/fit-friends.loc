@@ -1,9 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Expose } from 'class-transformer';
+import { Expose, Type } from 'class-transformer';
 
 import { OrderValidation } from '@server/order/order.constant';
 import { TrainingInterface } from '@server/training/interfaces/training.interface';
-import { OrderInterface } from '@server/order/interfaces';
+import { CreateTrainingRDO } from '@shared/training';
 
 export class CreateBalanceRDO {
   @ApiProperty({
@@ -49,4 +49,11 @@ export class CreateBalanceRDO {
   })
   @Expose()
   hasTrainingStarted: boolean;
+
+  @ApiProperty({
+    description: 'Orders training additional info',
+  })
+  @Expose()
+  @Type(() => CreateTrainingRDO)
+  trainingInfo?: CreateTrainingRDO;
 }

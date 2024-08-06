@@ -59,6 +59,10 @@ export class BalanceRepository extends BasePostgresRepository<BalanceEntity, Bal
       this.dbClient.balance.findMany({
         where,
 
+        include: {
+          training: true
+        },
+
         // Pagination
         take,
         skip,

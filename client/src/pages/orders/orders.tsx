@@ -13,15 +13,13 @@ export default function Orders(): ReactElement {
 
           <BackBtn />
 
-            <>
-              <div className="my-orders__title-wrapper">
-                <h1 className="my-orders__title">Мои заказы</h1>
+          <div className="my-orders__title-wrapper">
+            <h1 className="my-orders__title">Мои заказы</h1>
 
-                <OrdersSort onSortChange={setSortType}/>
-              </div>
+            <OrdersSort onSortChange={setSortType}/>
+          </div>
 
-              <OrdersList sortBy={sortType} />
-            </>
+          <OrdersList sortBy={sortType} />
         </div>
       </div>
     </section>

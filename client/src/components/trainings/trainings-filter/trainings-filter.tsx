@@ -1,4 +1,4 @@
-import { ReactElement, useEffect } from 'react';
+import { ReactElement } from 'react';
 
 import { TrainingValidation } from '@server/training/training.constant';
 import useFetchTrainingFilterParams from '@client/src/hooks/useFetchTrainingFilterParams';
@@ -38,7 +38,8 @@ export default function TrainingsFilter(): ReactElement | undefined {
     dayCaloriesTo: calories.max,
     ratingFrom: Number(TrainingValidation.RATING.MIN),
     ratingTo: Number(TrainingValidation.RATING.MAX),
-    sortDirection: String(SortDirectionEnum.DESC)
+    sortType: 'price',
+    sortDirection: String(SortDirectionEnum.ASC)
   }
 
   const debouncedChangeFilterHandler = debounce(handleFilterChange, CHANGE_FILTER_TIMEOUT);
@@ -92,6 +93,8 @@ export default function TrainingsFilter(): ReactElement | undefined {
       filterParams.priceTo = 0;
       filterParams.sortDirection = SortDirectionEnum.DESC;
     }
+
+    console.log('FILTER PARAMS: ', filterParams);
 
     debouncedChangeFilterHandler(filterParams);
   }
@@ -161,11 +164,11 @@ export default function TrainingsFilter(): ReactElement | undefined {
             <h4 className="gym-catalog-form__title gym-catalog-form__title--sort">Сортировка</h4>
             <div className="btn-radio-sort gym-catalog-form__radio">
               <label>
-                <input type="radio" name="sort" defaultValue={SortDirectionEnum.DESC} defaultChecked />
+                <input type="radio" name="sort" defaultValue={SortDirectionEnum.ASC} defaultChecked />
                 <span className="btn-radio-sort__label">Дешевле</span>
               </label>
               <label>
-                <input type="radio" name="sort" defaultValue={SortDirectionEnum.ASC} />
+                <input type="radio" name="sort" defaultValue={SortDirectionEnum.DESC} />
                 <span className="btn-radio-sort__label">Дороже</span>
               </label>
               <label>

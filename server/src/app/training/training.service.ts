@@ -34,8 +34,11 @@ export class TrainingService {
       throw new NotFoundException(`Can't find products by passed params " ${preparedQuery}"`);
     }
 
-    // Сортировка тренировок пользователя от более подходящих к менее подходящим
-    trainings.entities = await this.sortTrainingsByUser(query.userId, trainings.entities);
+    // Сортировка тренировок пользователя от более подходящих к менее подходящим 
+    // (Если не передана другая сортировка)
+    if(!query.sortType) {
+      trainings.entities = await this.sortTrainingsByUser(query.userId, trainings.entities);
+    }
 
     return trainings;
   }

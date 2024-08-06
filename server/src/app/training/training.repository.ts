@@ -75,7 +75,7 @@ export class TrainingRepository extends BasePostgresRepository<TrainingEntity, T
       totalPages: this.calculateItemsPage(totalItemsCount, take),
       totalItems: totalItemsCount,
       itemsPerPage: take ?? totalItemsCount,
-    }
+    };
   }
 
   public async create(entity: TrainingEntity): Promise<TrainingEntity | null> {

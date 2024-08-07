@@ -159,8 +159,6 @@ export class TrainingController {
       return;
     }
 
-    console.log('Documents: ', documents);
-
     const trainings = {
       ...documents,
       entities: documents.entities.map((document) => fillDTO(CreateTrainingRDO, document.toPOJO()))

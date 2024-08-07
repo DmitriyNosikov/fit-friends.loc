@@ -6,7 +6,6 @@ import { TrainingMessage, TrainingValidation } from './training.constant';
 import { CreateTrainingDTO, TrainingSearchQuery, UpdateTrainingDTO } from '@shared/training';
 import { fillDTO, omitUndefined } from '@server/libs/helpers';
 import { UserService } from '@server/user/user.service';
-import { UserIdPayload } from '@shared/types';
 
 @Injectable()
 export class TrainingService {
@@ -26,7 +25,7 @@ export class TrainingService {
     return training;
   }
 
-  public async search(query?: TrainingSearchQuery & UserIdPayload) {
+  public async search(query?: TrainingSearchQuery) {
     const preparedQuery = this.filterQuery(query);
     const trainings = await this.trainingRepository.search(preparedQuery);
 

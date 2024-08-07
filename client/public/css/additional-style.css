@@ -80,3 +80,8 @@
 .training-video__button--stop {
   display: block;
 }
+
+/* Reviews Simplebar Scrollbar styles */
+.reviews-side-bar__list .simplebar-scrollable-y .simplebar-track.simplebar-vertical {
+  width: 8px;
+}

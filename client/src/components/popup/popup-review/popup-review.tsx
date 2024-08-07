@@ -105,7 +105,7 @@ export default function PopupReview({ onClose }: PopupReviewProps): ReactElement
           <li className="popup__rate-item">
             <div className="popup__rate-item-wrap">
               <label tabIndex={6}>
-                <input type="radio" name="оценка тренировки" aria-label="оценка 5." defaultValue={5} defaultChecked />
+                <input type="radio" name="оценка тренировки" aria-label="оценка 5." defaultValue={5} />
                 <span className="popup__rate-number">5</span>
               </label>
             </div>

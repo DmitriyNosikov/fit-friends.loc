@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, HttpStatus, Param, Patch, Post, Query, UseGuards, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpStatus, Param, Patch, Post, Query, SetMetadata, UseGuards, UseInterceptors } from '@nestjs/common';
 import { ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import {
   CreateTrainingDTO,
@@ -15,8 +15,9 @@ import { fillDTO } from '@server/libs/helpers';
 import { JWTAuthGuard } from '@server/user/guards/jwt-auth.guard';
 import { DefaultSearchParam } from '@shared/types/search/base-search-query.type';
 import { SortDirectionEnum } from '@shared/types/sort/sort-direction.enum';
-import { genderTypeList, trainingTypeList } from '@server/libs/types';
+import { genderTypeList, trainingTypeList, UserRoleEnum } from '@server/libs/types';
 import { InjectUserIdInterceptor } from '@server/libs/interceptors/inject-user-id.interceptor';
+import { RoleGuard, ROLES_METADATA_KEY } from '@server/user/guards/role.guard';
 
 @ApiTags('trainings')
 @Controller('trainings')
@@ -26,13 +27,15 @@ export class TrainingController {
   ) { }
 
   @Post('')
+  @UseGuards(JWTAuthGuard, RoleGuard)
+  @UseInterceptors(InjectUserIdInterceptor)
   @ApiOperation({ summary: 'Add new training' })
   @ApiResponse({
     type: CreateTrainingDTO,
     status: HttpStatus.CREATED,
     description: TrainingMessage.SUCCESS.CREATED
   })
-
+  @SetMetadata(ROLES_METADATA_KEY, [ UserRoleEnum.ADMIN, UserRoleEnum.TRAINER ])
   public async create(@Body() dto: CreateTrainingDTO) {
     const newTraining = await this.trainingService.create(dto);
 
@@ -65,13 +68,13 @@ export class TrainingController {
   })
   @ApiQuery({
     name: "priceForm",
-    description: `Prisa start value`,
+    description: `Price start value`,
     example: 1000,
     required: false
   })
   @ApiQuery({
     name: "priceTo",
-    description: `Prisa end value`,
+    description: `Price end value`,
     example: 5000,
     required: false
   })
@@ -97,6 +100,12 @@ export class TrainingController {
     name: "ratingTo",
     description: `Rating end value`,
     example: 5,
+    required: false
+  })
+  @ApiQuery({
+    name: "userId",
+    description: `Creator id`,
+    example: "g83h4y0943-nv934819843-jv934h8t-n923g48n9438",
     required: false
   })
   @ApiQuery({
@@ -150,9 +159,11 @@ export class TrainingController {
       return;
     }
 
+    console.log('Documents: ', documents);
+
     const trainings = {
       ...documents,
-      entities: documents.entities.map((document) => document.toPOJO())
+      entities: documents.entities.map((document) => fillDTO(CreateTrainingRDO, document.toPOJO()))
     }
 
     return trainings;
@@ -180,7 +191,7 @@ export class TrainingController {
 
     const convenientTrainings = {
       ...documents,
-      entities: documents.entities.map((document) => document.toPOJO())
+      entities: documents.entities.map((document) => fillDTO(CreateTrainingRDO, document.toPOJO()))
     }
 
     return convenientTrainings;
@@ -207,7 +218,7 @@ export class TrainingController {
 
     const trainings = {
       ...documents,
-      entities: documents.entities.map((document) => document.toPOJO())
+      entities: documents.entities.map((document) => fillDTO(CreateTrainingRDO, document.toPOJO()))
     }
 
     return trainings;
@@ -234,7 +245,7 @@ export class TrainingController {
 
     const trainings = {
       ...documents,
-      entities: documents.entities.map((document) => document.toPOJO())
+      entities: documents.entities.map((document) => fillDTO(CreateTrainingRDO, document.toPOJO()))
     }
 
     return trainings;

@@ -119,7 +119,8 @@ export function getTrainings() {
       video: "test/video/later.avi",
       trainersName: "Johny",
       rating: 0,
-      isSpecial: false
+      isSpecial: false,
+      userId: ""
     },
     {
       id: randomUUID(),
@@ -136,7 +137,8 @@ export function getTrainings() {
       video: "test/video/later.avi",
       trainersName: "Alexa",
       rating: 0,
-      isSpecial: true
+      isSpecial: true,
+      userId: ""
     },
     {
       id: randomUUID(),
@@ -153,7 +155,8 @@ export function getTrainings() {
       video: "test/video/later.avi",
       trainersName: "Evil",
       rating: 0,
-      isSpecial: true
+      isSpecial: true,
+      userId: ""
     },
     {
       id: randomUUID(),
@@ -169,7 +172,8 @@ export function getTrainings() {
       video: "test/video/later.avi",
       trainersName: "Cindy",
       rating: 0,
-      isSpecial: false
+      isSpecial: false,
+      userId: ""
     },
     {
       id: randomUUID(),
@@ -186,7 +190,8 @@ export function getTrainings() {
       video: "test/video/later.avi",
       trainersName: "Alex",
       rating: 5,
-      isSpecial: true
+      isSpecial: true,
+      userId: ""
     }
   ];
 }
@@ -256,7 +261,7 @@ export function getReviews(
   return reviews;
 }
 
-function getRandomIntInclusive(min, max) {
+export function getRandomIntInclusive(min, max) {
   const minCeiled = Math.ceil(min);
   const maxFloored = Math.floor(max);
   return Math.floor(Math.random() * (maxFloored - minCeiled + 1) + minCeiled);

@@ -49,6 +49,7 @@ model User {
   dayCaloriesLimit  Int?      @map("day_calories_limit")
   isReadyToTraining Boolean?  @map("is_ready_to_training")
 
+  training Training[]
   balance Balance[]
   order Order[]
   trainingReview TrainingReview[]
@@ -74,12 +75,14 @@ model Training {
   gender            String
   video             String
   rating            Int?
-  trainersName      String    @map("trainers_name")
+  trainersName      String?    @map("trainers_name")
   isSpecial         Boolean?  @map("is_special")
+  userId            String    @map("user_id")
 
-  balance Balance[]
-  order Order[]
-  review TrainingReview[]
+  balance           Balance[]
+  order             Order[]
+  review            TrainingReview[]
+  user              User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("trainings")
 }

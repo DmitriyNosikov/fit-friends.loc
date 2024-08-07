@@ -7,7 +7,7 @@ export const ROLES_METADATA_KEY = 'role';
 @Injectable()
 /** 
  * To use this guard, you have to set route-metadata with key ROLES_METADATA_KEY and roles list
- * Use @SetMetadata(ROLES_METADATA_KEY, [ UserRoleEnum.CLIENT, UserRoleEnum.CLIENT ... ])
+ * Use @SetMetadata(ROLES_METADATA_KEY, [ UserRoleEnum.CLIENT, UserRoleEnum.TRAINER ... ])
  */
 export class RoleGuard implements CanActivate {
     constructor(private readonly reflector: Reflector){}

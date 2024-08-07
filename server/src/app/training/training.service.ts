@@ -50,6 +50,14 @@ export class TrainingService {
       dto.isSpecial = true;
     }
 
+    // Автоматически подставляем имя создателя тренировки
+    const userId = dto.userId;
+    const userInfo = await this.userService.findById(userId);
+
+    if(userInfo && !dto.trainersName) {
+      dto.trainersName = userInfo.name;
+    }
+
     const trainingEntity = this.trainingFactory.create(dto);
     const training = await this.trainingRepository.create(trainingEntity);
 

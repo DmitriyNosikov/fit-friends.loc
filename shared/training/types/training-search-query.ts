@@ -102,7 +102,7 @@ export class TrainingSearchQuery {
   })
   @IsNumber()
   @IsOptional()
-  public  dayCaloriesTo?: number;
+  public dayCaloriesTo?: number;
 
   @Expose()
   @Transform((field) => {
@@ -139,6 +139,11 @@ export class TrainingSearchQuery {
   @IsBoolean()
   @IsOptional()
   public isSpecial?: boolean;
+
+  @Expose()
+  @IsString()
+  @IsOptional()
+  public userId?: string;
 
   @Expose()
   @Transform((field) => {

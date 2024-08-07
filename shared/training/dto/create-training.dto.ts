@@ -43,7 +43,6 @@ export class CreateTrainingDTO {
   @IsString()
   userLevel!: UserLevel;
 
-  
   @ApiProperty({
     description: 'Training type',
     example: 'кроссфит',
@@ -133,7 +132,8 @@ export class CreateTrainingDTO {
     example: 'Tony Stark',
   })
   @IsString()
-  trainersName!: string;
+  @IsOptional()
+  trainersName?: string;
 
   @ApiProperty({
     description: 'Is special offer or simple training',
@@ -142,4 +142,11 @@ export class CreateTrainingDTO {
   @IsBoolean()
   @IsOptional()
   isSpecial?: boolean;
+
+  @ApiProperty({
+    description: 'Training creator`s ID',
+    example: 'g83h4y0943-nv934819843-jv934h8t-n923g48n9438',
+  })
+  @IsString()
+  userId!: string;
 }

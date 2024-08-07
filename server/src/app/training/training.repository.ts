@@ -37,9 +37,29 @@ export class TrainingRepository extends BasePostgresRepository<TrainingEntity, T
     return trainingEntities;
   }
 
+  public async findByUserId(userId: string): Promise<TrainingEntity | null> {
+    const training = await this.dbClient.training.findFirst({
+      where: { userId },
+
+      include: {
+        user: true
+      }
+    });
+
+    if (!training) {
+      return null;
+    }
+
+    return this.getEntity(training);
+  }
+
   public async findById(trainingId: string): Promise<TrainingEntity | null> {
     const training = await this.dbClient.training.findFirst({
-      where: { id: trainingId }
+      where: { id: trainingId },
+
+      include: {
+        user: true
+      }
     });
 
     if (!training) {
@@ -58,6 +78,10 @@ export class TrainingRepository extends BasePostgresRepository<TrainingEntity, T
     const [items, totalItemsCount] = await Promise.all([
       this.dbClient.training.findMany({
         where,
+
+        include: {
+          user: true
+        },
 
         // Pagination
         take,
@@ -96,7 +120,11 @@ export class TrainingRepository extends BasePostgresRepository<TrainingEntity, T
   ): Promise<TrainingEntity | null> {
     const updatedTraining = await this.dbClient.training.update({
       where: { id: trainingId },
-      data: { ...fieldsToUpdate }
+      data: { ...fieldsToUpdate },
+      
+      include: {
+        user: true
+      }
     });
 
     if (!updatedTraining) {
@@ -141,6 +169,11 @@ export class TrainingRepository extends BasePostgresRepository<TrainingEntity, T
 
     where.AND = [];
     const andFilters: AndFilters = [];
+
+    // Поиск по пользователю
+    if(query?.userId) {
+      where.userId = query.userId;
+    }
 
     // Поиск по заголовку
     if(query?.title) {

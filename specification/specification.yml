@@ -217,6 +217,12 @@ paths:
           description: Item's creation date
           example: 2024-05-29
           schema: {}
+        - name: userId
+          required: false
+          in: query
+          description: Creator id
+          example: g83h4y0943-nv934819843-jv934h8t-n923g48n9438
+          schema: {}
         - name: ratingTo
           required: false
           in: query
@@ -244,13 +250,13 @@ paths:
         - name: priceTo
           required: false
           in: query
-          description: Prisa end value
+          description: Price end value
           example: 5000
           schema: {}
         - name: priceForm
           required: false
           in: query
-          description: Prisa start value
+          description: Price start value
           example: 1000
           schema: {}
         - name: gender
@@ -1210,6 +1216,10 @@ components:
           type: boolean
           description: Is special offer or simple training
           example: false
+        userId:
+          type: string
+          description: Training creator`s ID
+          example: g83h4y0943-nv934819843-jv934h8t-n923g48n9438
       required:
         - title
         - background
@@ -1225,6 +1235,7 @@ components:
         - rating
         - trainersName
         - isSpecial
+        - userId
     CreateTrainingRDO:
       type: object
       properties:
@@ -1320,6 +1331,14 @@ components:
           type: string
           description: Training creator`s name
           example: Tony Stark
+        userId:
+          type: string
+          description: Training creator`s ID
+          example: g83h4y0943-nv934819843-jv934h8t-n923g48n9438
+        userInfo:
+          description: Training creator`s detail info
+          allOf:
+            - $ref: "#/components/schemas/UserRDO"
         isSpecial:
           type: boolean
           description: Is special offer or simple training
@@ -1341,6 +1360,8 @@ components:
         - video
         - rating
         - trainersName
+        - userId
+        - userInfo
         - isSpecial
     TrainingsWithPaginationRDO:
       type: object
@@ -1466,6 +1487,10 @@ components:
           type: string
           description: Training creator`s name
           example: Tony Stark
+        userId:
+          type: string
+          description: Training creator`s ID
+          example: g83h4y0943-nv934819843-jv934h8t-n923g48n9438
         isSpecial:
           type: boolean
           description: Is special offer or simple training
@@ -1484,6 +1509,7 @@ components:
         - video
         - rating
         - trainersName
+        - userId
         - isSpecial
     CreateTrainingReviewDTO:
       type: object

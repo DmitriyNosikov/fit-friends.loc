@@ -15,7 +15,7 @@ export default function PersonalAccountCoach(): ReactElement {
         </div>
         <span className="thumbnail-link__text">Мои тренировки</span></a>
 
-        <Link className="thumbnail-link thumbnail-link--theme-light" to={AppRoute.ACCOUNT}>
+        <Link className="thumbnail-link thumbnail-link--theme-light" to={AppRoute.TRAININGS_CREATE}>
           <div className="thumbnail-link__icon thumbnail-link__icon--theme-light">
             <svg width={30} height={26} aria-hidden="true">
               <use xlinkHref="#icon-add" />

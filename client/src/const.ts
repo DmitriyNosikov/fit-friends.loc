@@ -48,6 +48,7 @@ export const AppRoute = {
   REGISTRATION: '/registration',
   ACCOUNT: '/account',
   TRAININGS: '/trainings',
+  TRAININGS_CREATE: '/trainings-create',
   ORDERS: '/orders',
   PURCHASES: '/purchases',
   PAGE_404: '/page404',

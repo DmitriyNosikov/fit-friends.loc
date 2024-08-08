@@ -12,7 +12,6 @@ type CertificatesListProps = {
 }
 
 export default function CertificatesList({ imagesSrc }: CertificatesListProps): ReactElement {
-  console.log(imagesSrc);
   return (
     <Swiper
       modules={[Navigation]}

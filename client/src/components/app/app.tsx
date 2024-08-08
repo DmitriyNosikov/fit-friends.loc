@@ -16,6 +16,7 @@ import TrainingsDetail from '../../pages/trainings/trainings-detail/trainings-de
 import Trainings from '@client/src/pages/trainings/trainings';
 import Orders from '@client/src/pages/orders/orders';
 import Purchases from '@client/src/pages/purchases/purchases';
+import TrainingsCreate from '@client/src/pages/trainings/trainings-create/trainings-create';
 
 // TODO: Нужен Helmet для смены заголовков
 
@@ -56,6 +57,12 @@ export default function App(): ReactElement {
         <Route path={`${AppRoute.TRAININGS}`} element={
           <PrivateRoute redirectTo={AppRoute.INTRO}>
             <Trainings />
+          </PrivateRoute>
+        }/>
+
+        <Route path={`${AppRoute.TRAININGS_CREATE}`} element={
+          <PrivateRoute redirectTo={AppRoute.INTRO}>
+            <TrainingsCreate />
           </PrivateRoute>
         }/>
 

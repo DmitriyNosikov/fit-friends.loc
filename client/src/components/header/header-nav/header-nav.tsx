@@ -13,7 +13,12 @@ export default function HeaderNav(): ReactElement {
     `${AppRoute.TRAININGS}/${params.trainingId}`
   ];
 
-  const personalAccountPages: string[] = [AppRoute.ACCOUNT, AppRoute.ORDERS, AppRoute.PURCHASES];
+  const personalAccountPages: string[] = [
+    AppRoute.ACCOUNT,
+    AppRoute.ORDERS,
+    AppRoute.PURCHASES,
+    AppRoute.TRAININGS_CREATE
+  ];
 
   const mainClassName = classNames(
     'main-nav__link',

@@ -9,7 +9,6 @@ import { registerUserAction } from '@client/src/store/actions/api-user-action';
 
 import RegistrationAvatar from '@client/src/components/registration/registration-avatar/registration-avatar';
 import RegistrationRole from '@client/src/components/registration/registration-role/registration-role';
-import RegistrationGender from '@client/src/components/registration/registration-gender/registration-gender';
 import { clearFieldError, validateFields } from '../../validation/validation-tools';
 
 import { CreateUserDTO } from '@shared/user';
@@ -17,6 +16,8 @@ import { useNavigate } from 'react-router-dom';
 import { AppRoute } from '@client/src/const';
 import CustomSelectBtn from '@client/src/components/custom-select-btn/custom-select-btn';
 import { registrationValidationSchema } from '@client/src/validation/registration-validation';
+import RadioGender from '@client/src/components/radio-gender/radio-gender';
+import { upperCaseFirst } from '@client/src/utils/common';
 
 
 export default function Registration() {
@@ -165,19 +166,19 @@ export default function Registration() {
                     {
                       // Location list
                       location &&
-                        <>
+                      <>
                         <div className="custom-select custom-select--not-selected" id="location">
                           <span className="custom-select__label">Ваша локация</span>
-
+                          <div className="custom-select__placeholder">ст. м. {upperCaseFirst(userLocation)}</div>
                           <CustomSelectBtn
-                            itemsList={location}
+                            itemsList={location.map((item) => upperCaseFirst(item))}
                             uniqCSSId='registration-location'
                             onItemSelect={setUserLocation}
                           />
 
                           <span className="custom-input__error"></span>
                         </div>
-                        </>
+                      </>
                     }
 
                     <div className="custom-input" id="password">
@@ -192,7 +193,17 @@ export default function Registration() {
 
                     {
                       // User gender
-                      gender && <RegistrationGender genderList={gender} onGenderChange={setUserGender} />
+                      gender &&
+                      <div className="sign-up__radio" id="gender">
+                        <span className="sign-up__label">Пол</span>
+                        <RadioGender
+                          genderList={gender}
+                          onGenderChange={setUserGender}
+                          selectedItem='женский'
+                          containerAdditionalClass='custom-toggle-radio--big'
+                        />
+                        <span className="custom-input__error"></span>
+                      </div>
                     }
                   </div>
 

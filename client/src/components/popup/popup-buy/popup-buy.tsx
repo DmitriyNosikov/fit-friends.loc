@@ -6,7 +6,6 @@ import { PaymentType } from '@shared/types';
 import { useAppDispatch } from '@client/src/hooks';
 import { createOrderAction } from '@client/src/store/actions/api-order-action';
 import { toast } from 'react-toastify';
-import { changeBalance } from '@client/src/store/actions/api-balance-action';
 
 const INITIAL_TRAININGS_COUNT = 1;
 

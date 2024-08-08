@@ -28,6 +28,13 @@
   opacity: 1;
 } */
 
+
+
+.sign-up .custom-select__placeholder,
+.create-training .custom-select__placeholder {
+  bottom: 22px;
+}
+
 /* NoUISlider */
 .range-slider .noUi-horizontal .noUi-handle {
   width: 16px;

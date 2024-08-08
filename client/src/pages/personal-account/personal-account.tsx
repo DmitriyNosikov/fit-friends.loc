@@ -6,17 +6,40 @@ import { UserRoleEnum } from '@shared/types/user-roles.enum';
 
 import PersonalAccountUser from '../../components/personal-account/personal-account-user/personal-account-user';
 import PersonalAccountCoach from '../../components/personal-account/personal-account-coach/personal-account-coach';
+import PersonalAccountForm from '@client/src/components/personal-account/personal-account-form/personal-account-form';
+import Spinner from '@client/src/components/tools/spinner/spinner';
+import useFetchAdditionalInfo from '@client/src/hooks/useFetchAdditionalInfo';
 
 export default function PersonalAccount(): ReactElement {
+  useFetchAdditionalInfo();
+
   const userInfo = useAppSelector(getUserInfo);
 
-  return (
-    <>
-      {(userInfo?.role === UserRoleEnum.CLIENT || userInfo?.role === UserRoleEnum.ADMIN) &&
-        <PersonalAccountUser />}
+  if (!userInfo) {
+    return <Spinner />;
+  }
 
-      {(userInfo?.role === UserRoleEnum.TRAINER) &&
-        <PersonalAccountCoach />}
-    </>
+  return (
+    <section className="inner-page">
+      <div className="container">
+        {
+          userInfo &&
+          <div className="inner-page__wrapper">
+            <h1 className="visually-hidden">Личный кабинет</h1>
+            <section className="user-info">
+              <PersonalAccountForm userInfo={userInfo} />
+            </section>
+
+            <div className="inner-page__content">
+              {(userInfo?.role === UserRoleEnum.CLIENT || userInfo?.role === UserRoleEnum.ADMIN) &&
+                <PersonalAccountUser userInfo={userInfo} />}
+
+              {(userInfo?.role === UserRoleEnum.TRAINER) &&
+                <PersonalAccountCoach />}
+            </div>
+          </div>
+        }
+      </div>
+    </section>
   )
 }

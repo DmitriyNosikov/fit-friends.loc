@@ -19,12 +19,13 @@ import { updateUserAction, uploadFileAction } from '@client/src/store/actions/ap
 import { clearErrors, validateFields } from '@client/src/validation/validation-tools';
 import { personalAccountValidationSchema } from '@client/src/validation/personal-account-validation';
 import { DEFAULT_AVATAR_URL } from '@client/src/const';
+import { UserRoleEnum } from '@shared/types/user-roles.enum';
 
-type PersonalAccountUserFormProps = {
+type PersonalAccountFormProps = {
   userInfo: LoggedUserRDO
 }
 
-export default function PersonalAccountUserForm({ userInfo }: PersonalAccountUserFormProps): ReactElement {
+export default function PersonalAccountForm({ userInfo }: PersonalAccountFormProps): ReactElement {
   const dispatch = useAppDispatch();
   const additionalInfo = useAppSelector(getAdditionalInfo);
 
@@ -40,11 +41,14 @@ export default function PersonalAccountUserForm({ userInfo }: PersonalAccountUse
     location,
     gender,
     isReadyToTraining,
-    level
+    level,
+    role
   } = userInfo;
 
   const userAvatarUrl = avatar ? `${BASE_URL}${avatar}` : DEFAULT_AVATAR_URL;
   let adaptedUserLevel = getAdaptedUserLevel(level);
+
+  const isReadyToTrainingFlagText = (role === UserRoleEnum.TRAINER) ? 'Готов тренировать' : 'Готов к тренировке';
 
   const userName = useRef<HTMLInputElement>(null);
   const userDescription = useRef<HTMLTextAreaElement>(null);
@@ -171,10 +175,12 @@ export default function PersonalAccountUserForm({ userInfo }: PersonalAccountUse
       return true;
     }
 
-    const isFormHasErrors = validateFields<UpdateUserDTO>(updateUserData, personalAccountValidationSchema);
+    const [isFormHasErrors, errorMessages] = validateFields<UpdateUserDTO>(updateUserData, personalAccountValidationSchema);
 
     if (isFormHasErrors) {
-      toast.warn('Validation error. Please, correct marked fields and try send form again.');
+      toast.warn('Validation error');
+      errorMessages.forEach((error) => toast.warn(error))
+      toast.info(`Please, correct marked fields and try send form again.`);
       return false;
     }
 
@@ -182,7 +188,6 @@ export default function PersonalAccountUserForm({ userInfo }: PersonalAccountUse
 
     return true;
   }
-
 
   return (
     <>
@@ -279,7 +284,7 @@ export default function PersonalAccountUserForm({ userInfo }: PersonalAccountUse
                   <use xlinkHref="#arrow-check" />
                 </svg>
               </span>
-              <span className="custom-toggle__label">Готов тренировать</span>
+              <span className="custom-toggle__label">{isReadyToTrainingFlagText}</span>
             </label>
           </div>
         </div>

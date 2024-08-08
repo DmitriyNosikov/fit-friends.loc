@@ -13,7 +13,13 @@ export const personalAccountValidationSchema = Joi.object({
     .min(UserValidation.DESCRIPTION.MIN_LENGTH)
     .max(UserValidation.DESCRIPTION.MAX_LENGTH),
 
+  isReadyToTraining: Joi.boolean(),
+
   trainingType: Joi.array()
     .min(UserValidation.TRAINING_TYPE.MIN_COUNT)
-    .max(UserValidation.TRAINING_TYPE.MAX_COUNT)
+    .max(UserValidation.TRAINING_TYPE.MAX_COUNT),
+
+  location: Joi.string(),
+  gender: Joi.string(),
+  level: Joi.string(),
 });

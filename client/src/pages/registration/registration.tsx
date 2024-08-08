@@ -79,12 +79,13 @@ export default function Registration() {
       role: userRole,
     } as CreateUserDTO;
 
-    const isFormHasErrors = validateFields<CreateUserDTO>(userData, registrationValidationSchema);
+    const [isFormHasErrors, errorMessages] = validateFields<CreateUserDTO>(userData, registrationValidationSchema);
 
     if (isFormHasErrors) {
-      toast.warn('Validation error. Please, correct marked fields and try send form again.');
-
-      return;
+      toast.warn('Validation error');
+      errorMessages.forEach((error) => toast.warn(error))
+      toast.info(`Please, correct marked fields and try send form again.`);
+      return false;
     }
 
     dispatch(registerUserAction(userData))

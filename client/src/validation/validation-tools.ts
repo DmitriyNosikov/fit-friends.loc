@@ -12,12 +12,13 @@ const ERROR_CLASS = {
  * объекте
  */
 
-export function validateFields<T>(target: T, validationSchema: Joi.ObjectSchema<any>) {
+export function validateFields<T>(target: T, validationSchema: Joi.ObjectSchema<any>): [boolean, string[] | []] {
   clearErrors();
 
   const validationErrors = validationSchema.validate(target, { abortEarly: false });
 
   let isFieldsHasErrors = false;
+  let errorMessages: string[] | [] = [];
 
   if (validationErrors.error?.details) {
     isFieldsHasErrors = true;
@@ -35,9 +36,10 @@ export function validateFields<T>(target: T, validationSchema: Joi.ObjectSchema<
       }
     });
 
+    errorMessages = errorDetails.map((error) => error.message);
   }
 
-  return isFieldsHasErrors;
+  return [isFieldsHasErrors, errorMessages];
 }
 
 export function clearErrors() {

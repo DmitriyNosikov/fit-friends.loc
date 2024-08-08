@@ -40,12 +40,13 @@ export default function PopupReview({ onClose }: PopupReviewProps): ReactElement
       text: text.value
     };
 
-    const isFormHasErrors = validateFields<CreateTrainingReviewDTO>(reviewData, reviewPopupValidationSchema);
+    const [isFormHasErrors, errorMessages] = validateFields<CreateTrainingReviewDTO>(reviewData, reviewPopupValidationSchema);
 
     if (isFormHasErrors) {
-      toast.warn('Validation error. Please, correct marked fields and try send form again.');
-
-      return;
+      toast.warn('Validation error');
+      errorMessages.forEach((error) => toast.warn(error))
+      toast.info(`Please, correct marked fields and try send form again.`);
+      return false;
     }
 
     dispatch(addTrainingReviewsAction(reviewData))

@@ -70,7 +70,9 @@ export default function SpecialForYou(): ReactElement {
           }
 
           {
-            !isTrainingsLoading && <Swiper
+            !isTrainingsLoading &&
+            <Swiper
+              className='special-for-you__list'
               modules={[Navigation]}
               spaceBetween={20}
               slidesPerView={3}
@@ -85,22 +87,20 @@ export default function SpecialForYou(): ReactElement {
                 nextEl: '.special-for-you__control--next',
               }}
             >
-              <ul className="special-for-you__list">
-                {
-                  slides && slides.map((training) => {
-                    const itemProps = {
-                      ...training,
-                      id: training.id as string,
-                    };
+              {
+                slides && slides.map((training) => {
+                  const itemProps = {
+                    ...training,
+                    id: training.id as string,
+                  };
 
-                    return (
-                      <SwiperSlide key={training.id}>
-                        <SpecialForYouItem training={itemProps} />
-                      </SwiperSlide>
-                    )
-                  })
-                }
-              </ul>
+                  return (
+                    <SwiperSlide key={training.id}>
+                      <SpecialForYouItem training={itemProps} />
+                    </SwiperSlide>
+                  )
+                })
+              }
             </Swiper>
           }
         </div>

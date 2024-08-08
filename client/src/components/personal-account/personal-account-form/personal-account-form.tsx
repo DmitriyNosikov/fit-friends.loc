@@ -65,7 +65,7 @@ export default function PersonalAccountForm({ userInfo }: PersonalAccountFormPro
     if (formEditable) {
       const isFormValid = onSaveBtnClick();
 
-      if(!isFormValid) {
+      if (!isFormValid) {
         return;
       }
     }
@@ -95,20 +95,20 @@ export default function PersonalAccountForm({ userInfo }: PersonalAccountFormPro
   }
 
   function handleChangeAvatarClick() {
-    if(!newUserAvatar) {
+    if (!newUserAvatar) {
       toast.info('Choose avatar by click on left avatar preview before change it');
       return;
     }
 
     dispatch(uploadFileAction(newUserAvatar))
       .then((uploadAvatarResult) => {
-        if('error' in uploadAvatarResult) {
+        if ('error' in uploadAvatarResult) {
           return;
         }
 
         dispatch(updateUserAction({ avatar: uploadAvatarResult.payload as string }))
           .then((updateUserResult) => {
-            if('error' in updateUserResult) {
+            if ('error' in updateUserResult) {
               return;
             };
 
@@ -118,13 +118,13 @@ export default function PersonalAccountForm({ userInfo }: PersonalAccountFormPro
   }
 
   function handleDeleteAvatarClick() {
-    if(!avatar) {
+    if (!avatar) {
       return;
     }
 
     dispatch(updateUserAction({ avatar: '' }))
       .then((result) => {
-        if('error' in result) {
+        if ('error' in result) {
           return;
         };
 
@@ -190,8 +190,14 @@ export default function PersonalAccountForm({ userInfo }: PersonalAccountFormPro
   }
 
   return (
-    <>
-      <div className="user-info__header">
+    <section className={ classNames({
+        'user-info': !formEditable,
+        'user-info-edit': formEditable,
+      }) }>
+      <div className={ classNames({
+          'user-info__header': !formEditable,
+          'user-info-edit__header': formEditable,
+        }) }>
         <div className="input-load-avatar">
           <label>
             <input
@@ -344,6 +350,6 @@ export default function PersonalAccountForm({ userInfo }: PersonalAccountFormPro
           }
         </div>
       </form>
-    </>
+    </section>
   )
 }

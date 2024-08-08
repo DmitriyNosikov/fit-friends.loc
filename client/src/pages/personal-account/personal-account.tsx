@@ -26,9 +26,8 @@ export default function PersonalAccount(): ReactElement {
           userInfo &&
           <div className="inner-page__wrapper">
             <h1 className="visually-hidden">Личный кабинет</h1>
-            <section className="user-info">
-              <PersonalAccountForm userInfo={userInfo} />
-            </section>
+
+            <PersonalAccountForm userInfo={userInfo} />
 
             <div className="inner-page__content">
               {(userInfo?.role === UserRoleEnum.CLIENT || userInfo?.role === UserRoleEnum.ADMIN) &&

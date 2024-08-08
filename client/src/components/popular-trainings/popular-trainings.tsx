@@ -8,7 +8,7 @@ import 'swiper/css/bundle';
 
 import { AppRoute, POPULAR_MAX_SLIDES_COUNT } from '@client/src/const';
 import { useAppSelector } from '@client/src/hooks';
-import {  getWithRatingTrainingsLoadingStatus } from '@client/src/store/slices/training-process/training-process.selectors';
+import { getWithRatingTrainingsLoadingStatus } from '@client/src/store/slices/training-process/training-process.selectors';
 import useWithRatingTrainingsList from '@client/src/hooks/useWithRatingTrainingsList';
 
 import Spinner from '../tools/spinner/spinner';
@@ -27,7 +27,7 @@ export default function PopularTrainings(): ReactElement {
   // Слайдер может содержать не более SPECIAL_FOR_YOU_MAX_SLIDES_COUNT слайдов
   let slides = trainings?.entities;
 
-  if(slides) {
+  if (slides) {
     // Сортировка тренировок по величине скидки
     slides = [...slides].sort((trainingA, trainingB) => {
       if (!trainingA.rating || !trainingB.rating) {
@@ -87,6 +87,7 @@ export default function PopularTrainings(): ReactElement {
           {
             trainings &&
             <Swiper
+              className='popular-trainings__list'
               modules={[Navigation]}
               spaceBetween={20}
               slidesPerView={4}
@@ -100,24 +101,22 @@ export default function PopularTrainings(): ReactElement {
                 nextEl: '.popular-trainings__control--next',
               }}
             >
-              <ul className="popular-trainings__list">
-                {
-                  slides && slides.map((training) => {
-                    const itemProps = {
-                      ...training,
-                      id: training.id as string,
-                      rating: training.rating as number,
-                      discount: training.discount as number,
-                    };
+              {
+                slides && slides.map((training) => {
+                  const itemProps = {
+                    ...training,
+                    id: training.id as string,
+                    rating: training.rating as number,
+                    discount: training.discount as number,
+                  };
 
-                    return (
-                      <SwiperSlide key={training.id}>
-                        <PopularTrainingsItem training={itemProps} />
-                      </SwiperSlide>
-                    )
-                  })
-                }
-              </ul>
+                  return (
+                    <SwiperSlide key={training.id}>
+                      <PopularTrainingsItem training={itemProps} />
+                    </SwiperSlide>
+                  )
+                })
+              }
             </Swiper>
           }
         </div>

@@ -55,41 +55,38 @@ export default function SpecialOffers(): ReactElement {
               !trainings && <Stub />
             }
 
-            <ul className="special-offers__list">
-              <Swiper
-                className='special-offers__slider'
-                modules={[Pagination]}
-                spaceBetween={20}
-                slidesPerView={1}
-                slidesPerGroup={1}
-                allowTouchMove={false}
-                watchSlidesProgress
-                speed={1500}
+            <Swiper
+              className='special-offers__list special-offers__slider'
+              modules={[Pagination]}
+              spaceBetween={20}
+              slidesPerView={1}
+              slidesPerGroup={1}
+              allowTouchMove={false}
+              watchSlidesProgress
+              speed={1500}
 
-                pagination={{
-                  enabled: true,
-                  clickable: true
-                }}
-              >
-                <ul className="special-for-you__list">
-                  {
-                    slides && slides.map((training) => {
-                      const itemProps = {
-                        ...training,
-                        id: training.id as string,
-                        discount: training.discount as number,
-                      };
+              pagination={{
+                enabled: true,
+                clickable: true
+              }}
 
-                      return (
-                        <SwiperSlide key={training.id}>
-                          <SpecialOffersItem training={itemProps} />
-                        </SwiperSlide>
-                      )
-                    })
-                  }
-                </ul>
-              </Swiper>
-            </ul>
+            >
+              {
+                slides && slides.map((training) => {
+                  const itemProps = {
+                    ...training,
+                    id: training.id as string,
+                    discount: training.discount as number,
+                  };
+
+                  return (
+                    <SwiperSlide key={training.id}>
+                      <SpecialOffersItem training={itemProps} />
+                    </SwiperSlide>
+                  )
+                })
+              }
+            </Swiper>
 
             <Stub />
           </div>

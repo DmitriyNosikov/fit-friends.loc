@@ -60,6 +60,8 @@ export default function TrainingsCreate(): ReactElement {
   function handleUploadVideoChange(e: React.ChangeEvent<HTMLInputElement>) {
     const target = e.target;
 
+    console.log('Video info: ', target.files);
+
     setVideoURL(target.value);
   }
 

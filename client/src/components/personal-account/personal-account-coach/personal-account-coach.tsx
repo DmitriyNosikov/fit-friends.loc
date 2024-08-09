@@ -7,13 +7,15 @@ import Certificates from '../../certificates/certificates';
 export default function PersonalAccountCoach(): ReactElement {
   return (
     <div className="personal-account-coach">
-      <div className="personal-account-coach__navigation"><a className="thumbnail-link thumbnail-link--theme-light" href="#">
-        <div className="thumbnail-link__icon thumbnail-link__icon--theme-light">
-          <svg width={30} height={26} aria-hidden="true">
-            <use xlinkHref="#icon-flash" />
-          </svg>
-        </div>
-        <span className="thumbnail-link__text">Мои тренировки</span></a>
+      <div className="personal-account-coach__navigation">
+        <Link className="thumbnail-link thumbnail-link--theme-light" to={AppRoute.TRAININGS}>
+          <div className="thumbnail-link__icon thumbnail-link__icon--theme-light">
+            <svg width={30} height={26} aria-hidden="true">
+              <use xlinkHref="#icon-flash" />
+            </svg>
+          </div>
+          <span className="thumbnail-link__text">Мои тренировки</span>
+        </Link>
 
         <Link className="thumbnail-link thumbnail-link--theme-light" to={AppRoute.TRAININGS_CREATE}>
           <div className="thumbnail-link__icon thumbnail-link__icon--theme-light">

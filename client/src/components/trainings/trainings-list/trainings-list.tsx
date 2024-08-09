@@ -4,23 +4,41 @@ import { ITEMS_PER_PAGE } from '@client/src/const';
 
 import { useAppDispatch, useAppSelector } from '@client/src/hooks';
 import useSearchTrainings from '@client/src/hooks/useSearchTrainings';
+
 import { searchTrainingsAction } from '@client/src/store/actions/api-training-action';
+import { getUserInfo } from '@client/src/store/slices/user-process/user-process.selectors';
 import { getTrainingsListLoadingStatus } from '@client/src/store/slices/training-process/training-process.selectors';
-import { TrainingSearchQuery } from '@shared/training';
 
 import TrainingsListItem from '../trainings-list-item/trainings-list-item';
 import Stub from '../../tools/stub/stub';
 import Spinner from '../../tools/spinner/spinner';
 
+import { TrainingSearchQuery } from '@shared/training';
+import { UserRoleEnum } from '@shared/types/user-roles.enum';
+
+
 const START_PAGE = 1;
+const DEFAULT_SORT_TYPE = 'createdAt';
 
 export default function TrainingsList(): ReactElement {
+  const dispatch = useAppDispatch();
+  const userInfo = useAppSelector(getUserInfo);
+
+  const isTrainer = userInfo?.role === UserRoleEnum.TRAINER;
+  console.log(userInfo);
+
   let searchQuery: TrainingSearchQuery = {
     page: START_PAGE,
     limit: ITEMS_PER_PAGE
   };
 
-  const dispatch = useAppDispatch();
+  console.log('Is trainer: ', isTrainer);
+
+  if(isTrainer) {
+    searchQuery['userId'] = userInfo.id;
+    searchQuery['sortType'] = DEFAULT_SORT_TYPE;
+  }
+
   const trainingsList = useSearchTrainings(searchQuery);
   const isTrainingsLoadings = useAppSelector(getTrainingsListLoadingStatus);
 

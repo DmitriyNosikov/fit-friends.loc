@@ -64,9 +64,19 @@ export default function TrainingsFilter(): ReactElement | undefined {
 
   function handleRatingChange(ratingRanges: string[]) {
     const [ratingFrom, ratingTo] = ratingRanges;
+    const newRatingFrom = parseInt(ratingFrom);
+    const newRatingTo = parseInt(ratingTo);
 
-    filterParams.ratingFrom = parseInt(ratingFrom);
-    filterParams.ratingTo = parseInt(ratingTo);
+
+    if (
+      newRatingFrom === filterParams.ratingFrom &&
+      newRatingTo === filterParams.ratingTo
+    ) {
+      return;
+    }
+
+    filterParams.ratingFrom = newRatingFrom;
+    filterParams.ratingTo = newRatingTo;
 
     debouncedChangeFilterHandler(filterParams);
   }
@@ -80,7 +90,7 @@ export default function TrainingsFilter(): ReactElement | undefined {
   function handleSortTypeChange(e: React.FormEvent<HTMLDivElement>) {
     const target = e.target as HTMLInputElement;
 
-    if(!target.value) {
+    if (!target.value) {
       return;
     }
 
@@ -88,7 +98,7 @@ export default function TrainingsFilter(): ReactElement | undefined {
 
     filterParams.sortDirection = sortDirection;
 
-    if(sortDirection === SortDirectionEnum.FREE) {
+    if (sortDirection === SortDirectionEnum.FREE) {
       filterParams.priceFrom = 0;
       filterParams.priceTo = 0;
       filterParams.sortDirection = SortDirectionEnum.DESC;
@@ -100,6 +110,7 @@ export default function TrainingsFilter(): ReactElement | undefined {
   }
 
   function handleFilterChange(filterParams: TrainingSearchQuery) {
+    console.log('Filter changed: ', filterParams);
     dispatch(searchTrainingsAction({ searchQuery: filterParams }));
   }
 
@@ -143,7 +154,9 @@ export default function TrainingsFilter(): ReactElement | undefined {
             <h4 className="my-training-form__block-title">Рейтинг</h4>
             <div className="filter-raiting">
               <div className="filter-raiting__scale">
-                <div className="filter-raiting__bar"><span className="visually-hidden">Полоса прокрутки</span></div>
+                <div className="filter-raiting__bar">
+                  <span className="visually-hidden">Полоса прокрутки</span>
+                </div>
               </div>
 
               <RangeSlider

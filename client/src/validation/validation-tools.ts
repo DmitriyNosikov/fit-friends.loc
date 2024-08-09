@@ -13,7 +13,12 @@ const ERROR_CLASS = {
  * объекте
  */
 
-export function validateFields<T>(target: T, validationSchema: Joi.ObjectSchema<any>, showErrors: boolean = true): [boolean, string[] | []] {
+export function validateFields<T>(
+  target: T,
+  validationSchema: Joi.ObjectSchema<any>,
+  preserveErrorTextFieldContent: boolean = false, // Сохранять текст, который предустановлен в поле с ошибкой
+  showErrorToasts: boolean = true // Показывать всплывающие окна с ошибкой
+): [boolean, string[] | []] {
   clearErrors();
 
   console.log(target);
@@ -34,7 +39,12 @@ export function validateFields<T>(target: T, validationSchema: Joi.ObjectSchema<
       const errorTextBox = inputContainer?.querySelector(`.${ERROR_CLASS.TEXT_BOX}`);
 
       if (errorTextBox && error.message) {
-        errorTextBox.textContent = error.message;
+        // Если в поле с ошибкой указан какой то стандартный текст
+        // сохраняем его
+        if(!errorTextBox.textContent || !preserveErrorTextFieldContent) {
+          errorTextBox.textContent = error.message;
+        }
+
         inputContainer?.classList.add(ERROR_CLASS.FIELD);
       }
     });
@@ -42,7 +52,7 @@ export function validateFields<T>(target: T, validationSchema: Joi.ObjectSchema<
     errorMessages = errorDetails.map((error) => error.message);
   }
 
-  if(showErrors && errorMessages.length > 0) {
+  if(showErrorToasts && errorMessages.length > 0) {
     toast.error('Validation error');
     errorMessages.forEach((error) => toast.warn(error))
     toast.info(`Please, correct marked fields and try send form again.`);

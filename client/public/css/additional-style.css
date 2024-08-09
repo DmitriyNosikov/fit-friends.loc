@@ -24,15 +24,9 @@
   overflow: hidden;
 }
 
-/* .custom-select__text {
-  opacity: 1;
-} */
-
-
-
 .sign-up .custom-select__placeholder,
 .create-training .custom-select__placeholder {
-  bottom: 22px;
+  top: 44px;
 }
 
 /* NoUISlider */
@@ -78,6 +72,25 @@
   background-color: #121212;
 }
 
+/* Reviews Simplebar Scrollbar styles */
+.reviews-side-bar__list .simplebar-scrollable-y .simplebar-track.simplebar-vertical {
+  width: 8px;
+}
+
+/* Errors highlight */
+.custom-input--error label textarea {
+  border: 1px solid #e4001b;
+  background-color: transparent;
+}
+
+/* Training info */
+.training-info__textarea {
+  position: relative;
+}
+
+.training-video__edit-buttons {
+  display: grid;
+}
 
 .training-video__thumbnail video {
   width: 100%;
@@ -88,7 +101,10 @@
   display: block;
 }
 
-/* Reviews Simplebar Scrollbar styles */
-.reviews-side-bar__list .simplebar-scrollable-y .simplebar-track.simplebar-vertical {
-  width: 8px;
+.training-info__discount {
+  display: inherit;
+}
+
+.training-video__drop-files {
+  display: block;
 }

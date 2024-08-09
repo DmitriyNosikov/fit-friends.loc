@@ -9,7 +9,6 @@ import { setDataLoadingStatus } from '../slices/main-process/main-process';
 import { CreateTrainingReviewDTO, TrainingReviewsWithPaginationRDO } from '@shared/training-review';
 import { appendTrainingReviewsAction, setTrainingReviewsAction } from '../slices/training-reviews-process/training-reviews-process';
 import { fetchTrainingItemAction } from './api-training-action';
-import { setTrainingItemAction } from '../slices/training-process/training-process';
 
 const APITrainingPrefix = `[${Namespace.TRAINING_REVIEWS}-BACKEND]`;
 const APIAction = {

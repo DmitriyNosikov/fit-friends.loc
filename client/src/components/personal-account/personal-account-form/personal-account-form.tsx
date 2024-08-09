@@ -175,12 +175,9 @@ export default function PersonalAccountForm({ userInfo }: PersonalAccountFormPro
       return true;
     }
 
-    const [isFormHasErrors, errorMessages] = validateFields<UpdateUserDTO>(updateUserData, personalAccountValidationSchema);
+    const [isFormHasErrors] = validateFields<UpdateUserDTO>(updateUserData, personalAccountValidationSchema);
 
     if (isFormHasErrors) {
-      toast.warn('Validation error');
-      errorMessages.forEach((error) => toast.warn(error))
-      toast.info(`Please, correct marked fields and try send form again.`);
       return false;
     }
 

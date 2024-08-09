@@ -1,5 +1,5 @@
 
-import { ReactElement, useEffect, useState } from 'react';
+import { ReactElement, useEffect, useRef, useState } from 'react';
 
 import { useAppDispatch, useAppSelector } from '@client/src/hooks';
 import { useParams } from 'react-router-dom';
@@ -21,6 +21,12 @@ import { changeBalance } from '@client/src/store/actions/api-balance-action';
 import { CreateBalanceRDO } from '@shared/balance';
 import { getUserInfo } from '@client/src/store/slices/user-process/user-process.selectors';
 import { UserRoleEnum } from '@shared/types/user-roles.enum';
+import classNames from 'classnames';
+import { validateFields } from '@client/src/validation/validation-tools';
+import { UpdateTrainingDTO } from '@shared/training';
+import { updateTrainingValidationSchema } from '@client/src/validation/update-training-validation';
+import { updateTrainingAction } from '@client/src/store/actions/api-training-action';
+import { toast } from 'react-toastify';
 
 
 export default function TrainingsDetail(): ReactElement | undefined {
@@ -33,6 +39,9 @@ export default function TrainingsDetail(): ReactElement | undefined {
   }
 
   const userInfo = useAppSelector(getUserInfo);
+
+  const isTrainer = userInfo?.role === UserRoleEnum.TRAINER;
+
   const trainingItem = useFetchTrainingItem(trainingId);
   const balance = useFetchCurrentTrainingBalance(trainingId);
 
@@ -40,50 +49,24 @@ export default function TrainingsDetail(): ReactElement | undefined {
 
   const [isReviewModalOpened, setIsReviewModalOpened] = useState(false);
   const [isBuyModalOpened, setIsBuyModalOpened] = useState(false);
-  const [isBeginBtnDisabled, setIsBeginBtnDisabled]  = useState(false);
-  const [isUserCanLeaveReview, setIsUserCanLeaveReview]  = useState(false);
+  const [isBeginBtnDisabled, setIsBeginBtnDisabled] = useState(false);
+  const [isUserCanLeaveReview, setIsUserCanLeaveReview] = useState(false);
+  const [isEditable, setIsEditable] = useState(false);
+
+  const titleInput = useRef<HTMLInputElement>(null)
+  const descriptionInput = useRef<HTMLTextAreaElement>(null)
+  const priceInput = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
     setIsBeginBtnDisabled(!balance || balance.remainingTrainingsCount <= 0);
-    setIsUserCanLeaveReview(userInfo?.role === UserRoleEnum.CLIENT && balance !== null && balance.hasTrainingStarted);
+
+    setIsUserCanLeaveReview(
+      !isTrainer
+      && balance !== null
+      && balance.hasTrainingStarted
+    );
+
   }, [balance])
-
-  function handleLeaveReviewBtnClick() {
-    setIsReviewModalOpened(true);
-    setBodyScrollAvailable(false);
-  }
-
-  function handleBuyBtnClick() {
-    setIsBuyModalOpened(true);
-    setBodyScrollAvailable(false);
-  }
-
-  function handleSuccessPurchase() {
-    setIsBeginBtnDisabled(false);
-  }
-
-  function handleBeginBtnClick() {
-    if(!trainingId) {
-      return;
-    }
-
-    dispatch(changeBalance({ trainingId, increase: false }))
-      .then((result) => {
-        const payload = result.payload as CreateBalanceRDO;
-
-        if(!payload) {
-          return;
-        }
-
-        if(payload.remainingTrainingsCount <= 0) {
-          setIsBeginBtnDisabled(true);
-        }
-
-        if(payload.hasTrainingStarted) {
-          setIsUserCanLeaveReview(true);
-        }
-      })
-  }
 
   if (!trainingItem) {
     return;
@@ -103,6 +86,87 @@ export default function TrainingsDetail(): ReactElement | undefined {
   } = trainingItem;
 
   const trainingPrice = discount ? price - discount : price;
+
+  function handleLeaveReviewBtnClick() {
+    setIsReviewModalOpened(true);
+    setBodyScrollAvailable(false);
+  }
+
+  function handleBuyBtnClick() {
+    setIsBuyModalOpened(true);
+    setBodyScrollAvailable(false);
+  }
+
+  function handleSuccessPurchase() {
+    setIsBeginBtnDisabled(false);
+  }
+
+
+  function handleEditBtnCLick() {
+    setIsEditable(true);
+  }
+
+  function handleSaveBtnClick() {
+    const updateTrainingData: Record<string, unknown> = {}
+
+    const newTitleValue = titleInput.current?.value;
+    const newDescriptionValue = descriptionInput.current?.value;
+    const newPriceValue = priceInput.current?.value ? parseInt(priceInput.current.value) : '';
+
+    if (newTitleValue !== title) {
+      updateTrainingData['title'] = newTitleValue;
+    }
+
+    if (newDescriptionValue !== description) {
+      updateTrainingData['description'] = newDescriptionValue;
+    }
+
+    if (newPriceValue !== price) {
+      updateTrainingData['price'] = newPriceValue;
+    }
+
+    const [isFormHasErrors] = validateFields<Partial<UpdateTrainingDTO>>(updateTrainingData, updateTrainingValidationSchema);
+
+    if (isFormHasErrors) {
+      return;
+    }
+
+    updateTrainingData['trainingId'] = trainingId;
+
+    dispatch(updateTrainingAction(updateTrainingData))
+      .then((result) => {
+        if ('error' in result) {
+          return;
+        }
+
+        toast.success('Training has been successfully updated');
+
+        setIsEditable(false);
+      })
+  }
+
+  function handleBeginBtnClick() {
+    if (!trainingId) {
+      return;
+    }
+
+    dispatch(changeBalance({ trainingId, increase: false }))
+      .then((result) => {
+        const payload = result.payload as CreateBalanceRDO;
+
+        if (!payload) {
+          return;
+        }
+
+        if (payload.remainingTrainingsCount <= 0) {
+          setIsBeginBtnDisabled(true);
+        }
+
+        if (payload.hasTrainingStarted) {
+          setIsUserCanLeaveReview(true);
+        }
+      })
+  }
 
   return (
     <>
@@ -124,11 +188,15 @@ export default function TrainingsDetail(): ReactElement | undefined {
 
                 <TrainingsReviews trainingId={trainingId} />
 
-                {
-                  isUserCanLeaveReview &&
-                  <button className="btn btn--medium reviews-side-bar__button" type="button" onClick={handleLeaveReviewBtnClick}>Оставить отзыв</button>
-                }
+                <button
+                  className="btn btn--medium reviews-side-bar__button"
+                  type="button"
+                  disabled={!isUserCanLeaveReview}
+                  onClick={handleLeaveReviewBtnClick}
+                >Оставить отзыв</button>
               </aside>
+
+              {/* TODO: Вынести в отдельный компонент */}
               <div className="training-card">
                 <div className="training-info">
                   <h2 className="visually-hidden">Информация о тренировке</h2>
@@ -144,24 +212,62 @@ export default function TrainingsDetail(): ReactElement | undefined {
                         <span className="training-info__name">{trainersName}</span>
                       </div>
                     </div>
+
+                    {
+                      isTrainer &&
+                      <>
+                        {
+                          !isEditable &&
+                          <button
+                            className="btn-flat btn-flat--light training-info__edit training-info__edit--edit"
+                            type="button"
+                            onClick={handleEditBtnCLick}
+                          >
+                            <svg width={12} height={12} aria-hidden="true">
+                              <use xlinkHref="#icon-edit" />
+                            </svg>
+                            <span>Редактировать</span>
+                          </button>
+                        }
+
+                        {
+                          isEditable &&
+                          <button
+                            className={classNames(
+                              'btn-flat btn-flat--light btn-flat--underlined training-info__edit',
+                              { 'training-info__edit--save': !isEditable }
+                            )}
+                            type="button"
+                            onClick={handleSaveBtnClick}
+                          >
+                            <svg width={12} height={12} aria-hidden="true">
+                              <use xlinkHref="#icon-edit" />
+                            </svg>
+                            <span>Сохранить</span>
+                          </button>
+                        }
+                      </>
+                    }
                   </div>
                   <div className="training-info__main-content">
                     <form action="#" method="get">
                       <div className="training-info__form-wrapper">
                         <div className="training-info__info-wrapper">
-                          <div className="training-info__input training-info__input--training">
-                            <label><span className="training-info__label">Название тренировки</span>
-                              <input type="text" name="training" defaultValue={title} disabled />
+                          <div className="training-info__input training-info__input--training" id="title">
+                            <label>
+                              <span className="training-info__label">Название тренировки</span>
+                              <input type="text" name="training" ref={titleInput} defaultValue={title} disabled={!isEditable} />
                             </label>
-                            <div className="training-info__error">Обязательное поле</div>
+                            <div className="training-info__error custom-input__error">Обязательное поле</div>
                           </div>
-                          <div className="training-info__textarea">
-                            <label><span className="training-info__label">Описание тренировки</span>
-                              <textarea name="description" disabled defaultValue={description} />
+                          <div className="training-info__textarea" id="description">
+                            <label>
+                              <span className="training-info__label">Описание тренировки</span>
+                              <textarea name="description" ref={descriptionInput} defaultValue={description} disabled={!isEditable} />
                             </label>
+                            <div className="training-info__error custom-input__error"></div>
                           </div>
                         </div>
-                        {/* FIXME: Не обновляется рейтинг (вазуально) при добавлении отзыва */}
                         <div className="training-info__rating-wrapper">
                           <div className="training-info__input training-info__input--rating">
                             <label>
@@ -169,7 +275,8 @@ export default function TrainingsDetail(): ReactElement | undefined {
                               <span className="training-info__rating-icon">
                                 <svg width={18} height={18} aria-hidden="true">
                                   <use xlinkHref="#icon-star" />
-                                </svg></span>
+                                </svg>
+                              </span>
                               <input type="number" name="rating" defaultValue={rating} disabled />
                             </label>
                           </div>
@@ -190,21 +297,43 @@ export default function TrainingsDetail(): ReactElement | undefined {
                         </div>
 
                         <div className="training-info__price-wrapper">
-                          <div className="training-info__input training-info__input--price">
+                          <div className="training-info__input training-info__input--price" id="price">
                             <label>
                               <span className="training-info__label">Стоимость</span>
-                              <input type="text" name="price" defaultValue={`${trainingPrice} ₽`} disabled />
+                              <input type="text" name="price" ref={priceInput} defaultValue={`${trainingPrice} ₽`} disabled={!isEditable} />
                             </label>
-                            <div className="training-info__error">Введите число</div>
+                            <div className="training-info__error custom-input__error">Введите число</div>
                           </div>
-                          <button className="btn training-info__buy" type="button" onClick={handleBuyBtnClick} disabled={!isBeginBtnDisabled}>Купить</button>
+                          {
+                            !isTrainer &&
+                            <button
+                              className="btn training-info__buy"
+                              type="button"
+                              onClick={handleBuyBtnClick}
+                              disabled={!isBeginBtnDisabled}
+                            >Купить</button>
+                          }
+
+                          {
+                            isTrainer &&
+                            <button className="btn-flat btn-flat--light btn-flat--underlined training-info__discount" type="button">
+                              <svg width={14} height={14} aria-hidden="true">
+                                <use xlinkHref="#icon-discount" />
+                              </svg><span>Сделать скидку 10%</span>
+                            </button>
+                          }
                         </div>
                       </div>
                     </form>
                   </div>
                 </div>
 
-                <TrainingsVideoPlayer videoURL={video} isBeginBtnDisabled={isBeginBtnDisabled} onBeginClick={handleBeginBtnClick} />
+                <TrainingsVideoPlayer
+                  videoURL={video}
+                  isBeginBtnDisabled={isBeginBtnDisabled}
+                  onBeginClick={handleBeginBtnClick}
+                  isEditable={isEditable}
+                />
               </div>
             </div>
           }

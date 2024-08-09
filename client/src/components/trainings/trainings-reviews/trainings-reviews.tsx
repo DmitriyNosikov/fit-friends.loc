@@ -8,6 +8,8 @@ import Spinner from '../../tools/spinner/spinner';
 
 import SimpleBar from 'simplebar-react';
 import 'simplebar-react/dist/simplebar.min.css';
+import { useAppSelector } from '@client/src/hooks';
+import { getTrainingsReviewsLoadingStatus } from '@client/src/store/slices/training-reviews-process/training-process.selectors';
 
 const REVIEWS_CONTAINER_MAX_HEIGHT = 976;
 
@@ -17,9 +19,14 @@ type TrainingsReviewsProps = {
 
 export default function TrainingsReviews({ trainingId }: TrainingsReviewsProps): ReactElement {
   const trainingItemReviews = useFetchTrainingReviewsList(trainingId);
+  const isReviewsLoading = useAppSelector(getTrainingsReviewsLoadingStatus);
+
+  if(isReviewsLoading) {
+    return <Spinner />
+  }
 
   if (!trainingItemReviews?.entities) {
-    return <Spinner />
+    return <div>У тренировки пока нет ни одного отзыва</div>
   }
 
   const reviewsList = [...trainingItemReviews.entities].sort((a, b) => {

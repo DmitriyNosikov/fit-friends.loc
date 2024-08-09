@@ -4,10 +4,10 @@ import { toast } from 'react-toastify';
 import { ApiRoute, AppRoute, Namespace } from '@client/src/const';
 import { AsyncOptions } from '@client/src/types/async-options.type';
 
-import { CreateTrainingRDO, TrainingFilterParamsRDO, TrainingSearchQuery, TrainingsWithPaginationRDO } from '@shared/training';
+import { CreateTrainingDTO, CreateTrainingRDO, TrainingFilterParamsRDO, TrainingSearchQuery, TrainingsWithPaginationRDO, UpdateTrainingDTO } from '@shared/training';
 
 import { setDataLoadingStatus } from '../slices/main-process/main-process';
-import { appendTrainingsAction, deleteTrainingItemStateAction, setConvenientTrainingsAction, setTrainingFilterParamsAction, setTrainingItemAction, setTrainingsAction, setWithDiscountTrainingsAction, setWithRatingTrainingsAction, updateTrainingsListAction,  } from '../slices/training-process/training-process';
+import { appendTrainingAction, appendTrainingsAction, deleteTrainingItemStateAction, setConvenientTrainingsAction, setTrainingFilterParamsAction, setTrainingItemAction, setTrainingsAction, setWithDiscountTrainingsAction, setWithRatingTrainingsAction, updateTrainingsListAction,  } from '../slices/training-process/training-process';
 import { redirectToRoute } from '../middlewares/redirect-action';
 import { createSearchURL } from '@client/src/utils/adapters';
 
@@ -32,6 +32,65 @@ const APIAction = {
 // ASYNC ACTIONS
 type TrainingId = string;
 
+// Создание тренировки
+export const createTrainingAction = createAsyncThunk<CreateTrainingRDO, Partial<CreateTrainingDTO>, AsyncOptions>(
+  APIAction.TRAININGS_CREATE,
+  async (
+    trainingData,
+    { dispatch, rejectWithValue, extra: api }
+  ) => {
+    dispatch(setDataLoadingStatus(true));
+
+    try {
+      const { data } = await api.post<CreateTrainingRDO>(ApiRoute.TRAININGS_API, trainingData);
+
+      dispatch(setDataLoadingStatus(false));
+
+      return data;
+    } catch(err) {
+      toast.warn(`Can't create training. Error: ${err}`)
+
+      dispatch(setDataLoadingStatus(false));
+
+      return rejectWithValue(err);
+    }
+  }
+)
+
+type TrainingIdPayload = {
+  trainingId: TrainingId
+}
+
+export const updateTrainingAction = createAsyncThunk<CreateTrainingRDO, Partial<UpdateTrainingDTO & TrainingIdPayload>, AsyncOptions>(
+  APIAction.TRAININGS_UPDATE,
+  async (
+    trainingData,
+    { dispatch, rejectWithValue, extra: api }
+  ) => {
+    dispatch(setDataLoadingStatus(true));
+
+    const trainingId = trainingData.trainingId;
+    const updateTrainingData = {
+      ...trainingData,
+      trainingId: undefined
+    }
+
+    try {
+      const { data } = await api.patch<CreateTrainingRDO>(`${ApiRoute.TRAININGS_API}/${trainingId}`, updateTrainingData);
+
+      dispatch(setDataLoadingStatus(false));
+
+      return data;
+    } catch(err) {
+      toast.warn(`Can't update training. Error: ${err}`)
+
+      dispatch(setDataLoadingStatus(false));
+
+      return rejectWithValue(err);
+    }
+  }
+)
+
 // Загрузка списка тренировок с пагинацией
 export const fetchTrainingsAction = createAsyncThunk<void, void, AsyncOptions>(
   APIAction.TRAININGS_FETCH_LIST,
@@ -43,7 +102,6 @@ export const fetchTrainingsAction = createAsyncThunk<void, void, AsyncOptions>(
 
       dispatch(setTrainingsAction(data));
       dispatch(setDataLoadingStatus(false));
-
     } catch(err) {
       toast.warn('Can`t load trainings list. Please, refresh page or try again later')
 

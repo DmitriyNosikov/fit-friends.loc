@@ -1,4 +1,5 @@
 import Joi from 'joi';
+import { toast } from 'react-toastify';
 
 const ERROR_CLASS = {
   FIELD: 'custom-input--error',
@@ -12,8 +13,10 @@ const ERROR_CLASS = {
  * объекте
  */
 
-export function validateFields<T>(target: T, validationSchema: Joi.ObjectSchema<any>): [boolean, string[] | []] {
+export function validateFields<T>(target: T, validationSchema: Joi.ObjectSchema<any>, showErrors: boolean = true): [boolean, string[] | []] {
   clearErrors();
+
+  console.log(target);
 
   const validationErrors = validationSchema.validate(target, { abortEarly: false });
 
@@ -39,13 +42,19 @@ export function validateFields<T>(target: T, validationSchema: Joi.ObjectSchema<
     errorMessages = errorDetails.map((error) => error.message);
   }
 
+  if(showErrors && errorMessages.length > 0) {
+    toast.error('Validation error');
+    errorMessages.forEach((error) => toast.warn(error))
+    toast.info(`Please, correct marked fields and try send form again.`);
+  }
+
   return [isFieldsHasErrors, errorMessages];
 }
 
 export function clearErrors() {
-  const fieldsWithErorrs = document.querySelectorAll(`.${ERROR_CLASS.FIELD}`);
+  const fieldsWithErrors = document.querySelectorAll(`.${ERROR_CLASS.FIELD}`);
 
-  fieldsWithErorrs.forEach((errorField) => errorField.classList.remove(ERROR_CLASS.FIELD));
+  fieldsWithErrors.forEach((errorField) => errorField.classList.remove(ERROR_CLASS.FIELD));
 }
 
 export function clearFieldError(target: HTMLElement) {

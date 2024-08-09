@@ -1,7 +1,9 @@
 import axios, { AxiosError, AxiosInstance, AxiosRequestConfig } from 'axios';
 import { StatusCodes } from 'http-status-codes';
 import { toast } from 'react-toastify';
-import { AUTH_TOKEN_KEY, getToken, REFRESH_TOKEN_KEY, setToken } from './token';
+import { AUTH_TOKEN_KEY, deleteToken, getToken, REFRESH_TOKEN_KEY, setToken } from './token';
+import { useNavigate } from 'react-router-dom';
+import { AppRoute } from '../const';
 
 export const HOST = '127.0.0.1';
 export const PORT = 8000;
@@ -63,14 +65,28 @@ export function createAPI(): AxiosInstance {
         toast.error(ERROR_TEXT.NETWORK_CONNECTION);
       }
 
+      if(!error.response) {
+        throw error;
+      }
+
+      const currentPath = window.location.pathname;
+      const introPage = '/intro';
+
+      // Если получили статус Unauthorized, значит токен просрочен.
+      // Пока, вместо обновления токена через Refresh, просто удаляем
+      // старый токен и редиректим юзера на разводящую страницу
+      if(error.response.status === StatusCodes.UNAUTHORIZED && !currentPath.startsWith(introPage)) {
+        deleteToken();
+        window.location.href = introPage;
+      }
+
       // FIXME: Доработать. Валит кучу ошибок и работает не стабильно, но работает
       // Временно отключено из за некорректной работы
       // const refreshToken = getToken(REFRESH_TOKEN_KEY);
       // const originalRequest: ResponseWithRetryFlag = error.config;
 
       // if (
-      //   error.response
-      //   && error.response.status === StatusCodes.UNAUTHORIZED
+      //   error.response.status === StatusCodes.UNAUTHORIZED
       //   && !originalRequest._retry
       //   && refreshToken
       // ) {
@@ -87,7 +103,7 @@ export function createAPI(): AxiosInstance {
       //   }
       // }
 
-      if (error.response && StatusCodesMap.includes(error.response.status)) {
+      if (StatusCodesMap.includes(error.response.status)) {
         const { data } = error.response;
         const { message, details } = data;
 
@@ -116,8 +132,6 @@ export function createAPI(): AxiosInstance {
           });
         }
       }
-
-      throw error;
     }
   );
 

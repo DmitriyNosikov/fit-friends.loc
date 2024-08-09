@@ -62,6 +62,17 @@ export const trainingProcess = createSlice({
       state.paginatedTrainings.currentPage = addingTrainings.currentPage; // Обновляем текущую страницу
     },
 
+    // Добавление одной тренировки в общий список
+    appendTrainingAction: (state, action: PayloadAction<CreateTrainingRDO | null>) => {
+      const addingTraining = action.payload;
+
+      if(!state.paginatedTrainings || !addingTraining) {
+        return;
+      }
+
+      state.paginatedTrainings?.entities.push(addingTraining);
+    },
+
     // Подходящие по параметрам для пользователя тренировки
     setConvenientTrainingsAction: (state, action: PayloadAction<TrainingsWithPaginationRDO | null>) => {
       state.paginatedConvenientTrainings = action.payload;
@@ -214,6 +225,7 @@ export const trainingProcess = createSlice({
 
 export const {
   setTrainingsAction,
+  appendTrainingAction,
   appendTrainingsAction,
   setConvenientTrainingsAction,
   setWithDiscountTrainingsAction,

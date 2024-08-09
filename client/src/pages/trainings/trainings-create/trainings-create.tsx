@@ -1,10 +1,21 @@
 import CustomSelectBtn from '@client/src/components/custom-select-btn/custom-select-btn';
 import RadioGender from '@client/src/components/radio-gender/radio-gender';
+import { AppRoute } from '@client/src/const';
+import { useAppDispatch } from '@client/src/hooks';
 import useFetchAdditionalInfo from '@client/src/hooks/useFetchAdditionalInfo';
+import { createTrainingAction } from '@client/src/store/actions/api-training-action';
+import { createTrainingValidationSchema } from '@client/src/validation/create-training-validation';
+import { validateFields } from '@client/src/validation/validation-tools';
 import { Gender } from '@server/libs/types';
+import { CreateTrainingDTO } from '@shared/training';
 import { ReactElement, useRef, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
 export default function TrainingsCreate(): ReactElement {
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
+
   const additionalInfo = useFetchAdditionalInfo();
   const type = additionalInfo?.trainingType;
   const duration = additionalInfo?.trainingDuration;
@@ -58,15 +69,33 @@ export default function TrainingsCreate(): ReactElement {
     const trainingData = {
       title: title.current?.value,
       trainingType: trainingType,
-      calories: calories.current?.value,
+      calories: Number(calories.current?.value),
       trainingDuration: trainingDuration,
-      price: price.current?.value,
+      price: Number(price.current?.value),
       userLevel: userLevel,
-      gender: adaptGenderToServer(trainingGender),
-      description: description.current?.value
+      gender: adaptGenderToServer(trainingGender) as Gender,
+      description: description.current?.value,
+
+      background: "",
+      video: videoURL,
     };
 
-    console.log('Training data: ', trainingData);
+    const [isFormHasErrors] = validateFields<Partial<CreateTrainingDTO>>(trainingData, createTrainingValidationSchema);
+
+    if (isFormHasErrors) {
+      return false;
+    }
+
+    dispatch(createTrainingAction(trainingData))
+      .then((result) => {
+        if ('error' in result) {
+          return;
+        }
+
+        toast.success('New training has been successfully added');
+
+        navigate(AppRoute.ACCOUNT);
+      })
   }
 
   return (
@@ -82,11 +111,12 @@ export default function TrainingsCreate(): ReactElement {
                 <div className="create-training__wrapper">
                   <div className="create-training__block">
                     <h2 className="create-training__legend">Название тренировки</h2>
-                    <div className="custom-input create-training__input">
+                    <div className="custom-input create-training__input" id="title">
                       <label>
                         <span className="custom-input__wrapper">
                           <input type="text" name="training-name" ref={title} />
                         </span>
+                        <span className="custom-input__error"></span>
                       </label>
                     </div>
                   </div>
@@ -115,8 +145,8 @@ export default function TrainingsCreate(): ReactElement {
                             <input type="number" name="calories" ref={calories} />
                             <span className="custom-input__text">ккал</span>
                           </span>
+                          <span className="custom-input__error"></span>
                         </label>
-                        <span className="custom-input__error"></span>
                       </div>
 
                       <div className="custom-select custom-select--not-selected" id="trainingDuration">
@@ -140,8 +170,8 @@ export default function TrainingsCreate(): ReactElement {
                             <input type="number" name="price" ref={price} />
                             <span className="custom-input__text">₽</span>
                           </span>
+                          <span className="custom-input__error"></span>
                         </label>
-                        <span className="custom-input__error"></span>
                       </div>
 
                       <div className="custom-select custom-select--not-selected" id="userLevel">

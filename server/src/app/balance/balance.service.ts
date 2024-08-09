@@ -33,9 +33,9 @@ export class BalanceService {
   public async getUserBalanceByTrainingId(userId: string, trainingId: string): Promise<BalanceEntity | null> {
     const balance = await this.balanceRepository.findUserBalanceByTrainingId(userId, trainingId);
 
-    if (!balance) {
-      throw new NotFoundException(`${BalanceMessage.ERROR.NOT_FOUND}. Training ID: ${trainingId}`);
-    }
+    // if (!balance) {
+    //   throw new NotFoundException(`${BalanceMessage.ERROR.NOT_FOUND}. Training ID: ${trainingId}`);
+    // }
 
     return balance;
   }

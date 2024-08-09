@@ -39,7 +39,11 @@ export const checkUserAuthAction = createAsyncThunk<void, void, AsyncOptions>(
     dispatch(setDataLoadingStatus(true));
 
     try {
-      await api.post<TokenPayload>(ApiRoute.CHECK_JWT_TOKEN);
+      const result = await api.post<TokenPayload>(ApiRoute.CHECK_JWT_TOKEN);
+
+      if(!result) {
+        return;
+      }
 
       dispatch(fetchUserDetailInfoAction())
     } catch(error) {

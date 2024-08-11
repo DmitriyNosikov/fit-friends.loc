@@ -1,6 +1,6 @@
 import { Body, Controller, Delete, Get, HttpStatus, Param, Patch, Post, Query, UseGuards, UseInterceptors } from '@nestjs/common';
 import { ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { CreateOrderDTO, UpdateOrderDTO, CreateOrderRDO, OrdersWithPaginationRDO } from '@shared/order';
+import { CreateOrderDTO, UpdateOrderDTO, CreateOrderRDO, OrdersWithPaginationRDO, OrderSearchQuery } from '@shared/order';
 
 import { fillDTO } from '@server/libs/helpers';
 import { JWTAuthGuard } from '@server/user/guards/jwt-auth.guard';
@@ -8,7 +8,7 @@ import { JWTAuthGuard } from '@server/user/guards/jwt-auth.guard';
 import { OrderService } from './order.service';
 import { OrderMessage } from './order.constant';
 
-import { BaseSearchQuery, DefaultSearchParam } from '@shared/types/search/base-search-query.type';
+import { DefaultSearchParam } from '@shared/types/search/base-search-query.type';
 import { SortTypeEnum } from '@shared/types/sort/sort-type.enum';
 import { SortDirectionEnum } from '@shared/types/sort/sort-direction.enum';
 import { InjectUserIdInterceptor } from '@server/libs/interceptors/inject-user-id.interceptor';
@@ -37,6 +37,24 @@ export class OrderController {
 
   @Get('/')
   @ApiOperation({ summary: 'Get orders list by passed params (or without it)' })
+  @ApiQuery({
+    name: "userId",
+    description: `Creator id`,
+    example: "g83h4y0943-nv934819843-jv934h8t-n923g48n9438",
+    required: false
+  })
+  @ApiQuery({
+    name: "trainerId",
+    description: `Trainer's orders`,
+    example: "g83h4y0943-nv934819843-jv934h8t-n923g48n9438",
+    required: false
+  })
+  @ApiQuery({
+    name: "trainingId",
+    description: `Orders by training id`,
+    example: "g83h4y0943-nv934819843-jv934h8t-n923g48n9438",
+    required: false
+  })
   @ApiQuery({
     name: "createdAt",
     description: `Item's creation date`,
@@ -69,14 +87,8 @@ export class OrderController {
     example: " desc",
     required: false
   })
-  public async index(
-    @Body('userId') userId,
-    @Query() query?: BaseSearchQuery
-  ): Promise<OrdersWithPaginationRDO | null> {
-    const documents = await this.orderService.search({
-      ...query,
-      userId
-    });
+  public async index(@Query() query?: OrderSearchQuery): Promise<OrdersWithPaginationRDO | null> {
+    const documents = await this.orderService.search(query);
 
     if(!documents.entities || documents.entities.length <= 0) {
       return;

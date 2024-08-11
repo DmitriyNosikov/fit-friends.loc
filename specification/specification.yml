@@ -594,6 +594,24 @@ paths:
           description: Item's creation date
           example: 2024-05-29
           schema: {}
+        - name: trainingId
+          required: false
+          in: query
+          description: Orders by training id
+          example: g83h4y0943-nv934819843-jv934h8t-n923g48n9438
+          schema: {}
+        - name: trainerId
+          required: false
+          in: query
+          description: Trainer's orders
+          example: g83h4y0943-nv934819843-jv934h8t-n923g48n9438
+          schema: {}
+        - name: userId
+          required: false
+          in: query
+          description: Creator id
+          example: g83h4y0943-nv934819843-jv934h8t-n923g48n9438
+          schema: {}
       responses:
         "200":
           description: ""

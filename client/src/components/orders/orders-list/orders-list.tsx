@@ -6,8 +6,9 @@ import Stub from '../../tools/stub/stub';
 import OrdersListItem from '../orders-list-item/orders-list-item'
 
 import useSearchOrders from '@client/src/hooks/useSearchOrders';
-import { useAppDispatch } from '@client/src/hooks';
+import { useAppDispatch, useAppSelector } from '@client/src/hooks';
 import { searchOrdersAction } from '@client/src/store/actions/api-order-action';
+import { getUserInfo } from '@client/src/store/slices/user-process/user-process.selectors';
 
 export const OrdersSortTypeEnum = {
   TOTAL_PRICE: 'totalPrice',
@@ -23,9 +24,12 @@ type OrdersListProps = {
 const START_PAGE = 1;
 
 export default function OrdersList({ sortBy }: OrdersListProps) {
+  const userInfo = useAppSelector(getUserInfo);
+
   let searchQuery: OrderSearchQuery = {
     page: START_PAGE,
-    limit: ITEMS_PER_PAGE
+    limit: ITEMS_PER_PAGE,
+    trainerId: userInfo?.id
   };
 
   const dispatch = useAppDispatch();

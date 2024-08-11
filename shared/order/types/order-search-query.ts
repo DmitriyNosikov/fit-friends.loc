@@ -6,10 +6,15 @@ export class OrderSearchQuery extends BaseSearchQuery {
   @Expose()
   @IsString()
   @IsOptional()
-  trainingId?: string;
+  userId?: string;
 
   @Expose()
   @IsString()
   @IsOptional()
-  userId?: string;
+  trainerId?: string;
+
+  @Expose()
+  @IsString()
+  @IsOptional()
+  trainingId?: string;
 }

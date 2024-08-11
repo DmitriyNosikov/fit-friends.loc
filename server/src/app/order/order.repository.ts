@@ -161,6 +161,11 @@ export class OrderRepository extends BasePostgresRepository<OrderEntity, OrderIn
       where.userId = query.userId;
     }
 
+    // Поиск заказов тренировок у определенного тренера
+    if(query?.trainerId) {
+      where.training = { userId: query.trainerId }
+    }
+
     if(query?.trainingId) {
       where.trainingId = query.trainingId;
     }

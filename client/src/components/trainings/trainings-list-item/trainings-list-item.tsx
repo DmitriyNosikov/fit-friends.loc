@@ -16,6 +16,8 @@ type TrainingsItemProps = {
   }
 }
 
+// FIXME: Картинка background должна браться из моков по типу тренировки
+
 export default function TrainingsListItem({ item }: TrainingsItemProps): ReactElement {
   const { id, background, title, trainingType, calories, description, price, rating } = item;
 

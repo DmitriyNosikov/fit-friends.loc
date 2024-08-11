@@ -26,6 +26,7 @@ import PopupBuy from '@client/src/components/popup/popup-buy/popup-buy';
 
 import { CreateBalanceRDO } from '@shared/balance';
 import { UpdateTrainingDTO } from '@shared/training';
+import { UploadingFilePayload } from '@client/src/types/payloads';
 
 import { UserRoleEnum } from '@shared/types/user-roles.enum';
 import { validateFields } from '@client/src/validation/validation-tools';
@@ -43,6 +44,8 @@ export default function TrainingsDetail(): ReactElement | undefined {
   const userInfo = useAppSelector(getUserInfo);
   const trainingItem = useFetchTrainingItem(trainingId);
   const balance = useFetchCurrentTrainingBalance(trainingId);
+
+  console.log('ITEM: ', trainingItem);
 
   const [video, setVideo] = useState('');
 
@@ -62,6 +65,10 @@ export default function TrainingsDetail(): ReactElement | undefined {
   useEffect(() => {
     setIsBeginBtnDisabled(!balance || balance.remainingTrainingsCount <= 0);
 
+    if(trainingItem) {
+      setVideo(trainingItem.video);
+    }
+
     setIsUserCanLeaveReview(
       !isTrainer
       && balance !== null
@@ -69,6 +76,14 @@ export default function TrainingsDetail(): ReactElement | undefined {
     );
 
   }, [balance])
+
+  // Контроль смены видео
+  useEffect(() => {
+    if(trainingItem) {
+      setVideo(trainingItem.video);
+    }
+
+  }, [trainingItem?.id])
 
   if (!trainingItem) {
     return;
@@ -168,7 +183,7 @@ export default function TrainingsDetail(): ReactElement | undefined {
   }
 
   async function handleVideoChange(newVideo: FormData) {
-    const newVideoData = { video: newVideo };
+    const newVideoData = { uploadingFile: newVideo };
 
     const updatingResult = await updateTraining(newVideoData);
 
@@ -176,15 +191,15 @@ export default function TrainingsDetail(): ReactElement | undefined {
       return;
     }
 
-    const newVIdeo = updatingResult.video;
+    const updatedVideo = updatingResult.video;
 
-    setVideo(newVIdeo);
+    setVideo(updatedVideo);
   }
 
-  async function updateTraining(trainingData: UpdateTrainingDTO) {
+  async function updateTraining(trainingData: UpdateTrainingDTO & UploadingFilePayload) {
     const dataToUpdate = {
       ...trainingData,
-      trainingId: trainingId
+      trainingId: trainingId as string
     }
 
     return await dispatch(updateTrainingAction(dataToUpdate))

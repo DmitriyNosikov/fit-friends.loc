@@ -12,6 +12,8 @@ import {
   TrainingsWithPaginationRDO,
   UpdateTrainingDTO
 } from '@shared/training';
+import { TrainingId, UploadingFilePayload } from '@client/src/types/payloads';
+import { TrainingIdPayload } from '@shared/types';
 
 import { setDataLoadingStatus } from '../slices/main-process/main-process';
 import {
@@ -49,10 +51,11 @@ const APIAction = {
 } as const;
 
 // ASYNC ACTIONS
-type TrainingId = string;
+type CreateTrainingPayload = Partial<CreateTrainingDTO> & UploadingFilePayload;
+type UpdateTrainingPayload = UpdateTrainingDTO & TrainingIdPayload & UploadingFilePayload;
 
 // Создание тренировки
-export const createTrainingAction = createAsyncThunk<CreateTrainingRDO, Partial<CreateTrainingDTO>, AsyncOptions>(
+export const createTrainingAction = createAsyncThunk<CreateTrainingRDO, CreateTrainingPayload, AsyncOptions>(
   APIAction.TRAININGS_CREATE,
   async (
     trainingData,
@@ -62,9 +65,9 @@ export const createTrainingAction = createAsyncThunk<CreateTrainingRDO, Partial<
 
     // Видео нужно загружать отдельно
     let uploadedVideoUrl = '';
-    if (trainingData.video) {
+    if (trainingData.uploadingFile) {
       try {
-        const { data: videoURL } = await api.post<string>(ApiRoute.LOAD_FILES, trainingData.video);
+        const { data: videoURL } = await api.post<string>(ApiRoute.LOAD_FILES, trainingData.uploadingFile);
 
         uploadedVideoUrl = videoURL;
 
@@ -80,6 +83,7 @@ export const createTrainingAction = createAsyncThunk<CreateTrainingRDO, Partial<
     // Создание тренировки
     const trainingDataWithVideo = {
       ...trainingData,
+      uploadingFile: undefined,
       video: uploadedVideoUrl ?? trainingData.video
     };
 
@@ -99,11 +103,7 @@ export const createTrainingAction = createAsyncThunk<CreateTrainingRDO, Partial<
   }
 )
 
-type TrainingIdPayload = {
-  trainingId: TrainingId
-}
-
-export const updateTrainingAction = createAsyncThunk<CreateTrainingRDO, Partial<UpdateTrainingDTO & TrainingIdPayload>, AsyncOptions>(
+export const updateTrainingAction = createAsyncThunk<CreateTrainingRDO, UpdateTrainingPayload, AsyncOptions>(
   APIAction.TRAININGS_UPDATE,
   async (
     trainingData,
@@ -113,9 +113,9 @@ export const updateTrainingAction = createAsyncThunk<CreateTrainingRDO, Partial<
 
     // Видео нужно загружать отдельно
     let uploadedVideoUrl = '';
-    if (trainingData.video) {
+    if (trainingData.uploadingFile) {
       try {
-        const { data: videoURL } = await api.post<string>(ApiRoute.LOAD_FILES, trainingData.video);
+        const { data: videoURL } = await api.post<string>(ApiRoute.LOAD_FILES, trainingData.uploadingFile);
 
         uploadedVideoUrl = videoURL;
       } catch (err) {
@@ -132,6 +132,7 @@ export const updateTrainingAction = createAsyncThunk<CreateTrainingRDO, Partial<
     const updateTrainingData = {
       ...trainingData,
       trainingId: undefined,
+      uploadingFile: undefined,
       video: uploadedVideoUrl ?? trainingData.video
     };
 
@@ -248,6 +249,8 @@ export const fetchTrainingItemAction = createAsyncThunk<void, TrainingId, AsyncO
     { dispatch, extra: api }
   ) => {
     dispatch(setDataLoadingStatus(true));
+    dispatch(setTrainingItemAction(null));
+    console.log('Training id: ', trainingId);
 
     try {
       dispatch(setTrainingItemAction(null));

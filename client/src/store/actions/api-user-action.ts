@@ -15,6 +15,7 @@ import { AsyncOptions } from '@client/src/types/async-options.type';
 import { ApiRoute, AppRoute, AuthorizationStatus, Namespace } from '@client/src/const';
 import { TokenPayload } from '@client/src/types/token-payload';
 import { deleteToken, REFRESH_TOKEN_KEY, setToken } from '@client/src/services/token';
+import { UploadingFilePayload } from '@client/src/types/payloads';
 
 
 
@@ -83,7 +84,9 @@ export const fetchUserDetailInfoAction = createAsyncThunk<void, void, AsyncOptio
   }
 );
 
-export const registerUserAction = createAsyncThunk<LoggedUserRDO, CreateUserDTO, AsyncOptions>(
+type RegisterUserPayload = CreateUserDTO & UploadingFilePayload;
+
+export const registerUserAction = createAsyncThunk<LoggedUserRDO, RegisterUserPayload, AsyncOptions>(
   APIAction.USER_REGISTER,
   async (
     newUserData, // New User Data
@@ -93,9 +96,9 @@ export const registerUserAction = createAsyncThunk<LoggedUserRDO, CreateUserDTO,
 
     // Аватар нужно загружать отдельно
     let uploadedAvatarUrl = '';
-    if(newUserData.avatar) {
+    if(newUserData.uploadingFile) {
       try {
-        const { data: avatarUrl } = await api.post<string>(ApiRoute.LOAD_FILES, newUserData.avatar);
+        const { data: avatarUrl } = await api.post<string>(ApiRoute.LOAD_FILES, newUserData.uploadingFile);
 
         uploadedAvatarUrl = avatarUrl;
 

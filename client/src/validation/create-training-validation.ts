@@ -51,6 +51,9 @@ export const createTrainingValidationSchema = Joi.object({
   background: Joi.string()
     .allow(''),
 
-  video: Joi.any()
+  video: Joi.string()
+    .allow(''),
+
+  uploadingFile: Joi.any()
     .allow('')
 });

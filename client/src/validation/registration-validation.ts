@@ -54,5 +54,8 @@ export const registrationValidationSchema = Joi.object({
     .required(),
 
   location: Joi.string()
-    .required()
+    .required(),
+
+    uploadingFile: Joi.any()
+      .allow('')
 });

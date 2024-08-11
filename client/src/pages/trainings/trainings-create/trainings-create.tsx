@@ -1,5 +1,4 @@
 import { ReactElement, useRef, useState } from 'react';
-import { toast } from 'react-toastify';
 import { AppRoute } from '@client/src/const';
 
 import { useNavigate } from 'react-router-dom';
@@ -11,12 +10,14 @@ import { createTrainingValidationSchema } from '@client/src/validation/create-tr
 
 import { clearFieldError, validateFields } from '@client/src/validation/validation-tools';
 
-import { Gender } from '@server/libs/types';
+import { Gender, TrainingDuration, TrainingType, UserLevel } from '@server/libs/types';
 import { CreateTrainingDTO } from '@shared/training';
 
 import RadioGender from '@client/src/components/radio-gender/radio-gender';
 import CustomSelectBtn from '@client/src/components/custom-select-btn/custom-select-btn';
 import VideoUploader from '@client/src/components/video-uploader/video-uploader';
+import { toast } from 'react-toastify';
+import { UploadingFilePayload } from '@client/src/types/payloads';
 
 export default function TrainingsCreate(): ReactElement {
   const dispatch = useAppDispatch();
@@ -34,10 +35,10 @@ export default function TrainingsCreate(): ReactElement {
   const calories = useRef<HTMLInputElement>(null);
   const description = useRef<HTMLTextAreaElement>(null);
   const [trainingGender, setTrainingGender] = useState('всем');
-  const [trainingType, setTrainingType] = useState();
-  const [trainingDuration, setTrainingDuration] = useState();
-  const [userLevel, setUserLevel] = useState();
-  const [video, setVideo] = useState('');
+  const [trainingType, setTrainingType] = useState('');
+  const [trainingDuration, setTrainingDuration] = useState('');
+  const [userLevel, setUserLevel] = useState('');
+  const [video, setVideo] = useState();
 
   function adaptGenderToClient(gender: Gender) {
     let adaptedGender = '';
@@ -68,31 +69,35 @@ export default function TrainingsCreate(): ReactElement {
 
     const trainingData = {
       title: title.current?.value,
-      trainingType: trainingType,
+      trainingType: trainingType as TrainingType,
       calories: Number(calories.current?.value),
-      trainingDuration: trainingDuration,
+      trainingDuration: trainingDuration as TrainingDuration,
       price: Number(price.current?.value),
-      userLevel: userLevel,
+      userLevel: userLevel as UserLevel,
       gender: adaptGenderToServer(trainingGender) as Gender,
       description: description.current?.value,
 
-      background: "",
-      video: video,
-    };
+      background: '',
+      video: ''
+    } as CreateTrainingDTO & UploadingFilePayload;
 
-    const [isFormHasErrors] = validateFields<Partial<CreateTrainingDTO>>(trainingData, createTrainingValidationSchema);
+    if(video) {
+      trainingData['uploadingFile'] = video as FormData;
+    }
+
+    const [isFormHasErrors] = validateFields<CreateTrainingDTO>(trainingData, createTrainingValidationSchema);
 
     if (isFormHasErrors) {
       return false;
     }
-
-    console.log(trainingData);
 
     dispatch(createTrainingAction(trainingData))
       .then((result) => {
         if ('error' in result) {
           return;
         }
+
+        toast.success('New training has been successfully created');
 
         navigate(AppRoute.ACCOUNT);
       })

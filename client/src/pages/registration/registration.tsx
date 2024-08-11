@@ -18,6 +18,7 @@ import CustomSelectBtn from '@client/src/components/custom-select-btn/custom-sel
 import { registrationValidationSchema } from '@client/src/validation/registration-validation';
 import RadioGender from '@client/src/components/radio-gender/radio-gender';
 import { upperCaseFirst } from '@client/src/utils/common';
+import { UploadingFilePayload } from '@client/src/types/payloads';
 
 
 export default function Registration() {
@@ -34,7 +35,7 @@ export default function Registration() {
   const userEmail = useRef<HTMLInputElement>(null);
   const userBirthDate = useRef<HTMLInputElement>(null);
   const userPassword = useRef<HTMLInputElement>(null);
-  const [userAvatar, setUserAvatar] = useState('');
+  const [userAvatar, setUserAvatar] = useState();
   const [userLocation, setUserLocation] = useState('');
   const [userGender, setUserGender] = useState('неважно');
   const [userRole, setUserRole] = useState('client');
@@ -78,7 +79,11 @@ export default function Registration() {
       location: userLocation.toLowerCase(),
       gender: userGender,
       role: userRole,
-    } as CreateUserDTO;
+    } as CreateUserDTO & UploadingFilePayload;
+
+    if(userAvatar) {
+      userData['uploadingFile'] = userAvatar as FormData;
+    }
 
     const [isFormHasErrors] = validateFields<CreateUserDTO>(userData, registrationValidationSchema);
 

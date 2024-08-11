@@ -141,20 +141,6 @@ export class TrainingSearchQuery {
   public isSpecial?: boolean;
 
   @Expose()
-  @Transform((field) => {
-    if(field.value) {
-      if(field.value === 'false' || parseInt(field.value) <= 0) {
-        return false;
-      }
-
-      return !!field.value;
-    }
-  })
-  @IsBoolean()
-  @IsOptional()
-  public searchByUser?: boolean;
-
-  @Expose()
   @IsString()
   @IsOptional()
   public userId?: string;

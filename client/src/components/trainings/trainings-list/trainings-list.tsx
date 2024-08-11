@@ -34,7 +34,6 @@ export default function TrainingsList(): ReactElement {
   if(isTrainer) {
     searchQuery['userId'] = userInfo.id;
     searchQuery['sortType'] = DEFAULT_TRAININGS_SORT_TYPE;
-    searchQuery['searchByUser'] = true;
   }
 
   const trainingsList = useSearchTrainings(searchQuery);

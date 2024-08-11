@@ -149,11 +149,8 @@ export class TrainingController {
     status: HttpStatus.NOT_FOUND,
     description: TrainingMessage.ERROR.NOT_FOUND
   })
-  public async index(
-    @Body('userId') userId: string,
-    @Query() query?: TrainingSearchQuery
-  ): Promise<TrainingsWithPaginationRDO | null> {
-    const documents = await this.trainingService.search({ ...query, userId });
+  public async index( @Query() query?: TrainingSearchQuery): Promise<TrainingsWithPaginationRDO | null> {
+    const documents = await this.trainingService.search(query);
 
     if(!documents.entities || documents.entities.length <= 0) {
       return;

@@ -171,7 +171,7 @@ export class TrainingRepository extends BasePostgresRepository<TrainingEntity, T
     const andFilters: AndFilters = [];
 
     // Поиск по пользователю
-    if(query?.userId && query?.searchByUser) {
+    if(query?.userId) {
       where.userId = query.userId;
     }
 

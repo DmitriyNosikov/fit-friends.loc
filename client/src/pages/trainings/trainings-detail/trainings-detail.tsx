@@ -1,5 +1,4 @@
 import classNames from 'classnames';
-import { toast } from 'react-toastify';
 import { ReactElement, useEffect, useRef, useState } from 'react';
 
 import { useAppDispatch, useAppSelector } from '@client/src/hooks';
@@ -9,7 +8,7 @@ import useFetchTrainingItem from '@client/src/hooks/useFetchTrainingItem';
 import useFetchCurrentTrainingBalance from '@client/src/hooks/useFetchCurrentTrainingBalance';
 
 import { changeBalance } from '@client/src/store/actions/api-balance-action';
-import { updateTrainingAction } from '@client/src/store/actions/api-training-action';
+import { updateTrainingItemAction } from '@client/src/store/actions/api-training-action';
 
 import { getTrainingItemLoadingStatus } from '@client/src/store/slices/training-process/training-process.selectors';
 import { getUserInfo } from '@client/src/store/slices/user-process/user-process.selectors';
@@ -76,7 +75,6 @@ export default function TrainingsDetail(): ReactElement | undefined {
 
   }, [balance])
 
-  // Контроль смены видео
   useEffect(() => {
     if(trainingItem) {
       setVideo(trainingItem.video);
@@ -93,14 +91,15 @@ export default function TrainingsDetail(): ReactElement | undefined {
     title,
     description,
     rating,
+    price,
+    discount,
     trainingType,
     trainingDuration,
-    calories,
-    price,
-    discount
+    calories
   } = trainingItem;
 
   const trainingPrice = discount ? price - discount : price;
+  const discountBtnText = trainingItem.discount ? 'Отменить скидку' : 'Сделать скидку 10%';
 
   function handleLeaveReviewBtnClick() {
     setIsReviewModalOpened(true);
@@ -119,6 +118,23 @@ export default function TrainingsDetail(): ReactElement | undefined {
 
   function handleEditBtnCLick() {
     setIsEditable(true);
+  }
+
+  function handleDiscountBtnClick() {
+    // Если уже есть скидка - отменяем
+    // если скидки нет - делаем 10%
+    const discountValue = price * 0.1;
+    const calculatedPrice = discount ? price : price - discountValue;
+    const newDiscount = discount ? 0 : discountValue;
+    const updatePriceData = {
+      discount: newDiscount
+    };
+
+    updateTraining(updatePriceData);
+
+    if(priceInput.current) {
+      priceInput.current.value = String(calculatedPrice);
+    }
   }
 
   async function handleSaveBtnClick() {
@@ -196,18 +212,20 @@ export default function TrainingsDetail(): ReactElement | undefined {
   }
 
   async function updateTraining(trainingData: UpdateTrainingDTO & UploadingFilePayload) {
+    if(Object.keys(trainingData).length <= 0) {
+      return;
+    }
+
     const dataToUpdate = {
       ...trainingData,
       trainingId: trainingId as string
     }
 
-    return await dispatch(updateTrainingAction(dataToUpdate))
+    return await dispatch(updateTrainingItemAction(dataToUpdate))
       .then((result) => {
         if ('error' in result) {
           return false;
         }
-
-        toast.success('Training has been successfully updated');
 
         return result.payload;
       })
@@ -361,10 +379,11 @@ export default function TrainingsDetail(): ReactElement | undefined {
 
                           {
                             isUserCanEdit &&
-                            <button className="btn-flat btn-flat--light btn-flat--underlined training-info__discount" type="button">
+                            <button className="btn-flat btn-flat--light btn-flat--underlined training-info__discount" type="button" onClick={handleDiscountBtnClick}>
                               <svg width={14} height={14} aria-hidden="true">
                                 <use xlinkHref="#icon-discount" />
-                              </svg><span>Сделать скидку 10%</span>
+                              </svg>
+                              <span>{ discountBtnText }</span>
                             </button>
                           }
                         </div>

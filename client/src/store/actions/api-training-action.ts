@@ -12,8 +12,8 @@ import {
   TrainingsWithPaginationRDO,
   UpdateTrainingDTO
 } from '@shared/training';
-import { TrainingId, UploadingFilePayload } from '@client/src/types/payloads';
-import { TrainingIdPayload } from '@shared/types';
+import { TrainingIdPayload, UploadingFilePayload } from '@client/src/types/payloads';
+
 
 import { setDataLoadingStatus } from '../slices/main-process/main-process';
 import {
@@ -63,14 +63,19 @@ export const createTrainingAction = createAsyncThunk<CreateTrainingRDO, CreateTr
   ) => {
     dispatch(setDataLoadingStatus(true));
 
+    // Создание тренировки
+    const trainingDataWithVideo = {
+      ...trainingData,
+      trainingId: undefined,
+      uploadingFile: undefined,
+    };
+
     // Видео нужно загружать отдельно
-    let uploadedVideoUrl = '';
     if (trainingData.uploadingFile) {
       try {
         const { data: videoURL } = await api.post<string>(ApiRoute.LOAD_FILES, trainingData.uploadingFile);
 
-        uploadedVideoUrl = videoURL;
-
+        trainingDataWithVideo['video'] = videoURL;
       } catch (err) {
         toast.warn(`Can't load video: ${err}`);
 
@@ -79,13 +84,6 @@ export const createTrainingAction = createAsyncThunk<CreateTrainingRDO, CreateTr
         return rejectWithValue(err);
       }
     }
-
-    // Создание тренировки
-    const trainingDataWithVideo = {
-      ...trainingData,
-      uploadingFile: undefined,
-      video: uploadedVideoUrl ?? trainingData.video
-    };
 
     try {
       const { data } = await api.post<CreateTrainingRDO>(ApiRoute.TRAININGS_API, trainingDataWithVideo);
@@ -111,13 +109,20 @@ export const updateTrainingAction = createAsyncThunk<CreateTrainingRDO, UpdateTr
   ) => {
     dispatch(setDataLoadingStatus(true));
 
+    // Обновление тренировки
+    const trainingId = trainingData.trainingId;
+    const updateTrainingData = {
+      ...trainingData,
+      trainingId: undefined,
+      uploadingFile: undefined,
+    };
+
     // Видео нужно загружать отдельно
-    let uploadedVideoUrl = '';
     if (trainingData.uploadingFile) {
       try {
         const { data: videoURL } = await api.post<string>(ApiRoute.LOAD_FILES, trainingData.uploadingFile);
 
-        uploadedVideoUrl = videoURL;
+        updateTrainingData['video'] = videoURL;
       } catch (err) {
         toast.warn(`Can't load video: ${err}`);
 
@@ -126,15 +131,6 @@ export const updateTrainingAction = createAsyncThunk<CreateTrainingRDO, UpdateTr
         return rejectWithValue(err);
       }
     }
-
-    // Обновление тренировки
-    const trainingId = trainingData.trainingId;
-    const updateTrainingData = {
-      ...trainingData,
-      trainingId: undefined,
-      uploadingFile: undefined,
-      video: uploadedVideoUrl ?? trainingData.video
-    };
 
     try {
       const { data } = await api.patch<CreateTrainingRDO>(`${ApiRoute.TRAININGS_API}/${trainingId}`, updateTrainingData);
@@ -219,7 +215,7 @@ export const fetchWithDiscountTrainingsAction = createAsyncThunk<void, void, Asy
   }
 );
 
-// Загрузка тренироок с рейтингом больше 0
+// Загрузка тренировок с рейтингом больше 0
 export const fetchWithRatingTrainingsAction = createAsyncThunk<void, void, AsyncOptions>(
   APIAction.TRAININGS_FETCH_WITH_RATING,
   async (_arg, { dispatch, rejectWithValue, extra: api }) => {
@@ -242,15 +238,14 @@ export const fetchWithRatingTrainingsAction = createAsyncThunk<void, void, Async
 );
 
 // Загрузка детальной информации о тренировке
-export const fetchTrainingItemAction = createAsyncThunk<void, TrainingId, AsyncOptions>(
+export const fetchTrainingItemAction = createAsyncThunk<CreateTrainingRDO, TrainingIdPayload, AsyncOptions>(
   APIAction.TRAININGS_FETCH_ITEM,
   async (
-    trainingId,
-    { dispatch, extra: api }
+    { trainingId },
+    { dispatch, rejectWithValue, extra: api }
   ) => {
-    dispatch(setDataLoadingStatus(true));
     dispatch(setTrainingItemAction(null));
-    console.log('Training id: ', trainingId);
+    dispatch(setDataLoadingStatus(true));
 
     try {
       dispatch(setTrainingItemAction(null));
@@ -258,44 +253,75 @@ export const fetchTrainingItemAction = createAsyncThunk<void, TrainingId, AsyncO
       const { data } = await api.get<CreateTrainingRDO>(`${ApiRoute.TRAININGS_API}/${trainingId}`);
 
       dispatch(setTrainingItemAction(data));
+
+      return data;
     } catch (err) {
       toast.warn(`Can't find training with id: ${trainingId}`);
-      dispatch(redirectToRoute(AppRoute.PAGE_404));
-    }
 
-    dispatch(setDataLoadingStatus(false));
+      dispatch(setDataLoadingStatus(false));
+      dispatch(redirectToRoute(AppRoute.PAGE_404));
+
+      return rejectWithValue(err);
+    }
   }
 );
 
 // Обновление тренировки
-export const updateTrainingItemAction = createAsyncThunk<void, Partial<CreateTrainingRDO>, AsyncOptions>(
+export const updateTrainingItemAction = createAsyncThunk<CreateTrainingRDO, UpdateTrainingPayload, AsyncOptions>(
   APIAction.TRAININGS_UPDATE,
   async (
-    updateData,
-    { dispatch, extra: api }
+    trainingData,
+    { dispatch, rejectWithValue, extra: api }
   ) => {
     dispatch(setDataLoadingStatus(true));
 
-    try {
-      const { data } = await api.patch<CreateTrainingRDO>(`${ApiRoute.TRAININGS_API}/${updateData.id}`, updateData);
+    // Обновление тренировки
+    const trainingId = trainingData.trainingId;
+    const updateTrainingData = {
+      ...trainingData,
+      trainingId: undefined,
+      uploadingFile: undefined,
+    };
 
-      dispatch(updateTrainingsListAction(data)); // Обноавляем итем в списке
-      dispatch(setTrainingItemAction(data)); // Обноавляем итем о котором загружена детальная инфо
+    // Видео нужно загружать отдельно
+    if (trainingData.uploadingFile) {
+      try {
+        const { data: videoURL } = await api.post<string>(ApiRoute.LOAD_FILES, trainingData.uploadingFile);
 
-      toast.success(`Training ${updateData.id} was successfully updated`);
-    } catch (err) {
-      toast.warn(`Can't update training with ${updateData.id}. Error: ${err}`)
+        updateTrainingData['video'] = videoURL;
+      } catch (err) {
+        toast.warn(`Can't load video: ${err}`);
+
+        dispatch(setDataLoadingStatus(false));
+
+        return rejectWithValue(err);
+      }
     }
 
-    dispatch(setDataLoadingStatus(false));
+    try {
+      const { data } = await api.patch<CreateTrainingRDO>(`${ApiRoute.TRAININGS_API}/${trainingId}`, updateTrainingData);
+
+      dispatch(updateTrainingsListAction(data)); // Обновляем итем в списке
+      dispatch(setTrainingItemAction(data)); // Обновляем итем о котором загружена детальная инфо
+
+      toast.success(`Training ${trainingId} has been successfully updated`);
+
+      return data;
+    } catch (err) {
+      toast.warn(`Can't update training with ${trainingId}. Error: ${err}`)
+
+      dispatch(setDataLoadingStatus(false));
+
+      return rejectWithValue(err);
+    }
   }
 );
 
 // Удаление тренировки
-export const deleteTrainingItemAction = createAsyncThunk<void, TrainingId, AsyncOptions>(
+export const deleteTrainingItemAction = createAsyncThunk<void, TrainingIdPayload, AsyncOptions>(
   APIAction.TRAININGS_DELETE,
   async (
-    trainingId,
+    { trainingId },
     { dispatch, extra: api }
   ) => {
     dispatch(setDataLoadingStatus(true));

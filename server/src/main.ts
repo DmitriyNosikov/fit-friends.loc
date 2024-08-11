@@ -8,6 +8,8 @@ import { ConfigEnvironment } from './config';
 import { ConfigEnum } from './config/config.schema';
 import { RequestLoggerInterceptor } from '@server/libs/interceptors/request-logger.interceptor';
 
+import * as bodyParser from 'body-parser';
+
 const GLOBAL_PREFIX = 'api';
 
 async function bootstrap() {
@@ -46,6 +48,13 @@ async function bootstrap() {
 
   // Включаем работу с CORS
   app.enableCors();
+
+  // Увеличиваем лимиты на загрузку файлов
+  app.use(bodyParser.json({limit: '150mb'}));
+  app.use(bodyParser.urlencoded({
+    limit: '150mb',
+    extended: true
+  }));
 
   // Запуск сервера
   const host = configService.get(`${ConfigEnvironment.APP}.${ConfigEnum.HOST}`);

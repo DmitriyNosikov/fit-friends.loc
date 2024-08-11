@@ -31,10 +31,10 @@ export default function Orders(): ReactElement {
           <div className="my-orders__title-wrapper">
             <h1 className="my-orders__title">Мои заказы</h1>
 
-            <OrdersSort sort={ sort } onSortChange={ setSort }/>
+            <OrdersSort sort={ sort as OrdersSortType } onSortChange={ setSort }/>
           </div>
 
-          <OrdersList sort={sort} />
+          <OrdersList sort={ sort as OrdersSortType } />
         </div>
       </div>
     </section>

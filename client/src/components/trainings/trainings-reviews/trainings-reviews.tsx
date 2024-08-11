@@ -1,6 +1,6 @@
 import { ReactElement } from 'react';
 
-import { DEFAULT_AVATAR_URL } from '@client/src/const';
+import { AppRoute, DEFAULT_AVATAR_URL } from '@client/src/const';
 import { BASE_URL } from '@client/src/services/api';
 
 import useFetchTrainingReviewsList from '@client/src/hooks/useFetchTrainingReviewsList';
@@ -10,6 +10,7 @@ import SimpleBar from 'simplebar-react';
 import 'simplebar-react/dist/simplebar.min.css';
 import { useAppSelector } from '@client/src/hooks';
 import { getTrainingsReviewsLoadingStatus } from '@client/src/store/slices/training-reviews-process/training-process.selectors';
+import { Link } from 'react-router-dom';
 
 const REVIEWS_CONTAINER_MAX_HEIGHT = 976;
 
@@ -21,7 +22,7 @@ export default function TrainingsReviews({ trainingId }: TrainingsReviewsProps):
   const trainingItemReviews = useFetchTrainingReviewsList(trainingId);
   const isReviewsLoading = useAppSelector(getTrainingsReviewsLoadingStatus);
 
-  if(isReviewsLoading) {
+  if (isReviewsLoading) {
     return <Spinner />
   }
 
@@ -60,10 +61,13 @@ export default function TrainingsReviews({ trainingId }: TrainingsReviewsProps):
                 <div className="review">
                   <div className="review__user-info">
                     <div className="review__user-photo">
-                      <picture>
-                        <img src={userAvatar} srcSet={userAvatar} width={64} height={64} alt="Изображение пользователя" />
-                      </picture>
-                    </div><span className="review__user-name">{userInfo?.name}</span>
+                      <Link to={AppRoute.PERSONAL_CARD}>
+                        <picture>
+                          <img src={userAvatar} srcSet={userAvatar} width={64} height={64} alt="Изображение пользователя" />
+                        </picture>
+                      </Link>
+                    </div>
+                    <span className="review__user-name">{userInfo?.name}</span>
                     <div className="review__rating">
                       <svg width={16} height={16} aria-hidden="true">
                         <use xlinkHref="#icon-star" />

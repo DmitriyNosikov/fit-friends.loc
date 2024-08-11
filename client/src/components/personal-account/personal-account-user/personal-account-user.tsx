@@ -1,10 +1,5 @@
 import { ReactElement } from 'react';
 
-import { useAppSelector } from '@client/src/hooks';
-import { getUserInfo } from '@client/src/store/slices/user-process/user-process.selectors';
-import useFetchAdditionalInfo from '@client/src/hooks/useFetchAdditionalInfo';
-
-
 import { Link } from 'react-router-dom';
 import { AppRoute } from '@client/src/const';
 
@@ -32,19 +27,6 @@ export default function PersonalAccountUser({ userInfo }: PersonalAccountUserPro
             </div>
             <span className="thumbnail-link__text">Мои друзья</span>
           </a>
-
-          <div className="thumbnail-spec-gym">
-            <div className="thumbnail-spec-gym__image">
-              <picture>
-                <source type="image/webp" srcSet="img/content/thumbnails/nearest-gym-01.webp, img/content/thumbnails/nearest-gym-01@2x.webp 2x" />
-                <img src="img/content/thumbnails/nearest-gym-01.jpg" srcSet="img/content/thumbnails/nearest-gym-01@2x.jpg 2x" width={330} height={190} alt="" />
-              </picture>
-            </div>
-            <p class="thumbnail-spec-gym__type">Ближайший зал</p>
-            <div className="thumbnail-spec-gym__header" style={{ textAlign: 'center' }}>
-              <h3 className="thumbnail-spec-gym__title">Скоро тут появится что-то полезное</h3>
-            </div>
-          </div>
         */}
 
         <Stub />

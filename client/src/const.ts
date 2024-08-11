@@ -47,6 +47,7 @@ export const AppRoute = {
   LOGIN: '/login',
   REGISTRATION: '/registration',
   ACCOUNT: '/account',
+  PERSONAL_CARD: '/personal-card',
   TRAININGS: '/trainings',
   TRAININGS_CREATE: '/trainings-create',
   ORDERS: '/orders',

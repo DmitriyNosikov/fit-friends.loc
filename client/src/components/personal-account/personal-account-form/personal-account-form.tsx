@@ -18,8 +18,9 @@ import { updateUserAction, uploadFileAction } from '@client/src/store/actions/ap
 
 import { clearErrors, validateFields } from '@client/src/validation/validation-tools';
 import { personalAccountValidationSchema } from '@client/src/validation/personal-account-validation';
-import { DEFAULT_AVATAR_URL } from '@client/src/const';
+import { AppRoute, DEFAULT_AVATAR_URL } from '@client/src/const';
 import { UserRoleEnum } from '@shared/types/user-roles.enum';
+import { Link } from 'react-router-dom';
 
 type PersonalAccountFormProps = {
   userInfo: LoggedUserRDO
@@ -187,14 +188,14 @@ export default function PersonalAccountForm({ userInfo }: PersonalAccountFormPro
   }
 
   return (
-    <section className={ classNames({
-        'user-info': !formEditable,
-        'user-info-edit': formEditable,
-      }) }>
-      <div className={ classNames({
-          'user-info__header': !formEditable,
-          'user-info-edit__header': formEditable,
-        }) }>
+    <section className={classNames({
+      'user-info': !formEditable,
+      'user-info-edit': formEditable,
+    })}>
+      <div className={classNames({
+        'user-info__header': !formEditable,
+        'user-info-edit__header': formEditable,
+      })}>
         <div className="input-load-avatar">
           <label>
             <input
@@ -205,9 +206,11 @@ export default function PersonalAccountForm({ userInfo }: PersonalAccountFormPro
               onChange={handleAvatarChange}
               disabled={!formEditable}
             />
-            <span className="input-load-avatar__avatar">
-              <img src={userAvatarUrl} width={98} height={98} alt="user photo" />
-            </span>
+            <Link to={AppRoute.PERSONAL_CARD}>
+              <span className="input-load-avatar__avatar">
+                <img src={userAvatarUrl} width={98} height={98} alt="user photo" />
+              </span>
+            </Link>
           </label>
         </div>
         <div className={

@@ -17,26 +17,24 @@ import { TrainingSearchQuery } from '@shared/training';
 import { UserRoleEnum } from '@shared/types/user-roles.enum';
 
 
+export const DEFAULT_TRAININGS_SORT_TYPE = 'createdAt';
 const START_PAGE = 1;
-const DEFAULT_SORT_TYPE = 'createdAt';
 
 export default function TrainingsList(): ReactElement {
   const dispatch = useAppDispatch();
   const userInfo = useAppSelector(getUserInfo);
 
   const isTrainer = userInfo?.role === UserRoleEnum.TRAINER;
-  console.log(userInfo);
 
   let searchQuery: TrainingSearchQuery = {
     page: START_PAGE,
     limit: ITEMS_PER_PAGE
   };
 
-  console.log('Is trainer: ', isTrainer);
-
   if(isTrainer) {
     searchQuery['userId'] = userInfo.id;
-    searchQuery['sortType'] = DEFAULT_SORT_TYPE;
+    searchQuery['sortType'] = DEFAULT_TRAININGS_SORT_TYPE;
+    searchQuery['searchByUser'] = true;
   }
 
   const trainingsList = useSearchTrainings(searchQuery);

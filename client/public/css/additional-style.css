@@ -108,3 +108,10 @@
 .training-video__drop-files {
   display: block;
 }
+
+
+
+.checkboxes-list {
+  list-style: none;
+  padding: 0;
+}

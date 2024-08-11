@@ -28,7 +28,7 @@ export default function TrainingsDurationList({ onChange }: TrainingsDurationLis
     }
   }
 
-  function itemModifier(item: string) {
+  function adaptDurationToClient(item: string) {
     const [durationMin, durationMax] = item.split('-');
     return`${durationMin} мин - ${durationMax} мин`;
   }
@@ -43,7 +43,7 @@ export default function TrainingsDurationList({ onChange }: TrainingsDurationLis
         listContainerClassName={CLASS_LIST.CHECKBOX_CONTAINER}
         listItemClassName={CLASS_LIST.CHECKBOX_ITEM}
         onChangeHandler={handleDurationChange}
-        itemModifier={itemModifier}
+        itemModifier={adaptDurationToClient}
       />
     </div>
   )

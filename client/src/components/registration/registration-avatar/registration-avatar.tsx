@@ -2,7 +2,7 @@ import { getImgPreviewLink } from '@client/src/utils/common';
 import { ReactElement, useRef } from 'react';
 
 type RegistrationAvatarProps = {
-  onAvatarUpload: Function
+  onAvatarUpload?: Function
 }
 
 export default function RegistrationAvatar({ onAvatarUpload }: RegistrationAvatarProps): ReactElement {
@@ -23,6 +23,10 @@ export default function RegistrationAvatar({ onAvatarUpload }: RegistrationAvata
         avatarContainer?.setAttribute('style', `background-image: url(${link}); background-size: cover;`);
       }
     })
+
+    if(!onAvatarUpload) {
+      return;
+    }
 
     const formData = new FormData();
     formData.append('file', avatar);

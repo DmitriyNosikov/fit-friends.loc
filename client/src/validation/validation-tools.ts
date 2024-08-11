@@ -20,9 +20,6 @@ export function validateFields<T>(
   showErrorToasts: boolean = true // Показывать всплывающие окна с ошибкой
 ): [boolean, string[] | []] {
   clearErrors();
-
-  console.log(target);
-
   const validationErrors = validationSchema.validate(target, { abortEarly: false });
 
   let isFieldsHasErrors = false;

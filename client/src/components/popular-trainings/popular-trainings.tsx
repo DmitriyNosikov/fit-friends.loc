@@ -14,14 +14,21 @@ import useWithRatingTrainingsList from '@client/src/hooks/useWithRatingTrainings
 import Spinner from '../tools/spinner/spinner';
 import PopularTrainingsItem from './popular-trainings-item/popular-trainings-item';
 import Stub from '../tools/stub/stub';
+import { getUserInfo } from '@client/src/store/slices/user-process/user-process.selectors';
+import { UserRoleEnum } from '@shared/types/user-roles.enum';
 
 export default function PopularTrainings(): ReactElement {
   const navigate = useNavigate();
   const trainings = useWithRatingTrainingsList();
   const isTrainingsLoading = useAppSelector(getWithRatingTrainingsLoadingStatus);
+  const userInfo = useAppSelector(getUserInfo);
+
+  const isTrainer = userInfo?.role === UserRoleEnum.TRAINER;
 
   function handleSeeAllBtnClick() {
-    navigate(AppRoute.TRAININGS);
+    const destinationURL = isTrainer ? AppRoute.ACCOUNT : AppRoute.TRAININGS;
+
+    navigate(destinationURL);
   }
 
   // Слайдер может содержать не более SPECIAL_FOR_YOU_MAX_SLIDES_COUNT слайдов

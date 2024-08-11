@@ -75,7 +75,7 @@ export default function Registration() {
       email: emailValue,
       birthDate: birthDateValue ? new Date(birthDateValue) : undefined,
       password: passwordValue,
-      location: userLocation,
+      location: userLocation.toLowerCase(),
       gender: userGender,
       role: userRole,
     } as CreateUserDTO;

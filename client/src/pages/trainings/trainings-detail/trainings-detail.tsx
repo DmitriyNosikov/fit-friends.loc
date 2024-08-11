@@ -1,12 +1,19 @@
-
+import classNames from 'classnames';
+import { toast } from 'react-toastify';
 import { ReactElement, useEffect, useRef, useState } from 'react';
 
 import { useAppDispatch, useAppSelector } from '@client/src/hooks';
 import { useParams } from 'react-router-dom';
 
 import useFetchTrainingItem from '@client/src/hooks/useFetchTrainingItem';
+import useFetchCurrentTrainingBalance from '@client/src/hooks/useFetchCurrentTrainingBalance';
+
+import { changeBalance } from '@client/src/store/actions/api-balance-action';
+import { updateTrainingAction } from '@client/src/store/actions/api-training-action';
 
 import { getTrainingItemLoadingStatus } from '@client/src/store/slices/training-process/training-process.selectors';
+import { getUserInfo } from '@client/src/store/slices/user-process/user-process.selectors';
+
 import { setBodyScrollAvailable } from '@client/src/utils/common';
 
 import Spinner from '@client/src/components/tools/spinner/spinner';
@@ -16,18 +23,13 @@ import TrainingsReviews from '../../../components/trainings/trainings-reviews/tr
 import Popup from '@client/src/components/popup/popup';
 import PopupReview from '@client/src/components/popup/popup-review/popup-review';
 import PopupBuy from '@client/src/components/popup/popup-buy/popup-buy';
-import useFetchCurrentTrainingBalance from '@client/src/hooks/useFetchCurrentTrainingBalance';
-import { changeBalance } from '@client/src/store/actions/api-balance-action';
-import { CreateBalanceRDO } from '@shared/balance';
-import { getUserInfo } from '@client/src/store/slices/user-process/user-process.selectors';
-import { UserRoleEnum } from '@shared/types/user-roles.enum';
-import classNames from 'classnames';
-import { validateFields } from '@client/src/validation/validation-tools';
-import { UpdateTrainingDTO } from '@shared/training';
-import { updateTrainingValidationSchema } from '@client/src/validation/update-training-validation';
-import { updateTrainingAction } from '@client/src/store/actions/api-training-action';
-import { toast } from 'react-toastify';
 
+import { CreateBalanceRDO } from '@shared/balance';
+import { UpdateTrainingDTO } from '@shared/training';
+
+import { UserRoleEnum } from '@shared/types/user-roles.enum';
+import { validateFields } from '@client/src/validation/validation-tools';
+import { updateTrainingValidationSchema } from '@client/src/validation/update-training-validation';
 
 export default function TrainingsDetail(): ReactElement | undefined {
   const params = useParams();
@@ -39,12 +41,12 @@ export default function TrainingsDetail(): ReactElement | undefined {
   }
 
   const userInfo = useAppSelector(getUserInfo);
-
-  const isTrainer = userInfo?.role === UserRoleEnum.TRAINER;
-
   const trainingItem = useFetchTrainingItem(trainingId);
   const balance = useFetchCurrentTrainingBalance(trainingId);
 
+  const [video, setVideo] = useState('');
+
+  const isTrainer = userInfo?.role === UserRoleEnum.TRAINER;
   const isTrainingLoading = useAppSelector(getTrainingItemLoadingStatus)
 
   const [isReviewModalOpened, setIsReviewModalOpened] = useState(false);
@@ -76,7 +78,6 @@ export default function TrainingsDetail(): ReactElement | undefined {
     trainersName,
     title,
     description,
-    video,
     rating,
     trainingType,
     trainingDuration,
@@ -106,7 +107,7 @@ export default function TrainingsDetail(): ReactElement | undefined {
     setIsEditable(true);
   }
 
-  function handleSaveBtnClick() {
+  async function handleSaveBtnClick() {
     const updateTrainingData: Record<string, unknown> = {}
 
     const newTitleValue = titleInput.current?.value;
@@ -131,18 +132,16 @@ export default function TrainingsDetail(): ReactElement | undefined {
       return;
     }
 
-    updateTrainingData['trainingId'] = trainingId;
+    if (Object.keys(updateTrainingData).length <= 0) {
+      setIsEditable(false);
+      return;
+    }
 
-    dispatch(updateTrainingAction(updateTrainingData))
-      .then((result) => {
-        if ('error' in result) {
-          return;
-        }
+    const updatedTraining = await updateTraining(updateTrainingData);
 
-        toast.success('Training has been successfully updated');
-
-        setIsEditable(false);
-      })
+    if (updatedTraining) {
+      setIsEditable(false);
+    }
   }
 
   function handleBeginBtnClick() {
@@ -165,6 +164,38 @@ export default function TrainingsDetail(): ReactElement | undefined {
         if (payload.hasTrainingStarted) {
           setIsUserCanLeaveReview(true);
         }
+      })
+  }
+
+  async function handleVideoChange(newVideo: FormData) {
+    const newVideoData = { video: newVideo };
+
+    const updatingResult = await updateTraining(newVideoData);
+
+    if(!updatingResult || !updatingResult.video) {
+      return;
+    }
+
+    const newVIdeo = updatingResult.video;
+
+    setVideo(newVIdeo);
+  }
+
+  async function updateTraining(trainingData: UpdateTrainingDTO) {
+    const dataToUpdate = {
+      ...trainingData,
+      trainingId: trainingId
+    }
+
+    return await dispatch(updateTrainingAction(dataToUpdate))
+      .then((result) => {
+        if ('error' in result) {
+          return false;
+        }
+
+        toast.success('Training has been successfully updated');
+
+        return result.payload;
       })
   }
 
@@ -331,7 +362,8 @@ export default function TrainingsDetail(): ReactElement | undefined {
                 <TrainingsVideoPlayer
                   videoURL={video}
                   isBeginBtnDisabled={isBeginBtnDisabled}
-                  onBeginClick={handleBeginBtnClick}
+                  onBeginBtnClick={handleBeginBtnClick}
+                  onChangeVideo={handleVideoChange}
                   isEditable={isEditable}
                 />
               </div>

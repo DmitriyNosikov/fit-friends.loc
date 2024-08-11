@@ -4,10 +4,27 @@ import { toast } from 'react-toastify';
 import { ApiRoute, AppRoute, Namespace } from '@client/src/const';
 import { AsyncOptions } from '@client/src/types/async-options.type';
 
-import { CreateTrainingDTO, CreateTrainingRDO, TrainingFilterParamsRDO, TrainingSearchQuery, TrainingsWithPaginationRDO, UpdateTrainingDTO } from '@shared/training';
+import {
+  CreateTrainingDTO,
+  CreateTrainingRDO,
+  TrainingFilterParamsRDO,
+  TrainingSearchQuery,
+  TrainingsWithPaginationRDO,
+  UpdateTrainingDTO
+} from '@shared/training';
 
 import { setDataLoadingStatus } from '../slices/main-process/main-process';
-import { appendTrainingAction, appendTrainingsAction, deleteTrainingItemStateAction, setConvenientTrainingsAction, setTrainingFilterParamsAction, setTrainingItemAction, setTrainingsAction, setWithDiscountTrainingsAction, setWithRatingTrainingsAction, updateTrainingsListAction,  } from '../slices/training-process/training-process';
+import {
+  appendTrainingsAction,
+  deleteTrainingItemStateAction,
+  setConvenientTrainingsAction,
+  setTrainingFilterParamsAction,
+  setTrainingItemAction,
+  setTrainingsAction,
+  setWithDiscountTrainingsAction,
+  setWithRatingTrainingsAction,
+  updateTrainingsListAction
+} from '../slices/training-process/training-process';
 import { redirectToRoute } from '../middlewares/redirect-action';
 import { createSearchURL } from '@client/src/utils/adapters';
 
@@ -27,6 +44,8 @@ const APIAction = {
   PAGINATION_GET_PAGE: `${APITrainingPrefix}/get-pagination-page`,
   SEARCH: `${APITrainingPrefix}/search`,
   FILTER_GET_PARAMS: `${APITrainingPrefix}/get-filter-params`,
+
+  TRAININGS_UPLOAD_VIDEO: `${APITrainingPrefix}/upload-video`,
 } as const;
 
 // ASYNC ACTIONS
@@ -41,13 +60,36 @@ export const createTrainingAction = createAsyncThunk<CreateTrainingRDO, Partial<
   ) => {
     dispatch(setDataLoadingStatus(true));
 
+    // Видео нужно загружать отдельно
+    let uploadedVideoUrl = '';
+    if (trainingData.video) {
+      try {
+        const { data: videoURL } = await api.post<string>(ApiRoute.LOAD_FILES, trainingData.video);
+
+        uploadedVideoUrl = videoURL;
+
+      } catch (err) {
+        toast.warn(`Can't load video: ${err}`);
+
+        dispatch(setDataLoadingStatus(false));
+
+        return rejectWithValue(err);
+      }
+    }
+
+    // Создание тренировки
+    const trainingDataWithVideo = {
+      ...trainingData,
+      video: uploadedVideoUrl ?? trainingData.video
+    };
+
     try {
-      const { data } = await api.post<CreateTrainingRDO>(ApiRoute.TRAININGS_API, trainingData);
+      const { data } = await api.post<CreateTrainingRDO>(ApiRoute.TRAININGS_API, trainingDataWithVideo);
 
       dispatch(setDataLoadingStatus(false));
 
       return data;
-    } catch(err) {
+    } catch (err) {
       toast.warn(`Can't create training. Error: ${err}`)
 
       dispatch(setDataLoadingStatus(false));
@@ -69,11 +111,29 @@ export const updateTrainingAction = createAsyncThunk<CreateTrainingRDO, Partial<
   ) => {
     dispatch(setDataLoadingStatus(true));
 
+    // Видео нужно загружать отдельно
+    let uploadedVideoUrl = '';
+    if (trainingData.video) {
+      try {
+        const { data: videoURL } = await api.post<string>(ApiRoute.LOAD_FILES, trainingData.video);
+
+        uploadedVideoUrl = videoURL;
+      } catch (err) {
+        toast.warn(`Can't load video: ${err}`);
+
+        dispatch(setDataLoadingStatus(false));
+
+        return rejectWithValue(err);
+      }
+    }
+
+    // Обновление тренировки
     const trainingId = trainingData.trainingId;
     const updateTrainingData = {
       ...trainingData,
-      trainingId: undefined
-    }
+      trainingId: undefined,
+      video: uploadedVideoUrl ?? trainingData.video
+    };
 
     try {
       const { data } = await api.patch<CreateTrainingRDO>(`${ApiRoute.TRAININGS_API}/${trainingId}`, updateTrainingData);
@@ -81,7 +141,7 @@ export const updateTrainingAction = createAsyncThunk<CreateTrainingRDO, Partial<
       dispatch(setDataLoadingStatus(false));
 
       return data;
-    } catch(err) {
+    } catch (err) {
       toast.warn(`Can't update training. Error: ${err}`)
 
       dispatch(setDataLoadingStatus(false));
@@ -102,7 +162,7 @@ export const fetchTrainingsAction = createAsyncThunk<void, void, AsyncOptions>(
 
       dispatch(setTrainingsAction(data));
       dispatch(setDataLoadingStatus(false));
-    } catch(err) {
+    } catch (err) {
       toast.warn('Can`t load trainings list. Please, refresh page or try again later')
 
       dispatch(setDataLoadingStatus(false));
@@ -126,7 +186,7 @@ export const fetchConvenientTrainingsAction = createAsyncThunk<TrainingsWithPagi
 
       return data;
 
-    } catch(err) {
+    } catch (err) {
       toast.warn('Can`t load your convenient trainings. Please, refresh page or try again later')
 
       dispatch(setDataLoadingStatus(false));
@@ -148,7 +208,7 @@ export const fetchWithDiscountTrainingsAction = createAsyncThunk<void, void, Asy
       dispatch(setWithDiscountTrainingsAction(data));
       dispatch(setDataLoadingStatus(false));
 
-    } catch(err) {
+    } catch (err) {
       toast.warn('Can`t load trainings with discount. Please, refresh page or try again later')
 
       dispatch(setDataLoadingStatus(false));
@@ -170,7 +230,7 @@ export const fetchWithRatingTrainingsAction = createAsyncThunk<void, void, Async
       dispatch(setWithRatingTrainingsAction(data));
       dispatch(setDataLoadingStatus(false));
 
-    } catch(err) {
+    } catch (err) {
       toast.warn('Can`t load trainings with rating. Please, refresh page or try again later')
 
       dispatch(setDataLoadingStatus(false));
@@ -185,7 +245,7 @@ export const fetchTrainingItemAction = createAsyncThunk<void, TrainingId, AsyncO
   APIAction.TRAININGS_FETCH_ITEM,
   async (
     trainingId,
-    {dispatch, extra: api}
+    { dispatch, extra: api }
   ) => {
     dispatch(setDataLoadingStatus(true));
 
@@ -195,7 +255,7 @@ export const fetchTrainingItemAction = createAsyncThunk<void, TrainingId, AsyncO
       const { data } = await api.get<CreateTrainingRDO>(`${ApiRoute.TRAININGS_API}/${trainingId}`);
 
       dispatch(setTrainingItemAction(data));
-    } catch(err) {
+    } catch (err) {
       toast.warn(`Can't find training with id: ${trainingId}`);
       dispatch(redirectToRoute(AppRoute.PAGE_404));
     }
@@ -209,7 +269,7 @@ export const updateTrainingItemAction = createAsyncThunk<void, Partial<CreateTra
   APIAction.TRAININGS_UPDATE,
   async (
     updateData,
-    {dispatch, extra: api}
+    { dispatch, extra: api }
   ) => {
     dispatch(setDataLoadingStatus(true));
 
@@ -220,7 +280,7 @@ export const updateTrainingItemAction = createAsyncThunk<void, Partial<CreateTra
       dispatch(setTrainingItemAction(data)); // Обноавляем итем о котором загружена детальная инфо
 
       toast.success(`Training ${updateData.id} was successfully updated`);
-    } catch(err) {
+    } catch (err) {
       toast.warn(`Can't update training with ${updateData.id}. Error: ${err}`)
     }
 
@@ -233,7 +293,7 @@ export const deleteTrainingItemAction = createAsyncThunk<void, TrainingId, Async
   APIAction.TRAININGS_DELETE,
   async (
     trainingId,
-    {dispatch, extra: api}
+    { dispatch, extra: api }
   ) => {
     dispatch(setDataLoadingStatus(true));
 
@@ -241,7 +301,7 @@ export const deleteTrainingItemAction = createAsyncThunk<void, TrainingId, Async
       await api.delete<void>(`${ApiRoute.TRAININGS_API}/${trainingId}`);
 
       dispatch(deleteTrainingItemStateAction(trainingId));
-    } catch(err) {
+    } catch (err) {
       toast.error(`Cant't delete training with id ${trainingId}. Error: ${err}`);
     }
 
@@ -256,7 +316,7 @@ export const getPaginationPage = createAsyncThunk<void, PageNumber, AsyncOptions
   APIAction.PAGINATION_GET_PAGE,
   async (
     pageNumber,
-    {dispatch, extra: api}
+    { dispatch, extra: api }
   ) => {
     dispatch(setDataLoadingStatus(true));
 
@@ -264,7 +324,7 @@ export const getPaginationPage = createAsyncThunk<void, PageNumber, AsyncOptions
       const { data } = await api.get<TrainingsWithPaginationRDO>(`${ApiRoute.TRAININGS_API}/?page=${pageNumber}`);
 
       dispatch(appendTrainingsAction(data));
-    } catch(err) {
+    } catch (err) {
       toast.error(`Cant't get pagination page ${pageNumber}. Error: ${err}`);
     }
 
@@ -281,7 +341,7 @@ export const searchTrainingsAction = createAsyncThunk<TrainingsWithPaginationRDO
   APIAction.SEARCH,
   async (
     { searchQuery, appendItems },
-    {dispatch, rejectWithValue, extra: api}
+    { dispatch, rejectWithValue, extra: api }
   ) => {
     dispatch(setDataLoadingStatus(true));
 
@@ -291,11 +351,11 @@ export const searchTrainingsAction = createAsyncThunk<TrainingsWithPaginationRDO
     try {
       const { data } = await api.get<TrainingsWithPaginationRDO>(url);
 
-      if(!data) {
+      if (!data) {
         toast.info('No products found by passed filter');
       }
 
-      if(!appendItems) {
+      if (!appendItems) {
         dispatch(setTrainingsAction(data));
 
         dispatch(setDataLoadingStatus(false));
@@ -312,7 +372,7 @@ export const searchTrainingsAction = createAsyncThunk<TrainingsWithPaginationRDO
 
       dispatch(setDataLoadingStatus(false));
       return data;
-    } catch(err) {
+    } catch (err) {
       toast.error(`Can't get trainings. Error: ${err}`);
 
       dispatch(setDataLoadingStatus(false));
@@ -333,7 +393,7 @@ export const fetchTrainingFilterParams = createAsyncThunk<TrainingFilterParamsRD
       dispatch(setTrainingFilterParamsAction(data));
 
       return data;
-    } catch(err) {
+    } catch (err) {
       toast.error(`Cant't get params for training filter. Error: ${err}`);
 
       dispatch(setDataLoadingStatus(false));

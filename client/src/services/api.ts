@@ -65,17 +65,22 @@ export function createAPI(): AxiosInstance {
         toast.error(ERROR_TEXT.NETWORK_CONNECTION);
       }
 
-      if(!error.response) {
+      if (!error.response) {
         throw error;
       }
 
       const currentPath = window.location.pathname;
       const introPage = '/intro';
+      const loginPage = '/login';
 
       // Если получили статус Unauthorized, значит токен просрочен.
       // Пока, вместо обновления токена через Refresh, просто удаляем
       // старый токен и редиректим юзера на разводящую страницу
-      if(error.response.status === StatusCodes.UNAUTHORIZED && !currentPath.startsWith(introPage)) {
+      if (
+        error.response.status === StatusCodes.UNAUTHORIZED
+        && !currentPath.startsWith(introPage)
+        && !currentPath.startsWith(loginPage)
+      ) {
         deleteToken();
         window.location.href = introPage;
       }

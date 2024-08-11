@@ -1,16 +1,22 @@
-import CustomSelectBtn from '@client/src/components/custom-select-btn/custom-select-btn';
-import RadioGender from '@client/src/components/radio-gender/radio-gender';
+import { ReactElement, useRef, useState } from 'react';
+import { toast } from 'react-toastify';
 import { AppRoute } from '@client/src/const';
+
+import { useNavigate } from 'react-router-dom';
 import { useAppDispatch } from '@client/src/hooks';
 import useFetchAdditionalInfo from '@client/src/hooks/useFetchAdditionalInfo';
+
 import { createTrainingAction } from '@client/src/store/actions/api-training-action';
 import { createTrainingValidationSchema } from '@client/src/validation/create-training-validation';
-import { validateFields } from '@client/src/validation/validation-tools';
+
+import { clearFieldError, validateFields } from '@client/src/validation/validation-tools';
+
 import { Gender } from '@server/libs/types';
 import { CreateTrainingDTO } from '@shared/training';
-import { ReactElement, useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { toast } from 'react-toastify';
+
+import RadioGender from '@client/src/components/radio-gender/radio-gender';
+import CustomSelectBtn from '@client/src/components/custom-select-btn/custom-select-btn';
+import VideoUploader from '@client/src/components/video-uploader/video-uploader';
 
 export default function TrainingsCreate(): ReactElement {
   const dispatch = useAppDispatch();
@@ -31,7 +37,7 @@ export default function TrainingsCreate(): ReactElement {
   const [trainingType, setTrainingType] = useState();
   const [trainingDuration, setTrainingDuration] = useState();
   const [userLevel, setUserLevel] = useState();
-  const [videoURL, setVideoURL] = useState('Загрузите сюда файлы формата MOV, AVI или MP4');
+  const [video, setVideo] = useState('');
 
   function adaptGenderToClient(gender: Gender) {
     let adaptedGender = '';
@@ -57,14 +63,6 @@ export default function TrainingsCreate(): ReactElement {
     return adaptedGender;
   }
 
-  function handleUploadVideoChange(e: React.ChangeEvent<HTMLInputElement>) {
-    const target = e.target;
-
-    console.log('Video info: ', target.files);
-
-    setVideoURL(target.value);
-  }
-
   function handleSubmitForm(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
 
@@ -79,7 +77,7 @@ export default function TrainingsCreate(): ReactElement {
       description: description.current?.value,
 
       background: "",
-      video: videoURL,
+      video: video,
     };
 
     const [isFormHasErrors] = validateFields<Partial<CreateTrainingDTO>>(trainingData, createTrainingValidationSchema);
@@ -88,16 +86,23 @@ export default function TrainingsCreate(): ReactElement {
       return false;
     }
 
+    console.log(trainingData);
+
     dispatch(createTrainingAction(trainingData))
       .then((result) => {
         if ('error' in result) {
           return;
         }
 
-        toast.success('New training has been successfully added');
-
         navigate(AppRoute.ACCOUNT);
       })
+  }
+
+  function handleFormFieldChange(e: React.FormEvent<HTMLFormElement>) {
+    const target = e.target;
+
+    // При изменении поля, если на нем есть ошибка - очищаем ее
+    clearFieldError(target as HTMLElement);
   }
 
   return (
@@ -108,7 +113,7 @@ export default function TrainingsCreate(): ReactElement {
             <h1 className="popup-form__title">Создание тренировки</h1>
           </div>
           <div className="popup-form__form">
-            <form method="get" onSubmit={handleSubmitForm}>
+            <form method="get" onChange={handleFormFieldChange} onSubmit={handleSubmitForm}>
               <div className="create-training">
                 <div className="create-training__wrapper">
                   <div className="create-training__block">
@@ -144,7 +149,7 @@ export default function TrainingsCreate(): ReactElement {
                         <label>
                           <span className="custom-input__label">Сколько калорий потратим</span>
                           <span className="custom-input__wrapper">
-                            <input type="number" name="calories" ref={calories} />
+                            <input type="number" name="calories" min={0} ref={calories} />
                             <span className="custom-input__text">ккал</span>
                           </span>
                           <span className="custom-input__error"></span>
@@ -169,7 +174,7 @@ export default function TrainingsCreate(): ReactElement {
                         <label>
                           <span className="custom-input__label">Стоимость тренировки</span>
                           <span className="custom-input__wrapper">
-                            <input type="number" name="price" ref={price} />
+                            <input type="number" name="price" min={0} ref={price} />
                             <span className="custom-input__text">₽</span>
                           </span>
                           <span className="custom-input__error"></span>
@@ -218,16 +223,8 @@ export default function TrainingsCreate(): ReactElement {
 
                   <div className="create-training__block">
                     <h2 className="create-training__legend">Загрузите видео-тренировку</h2>
-                    <div className="drag-and-drop create-training__drag-and-drop">
-                      <label>
-                        <span className="drag-and-drop__label" tabIndex={0}>{videoURL}
-                          <svg width={20} height={20} aria-hidden="true">
-                            <use xlinkHref="#icon-import-video" />
-                          </svg>
-                        </span>
-                        <input type="file" name="import" tabIndex={-1} accept=".mov, .avi, .mp4" onChange={handleUploadVideoChange} />
-                      </label>
-                    </div>
+
+                    <VideoUploader onVideoUpload={setVideo} />
                   </div>
                 </div>
 

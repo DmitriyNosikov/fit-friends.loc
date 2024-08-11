@@ -1,36 +1,54 @@
+import { BASE_URL } from '@client/src/services/api';
 import classNames from 'classnames';
-import { ReactElement, useState } from 'react';
+import { ReactElement, useEffect, useState } from 'react';
+import VideoUploader from '../../video-uploader/video-uploader';
 
 type TrainingsVideoPlayerProps = {
   videoURL: string,
   thumbnailURL?: string,
   isBeginBtnDisabled?: boolean,
-  onBeginClick?: Function,
-  isEditable?: boolean
+  isEditable?: boolean,
+  onBeginBtnClick?: Function,
+  onChangeVideo?: Function
 };
 
 export default function TrainingsVideoPlayer({
   videoURL,
   thumbnailURL = '/img/content/training-video/video-thumbnail.png',
   isBeginBtnDisabled = true,
-  onBeginClick,
-  isEditable
+  isEditable,
+  onBeginBtnClick,
+  onChangeVideo
 }: TrainingsVideoPlayerProps): ReactElement | undefined {
-  if (!videoURL) {
-    return;
-  }
-
   const [video, setVideo] = useState(videoURL);
+  const [newVideo, setNewVideo] = useState('');
   const [isPlaying, setIsPlaying] = useState(false);
   const [playBtnDisabled, setPlayBtnDisabled] = useState(true);
+
+  useEffect(() => {
+    let isMounted = true
+
+    if (isMounted) {
+
+      if(!isEditable) {
+        setVideo(`${BASE_URL}${videoURL}`);
+      }
+
+      setPlayBtnDisabled(!isEditable);
+    }
+
+    return () => {
+      isMounted = false;
+    }
+  })
 
   function handlePlayBtnClick() {
     setIsPlaying(true);
   }
 
   function handleBeginBtnClick() {
-    if (onBeginClick) {
-      onBeginClick();
+    if (onBeginBtnClick) {
+      onBeginBtnClick();
     }
 
     setPlayBtnDisabled(false);
@@ -43,16 +61,13 @@ export default function TrainingsVideoPlayer({
 
   function handleDeleteBtnClick() {
     setVideo('');
+    setNewVideo('');
   }
 
   function handleSaveBtnClick() {
-    console.log('Saving video is not implemented yet');
-  }
-
-  function handleUploadVideoFieldChange(e: React.ChangeEvent<HTMLInputElement>) {
-    const target = e.target;
-
-    console.log('Video info: ', target.files);
+    if (onChangeVideo) {
+      onChangeVideo(newVideo);
+    }
   }
 
   return (
@@ -97,28 +112,24 @@ export default function TrainingsVideoPlayer({
       }
 
       {
+        !isEditable && !video &&
+        <p>Видео для данной тренировки пока не загружено :(</p>
+      }
+
+      { // Загрузка видео
         isEditable && !video &&
         <div className="training-video__drop-files">
           <form action="#" method="post">
             <div className="training-video__form-wrapper">
-              <div className="drag-and-drop">
-                <label>
-                  <span className="drag-and-drop__label" tabIndex={0}>Загрузите сюда файлы формата MOV, AVI или MP4
-                    <svg width={20} height={20} aria-hidden="true">
-                      <use xlinkHref="#icon-import-video" />
-                    </svg>
-                  </span>
-                  <input type="file" name="import" tabIndex={-1} accept=".mov, .avi, .mp4" onChange={handleUploadVideoFieldChange} />
-                </label>
-              </div>
+              <VideoUploader onVideoUpload={setNewVideo} />
             </div>
           </form>
         </div>
       }
 
       <div className="training-video__buttons-wrapper">
-        {
-          !isEditable &&
+        { // Кнопки управления видео
+          !isEditable && video &&
           <>
             <button
               className={
@@ -144,10 +155,10 @@ export default function TrainingsVideoPlayer({
           </>
         }
 
-        {
+        { // Кнопки Сохранения/Удаления видео
           isEditable &&
           <div className="training-video__edit-buttons">
-            <button className="btn" type="button" onClick={handleSaveBtnClick}>Сохранить</button>
+            <button className="btn" type="button" disabled={!newVideo} onClick={handleSaveBtnClick}>Сохранить</button>
             <button className="btn btn--outlined" type="button" onClick={handleDeleteBtnClick} disabled={!video}>Удалить</button>
           </div>
         }

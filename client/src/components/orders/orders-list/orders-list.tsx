@@ -10,20 +10,15 @@ import { useAppDispatch, useAppSelector } from '@client/src/hooks';
 import { searchOrdersAction } from '@client/src/store/actions/api-order-action';
 import { getUserInfo } from '@client/src/store/slices/user-process/user-process.selectors';
 
-export const OrdersSortTypeEnum = {
-  TOTAL_PRICE: 'totalPrice',
-  TRAININGS_COUNT: 'trainingsCount'
-} as const;
-
-export type OrdersSortTypeList = (typeof OrdersSortTypeEnum)[keyof typeof OrdersSortTypeEnum];
+import { OrdersSortType, OrdersSortTypeEnum } from '@client/src/pages/orders/orders';
 
 type OrdersListProps = {
-  sortBy: OrdersSortTypeList
+  sort: OrdersSortType
 }
 
 const START_PAGE = 1;
 
-export default function OrdersList({ sortBy }: OrdersListProps) {
+export default function OrdersList({ sort }: OrdersListProps) {
   const userInfo = useAppSelector(getUserInfo);
 
   let searchQuery: OrderSearchQuery = {
@@ -68,14 +63,18 @@ export default function OrdersList({ sortBy }: OrdersListProps) {
     dispatch(searchOrdersAction({ searchQuery }));
   }
 
-  const sort = {
-    [OrdersSortTypeEnum.TOTAL_PRICE]: (items: CreateOrderRDO[]) =>
+  const sortType = {
+    [`${OrdersSortTypeEnum.TOTAL_PRICE}_DESC`]: (items: CreateOrderRDO[]) =>
       [...items].sort((a, b) => b.totalPrice - a.totalPrice),
-    [OrdersSortTypeEnum.TRAININGS_COUNT]: (items: CreateOrderRDO[]) =>
+    [`${OrdersSortTypeEnum.TOTAL_PRICE}_ASC`]: (items: CreateOrderRDO[]) =>
+      [...items].sort((a, b) => a.totalPrice - b.totalPrice),
+    [`${OrdersSortTypeEnum.TRAININGS_COUNT}_DESC`]: (items: CreateOrderRDO[]) =>
       [...items].sort((a, b) => b.trainingsCount - a.trainingsCount),
+    [`${OrdersSortTypeEnum.TRAININGS_COUNT}_ASC`]: (items: CreateOrderRDO[]) =>
+      [...items].sort((a, b) => a.trainingsCount - b.trainingsCount),
   };
 
-  const sortedOrders = sort[sortBy](orderEntities);
+  const sortedOrders = sortType[`${sort.type}_${sort.order}`](orderEntities);
 
   return (
     <>

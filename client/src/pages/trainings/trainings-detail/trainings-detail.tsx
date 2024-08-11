@@ -45,11 +45,10 @@ export default function TrainingsDetail(): ReactElement | undefined {
   const trainingItem = useFetchTrainingItem(trainingId);
   const balance = useFetchCurrentTrainingBalance(trainingId);
 
-  console.log('ITEM: ', trainingItem);
-
   const [video, setVideo] = useState('');
 
   const isTrainer = userInfo?.role === UserRoleEnum.TRAINER;
+  const isUserCanEdit = isTrainer && trainingItem && (trainingItem.userId === userInfo.id);
   const isTrainingLoading = useAppSelector(getTrainingItemLoadingStatus)
 
   const [isReviewModalOpened, setIsReviewModalOpened] = useState(false);
@@ -260,7 +259,7 @@ export default function TrainingsDetail(): ReactElement | undefined {
                     </div>
 
                     {
-                      isTrainer &&
+                      isUserCanEdit &&
                       <>
                         {
                           !isEditable &&
@@ -361,7 +360,7 @@ export default function TrainingsDetail(): ReactElement | undefined {
                           }
 
                           {
-                            isTrainer &&
+                            isUserCanEdit &&
                             <button className="btn-flat btn-flat--light btn-flat--underlined training-info__discount" type="button">
                               <svg width={14} height={14} aria-hidden="true">
                                 <use xlinkHref="#icon-discount" />

@@ -11,7 +11,7 @@ import { validateFields } from '@client/src/validation/validation-tools';
 
 import { CreateTrainingReviewDTO } from '@shared/training-review';
 import { reviewPopupValidationSchema } from '@client/src/validation/review-popup-validation';
-import { getUserInfo } from '@client/src/store/slices/user-process/user-process.selectors';
+import { getCurrentUserInfo } from '@client/src/store/slices/user-process/user-process.selectors';
 
 import { addTrainingReviewsAction } from '@client/src/store/actions/api-training-review-action';
 
@@ -23,7 +23,7 @@ export default function PopupReview({ onClose }: PopupReviewProps): ReactElement
   const dispatch = useAppDispatch();
   const params = useParams()
   const trainingId = params.trainingId
-  const userInfo = useAppSelector(getUserInfo);
+  const userInfo = useAppSelector(getCurrentUserInfo);
 
   function handleReviewSubmit() {
     if (!userInfo || !trainingId) {

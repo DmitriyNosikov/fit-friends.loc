@@ -3,9 +3,9 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 import { toast } from 'react-toastify';
 
 import { setDataLoadingStatus } from '../slices/main-process/main-process';
-import { setAdditionalInfo, setUserAuthStatus, setUserInfoAction } from '../slices/user-process/user-process';
+import { setAdditionalInfo, setUserAuthStatus, setCurrentUserInfo, setUserInfo } from '../slices/user-process/user-process';
 
-import { AdditionalInfoRDO, CreateUserDTO, LoggedUserRDO, LoginUserDTO, UpdateUserDTO } from '@shared/user';
+import { AdditionalInfoRDO, CreateUserDTO, LoggedUserRDO, LoginUserDTO, UpdateUserDTO, UserRDO } from '@shared/user';
 import { redirectToRoute } from '../middlewares/redirect-action';
 
 
@@ -25,10 +25,12 @@ const APIAction = {
   USER_REGISTER: `${APIUserPrefix}/register`,
   USER_LOGIN: `${APIUserPrefix}/login`,
   USER_UPDATE: `${APIUserPrefix}/update`,
-  USER_CHECK_AUTH: `${APIUserPrefix}/checkAuth`,
-  USER_GET_DETAIL: `${APIUserPrefix}/getDetail`,
-  USER_GET_ADDITIONAL: `${APIUserPrefix}/getAdditional`,
-  USER_UPLOAD_AVATAR: `${APIUserPrefix}/uploadAvatar`,
+
+  USER_CHECK_AUTH: `${APIUserPrefix}/check-auth`,
+  USER_GET_DETAIL: `${APIUserPrefix}/get-detail`,
+  USER_GET_BY_ID: `${APIUserPrefix}/get-by-id`,
+  USER_GET_ADDITIONAL: `${APIUserPrefix}/get-additional`,
+  USER_UPLOAD_AVATAR: `${APIUserPrefix}/upload-avatar`,
 } as const;
 
 // ASYNC ACTIONS
@@ -61,7 +63,7 @@ export const checkUserAuthAction = createAsyncThunk<void, void, AsyncOptions>(
 export const fetchUserDetailInfoAction = createAsyncThunk<void, void, AsyncOptions>(
   APIAction.USER_GET_DETAIL,
   async (
-    _, // AuthData
+    _, // Data
     { dispatch, rejectWithValue, extra: api } // AsyncOptions
   ) => {
     dispatch(setDataLoadingStatus(true));
@@ -69,7 +71,7 @@ export const fetchUserDetailInfoAction = createAsyncThunk<void, void, AsyncOptio
     try {
       const { data } = await api.get<LoggedUserRDO>(`${ApiRoute.USER_API}`);
 
-      dispatch(setUserInfoAction(data));
+      dispatch(setCurrentUserInfo(data));
       dispatch(setDataLoadingStatus(false));
     } catch(err) {
       toast.warn(`Can't get user's detail info: ${err}. Please, try to login again`);
@@ -78,6 +80,35 @@ export const fetchUserDetailInfoAction = createAsyncThunk<void, void, AsyncOptio
       deleteToken();
       dispatch(setUserAuthStatus(AuthorizationStatus.NO_AUTH));
       dispatch(redirectToRoute(AppRoute.INTRO));
+
+      return rejectWithValue(err);
+    }
+  }
+);
+
+type UserIdPayload = {
+  userId: string
+}
+
+export const fetchUserByIdAction = createAsyncThunk<UserRDO, UserIdPayload, AsyncOptions>(
+  APIAction.USER_GET_BY_ID,
+  async (
+    { userId },
+    { dispatch, rejectWithValue, extra: api } // AsyncOptions
+  ) => {
+    dispatch(setDataLoadingStatus(true));
+
+    try {
+      const { data } = await api.get<UserRDO>(`${ApiRoute.USER_API}/${userId}`);
+
+      dispatch(setUserInfo(data));
+      dispatch(setDataLoadingStatus(false));
+
+      return data;
+    } catch(err) {
+      toast.warn(`Can't get user's detail info: ${err}. Please, try to login again`);
+
+      dispatch(setDataLoadingStatus(false));
 
       return rejectWithValue(err);
     }
@@ -155,7 +186,7 @@ export const loginUserAction = createAsyncThunk<void, LoginUserDTO, AsyncOptions
       setToken(accessToken);
       setToken(refreshToken, REFRESH_TOKEN_KEY);
 
-      dispatch(setUserInfoAction(data));
+      dispatch(setCurrentUserInfo(data));
       dispatch(setDataLoadingStatus(false));
     } catch(err) {
       toast.error(`Can't authorize you: ${err}`);
@@ -178,7 +209,7 @@ export const updateUserAction = createAsyncThunk<LoggedUserRDO, UpdateUserDTO, A
     try {
       const { data } = await api.patch<LoggedUserRDO>(ApiRoute.USER_API, updateUserData);
 
-      dispatch(setUserInfoAction(data));
+      dispatch(setCurrentUserInfo(data));
       dispatch(setDataLoadingStatus(false));
 
       toast.success('User has been successfully updated');

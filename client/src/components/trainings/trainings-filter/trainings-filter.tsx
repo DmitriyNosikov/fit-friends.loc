@@ -11,7 +11,7 @@ import { TrainingSearchQuery } from '@shared/training';
 import { debounce } from '@client/src/utils/common';
 import { useAppDispatch, useAppSelector } from '@client/src/hooks';
 import { searchTrainingsAction } from '@client/src/store/actions/api-training-action';
-import { getUserInfo } from '@client/src/store/slices/user-process/user-process.selectors';
+import { getCurrentUserInfo } from '@client/src/store/slices/user-process/user-process.selectors';
 import { UserRoleEnum } from '@shared/types/user-roles.enum';
 import TrainingsDurationList from '../trainings-duration-list/trainings-duration-list';
 import { DEFAULT_TRAININGS_SORT_TYPE } from '../trainings-list/trainings-list';
@@ -27,7 +27,7 @@ export const SortDirectionEnum = {
 export default function TrainingsFilter(): ReactElement | undefined {
   const dispatch = useAppDispatch();
   const baseFilterParams = useFetchTrainingFilterParams();
-  const userInfo = useAppSelector(getUserInfo);
+  const userInfo = useAppSelector(getCurrentUserInfo);
 
   const isTrainer = userInfo?.role === UserRoleEnum.TRAINER;
 

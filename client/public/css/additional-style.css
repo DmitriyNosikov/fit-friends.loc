@@ -110,6 +110,15 @@
 }
 
 
+.user-card__status--disabled {
+  border-color: lightgray;
+  color: lightgray;
+}
+
+.user-card__status--disabled::after {
+  background-color: lightgray;
+}
+
 
 .checkboxes-list {
   list-style: none;

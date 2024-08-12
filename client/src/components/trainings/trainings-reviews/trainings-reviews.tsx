@@ -1,16 +1,19 @@
 import { ReactElement } from 'react';
+import { Link } from 'react-router-dom';
+
+import SimpleBar from 'simplebar-react';
+import 'simplebar-react/dist/simplebar.min.css';
 
 import { AppRoute, DEFAULT_AVATAR_URL } from '@client/src/const';
 import { BASE_URL } from '@client/src/services/api';
 
-import useFetchTrainingReviewsList from '@client/src/hooks/useFetchTrainingReviewsList';
-import Spinner from '../../tools/spinner/spinner';
-
-import SimpleBar from 'simplebar-react';
-import 'simplebar-react/dist/simplebar.min.css';
 import { useAppSelector } from '@client/src/hooks';
 import { getTrainingsReviewsLoadingStatus } from '@client/src/store/slices/training-reviews-process/training-process.selectors';
-import { Link } from 'react-router-dom';
+import useFetchTrainingReviewsList from '@client/src/hooks/useFetchTrainingReviewsList';
+
+import Spinner from '../../tools/spinner/spinner';
+
+
 
 const REVIEWS_CONTAINER_MAX_HEIGHT = 976;
 
@@ -61,7 +64,7 @@ export default function TrainingsReviews({ trainingId }: TrainingsReviewsProps):
                 <div className="review">
                   <div className="review__user-info">
                     <div className="review__user-photo">
-                      <Link to={AppRoute.PERSONAL_CARD}>
+                      <Link to={`${AppRoute.PERSONAL_CARD}/${userInfo?.id}`}>
                         <picture>
                           <img src={userAvatar} srcSet={userAvatar} width={64} height={64} alt="Изображение пользователя" />
                         </picture>

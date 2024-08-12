@@ -1,4 +1,5 @@
 import { AppRoute } from '@client/src/const';
+import { getTrainingThumbnailByType } from '@client/src/utils/adapters';
 import { TrainingType } from '@shared/types/training-type.enum';
 import { ReactElement } from 'react';
 import { Link } from 'react-router-dom';
@@ -16,10 +17,9 @@ type TrainingsItemProps = {
   }
 }
 
-// FIXME: Картинка background должна браться из моков по типу тренировки
-
 export default function TrainingsListItem({ item }: TrainingsItemProps): ReactElement {
-  const { id, background, title, trainingType, calories, description, price, rating } = item;
+  const { id, title, trainingType, calories, description, price, rating } = item;
+  const trainingThumbnail = getTrainingThumbnailByType(trainingType);
 
   return (
     <>
@@ -27,7 +27,8 @@ export default function TrainingsListItem({ item }: TrainingsItemProps): ReactEl
         <div className="thumbnail-training__inner">
           <div className="thumbnail-training__image">
             <picture>
-              <img src={ background } width={330} height={190} alt="" />
+              <source type="image/webp" srcSet={`${trainingThumbnail}.webp, ${trainingThumbnail}@2x.webp 2x`} />
+              <img src={`${trainingThumbnail}.jpg`} srcSet={`${trainingThumbnail}@2x.jpg 2x`} width="330" height="190" alt="" />
             </picture>
           </div>
           <p className="thumbnail-training__price">{ (price >= 0) ? price : 'Бесплатно' }</p>

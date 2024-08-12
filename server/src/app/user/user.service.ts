@@ -144,17 +144,6 @@ export class UserService {
     return updatedUser;
   }
 
-
-  public async getUserDetail(userId: string): Promise<UserEntity | null> {
-    const user = await this.userRepository.findById(userId);
-
-    if(!user) {
-      throw new NotFoundException(UserMessage.ERROR.NOT_FOUND);
-    }
-
-    return user;
-  }
-
   public async deleteUser(userId: string): Promise<void> {
     const isUserExists = await this.userRepository.exists(userId);
 

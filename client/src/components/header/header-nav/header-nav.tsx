@@ -17,7 +17,8 @@ export default function HeaderNav(): ReactElement {
     AppRoute.ACCOUNT,
     AppRoute.ORDERS,
     AppRoute.PURCHASES,
-    AppRoute.TRAININGS_CREATE
+    AppRoute.TRAININGS_CREATE,
+    `${AppRoute.PERSONAL_CARD}/${params.userId}`
   ];
 
   const mainClassName = classNames(

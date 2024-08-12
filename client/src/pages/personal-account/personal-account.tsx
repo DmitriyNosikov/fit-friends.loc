@@ -1,7 +1,7 @@
 import { ReactElement } from 'react';
 
 import { useAppSelector } from '@client/src/hooks';
-import { getUserInfo } from '@client/src/store/slices/user-process/user-process.selectors';
+import { getCurrentUserInfo } from '@client/src/store/slices/user-process/user-process.selectors';
 import { UserRoleEnum } from '@shared/types/user-roles.enum';
 
 import PersonalAccountUser from '../../components/personal-account/personal-account-user/personal-account-user';
@@ -13,7 +13,7 @@ import useFetchAdditionalInfo from '@client/src/hooks/useFetchAdditionalInfo';
 export default function PersonalAccount(): ReactElement {
   useFetchAdditionalInfo();
 
-  const userInfo = useAppSelector(getUserInfo);
+  const userInfo = useAppSelector(getCurrentUserInfo);
 
   if (!userInfo) {
     return <Spinner />;

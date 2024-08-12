@@ -6,7 +6,7 @@ import { useAppDispatch, useAppSelector } from '@client/src/hooks';
 import useSearchTrainings from '@client/src/hooks/useSearchTrainings';
 
 import { searchTrainingsAction } from '@client/src/store/actions/api-training-action';
-import { getUserInfo } from '@client/src/store/slices/user-process/user-process.selectors';
+import { getCurrentUserInfo } from '@client/src/store/slices/user-process/user-process.selectors';
 import { getTrainingsListLoadingStatus } from '@client/src/store/slices/training-process/training-process.selectors';
 
 import TrainingsListItem from '../trainings-list-item/trainings-list-item';
@@ -22,7 +22,7 @@ const START_PAGE = 1;
 
 export default function TrainingsList(): ReactElement {
   const dispatch = useAppDispatch();
-  const userInfo = useAppSelector(getUserInfo);
+  const userInfo = useAppSelector(getCurrentUserInfo);
 
   const isTrainer = userInfo?.role === UserRoleEnum.TRAINER;
 

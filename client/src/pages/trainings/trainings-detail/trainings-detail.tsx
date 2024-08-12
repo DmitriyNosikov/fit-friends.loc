@@ -11,7 +11,7 @@ import { changeBalance } from '@client/src/store/actions/api-balance-action';
 import { updateTrainingItemAction } from '@client/src/store/actions/api-training-action';
 
 import { getTrainingItemLoadingStatus } from '@client/src/store/slices/training-process/training-process.selectors';
-import { getUserInfo } from '@client/src/store/slices/user-process/user-process.selectors';
+import { getCurrentUserInfo } from '@client/src/store/slices/user-process/user-process.selectors';
 
 import { setBodyScrollAvailable } from '@client/src/utils/common';
 
@@ -40,7 +40,7 @@ export default function TrainingsDetail(): ReactElement | undefined {
     return;
   }
 
-  const userInfo = useAppSelector(getUserInfo);
+  const userInfo = useAppSelector(getCurrentUserInfo);
   const trainingItem = useFetchTrainingItem(trainingId);
   const balance = useFetchCurrentTrainingBalance(trainingId);
 

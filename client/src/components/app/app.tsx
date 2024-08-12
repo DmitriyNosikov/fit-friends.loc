@@ -55,7 +55,7 @@ export default function App(): ReactElement {
           </PrivateRoute>
         } />
 
-        <Route path={AppRoute.PERSONAL_CARD} element={
+        <Route path={`${AppRoute.PERSONAL_CARD}/:userId`} element={
           <PrivateRoute redirectTo={AppRoute.INTRO}>
             <PersonalCard />
           </PrivateRoute>

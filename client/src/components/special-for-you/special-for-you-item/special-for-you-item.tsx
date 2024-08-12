@@ -1,30 +1,24 @@
 import { AppRoute } from '@client/src/const';
+import { getTrainingThumbnailByType } from '@client/src/utils/adapters';
+import { CreateTrainingRDO } from '@shared/training';
 import { ReactElement } from 'react';
 import { Link } from 'react-router-dom';
 
 type SpecialForYouItemProps = {
-  training: {
-    id: string;
-    background: string;
-    title: string;
-  }
+  training: CreateTrainingRDO
 };
 
 export default function SpecialForYouItem({ training }: SpecialForYouItemProps): ReactElement {
-  const { id, background, title } = training;
+  const { id, title, trainingType } = training;
+  const trainingThumbnail = getTrainingThumbnailByType(trainingType);
 
   return (
     <li className="special-for-you__item" key={training.id}>
       <div className="thumbnail-preview">
         <div className="thumbnail-preview__image">
           <picture>
-            <img
-              src={background}
-              srcSet={`${background}@2x.jpg 2x`}
-              width={452}
-              height={191}
-              alt=""
-            />
+            <source type="image/webp" srcSet={`${trainingThumbnail}.webp, ${trainingThumbnail}@2x.webp 2x`} />
+            <img src={`${trainingThumbnail}.jpg`} srcSet={`${trainingThumbnail}@2x.jpg 2x`} width="330" height="190" alt="" />
           </picture>
         </div>
         <div className="thumbnail-preview__inner">

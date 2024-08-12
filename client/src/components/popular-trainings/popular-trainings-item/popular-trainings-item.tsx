@@ -1,7 +1,9 @@
-import { AppRoute } from '@client/src/const';
-import { TrainingType } from '@shared/types/training-type.enum';
-import { ReactElement } from 'react';
 import { Link } from 'react-router-dom';
+import { ReactElement } from 'react';
+
+import { AppRoute } from '@client/src/const';
+import { getTrainingThumbnailByType } from '@client/src/utils/adapters';
+import { TrainingType } from '@shared/types/training-type.enum';
 
 type PopularTrainingsItemProps = {
   training: {
@@ -22,7 +24,6 @@ export default function PopularTrainingsItem({ training }: PopularTrainingsItemP
     id,
     title,
     description,
-    background,
     calories,
     rating,
     price,
@@ -30,6 +31,7 @@ export default function PopularTrainingsItem({ training }: PopularTrainingsItemP
     trainingType
   } = training;
 
+  const trainingThumbnail = getTrainingThumbnailByType(trainingType);
   const newPrice = discount ? price - discount : price;
 
   return (
@@ -38,12 +40,8 @@ export default function PopularTrainingsItem({ training }: PopularTrainingsItemP
         <div className="thumbnail-training__inner">
           <div className="thumbnail-training__image">
             <picture>
-              <img
-                src={background}
-                width={330}
-                height={190}
-                alt=""
-              />
+              <source type="image/webp" srcSet={`${trainingThumbnail}.webp, ${trainingThumbnail}@2x.webp 2x`} />
+              <img src={`${trainingThumbnail}.jpg`} srcSet={`${trainingThumbnail}@2x.jpg 2x`} width="330" height="190" alt="" />
             </picture>
           </div>
           <p className="thumbnail-training__price">

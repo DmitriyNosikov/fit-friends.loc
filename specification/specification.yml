@@ -66,7 +66,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/UserRDO"
+                $ref: "#/components/schemas/LoggedUserRDO"
         "401":
           description: Incorrect user email/password
       tags: *a1
@@ -81,7 +81,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/UserRDO"
+                $ref: "#/components/schemas/LoggedUserRDO"
         "404":
           description: User not found
       tags: *a1
@@ -101,6 +101,25 @@ paths:
             are empty"
       tags: *a1
   /api/users/{userId}:
+    get:
+      operationId: UserController_getUserById
+      summary: Get info about user by id
+      parameters:
+        - name: userId
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        "200":
+          description: User found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserRDO"
+        "404":
+          description: User not found
+      tags: *a1
     delete:
       operationId: UserController_deleteUser
       summary: Delete user
@@ -280,7 +299,7 @@ paths:
               - йога
               - бег
               - бокс
-              - стрейчинг
+              - стретчинг
               - кроссфит
               - аэробика
               - пилатес
@@ -955,7 +974,7 @@ components:
             - йога
             - бег
             - бокс
-            - стрейчинг
+            - стретчинг
             - кроссфит
             - аэробика
             - пилатес
@@ -1040,7 +1059,7 @@ components:
           type: string
           description: User gender
           example: мужской
-          enum:
+          enum: &a6
             - мужской
             - женский
             - неважно
@@ -1057,7 +1076,7 @@ components:
           type: string
           description: User metro station
           example: звездная
-          enum:
+          enum: &a7
             - пионерская
             - петроградская
             - удельная
@@ -1071,7 +1090,7 @@ components:
           type: string
           description: User training level
           example: новичок
-          enum:
+          enum: &a8
             - новичок
             - любитель
             - профессионал
@@ -1079,11 +1098,11 @@ components:
           type: string
           description: User trainings type
           example: '["box", "crossfit", "running"]'
-          enum:
+          enum: &a9
             - йога
             - бег
             - бокс
-            - стрейчинг
+            - стретчинг
             - кроссфит
             - аэробика
             - пилатес
@@ -1091,7 +1110,7 @@ components:
           type: string
           description: User training time periods (in minutes)
           example: 10-30
-          enum:
+          enum: &a10
             - 10-30
             - 30-50
             - 50-80
@@ -1147,6 +1166,124 @@ components:
       required:
         - email
         - password
+    LoggedUserRDO:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Uniq user ID
+          example: g83h4y0943-nv934819843-jv934h8t-n923g48n9438
+        createdAt:
+          format: date-time
+          type: string
+          description: Created at date
+          example: 2024-04-26 13:02:24.847
+        updatedAt:
+          format: date-time
+          type: string
+          description: Updated at date
+          example: 2024-04-26 13:02:24.847
+        name:
+          type: string
+          description: User name
+          example: Tony
+          minimum: 1
+          maximum: 15
+        email:
+          type: string
+          description: User email
+          example: iron-man@starkindustries.it
+        avatar:
+          type: string
+          description: User avatar
+          example: some/interesting/avatar.jpg
+        role:
+          type: string
+          description: User role
+          example: admin
+        gender:
+          type: string
+          description: User gender
+          example: мужской
+          enum: *a6
+        birthDate:
+          format: date-time
+          type: string
+          description: User birth date
+          example: 26.09.1993
+        description:
+          type: string
+          description: User profile description
+          example: Some interesting profile description
+        location:
+          type: string
+          description: User metro station
+          example: звездная
+          enum: *a7
+        pageBackground:
+          type: string
+          description: User profile background. If not passed = User avatar
+          example: some/interesting/avatar.jpg
+        level:
+          type: string
+          description: User training level
+          example: новичок
+          enum: *a8
+        trainingType:
+          type: string
+          description: User trainings type
+          example: '["box", "crossfit", "running"]'
+          enum: *a9
+        trainingDuration:
+          type: string
+          description: User training time periods (in minutes)
+          example: 10-30
+          enum: *a10
+        loseCaloriesLimit:
+          type: number
+          description: User lose calories aim
+          example: "1000"
+          minimum: 1000
+          maximum: 5000
+        dayCaloriesLimit:
+          type: number
+          description: User calories per day limit
+          example: "5000"
+          minimum: 1000
+          maximum: 5000
+        isReadyToTraining:
+          type: boolean
+          description: Is user ready to training
+          example: "true"
+        accessToken:
+          type: string
+          description: User JWT Token
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpFVCJ9.eyJ1c2VySWQiOiI2NjM4ZDIzZDgyNGQ3ZTdkNzQ3NzNjYmIiLCJlbWFpbCI6Imlyb24tbWFuM0BzdGFya2luZHVzdHJpZXMuaXQiLCJmaXJzdG5hbWUiOiJUb255IiwibGFzdG5hbWUiOiJTdGFyazEyMyIsImlhdCI6MTcxNTAwMDYyMCwiZXhwIjoxNzE1MDAwOTIwfQ.TgH1861ix-vw6XGtoCLfDymnH_9yQIYp0Z3m7TT3jxY
+        refreshToken:
+          type: string
+          description: User JWT Refresh Token
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpFVCJ9.eyJ1c2VySWQiOiI2NjM4ZDIzZDgyNGQ3ZTdkNzQ3NzNjYmIiLCJlbWFpbCI6Imlyb24tbWFuM0BzdGFya2luZHVzdHJpZXMuaXQiLCJmaXJzdG5hbWUiOiJUb255IiwibGFzdG5hbWUiOiJTdGFyazEyMyIsImlhdCI6MTcxNTAwMDYyMCwiZXhwIjoxNzE1MDAwOTIwfQ.TgH1861ix-vw6XGtoCLfDymnH_9yQIYp0Z3m7TT3jxY
+      required:
+        - id
+        - createdAt
+        - updatedAt
+        - name
+        - email
+        - avatar
+        - role
+        - gender
+        - birthDate
+        - description
+        - location
+        - pageBackground
+        - level
+        - trainingType
+        - trainingDuration
+        - loseCaloriesLimit
+        - dayCaloriesLimit
+        - isReadyToTraining
+        - accessToken
+        - refreshToken
     CreateTrainingDTO:
       type: object
       properties:
@@ -1176,7 +1313,7 @@ components:
             - йога
             - бег
             - бокс
-            - стрейчинг
+            - стретчинг
             - кроссфит
             - аэробика
             - пилатес
@@ -1297,7 +1434,7 @@ components:
             - йога
             - бег
             - бокс
-            - стрейчинг
+            - стретчинг
             - кроссфит
             - аэробика
             - пилатес
@@ -1453,7 +1590,7 @@ components:
             - йога
             - бег
             - бокс
-            - стрейчинг
+            - стретчинг
             - кроссфит
             - аэробика
             - пилатес

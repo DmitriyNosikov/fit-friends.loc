@@ -14,14 +14,14 @@ import useWithRatingTrainingsList from '@client/src/hooks/useWithRatingTrainings
 import Spinner from '../tools/spinner/spinner';
 import PopularTrainingsItem from './popular-trainings-item/popular-trainings-item';
 import Stub from '../tools/stub/stub';
-import { getUserInfo } from '@client/src/store/slices/user-process/user-process.selectors';
+import { getCurrentUserInfo } from '@client/src/store/slices/user-process/user-process.selectors';
 import { UserRoleEnum } from '@shared/types/user-roles.enum';
 
 export default function PopularTrainings(): ReactElement {
   const navigate = useNavigate();
   const trainings = useWithRatingTrainingsList();
   const isTrainingsLoading = useAppSelector(getWithRatingTrainingsLoadingStatus);
-  const userInfo = useAppSelector(getUserInfo);
+  const userInfo = useAppSelector(getCurrentUserInfo);
 
   const isTrainer = userInfo?.role === UserRoleEnum.TRAINER;
 

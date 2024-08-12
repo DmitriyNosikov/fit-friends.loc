@@ -8,7 +8,7 @@ import OrdersListItem from '../orders-list-item/orders-list-item'
 import useSearchOrders from '@client/src/hooks/useSearchOrders';
 import { useAppDispatch, useAppSelector } from '@client/src/hooks';
 import { searchOrdersAction } from '@client/src/store/actions/api-order-action';
-import { getUserInfo } from '@client/src/store/slices/user-process/user-process.selectors';
+import { getCurrentUserInfo } from '@client/src/store/slices/user-process/user-process.selectors';
 
 import { OrdersSortType, OrdersSortTypeEnum } from '@client/src/pages/orders/orders';
 
@@ -19,7 +19,7 @@ type OrdersListProps = {
 const START_PAGE = 1;
 
 export default function OrdersList({ sort }: OrdersListProps) {
-  const userInfo = useAppSelector(getUserInfo);
+  const userInfo = useAppSelector(getCurrentUserInfo);
 
   let searchQuery: OrderSearchQuery = {
     page: START_PAGE,

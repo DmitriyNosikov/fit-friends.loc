@@ -2,8 +2,7 @@ import { useEffect } from 'react';
 import { useAppDispatch } from '.';
 import { fetchUserDetailInfoAction } from '../store/actions/api-user-action';
 
-
-export default function useFetchUserDetailInfo() {
+export default function useFetchCurrentUserInfo() {
   const dispatch = useAppDispatch();
 
   useEffect(() => {

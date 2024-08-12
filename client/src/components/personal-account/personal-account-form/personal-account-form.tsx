@@ -206,7 +206,7 @@ export default function PersonalAccountForm({ userInfo }: PersonalAccountFormPro
               onChange={handleAvatarChange}
               disabled={!formEditable}
             />
-            <Link to={AppRoute.PERSONAL_CARD}>
+            <Link to={`${AppRoute.PERSONAL_CARD}/${userInfo.id}`}>
               <span className="input-load-avatar__avatar">
                 <img src={userAvatarUrl} width={98} height={98} alt="user photo" />
               </span>

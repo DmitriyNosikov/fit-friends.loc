@@ -3,18 +3,19 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 import { toast } from 'react-toastify';
 
 import { setDataLoadingStatus } from '../slices/main-process/main-process';
-import { setAdditionalInfo, setUserInfoAction } from '../slices/user-process/user-process';
+import { setAdditionalInfo, setUserAuthStatus, setCurrentUserInfo, setUserInfo } from '../slices/user-process/user-process';
 
-import { AdditionalInfoRDO, CreateUserDTO, LoggedUserRDO, LoginUserDTO, UpdateUserDTO } from '@shared/user';
+import { AdditionalInfoRDO, CreateUserDTO, LoggedUserRDO, LoginUserDTO, UpdateUserDTO, UserRDO } from '@shared/user';
 import { redirectToRoute } from '../middlewares/redirect-action';
 
 
 import { AsyncOptions } from '@client/src/types/async-options.type';
 
 
-import { ApiRoute, AppRoute, Namespace } from '@client/src/const';
+import { ApiRoute, AppRoute, AuthorizationStatus, Namespace } from '@client/src/const';
 import { TokenPayload } from '@client/src/types/token-payload';
-import { deleteToken, setToken } from '@client/src/services/token';
+import { deleteToken, REFRESH_TOKEN_KEY, setToken } from '@client/src/services/token';
+import { UploadingFilePayload } from '@client/src/types/payloads';
 
 
 
@@ -24,10 +25,12 @@ const APIAction = {
   USER_REGISTER: `${APIUserPrefix}/register`,
   USER_LOGIN: `${APIUserPrefix}/login`,
   USER_UPDATE: `${APIUserPrefix}/update`,
-  USER_CHECK_AUTH: `${APIUserPrefix}/checkAuth`,
-  USER_GET_DETAIL: `${APIUserPrefix}/getDetail`,
-  USER_GET_ADDITIONAL: `${APIUserPrefix}/getAdditional`,
-  USER_UPLOAD_AVATAR: `${APIUserPrefix}/uploadAvatar`,
+
+  USER_CHECK_AUTH: `${APIUserPrefix}/check-auth`,
+  USER_GET_DETAIL: `${APIUserPrefix}/get-detail`,
+  USER_GET_BY_ID: `${APIUserPrefix}/get-by-id`,
+  USER_GET_ADDITIONAL: `${APIUserPrefix}/get-additional`,
+  USER_UPLOAD_AVATAR: `${APIUserPrefix}/upload-avatar`,
 } as const;
 
 // ASYNC ACTIONS
@@ -39,21 +42,82 @@ export const checkUserAuthAction = createAsyncThunk<void, void, AsyncOptions>(
     dispatch(setDataLoadingStatus(true));
 
     try {
-      await api.post<TokenPayload>(ApiRoute.CHECK_JWT_TOKEN);
+      const result = await api.post<TokenPayload>(ApiRoute.CHECK_JWT_TOKEN);
+
+      if(!result) {
+        return;
+      }
 
       dispatch(fetchUserDetailInfoAction())
     } catch(error) {
       deleteToken();
 
-      dispatch(setUserInfoAction(null));
-      dispatch(redirectToRoute(AppRoute.LOGIN));
+      dispatch(setUserAuthStatus(AuthorizationStatus.NO_AUTH));
+      dispatch(redirectToRoute(AppRoute.INTRO));
     }
 
     dispatch(setDataLoadingStatus(false));
   }
 );
 
-export const registerUserAction = createAsyncThunk<LoggedUserRDO, CreateUserDTO, AsyncOptions>(
+export const fetchUserDetailInfoAction = createAsyncThunk<void, void, AsyncOptions>(
+  APIAction.USER_GET_DETAIL,
+  async (
+    _, // Data
+    { dispatch, rejectWithValue, extra: api } // AsyncOptions
+  ) => {
+    dispatch(setDataLoadingStatus(true));
+
+    try {
+      const { data } = await api.get<LoggedUserRDO>(`${ApiRoute.USER_API}`);
+
+      dispatch(setCurrentUserInfo(data));
+      dispatch(setDataLoadingStatus(false));
+    } catch(err) {
+      toast.warn(`Can't get user's detail info: ${err}. Please, try to login again`);
+
+      dispatch(setDataLoadingStatus(false));
+      deleteToken();
+      dispatch(setUserAuthStatus(AuthorizationStatus.NO_AUTH));
+      dispatch(redirectToRoute(AppRoute.INTRO));
+
+      return rejectWithValue(err);
+    }
+  }
+);
+
+type UserIdPayload = {
+  userId: string
+}
+
+export const fetchUserByIdAction = createAsyncThunk<UserRDO, UserIdPayload, AsyncOptions>(
+  APIAction.USER_GET_BY_ID,
+  async (
+    { userId },
+    { dispatch, rejectWithValue, extra: api } // AsyncOptions
+  ) => {
+    dispatch(setDataLoadingStatus(true));
+
+    try {
+      const { data } = await api.get<UserRDO>(`${ApiRoute.USER_API}/${userId}`);
+
+      dispatch(setUserInfo(data));
+      dispatch(setDataLoadingStatus(false));
+
+      return data;
+    } catch(err) {
+      toast.warn(`Can't get user's detail info: ${err}. Please, try to login again`);
+
+      dispatch(setDataLoadingStatus(false));
+
+      return rejectWithValue(err);
+    }
+  }
+);
+
+type RegisterUserPayload = CreateUserDTO & UploadingFilePayload;
+
+export const registerUserAction = createAsyncThunk<LoggedUserRDO, RegisterUserPayload, AsyncOptions>(
   APIAction.USER_REGISTER,
   async (
     newUserData, // New User Data
@@ -63,9 +127,9 @@ export const registerUserAction = createAsyncThunk<LoggedUserRDO, CreateUserDTO,
 
     // Аватар нужно загружать отдельно
     let uploadedAvatarUrl = '';
-    if(newUserData.avatar) {
+    if(newUserData.uploadingFile) {
       try {
-        const { data: avatarUrl } = await api.post<string>(ApiRoute.LOAD_FILES, newUserData.avatar);
+        const { data: avatarUrl } = await api.post<string>(ApiRoute.LOAD_FILES, newUserData.uploadingFile);
 
         uploadedAvatarUrl = avatarUrl;
 
@@ -113,15 +177,16 @@ export const loginUserAction = createAsyncThunk<void, LoginUserDTO, AsyncOptions
         ApiRoute.LOGIN,
         { email, password }
       );
-      const { accessToken } = data;
+      const { accessToken, refreshToken } = data;
 
       if(!accessToken) {
         throw new Error('Didn`t get access token from server. Please, try again later.');
       }
 
       setToken(accessToken);
+      setToken(refreshToken, REFRESH_TOKEN_KEY);
 
-      dispatch(setUserInfoAction(data));
+      dispatch(setCurrentUserInfo(data));
       dispatch(setDataLoadingStatus(false));
     } catch(err) {
       toast.error(`Can't authorize you: ${err}`);
@@ -144,7 +209,7 @@ export const updateUserAction = createAsyncThunk<LoggedUserRDO, UpdateUserDTO, A
     try {
       const { data } = await api.patch<LoggedUserRDO>(ApiRoute.USER_API, updateUserData);
 
-      dispatch(setUserInfoAction(data));
+      dispatch(setCurrentUserInfo(data));
       dispatch(setDataLoadingStatus(false));
 
       toast.success('User has been successfully updated');
@@ -183,31 +248,6 @@ export const uploadFileAction = createAsyncThunk<string | unknown, FormData, Asy
 
         return rejectWithValue(err);
       }
-    }
-  }
-);
-
-export const fetchUserDetailInfoAction = createAsyncThunk<void, void, AsyncOptions>(
-  APIAction.USER_GET_DETAIL,
-  async (
-    _, // AuthData
-    { dispatch, rejectWithValue, extra: api } // AsyncOptions
-  ) => {
-    dispatch(setDataLoadingStatus(true));
-
-    try {
-      const { data } = await api.get<LoggedUserRDO>(`${ApiRoute.USER_API}`);
-
-      dispatch(setUserInfoAction(data));
-      dispatch(setDataLoadingStatus(false));
-    } catch(err) {
-      toast.warn(`Can't get user's detail info: ${err}. Please, try to login again`);
-
-      deleteToken();
-      dispatch(setDataLoadingStatus(false));
-      dispatch(redirectToRoute(AppRoute.INTRO));
-
-      return rejectWithValue(err);
     }
   }
 );

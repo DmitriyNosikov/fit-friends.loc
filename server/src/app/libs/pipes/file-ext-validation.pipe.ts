@@ -5,16 +5,20 @@ import { extension } from 'mime-types';
 export class FileExtValidationPipe implements PipeTransform {
   transform(value: any, metadata: ArgumentMetadata) {
     // "value" is an object containing the file's attributes and metadata
-    const allowedExtensions = ['jpg', 'jpeg', 'png']; // TODO: Перенeсти расширения в SetMetadata
-    const fileExtension = extension(value.mimetype);
+    const allowedImgExtensions = ['jpg', 'jpeg', 'png']; // TODO: Перенeсти расширения в SetMetadata
+    const allowedVideoExtensions = ['mov', 'mp4', 'avi'];
+    const fileExtension = extension(value.mimetype) || value.mimetype.split('/')[1];
 
+    // Неправильно определяется расширение, т.к. mime-type всегда: text/plain - TODO: Исправить
     console.log('File to upload: ', value);
-    // Неправильно определяется расширение, т.к. mime-type всегдаЖ text/plain - TODO: Исправить
-    console.log('Extension: ', fileExtension);
+    console.log('Extension: ', fileExtension, typeof(value.mimetype));
     console.log('File Metadata: ', metadata);
 
-    if(!allowedExtensions.includes(fileExtension)) {
-      throw new BadRequestException(`Unsupported file extension. Allowed to upload: ${ allowedExtensions.join(', ') }. Passed: .${fileExtension}`);
+    if(!allowedImgExtensions.includes(fileExtension) && !allowedVideoExtensions.includes(fileExtension)) {
+      throw new BadRequestException(`Unsupported file extension. Allowed to upload: 
+        ${ allowedImgExtensions.join(', ') } 
+        ${ allowedVideoExtensions.join(', ') }. 
+        Passed: .${fileExtension}`);
     }
 
     return value;

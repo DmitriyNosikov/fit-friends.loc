@@ -11,10 +11,13 @@ import Layout from '../layout/layout';
 import PrivateRoute from '../private-route/private-route';
 import OnlyUnauthorizedRoute from '../only-unauthorized-route/only-unauthorized-route';
 import Intro from '@client/src/pages/intro/intro';
-import PersonalAccount from '../personal-account/personal-account';
+import PersonalAccount from '../../pages/personal-account/personal-account';
 import TrainingsDetail from '../../pages/trainings/trainings-detail/trainings-detail';
-import TrainingsList from '@client/src/pages/trainings/trainings-list/trainings-list';
+import Trainings from '@client/src/pages/trainings/trainings';
 import Orders from '@client/src/pages/orders/orders';
+import Purchases from '@client/src/pages/purchases/purchases';
+import TrainingsCreate from '@client/src/pages/trainings/trainings-create/trainings-create';
+import PersonalCard from '@client/src/pages/personal-card/personal-card';
 
 // TODO: Нужен Helmet для смены заголовков
 
@@ -31,44 +34,62 @@ export default function App(): ReactElement {
         <Route path={AppRoute.INTRO} element={
           <OnlyUnauthorizedRoute children={
             <Intro />
-          }/>
-        }/>
+          } />
+        } />
 
         <Route path={AppRoute.LOGIN} element={
           <OnlyUnauthorizedRoute children={
             <Login />
-          }/>
-        }/>
+          } />
+        } />
 
         <Route path={AppRoute.REGISTRATION} element={
           <OnlyUnauthorizedRoute children={
             <Registration />
-          }/>
-        }/>
+          } />
+        } />
 
         <Route path={AppRoute.ACCOUNT} element={
           <PrivateRoute redirectTo={AppRoute.INTRO}>
             <PersonalAccount />
           </PrivateRoute>
-        }/>
+        } />
+
+        <Route path={`${AppRoute.PERSONAL_CARD}/:userId`} element={
+          <PrivateRoute redirectTo={AppRoute.INTRO}>
+            <PersonalCard />
+          </PrivateRoute>
+        } />
 
         <Route path={`${AppRoute.TRAININGS}`} element={
           <PrivateRoute redirectTo={AppRoute.INTRO}>
-            <TrainingsList />
+            <Trainings />
           </PrivateRoute>
-        }/>
+        } />
+
+        <Route path={`${AppRoute.TRAININGS_CREATE}`} element={
+          <PrivateRoute redirectTo={AppRoute.INTRO}>
+            <TrainingsCreate />
+          </PrivateRoute>
+        } />
 
         <Route path={`${AppRoute.TRAININGS}/:trainingId`} element={
           <PrivateRoute redirectTo={AppRoute.INTRO}>
             <TrainingsDetail />
           </PrivateRoute>
-        }/>
+        } />
+
+        <Route path={`${AppRoute.PURCHASES}`} element={
+          <PrivateRoute redirectTo={AppRoute.INTRO}>
+            <Purchases />
+          </PrivateRoute>
+        } />
 
         <Route path={`${AppRoute.ORDERS}`} element={
           <PrivateRoute redirectTo={AppRoute.INTRO}>
             <Orders />
           </PrivateRoute>
-        }/>
+        } />
 
         <Route path="*" element={<Page404 />} />
       </Route>

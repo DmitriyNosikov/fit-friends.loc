@@ -19,14 +19,9 @@ export const mainProcess = createSlice({
     setDataLoadingStatus: (state, action: PayloadAction<boolean>) => {
       state.isDataLoading = action.payload;
     },
-
-    setReviewPopupShowing: (state, action: PayloadAction<boolean>) => {
-      state.isReviewPopupShowed = action.payload;
-    }
   }
 });
 
 export const {
-  setDataLoadingStatus,
-  setReviewPopupShowing
+  setDataLoadingStatus
 } = mainProcess.actions;

@@ -1,9 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Expose } from 'class-transformer';
+import { Expose, Type } from 'class-transformer';
 
 import { OrderValidation } from '@server/order/order.constant';
 import { TrainingInterface } from '@server/training/interfaces/training.interface';
-import { OrderInterface } from '@server/order/interfaces';
+import { CreateTrainingRDO } from '@shared/training';
 
 export class CreateBalanceRDO {
   @ApiProperty({
@@ -32,14 +32,7 @@ export class CreateBalanceRDO {
     example: 'd61ef04e-295a-41cb-a230-7e9e4570f14b',
   })
   @Expose()
-  serviceId: TrainingInterface['id'];
-
-  @ApiProperty({
-    description: 'Order ID',
-    example: 'd61ef04e-295a-41cb-a230-7e9e4570f14b',
-  })
-  @Expose()
-  orderId: OrderInterface['id'];
+  trainingId: TrainingInterface['id'];
 
   @ApiProperty({
     description: 'Remaining trainings count',
@@ -49,4 +42,18 @@ export class CreateBalanceRDO {
   })
   @Expose()
   remainingTrainingsCount: number;
+
+  @ApiProperty({
+    description: 'Whether the user has started training',
+    example: 'false',
+  })
+  @Expose()
+  hasTrainingStarted: boolean;
+
+  @ApiProperty({
+    description: 'Orders training additional info',
+  })
+  @Expose()
+  @Type(() => CreateTrainingRDO)
+  trainingInfo?: CreateTrainingRDO;
 }

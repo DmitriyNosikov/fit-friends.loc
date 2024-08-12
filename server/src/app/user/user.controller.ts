@@ -82,7 +82,7 @@ export class UserController {
   @ApiOperation({ summary: 'Login user by passed credentials' })
   @UseGuards(LocalAuthGuard) // Верификация перенесена в гард через LocalStrategy
   @ApiResponse({
-    type: UserRDO,
+    type: LoggedUserRDO,
     status: HttpStatus.OK,
     description: UserMessage.SUCCESS.LOGGED_IN
   })
@@ -109,7 +109,7 @@ export class UserController {
   @UseInterceptors(InjectUserIdInterceptor)
   @ApiOperation({ summary: 'Get detail info about user' })
   @ApiResponse({
-    type: UserRDO,
+    type: LoggedUserRDO,
     status: HttpStatus.OK,
     description: UserMessage.SUCCESS.FOUND
   })
@@ -118,9 +118,27 @@ export class UserController {
     description: UserMessage.ERROR.NOT_FOUND
   })
   public async show(@Body('userId') userId: string): Promise<LoggedUserRDO> {
-    const userDetail = await this.userService.getUserDetail(userId);
+    const userDetail = await this.userService.findById(userId);
 
     return fillDTO(LoggedUserRDO, userDetail.toPOJO());
+  }
+
+  @Get('/:userId')
+  @UseGuards(JWTAuthGuard)
+  @ApiOperation({ summary: 'Get info about user by id' })
+  @ApiResponse({
+    type: UserRDO,
+    status: HttpStatus.OK,
+    description: UserMessage.SUCCESS.FOUND
+  })
+  @ApiResponse({
+    status: HttpStatus.NOT_FOUND,
+    description: UserMessage.ERROR.NOT_FOUND
+  })
+  public async getUserById(@Param('userId') userId: string): Promise<UserRDO> {
+    const userDetail = await this.userService.findById(userId);
+
+    return fillDTO(UserRDO, userDetail.toPOJO());
   }
 
   @Patch('/')

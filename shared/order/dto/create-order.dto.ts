@@ -28,7 +28,7 @@ export class CreateOrderDTO {
     example: 'd61ef04e-295a-41cb-a230-7e9e4570f14b',
   })
   @IsString()
-  serviceId: TrainingInterface['id'];
+  trainingId: TrainingInterface['id'];
 
   @ApiProperty({
     description: 'Trainings count',
@@ -55,5 +55,5 @@ export class CreateOrderDTO {
     example: 'd61ef04e-295a-41cb-a230-7e9e4570f14b',
   })
   @IsString()
-  userId?: UserInterface['id'];
+  userId: UserInterface['id'];
 }

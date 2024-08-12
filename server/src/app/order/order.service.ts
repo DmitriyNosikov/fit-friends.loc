@@ -3,13 +3,13 @@ import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/co
 import { OrderRepository } from './order.repository';
 import { OrderFactory } from './order.factory';
 
-import { CreateOrderDTO, UpdateOrderDTO } from '@shared/order';
+import { CreateOrderDTO, OrderSearchQuery, UpdateOrderDTO } from '@shared/order';
 import { OrderMessage } from './order.constant';
 import { OrderEntity } from './order.entity';
 import { TrainingService } from '@server/training/training.service';
-import { BaseSearchQuery, UserIdPayload } from '@shared/types';
 import { BalanceService } from '../balance/balance.service';
 import { CreateBalanceDTO } from '@shared/balance';
+import { fillDTO, omitUndefined } from '@server/libs/helpers';
 
 @Injectable()
 export class OrderService {
@@ -33,18 +33,19 @@ export class OrderService {
     return order;
   }
 
-  public async search(query?: BaseSearchQuery & UserIdPayload) {
-    const orders = await this.orderRepository.search(query);
+  public async search(query?: OrderSearchQuery) {
+    const preparedQuery = this.filterQuery(query);
+    const orders = await this.orderRepository.search(preparedQuery);
 
     if(!orders && query) {
-      throw new NotFoundException(`Can't find products by passed params " ${query}"`);
+      throw new NotFoundException(`Can't find orders by passed params " ${query}"`);
     }
 
     return orders;
   }
 
   public async create(dto: CreateOrderDTO) {
-    const { price, totalPrice } = await this.countPricesByTraining(dto.serviceId, dto.trainingsCount);
+    const { price, totalPrice } = await this.countPricesByTraining(dto.trainingId, dto.trainingsCount);
     const createOrderDTO = {
       ...dto,
       price,
@@ -55,7 +56,8 @@ export class OrderService {
     const order = await this.orderRepository.create(orderEntity);
 
     const balanceData: CreateBalanceDTO = {
-      orderId: order.id,
+      trainingId: order.trainingId,
+      userId: order.userId,
       remainingTrainingsCount: order.trainingsCount
     };
     await this.balanceService.create(balanceData)
@@ -75,8 +77,8 @@ export class OrderService {
     let price = order.price;
     let totalPrice = order.totalPrice;
 
-    if(fieldsToUpdate.serviceId) {
-      const { price: newPrice, totalPrice: newTotalPrice } = await this.countPricesByTraining(fieldsToUpdate.serviceId, trainingsCount);
+    if(fieldsToUpdate.trainingId) {
+      const { price: newPrice, totalPrice: newTotalPrice } = await this.countPricesByTraining(fieldsToUpdate.trainingId, trainingsCount);
       price = newPrice;
       totalPrice = newTotalPrice;
     }
@@ -108,8 +110,8 @@ export class OrderService {
   }
 
   //////////////////// Вспомогательные методы ////////////////////
-  private async countPricesByTraining(serviceId: string, trainingsCount: number) {
-    const training = await this.trainingService.findById(serviceId);
+  private async countPricesByTraining(trainingId: string, trainingsCount: number) {
+    const training = await this.trainingService.findById(trainingId);
     const price = training.price;
     const totalPrice = price * trainingsCount;
 
@@ -124,5 +126,12 @@ export class OrderService {
     }
 
     return true;
+  }
+
+  public filterQuery(query: OrderSearchQuery) {
+    const filteredQuery = fillDTO(OrderSearchQuery, query);
+    const omitedQuery = omitUndefined(filteredQuery as Record<string, unknown>);
+
+    return omitedQuery;
   }
 }

@@ -7,10 +7,10 @@ import { UserInterface } from '@server/user/interfaces';
 export interface OrderInterface extends CreatedUpdatedDatesInterface {
   id?: string;
   type: OrderType;
-  serviceId: TrainingInterface['id'];
-  price: TrainingInterface['price'],
+  trainingId: TrainingInterface['id'];
+  userId: UserInterface['id'];
   trainingsCount: number;
+  price: TrainingInterface['price'],
   totalPrice: number;
   paymentType: PaymentType;
-  userId?: UserInterface['id'];
 }

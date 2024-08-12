@@ -12,6 +12,7 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 import App from './components/app/app';
+
 import { checkUserAuthAction } from './store/actions/api-user-action';
 
 // Проверяем авторизацию пользователя

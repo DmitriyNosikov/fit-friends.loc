@@ -22,7 +22,7 @@ export class FileVaultService {
       const uploadDirectoryPath = this.getUploadDirectoryPath();
 
       const uniqFilename = `${getUniqFilenamePrefix()}-${file.originalname}`;
-      const filesDestination = this.getDestinationFilePath(uniqFilename); // Место хранения файлоа на сервере
+      const filesDestination = this.getDestinationFilePath(uniqFilename); // Место хранения файла на сервере
       const staticUrl = this.getStaticUrl(uniqFilename); // Ссылка на файл для внешних ресурсов (статика)
 
       await ensureDir(uploadDirectoryPath);

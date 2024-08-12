@@ -30,12 +30,12 @@ export class BalanceService {
     return balance;
   }
 
-  public async getUserBalanceByServiceId(serviceId: string, userId: string): Promise<BalanceEntity | null> {
-    const balance = await this.balanceRepository.findByServiceId(serviceId, userId);
+  public async getUserBalanceByTrainingId(userId: string, trainingId: string): Promise<BalanceEntity | null> {
+    const balance = await this.balanceRepository.findUserBalanceByTrainingId(userId, trainingId);
 
-    if (!balance) {
-      throw new NotFoundException(BalanceMessage.ERROR.NOT_FOUND);
-    }
+    // if (!balance) {
+    //   throw new NotFoundException(`${BalanceMessage.ERROR.NOT_FOUND}. Training ID: ${trainingId}`);
+    // }
 
     return balance;
   }
@@ -61,6 +61,20 @@ export class BalanceService {
   }
 
   public async create(dto: CreateBalanceDTO) {
+    const { userId, trainingId } = dto;
+    const existsBalance = await this.balanceRepository.findUserBalanceByTrainingId(userId, trainingId);
+
+    // Мы не можем создавать новый баланс для одной и той же тренировки
+    // и одного и того же пользователя одновременно. Если для пользователя
+    // уже существует баланс соответствующей тренировки, нам необходимо
+    // изменять его через метод обновления
+    if(existsBalance) {
+        // Вместо создания нового баланса - дополняем существующий
+        const updatedBalance = await this.increaseTrainingBalance(existsBalance.trainingId, userId, dto.remainingTrainingsCount);
+
+        return updatedBalance;
+    }
+
     const balanceEntity = this.balanceFactory.create(dto);
     const balance = await this.balanceRepository.create(balanceEntity);
 
@@ -86,49 +100,54 @@ export class BalanceService {
   }
 
   public async decreaseTrainingBalance(
-    balanceId: string,
+    trainingId: string,
     userId: string,
     amount: number
   ) {
-    const updatedBalance = await this.changeTrainingBalance(balanceId, userId, amount, false);
+    const updatedBalance = await this.changeTrainingBalance(trainingId, userId, amount, false);
 
     return updatedBalance;
   }
 
   public async increaseTrainingBalance(
-    balanceId: string,
+    trainingId: string,
     userId: string,
     amount: number) {
-    const updatedBalance = await this.changeTrainingBalance(balanceId, userId, amount, true);
+    const updatedBalance = await this.changeTrainingBalance(trainingId, userId, amount, true);
 
     return updatedBalance;
   }
 
   public async changeTrainingBalance(
-    balanceId: string,
+    trainingId: string,
     userId: string,
     amount: number, // На сколько изменять баланс
     increase: boolean = false // Увеличивать баланс (true) / Уменьшать баланс (false)
   ): Promise<BalanceEntity> {
-    const balance = await this.getBalanceDetail(balanceId, userId);
+    const newAmount = amount ?? 1;
+    const balance = await this.getUserBalanceByTrainingId(userId, trainingId);
     let newBalance = 0;
 
     if (increase) {
-      newBalance = balance.remainingTrainingsCount + amount;
+      newBalance = balance.remainingTrainingsCount + newAmount;
     } else {
-      newBalance = balance.remainingTrainingsCount - amount;
+      newBalance = balance.remainingTrainingsCount - newAmount;
     }
 
     if (newBalance < 0) {
       newBalance = 0;
     }
 
-    const updatedBalance = await this.balanceRepository.changeTrainingBalance(balanceId, newBalance);
+    // Если баланс уменьшается и тренировка ище не была начата ни разу
+    // т.е. пользователь впервые приступает к тренировке после покупки
+    const hasTrainingStarted = !increase && !balance.hasTrainingStarted || undefined;
+
+    const updatedBalance = await this.balanceRepository.changeBalance(balance.id, newBalance, hasTrainingStarted);
 
     return updatedBalance;
   }
 
-  public async countAvailableTrainings(userId: string) {
+  public async countAllAvailableTrainings(userId: string) {
     const userTrainings = await this.balanceRepository.getUserTrainingBalance(userId);
 
     if(!userTrainings) {

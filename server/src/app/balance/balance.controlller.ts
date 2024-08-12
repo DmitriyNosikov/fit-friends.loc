@@ -5,15 +5,14 @@ import { JWTAuthGuard } from '@server/user/guards/jwt-auth.guard';
 import { InjectUserIdInterceptor } from '@server/libs/interceptors/inject-user-id.interceptor';
 
 import { fillDTO } from '@server/libs/helpers';
-import { CreateBalanceDTO, CreateBalanceRDO, UpdateBalanceDTO } from '@shared/balance';
+import { BalancesWithPaginationRDO, ChangeBalanceDTO, CreateBalanceDTO, CreateBalanceRDO, UpdateBalanceDTO } from '@shared/balance';
 
 import { BalanceService } from './balance.service';
 import { BalanceMessage } from './balance.constant';
 
-
-import { PaginationResult } from '@server/libs/interfaces';
 import { BaseSearchQuery, DefaultSearchParam } from '@shared/types/search/base-search-query.type';
 import { SortDirectionEnum, SortTypeEnum } from '@shared/types';
+
 @ApiTags('balance')
 @Controller('balance')
 @UseGuards(JWTAuthGuard)
@@ -31,9 +30,9 @@ export class BalanceController {
     description: BalanceMessage.SUCCESS.CREATED
   })
   public async create(@Body() dto: CreateBalanceDTO) {
-    const newBalance = await this.balanceService.create(dto);
+    const balance = await this.balanceService.create(dto);
 
-    return fillDTO(CreateBalanceDTO, newBalance.toPOJO());
+    return fillDTO(CreateBalanceRDO, balance.toPOJO());
   }
 
   @Get('')
@@ -82,7 +81,7 @@ export class BalanceController {
   public async index(
     @Query() query: BaseSearchQuery,
     @Body('userId') userId: string
-  ): Promise<PaginationResult<CreateBalanceRDO>> {
+  ): Promise<BalancesWithPaginationRDO> {
     const searchQuery = {
       ...query,
       userId
@@ -97,6 +96,22 @@ export class BalanceController {
     return result;
   }
 
+  @Get('by-training/:trainingId')
+  @ApiOperation({ summary: 'Get user`s balance by training id' })
+  @ApiResponse({
+    type: CreateBalanceDTO,
+    status: HttpStatus.CREATED,
+    description: BalanceMessage.SUCCESS.CREATED
+  })
+  public async getUserBalance(
+    @Param('trainingId') trainingId: string,
+    @Body('userId') userId: string
+  ) {
+    const balance = await this.balanceService.getUserBalanceByTrainingId(userId, trainingId);
+
+    return fillDTO(CreateBalanceRDO, balance.toPOJO());
+  }
+
   @Get('/count')
   @ApiOperation({ summary: 'Get summary user`s balance' })
   @ApiResponse({
@@ -109,9 +124,45 @@ export class BalanceController {
     description: BalanceMessage.ERROR.NOT_FOUND
   })
   public async countBalance(@Body('userId') userId: string): Promise<number> {
-    const trainingBalance = await this.balanceService.countAvailableTrainings(userId);
+    const trainingBalance = await this.balanceService.countAllAvailableTrainings(userId);
 
     return trainingBalance;
+  }
+
+  @Patch('/increase')
+  @ApiOperation({ summary: 'Increase training balance by passed amount' })
+  @ApiResponse({
+    type: CreateBalanceRDO,
+    status: HttpStatus.OK,
+    description: BalanceMessage.SUCCESS.FOUND
+  })
+  @ApiResponse({
+    status: HttpStatus.NOT_FOUND,
+    description: BalanceMessage.ERROR.NOT_FOUND
+  })
+  public async increaseBalance( @Body() dto: ChangeBalanceDTO ): Promise<CreateBalanceRDO> {
+    const { trainingId, userId, amount } = dto;
+    const newBalance = await this.balanceService.increaseTrainingBalance(trainingId, userId, amount);
+
+    return fillDTO(CreateBalanceRDO, newBalance.toPOJO());
+  }
+
+  @Patch('/decrease')
+  @ApiOperation({ summary: 'Decrease training balance by passed amount' })
+  @ApiResponse({
+    type: CreateBalanceRDO,
+    status: HttpStatus.OK,
+    description: BalanceMessage.SUCCESS.FOUND
+  })
+  @ApiResponse({
+    status: HttpStatus.NOT_FOUND,
+    description: BalanceMessage.ERROR.NOT_FOUND
+  })
+  public async decreaseBalance( @Body() dto: ChangeBalanceDTO ): Promise<CreateBalanceRDO> {
+    const { trainingId, userId, amount } = dto;
+    const newBalance = await this.balanceService.decreaseTrainingBalance(trainingId, userId, amount);
+
+    return fillDTO(CreateBalanceRDO, newBalance.toPOJO());
   }
 
   @Patch(':balanceId')
@@ -125,7 +176,7 @@ export class BalanceController {
     status: HttpStatus.BAD_REQUEST,
     description: BalanceMessage.ERROR.CANT_UPDATE
   })
-  public async updateTraining(
+  public async update(
     @Param('balanceId') balanceId: string,
     @Body() dto: UpdateBalanceDTO
   ): Promise<CreateBalanceRDO | null> {
@@ -134,7 +185,6 @@ export class BalanceController {
     return fillDTO(CreateBalanceRDO, updatedBalance.toPOJO());
   }
 
-  
   @Delete(':balanceId')
   @ApiOperation({ summary: 'Delete balance' })
   @ApiResponse({
@@ -146,47 +196,5 @@ export class BalanceController {
     @Body('userId') userId: string,
   ): Promise<void> {
     await this.balanceService.deleteBalance(balanceId, userId);
-  }
-
-  @Patch('/:balanceId/increase/:amount')
-  @ApiOperation({ summary: 'Increase training balance by passed amount' })
-  @ApiResponse({
-    type: CreateBalanceRDO,
-    status: HttpStatus.OK,
-    description: BalanceMessage.SUCCESS.FOUND
-  })
-  @ApiResponse({
-    status: HttpStatus.NOT_FOUND,
-    description: BalanceMessage.ERROR.NOT_FOUND
-  })
-  public async increaseBalance(
-    @Param('balanceId') balanceId: string,
-    @Param('amount') amount: number,
-    @Body('userId') userId: string
-  ): Promise<CreateBalanceRDO> {
-    const newBalance = await this.balanceService.increaseTrainingBalance(balanceId, userId, amount);
-
-    return fillDTO(CreateBalanceRDO, newBalance.toPOJO());
-  }
-
-  @Patch(':balanceId/decrease/:amount')
-  @ApiOperation({ summary: 'Decrease training balance by passed amount' })
-  @ApiResponse({
-    type: CreateBalanceRDO,
-    status: HttpStatus.OK,
-    description: BalanceMessage.SUCCESS.FOUND
-  })
-  @ApiResponse({
-    status: HttpStatus.NOT_FOUND,
-    description: BalanceMessage.ERROR.NOT_FOUND
-  })
-  public async decreaseBalance(
-    @Param('balanceId') balanceId: string,
-    @Param('amount') amount: number,
-    @Body('userId') userId: string
-  ): Promise<CreateBalanceRDO> {
-    const newBalance = await this.balanceService.decreaseTrainingBalance(balanceId, userId, amount);
-
-    return fillDTO(CreateBalanceRDO, newBalance.toPOJO());
   }
 }

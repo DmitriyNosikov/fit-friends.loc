@@ -8,29 +8,29 @@ import { TrainingInterface } from '@server/training/interfaces/training.interfac
 import { PaymentType } from '@shared/types/payment-type.enum';
 import { OrderType } from '@server/libs/types';
 
-
-export const TRAINING_DEFAULT = {
-  RATING: 0,
-} as const;
-
+type TrainingInfo = {
+  training?: TrainingInterface
+};
 export class OrderEntity extends Entity implements StorableEntityInterface<OrderInterface> {
   public createdAt?: Date;
   public updatedAt?: Date;
 
   public type: OrderType;
-  public serviceId: TrainingInterface['id'];
+  public userId: UserInterface['id'];
+  public trainingId: TrainingInterface['id'];
   public price: TrainingInterface['price'];
   public trainingsCount: number;
   public totalPrice: number;
   public paymentType: PaymentType;
-  public userId: UserInterface['id'];
+
+  public trainingInfo?: TrainingInterface;
 
   constructor(order?: OrderInterface) {
     super();
     this.populate(order);
   }
 
-  populate(order: OrderInterface) {
+  populate(order: OrderInterface & TrainingInfo) {
     if (!order) {
       return;
     }
@@ -40,27 +40,31 @@ export class OrderEntity extends Entity implements StorableEntityInterface<Order
     this.updatedAt = order.updatedAt;
 
     this.type = order.type;
-    this.serviceId = order.serviceId;
+    this.userId = order.userId;
+    this.trainingId = order.trainingId;
     this.price = order.price;
     this.trainingsCount = order.trainingsCount;
     this.totalPrice = order.totalPrice;
     this.paymentType = order.paymentType;
-    this.userId = order.userId;
+
+    this.trainingInfo = order.training;
   }
 
-  toPOJO(): OrderInterface {
+  toPOJO(): OrderInterface & { trainingInfo: TrainingInterface } {
     return {
       id: this.id,
       createdAt: this.createdAt,
       updatedAt: this.updatedAt,
 
       type: this.type,
-      serviceId: this.serviceId,
+      userId: this.userId,
+      trainingId: this.trainingId,
       price: this.price,
       trainingsCount: this.trainingsCount,
       totalPrice: this.totalPrice,
       paymentType: this.paymentType,
-      userId: this.userId,
+
+      trainingInfo: this.trainingInfo
     };
   }
 }

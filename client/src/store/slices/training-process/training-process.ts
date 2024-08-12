@@ -1,8 +1,8 @@
 import { Namespace } from '@client/src/const';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { CreateTrainingRDO, TrainingsWithPaginationRDO } from '@shared/training';
+import { CreateTrainingRDO, TrainingFilterParamsRDO, TrainingsWithPaginationRDO } from '@shared/training';
 
-import { fetchConvenientTrainingsAction, fetchTrainingItemAction, fetchTrainingsAction, fetchWithDiscountTrainingsAction, fetchWithRatingTrainingsAction } from '../../actions/api-training-action';
+import { fetchConvenientTrainingsAction, fetchTrainingItemAction, fetchTrainingsAction, fetchWithDiscountTrainingsAction, fetchWithRatingTrainingsAction, searchTrainingsAction } from '../../actions/api-training-action';
 
 export type TrainingProcess = {
   paginatedTrainings: TrainingsWithPaginationRDO | null,
@@ -10,6 +10,8 @@ export type TrainingProcess = {
   paginatedWithDiscountTrainings: TrainingsWithPaginationRDO | null,
   paginatedWithRatingTrainings: TrainingsWithPaginationRDO | null,
   trainingItem: CreateTrainingRDO | null,
+
+  filterParams: TrainingFilterParamsRDO | null,
 
   isTrainingsLoading: boolean,
   isTrainingsItemLoading: boolean,
@@ -24,6 +26,8 @@ const initialState: TrainingProcess = {
   paginatedWithDiscountTrainings: null,
   paginatedWithRatingTrainings: null,
   trainingItem: null,
+
+  filterParams: null,
 
   isTrainingsLoading: false,
   isTrainingsItemLoading: false,
@@ -58,6 +62,17 @@ export const trainingProcess = createSlice({
       state.paginatedTrainings.currentPage = addingTrainings.currentPage; // Обновляем текущую страницу
     },
 
+    // Добавление одной тренировки в общий список
+    appendTrainingAction: (state, action: PayloadAction<CreateTrainingRDO | null>) => {
+      const addingTraining = action.payload;
+
+      if(!state.paginatedTrainings || !addingTraining) {
+        return;
+      }
+
+      state.paginatedTrainings?.entities.push(addingTraining);
+    },
+
     // Подходящие по параметрам для пользователя тренировки
     setConvenientTrainingsAction: (state, action: PayloadAction<TrainingsWithPaginationRDO | null>) => {
       state.paginatedConvenientTrainings = action.payload;
@@ -71,6 +86,11 @@ export const trainingProcess = createSlice({
     // Тренировки с рейтингом больше 0
     setWithRatingTrainingsAction: (state, action: PayloadAction<TrainingsWithPaginationRDO | null>) => {
       state.paginatedWithRatingTrainings = action.payload;
+    },
+
+    // Установка базовых парамтеров фильтра (цена и калории) исходя из имеющихся тренировок
+    setTrainingFilterParamsAction: (state, action: PayloadAction<TrainingFilterParamsRDO | null>) => {
+      state.filterParams = action.payload;
     },
 
     // При обновлении какой либо тренировки. ее нужно обновить во всех списках
@@ -145,6 +165,18 @@ export const trainingProcess = createSlice({
         state.isTrainingsLoading = false;
       })
 
+       // Search trainings
+      .addCase(searchTrainingsAction.pending, (state) => {
+        state.isTrainingsLoading = true;
+      })
+      .addCase(searchTrainingsAction.fulfilled, (state) => {
+        state.isTrainingsLoading = false;
+      })
+      .addCase(searchTrainingsAction.rejected, (state) => {
+        state.isTrainingsLoading = false;
+      })
+
+
       // Training item
       .addCase(fetchTrainingItemAction.pending, (state) => {
         state.isTrainingsItemLoading = true;
@@ -193,11 +225,13 @@ export const trainingProcess = createSlice({
 
 export const {
   setTrainingsAction,
+  appendTrainingAction,
   appendTrainingsAction,
   setConvenientTrainingsAction,
   setWithDiscountTrainingsAction,
   setWithRatingTrainingsAction,
   setTrainingItemAction,
+  setTrainingFilterParamsAction,
   updateTrainingsListAction,
   deleteTrainingItemStateAction
 } = trainingProcess.actions;

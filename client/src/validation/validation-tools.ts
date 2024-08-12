@@ -1,4 +1,5 @@
 import Joi from 'joi';
+import { toast } from 'react-toastify';
 
 const ERROR_CLASS = {
   FIELD: 'custom-input--error',
@@ -12,12 +13,17 @@ const ERROR_CLASS = {
  * объекте
  */
 
-export function validateFields<T>(target: T, validationSchema: Joi.ObjectSchema<any>) {
+export function validateFields<T>(
+  target: T,
+  validationSchema: Joi.ObjectSchema<any>,
+  preserveErrorTextFieldContent: boolean = false, // Сохранять текст, который предустановлен в поле с ошибкой
+  showErrorToasts: boolean = true // Показывать всплывающие окна с ошибкой
+): [boolean, string[] | []] {
   clearErrors();
-
   const validationErrors = validationSchema.validate(target, { abortEarly: false });
 
   let isFieldsHasErrors = false;
+  let errorMessages: string[] | [] = [];
 
   if (validationErrors.error?.details) {
     isFieldsHasErrors = true;
@@ -30,20 +36,32 @@ export function validateFields<T>(target: T, validationSchema: Joi.ObjectSchema<
       const errorTextBox = inputContainer?.querySelector(`.${ERROR_CLASS.TEXT_BOX}`);
 
       if (errorTextBox && error.message) {
-        errorTextBox.textContent = error.message;
+        // Если в поле с ошибкой указан какой то стандартный текст
+        // сохраняем его
+        if(!errorTextBox.textContent || !preserveErrorTextFieldContent) {
+          errorTextBox.textContent = error.message;
+        }
+
         inputContainer?.classList.add(ERROR_CLASS.FIELD);
       }
     });
 
+    errorMessages = errorDetails.map((error) => error.message);
   }
 
-  return isFieldsHasErrors;
+  if(showErrorToasts && errorMessages.length > 0) {
+    toast.error('Validation error');
+    errorMessages.forEach((error) => toast.warn(error))
+    toast.info(`Please, correct marked fields and try send form again.`);
+  }
+
+  return [isFieldsHasErrors, errorMessages];
 }
 
 export function clearErrors() {
-  const fieldsWithErorrs = document.querySelectorAll(`.${ERROR_CLASS.FIELD}`);
+  const fieldsWithErrors = document.querySelectorAll(`.${ERROR_CLASS.FIELD}`);
 
-  fieldsWithErorrs.forEach((errorField) => errorField.classList.remove(ERROR_CLASS.FIELD));
+  fieldsWithErrors.forEach((errorField) => errorField.classList.remove(ERROR_CLASS.FIELD));
 }
 
 export function clearFieldError(target: HTMLElement) {

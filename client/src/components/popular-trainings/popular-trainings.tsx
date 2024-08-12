@@ -8,28 +8,33 @@ import 'swiper/css/bundle';
 
 import { AppRoute, POPULAR_MAX_SLIDES_COUNT } from '@client/src/const';
 import { useAppSelector } from '@client/src/hooks';
-import { getTrainingsWithRating, getWithRatingTrainingsLoadingStatus } from '@client/src/store/slices/training-process/training-process.selectors';
+import { getWithRatingTrainingsLoadingStatus } from '@client/src/store/slices/training-process/training-process.selectors';
+import useWithRatingTrainingsList from '@client/src/hooks/useWithRatingTrainingsList';
+
 import Spinner from '../tools/spinner/spinner';
 import PopularTrainingsItem from './popular-trainings-item/popular-trainings-item';
 import Stub from '../tools/stub/stub';
+import { getCurrentUserInfo } from '@client/src/store/slices/user-process/user-process.selectors';
+import { UserRoleEnum } from '@shared/types/user-roles.enum';
 
 export default function PopularTrainings(): ReactElement {
   const navigate = useNavigate();
-  const trainings = useAppSelector(getTrainingsWithRating);
+  const trainings = useWithRatingTrainingsList();
   const isTrainingsLoading = useAppSelector(getWithRatingTrainingsLoadingStatus);
+  const userInfo = useAppSelector(getCurrentUserInfo);
+
+  const isTrainer = userInfo?.role === UserRoleEnum.TRAINER;
 
   function handleSeeAllBtnClick() {
-    navigate(AppRoute.TRAININGS);
-  }
+    const destinationURL = isTrainer ? AppRoute.ACCOUNT : AppRoute.TRAININGS;
 
-  if (isTrainingsLoading) {
-    return <Spinner />
+    navigate(destinationURL);
   }
 
   // Слайдер может содержать не более SPECIAL_FOR_YOU_MAX_SLIDES_COUNT слайдов
   let slides = trainings?.entities;
 
-  if(slides) {
+  if (slides) {
     // Сортировка тренировок по величине скидки
     slides = [...slides].sort((trainingA, trainingB) => {
       if (!trainingA.rating || !trainingB.rating) {
@@ -79,12 +84,17 @@ export default function PopularTrainings(): ReactElement {
           </div>
 
           {
+            isTrainingsLoading && <Spinner />
+          }
+
+          {
             !trainings && <Stub />
           }
 
           {
             trainings &&
             <Swiper
+              className='popular-trainings__list'
               modules={[Navigation]}
               spaceBetween={20}
               slidesPerView={4}
@@ -98,24 +108,22 @@ export default function PopularTrainings(): ReactElement {
                 nextEl: '.popular-trainings__control--next',
               }}
             >
-              <ul className="popular-trainings__list">
-                {
-                  slides && slides.map((training) => {
-                    const itemProps = {
-                      ...training,
-                      id: training.id as string,
-                      rating: training.rating as number,
-                      discount: training.discount as number,
-                    };
+              {
+                slides && slides.map((training) => {
+                  const itemProps = {
+                    ...training,
+                    id: training.id as string,
+                    rating: training.rating as number,
+                    discount: training.discount as number,
+                  };
 
-                    return (
-                      <SwiperSlide key={training.id}>
-                        <PopularTrainingsItem training={itemProps} />
-                      </SwiperSlide>
-                    )
-                  })
-                }
-              </ul>
+                  return (
+                    <SwiperSlide key={training.id}>
+                      <PopularTrainingsItem training={itemProps} />
+                    </SwiperSlide>
+                  )
+                })
+              }
             </Swiper>
           }
         </div>

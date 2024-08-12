@@ -8,6 +8,7 @@ import { AsyncOptions } from '@client/src/types/async-options.type';
 import { setDataLoadingStatus } from '../slices/main-process/main-process';
 import { CreateTrainingReviewDTO, TrainingReviewsWithPaginationRDO } from '@shared/training-review';
 import { appendTrainingReviewsAction, setTrainingReviewsAction } from '../slices/training-reviews-process/training-reviews-process';
+import { fetchTrainingItemAction } from './api-training-action';
 
 const APITrainingPrefix = `[${Namespace.TRAINING_REVIEWS}-BACKEND]`;
 const APIAction = {
@@ -16,7 +17,7 @@ const APIAction = {
   TRAINING_REVIEW_FETCH_ITEM: `${APITrainingPrefix}/item`,
 
   TRAINING_REVIEW_CREATE: `${APITrainingPrefix}/create`,
-  TRAINING_EVIEW_UPDATE: `${APITrainingPrefix}/update`,
+  TRAINING_REVIEW_UPDATE: `${APITrainingPrefix}/update`,
   TRAINING_REVIEW_DELETE: `${APITrainingPrefix}/delete`,
 } as const;
 
@@ -56,13 +57,13 @@ export const addTrainingReviewsAction = createAsyncThunk<void, CreateTrainingRev
   ) => {
     dispatch(setDataLoadingStatus(true));
 
-    const trainingId = reviewData.trainingId;
-
+    const trainingId = reviewData.trainingId as string;
 
     try {
       const { data } = await api.post<CreateTrainingReviewDTO>(`${ApiRoute.TRAINING_REVIEWS_API}/${trainingId}`, reviewData);
 
       dispatch(appendTrainingReviewsAction(data));
+      dispatch(fetchTrainingItemAction(trainingId)); // Обновляем информацию о тренировке (т.к. пересчитался рейтинг)
       dispatch(setDataLoadingStatus(false));
 
     } catch(err) {

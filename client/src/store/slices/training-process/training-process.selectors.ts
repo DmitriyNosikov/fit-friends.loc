@@ -1,6 +1,6 @@
 import { Namespace } from '@client/src/const';
 import { TrainingStateNamespace } from '@client/src/types/selector';
-import { CreateTrainingRDO, TrainingsWithPaginationRDO } from '@shared/training';
+import { CreateTrainingRDO, TrainingFilterParamsRDO, TrainingsWithPaginationRDO } from '@shared/training';
 
 // Lists
 export function getTrainingsList(state: TrainingStateNamespace): TrainingsWithPaginationRDO | null {
@@ -22,6 +22,11 @@ export function getTrainingsWithRating(state: TrainingStateNamespace): Trainings
 // Trainings item
 export function getTrainingItem(state: TrainingStateNamespace): CreateTrainingRDO | null {
   return state[Namespace.TRAINING].trainingItem;
+}
+
+// Training filter params
+export function getTrainingFilterParams(state: TrainingStateNamespace): TrainingFilterParamsRDO | null {
+  return state[Namespace.TRAINING].filterParams;
 }
 
 

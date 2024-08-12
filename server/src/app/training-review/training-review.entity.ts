@@ -14,12 +14,14 @@ export class TrainingReviewEntity extends Entity implements StorableEntityInterf
   public rating: number;
   public text: string;
   
+  public userInfo?: UserInterface;
+  
   constructor(review?: TrainingReviewInterface) {
     super();
     this.populate(review);
   }
 
-  public populate(review?: TrainingReviewInterface) {
+  public populate(review?: TrainingReviewInterface & { user?: UserInterface }) {
     if (!review) {
       return;
     }
@@ -32,9 +34,15 @@ export class TrainingReviewEntity extends Entity implements StorableEntityInterf
     this.trainingId = review.trainingId;
     this.rating = review.rating;
     this.text = review.text;
+
+    // Храним доп. инфу о юзере в свойстве userInfo вместо user
+    // т.к. из за того, что призма строит зависимости и выводит сущности сама,
+    // в ее типах уже хранится свойство user для создания зависимостей, и мы
+    // не можем использовать его в своих целях
+    this.userInfo = review.user;
   }
 
-  public toPOJO(): TrainingReviewInterface {
+  public toPOJO(): TrainingReviewInterface & { userInfo?: UserInterface } {
     return {
       id: this.id,
       createdAt: this.createdAt,
@@ -44,6 +52,8 @@ export class TrainingReviewEntity extends Entity implements StorableEntityInterf
       trainingId: this.trainingId,
       rating: this.rating,
       text: this.text,
+
+      userInfo: this.userInfo,
     };
   }
 }

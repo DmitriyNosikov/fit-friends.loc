@@ -1,13 +1,28 @@
-import { TrainingSearchQuery } from '@shared/training';
-import { BaseSearchQuery } from '@shared/types';
+import { TrainingType } from '@shared/types/training-type.enum';
 import { UserLevelEnum } from '@shared/types/user-level.enum';
 
-export function adaptQueryParams(queryString: BaseSearchQuery | TrainingSearchQuery) {
+export function createSearchURL<T extends Record<string, unknown>>(baseURL: string, searchQuery?: T) {
+  let url = baseURL;
+
+  if(searchQuery && Object.keys(searchQuery).length > 0) {
+    const queryString = adaptQueryParams(searchQuery as Record<string, unknown>);
+
+    url += `?${queryString}`;
+  }
+
+  return url;
+}
+
+export function adaptQueryParams(queryString: Record<string, unknown>) {
   let adaptedQueryString = '';
   let tempStorage: string[] = [];
 
   for(const [key, value] of Object.entries(queryString)) {
-    if((key === 'type' || key === 'stringsCount') && Array.isArray(value)) {
+    if(Array.isArray(value) && value.length <= 0) {
+      continue;
+    }
+
+    if(Array.isArray(value)) {
       tempStorage.push(getUrlStringFromArray(key, value));
     } else {
       tempStorage.push(`${key}=${value}`);
@@ -55,4 +70,30 @@ export function getAdaptedUserLevel(level: string) {
   }
 
   return userLevel;
+}
+
+export function adaptPaymentType(type: string) {
+  return (type === 'мир') ? 'mir' : type;
+}
+
+export function getTrainingThumbnailByType(type: TrainingType) {
+  switch(type) {
+    case 'йога': return '/img/content/thumbnails/training-01';
+    case 'бег': return '/img/content/thumbnails/training-06';
+    case 'бокс': return '/img/content/thumbnails/training-03';
+    case 'стретчинг': return '/img/content/thumbnails/training-12';
+    case 'кроссфит': return '/img/content/thumbnails/training-02';
+    case 'аэробика': return '/img/content/thumbnails/training-09';
+    case 'пилатес': return '/img/content/thumbnails/training-05';
+    default: return '/img/content/thumbnails/training-11';
+  }
+}
+
+export function getTrainingPromoByType(type: TrainingType) {
+  switch(type) {
+    case 'аэробика': return '/img/content/promo-1';
+    case 'стретчинг': return '/img/content/promo-2';
+    case 'пилатес': return '/img/content/promo-3';
+    default: return '/img/content/promo-2';
+  }
 }

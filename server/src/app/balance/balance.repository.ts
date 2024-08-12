@@ -27,8 +27,7 @@ export class BalanceRepository extends BasePostgresRepository<BalanceEntity, Bal
 
   public async findById(balanceId: string): Promise<BalanceEntity | null> {
     const balance = await this.dbClient.balance.findFirst({
-      where: { id: balanceId },
-      include: { order: true }
+      where: { id: balanceId }
     });
 
     if (!balance) {
@@ -38,14 +37,9 @@ export class BalanceRepository extends BasePostgresRepository<BalanceEntity, Bal
     return this.getEntity(balance);
   }
 
-  public async findByServiceId(serviceId: string, userId: string): Promise<BalanceEntity | null> {
+  public async findUserBalanceByTrainingId(userId: string, trainingId: string): Promise<BalanceEntity | null> {
     const balance = await this.dbClient.balance.findFirst({
-      where: {
-        order: { serviceId, userId }
-      },
-      include: {
-        order: true,
-      }
+      where: { trainingId, userId }
     });
 
     if (!balance) {
@@ -64,6 +58,10 @@ export class BalanceRepository extends BasePostgresRepository<BalanceEntity, Bal
     const [items, totalItemsCount] = await Promise.all([
       this.dbClient.balance.findMany({
         where,
+
+        include: {
+          training: true
+        },
 
         // Pagination
         take,
@@ -122,9 +120,7 @@ export class BalanceRepository extends BasePostgresRepository<BalanceEntity, Bal
     const documents = await this.dbClient.balance.findMany({
       where: {
         AND: [
-          {
-            order: { userId }
-          },
+          { userId },
           { remainingTrainingsCount: { gt: 0 } }
         ]
       }
@@ -135,11 +131,14 @@ export class BalanceRepository extends BasePostgresRepository<BalanceEntity, Bal
     return remainingTrainings;
   }
 
-  public async changeTrainingBalance(balanceId: string, balance: number) {
+  public async changeBalance(balanceId: string, balance: number, hasTrainingStarted: boolean) {
     // Обновляем баланс
     const updatedOrder = await this.dbClient.balance.update({
       where: { id: balanceId },
-      data: { remainingTrainingsCount: balance }
+      data: {
+        remainingTrainingsCount: balance,
+        hasTrainingStarted
+      }
     });
 
     const orderWithUpdatedBalance = this.createEntityFromDocument(updatedOrder as unknown as BalanceInterface);
@@ -163,7 +162,7 @@ export class BalanceRepository extends BasePostgresRepository<BalanceEntity, Bal
     const balance = await this.dbClient.balance.findFirst({
       where: {
         id: balanceId,
-        order: { userId }
+        userId
       },
     });
 
@@ -184,9 +183,7 @@ export class BalanceRepository extends BasePostgresRepository<BalanceEntity, Bal
     const orderBy: Prisma.BalanceOrderByWithRelationInput = {};
 
     if(query?.userId) {
-      where.order = {
-        userId: query.userId
-      }
+      where.userId = query.userId;
     }
 
     // Сортировка и направление сортировки

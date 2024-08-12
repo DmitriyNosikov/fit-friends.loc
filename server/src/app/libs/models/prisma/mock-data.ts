@@ -47,7 +47,7 @@ export async function getUsers(): Promise<AuthUserInterface[]> {
       email: "test1@test.ru",
       name: "Alex",
       passwordHash,
-      avatar: "/client/public/img/content/avatars/users/photo-1.png",
+      avatar: "/img/content/avatars/users/photo-1.png",
       gender: GenderEnum.MALE,
       location: LocationEnum.PETROGRADSKAYA,
       role: UserRoleEnum.CLIENT,
@@ -61,7 +61,7 @@ export async function getUsers(): Promise<AuthUserInterface[]> {
       email: "test2@test.ru",
       name: "Maria",
       passwordHash,
-      avatar: "/client/public/img/content/avatars/users/photo-2.png",
+      avatar: "/img/content/avatars/users/photo-2.png",
       gender: GenderEnum.FEMALE,
       location: LocationEnum.UDELNAYA,
       role: UserRoleEnum.CLIENT,
@@ -75,7 +75,7 @@ export async function getUsers(): Promise<AuthUserInterface[]> {
       email: "test3@test.ru",
       name: "Rick",
       passwordHash,
-      avatar: "/client/public/img/content/avatars/users/photo-4.png",
+      avatar: "/img/content/avatars/users/photo-4.png",
       gender: GenderEnum.MALE,
       location: LocationEnum.ZVEZDNAYA,
       role: UserRoleEnum.CLIENT,
@@ -89,7 +89,7 @@ export async function getUsers(): Promise<AuthUserInterface[]> {
       email: "test4@test.ru",
       name: "Lina",
       passwordHash,
-      avatar: "/client/public/img/content/avatars/users/photo-3.png",
+      avatar: "/img/content/avatars/users/photo-3.png",
       gender: GenderEnum.FEMALE,
       location: LocationEnum.SPORTIVNAYA,
       role: UserRoleEnum.CLIENT,
@@ -108,7 +108,7 @@ export function getTrainings() {
     {
       id: randomUUID(),
       title: "fitball",
-      background: "img/content/thumbnails/training-01.jpg",
+      background: "/img/content/thumbnails/training-01.jpg",
       userLevel: UserLevelEnum.NEWBIE,
       trainingType: TrainingTypeEnum.YOGA,
       trainingDuration: TrainingDurationEnum.HOUR,
@@ -119,12 +119,13 @@ export function getTrainings() {
       video: "test/video/later.avi",
       trainersName: "Johny",
       rating: 0,
-      isSpecial: false
+      isSpecial: false,
+      userId: ""
     },
     {
       id: randomUUID(),
       title: "run, forrest",
-      background: "img/content/thumbnails/training-02.jpg",
+      background: "/img/content/thumbnails/training-02.jpg",
       userLevel: UserLevelEnum.REGULAR,
       trainingType: TrainingTypeEnum.RUNNING,
       trainingDuration: TrainingDurationEnum.HALF_HOUR,
@@ -136,12 +137,13 @@ export function getTrainings() {
       video: "test/video/later.avi",
       trainersName: "Alexa",
       rating: 0,
-      isSpecial: true
+      isSpecial: true,
+      userId: ""
     },
     {
       id: randomUUID(),
       title: "full body stretch",
-      background: "img/content/thumbnails/training-03.jpg",
+      background: "/img/content/thumbnails/training-03.jpg",
       userLevel: UserLevelEnum.REGULAR,
       trainingType: TrainingTypeEnum.STRETCHING,
       trainingDuration: TrainingDurationEnum.TWO_HOURS,
@@ -153,12 +155,13 @@ export function getTrainings() {
       video: "test/video/later.avi",
       trainersName: "Evil",
       rating: 0,
-      isSpecial: true
+      isSpecial: true,
+      userId: ""
     },
     {
       id: randomUUID(),
       title: "devil's cindy",
-      background: "img/content/thumbnails/training-04.jpg",
+      background: "/img/content/thumbnails/training-04.jpg",
       userLevel: UserLevelEnum.PRO,
       trainingType: TrainingTypeEnum.CROSSFIT,
       trainingDuration: TrainingDurationEnum.HOUR_AND_HALF,
@@ -169,12 +172,13 @@ export function getTrainings() {
       video: "test/video/later.avi",
       trainersName: "Cindy",
       rating: 0,
-      isSpecial: false
+      isSpecial: false,
+      userId: ""
     },
     {
       id: randomUUID(),
       title: "Suffer",
-      background: "img/content/thumbnails/training-05.jpg",
+      background: "/img/content/thumbnails/training-05.jpg",
       userLevel: UserLevelEnum.PRO,
       trainingType: TrainingTypeEnum.CROSSFIT,
       trainingDuration: TrainingDurationEnum.TWO_HOURS,
@@ -186,7 +190,8 @@ export function getTrainings() {
       video: "test/video/later.avi",
       trainersName: "Alex",
       rating: 5,
-      isSpecial: true
+      isSpecial: true,
+      userId: ""
     }
   ];
 }
@@ -202,9 +207,9 @@ export function getOrders(usersList: AuthUserInterface[], trainingsList: Trainin
     const randomUserId = usersList[randomUserIdIndex].id;
 
     orders.push({
-      userId: randomUserId,
       type: "абонемент",
-      serviceId: training.id,
+      userId: randomUserId,
+      trainingId: training.id,
       trainingsCount: trainingsCount,
       paymentType: PaymentTypeEnum.MIR,
       price: training.price,
@@ -256,7 +261,7 @@ export function getReviews(
   return reviews;
 }
 
-function getRandomIntInclusive(min, max) {
+export function getRandomIntInclusive(min, max) {
   const minCeiled = Math.ceil(min);
   const maxFloored = Math.floor(max);
   return Math.floor(Math.random() * (maxFloored - minCeiled + 1) + minCeiled);

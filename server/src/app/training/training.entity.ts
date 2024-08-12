@@ -2,12 +2,7 @@ import { Entity } from '@server/libs/entities';
 import { StorableEntityInterface } from '@server/libs/interfaces';
 import { TrainingInterface } from './interfaces/training.interface';
 import { Gender, TrainingDuration, TrainingType, UserLevel } from '@server/libs/types';
-
-
-export const TRAINING_DEFAULT = {
-  RATING: 0,
-
-} as const;
+import { UserInterface } from '@server/user/interfaces';
 
 export class TrainingEntity extends Entity implements StorableEntityInterface<TrainingInterface> {
   public createdAt?: Date;
@@ -26,14 +21,17 @@ export class TrainingEntity extends Entity implements StorableEntityInterface<Tr
   public video: string;
   public rating?: number;
   public trainersName: string;
-  public isSpecial: boolean;
+  public isSpecial?: boolean;
+
+  public userId: UserInterface['id'];
+  public userInfo?: UserInterface;
 
   constructor(training?: TrainingInterface) {
     super();
     this.populate(training);
   }
 
-  populate(training: TrainingInterface) {
+  populate(training: TrainingInterface & { user?: UserInterface }) {
     if (!training) {
       return;
     }
@@ -56,9 +54,12 @@ export class TrainingEntity extends Entity implements StorableEntityInterface<Tr
     this.rating = training.rating;
     this.trainersName = training.trainersName;
     this.isSpecial = training.isSpecial ?? false;
+
+    this.userId = training.userId;
+    this.userInfo = training.user;
   }
 
-  toPOJO(): TrainingInterface {
+  toPOJO(): TrainingInterface & { userInfo?: UserInterface } {
     return {
       id: this.id,
       createdAt: this.createdAt,
@@ -78,6 +79,9 @@ export class TrainingEntity extends Entity implements StorableEntityInterface<Tr
       rating: this.rating,
       trainersName: this.trainersName,
       isSpecial: this.isSpecial,
+
+      userId: this.userId,
+      userInfo: this.userInfo,
     };
   }
 }

@@ -1,18 +1,21 @@
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
-import { AdditionalInfoRDO, LoggedUserRDO } from '@shared/user/';
+import { AdditionalInfoRDO, LoggedUserRDO, UserRDO } from '@shared/user/';
 import { checkUserAuthAction, loginUserAction } from '../../actions/api-user-action';
 
-import { AuthorizationStatus, Namespace } from '@client/src/const';
+import { AuthorizationStatus, AuthorizationStatusList, Namespace } from '@client/src/const';
 import { getToken } from '@client/src/services/token';
 
 export type UserProcess = {
   authorizationStatus: keyof typeof AuthorizationStatus,
-  userInfo: LoggedUserRDO | null,
+  currentUserInfo: LoggedUserRDO | null,
+  userInfo: UserRDO | null,
   additionalInfo: AdditionalInfoRDO | null
 };
 
+
 const initialState: UserProcess = {
   authorizationStatus: AuthorizationStatus.UNKNOWN,
+  currentUserInfo: null,
   userInfo: null,
   additionalInfo: null,
 };
@@ -21,11 +24,20 @@ export const userProcess = createSlice({
   name: Namespace.USER,
   initialState,
   reducers: {
-    setUserInfoAction: (state, action: PayloadAction<LoggedUserRDO | null>) => {
+    setCurrentUserInfo: (state, action: PayloadAction<LoggedUserRDO | null>) => {
+      state.currentUserInfo = action.payload;
+    },
+
+    setUserInfo: (state, action: PayloadAction<UserRDO | null>) => {
       state.userInfo = action.payload;
     },
+
     setAdditionalInfo: (state, action: PayloadAction<AdditionalInfoRDO | null>) => {
       state.additionalInfo = action.payload;
+    },
+
+    setUserAuthStatus: (state, action: PayloadAction<AuthorizationStatusList>) => {
+      state.authorizationStatus = action.payload;
     }
   },
   extraReducers(builder) {
@@ -53,4 +65,9 @@ export const userProcess = createSlice({
   },
 });
 
-export const { setUserInfoAction, setAdditionalInfo } = userProcess.actions;
+export const {
+  setCurrentUserInfo,
+  setUserInfo,
+  setAdditionalInfo,
+  setUserAuthStatus
+} = userProcess.actions;

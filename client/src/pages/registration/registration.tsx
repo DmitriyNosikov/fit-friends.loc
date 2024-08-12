@@ -2,15 +2,13 @@ import { useRef, useState } from 'react';
 import { toast } from 'react-toastify';
 import dayjs from 'dayjs';
 
-import { useAppDispatch, useAppSelector } from '@client/src/hooks';
-import useAdditionalInfo from '@client/src/hooks/useAdditionalInfo';
+import { useAppDispatch } from '@client/src/hooks';
+import useFetchAdditionalInfo from '@client/src/hooks/useFetchAdditionalInfo';
 
-import { getAdditionalInfo } from '@client/src/store/slices/user-process/user-process.selectors';
 import { registerUserAction } from '@client/src/store/actions/api-user-action';
 
 import RegistrationAvatar from '@client/src/components/registration/registration-avatar/registration-avatar';
 import RegistrationRole from '@client/src/components/registration/registration-role/registration-role';
-import RegistrationGender from '@client/src/components/registration/registration-gender/registration-gender';
 import { clearFieldError, validateFields } from '../../validation/validation-tools';
 
 import { CreateUserDTO } from '@shared/user';
@@ -18,15 +16,17 @@ import { useNavigate } from 'react-router-dom';
 import { AppRoute } from '@client/src/const';
 import CustomSelectBtn from '@client/src/components/custom-select-btn/custom-select-btn';
 import { registrationValidationSchema } from '@client/src/validation/registration-validation';
+import RadioGender from '@client/src/components/radio-gender/radio-gender';
+import { upperCaseFirst } from '@client/src/utils/common';
+import { UploadingFilePayload } from '@client/src/types/payloads';
+
 
 export default function Registration() {
-  useAdditionalInfo();
-
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
   const maxBirthDate = dayjs().format('YYYY-MM-DD');
-  const additionalInfo = useAppSelector(getAdditionalInfo);
+  const additionalInfo = useFetchAdditionalInfo();
   const gender = additionalInfo?.gender;
   const location = additionalInfo?.location;
   const roles = additionalInfo?.roles;
@@ -35,7 +35,7 @@ export default function Registration() {
   const userEmail = useRef<HTMLInputElement>(null);
   const userBirthDate = useRef<HTMLInputElement>(null);
   const userPassword = useRef<HTMLInputElement>(null);
-  const [userAvatar, setUserAvatar] = useState('');
+  const [userAvatar, setUserAvatar] = useState();
   const [userLocation, setUserLocation] = useState('');
   const [userGender, setUserGender] = useState('неважно');
   const [userRole, setUserRole] = useState('client');
@@ -76,17 +76,19 @@ export default function Registration() {
       email: emailValue,
       birthDate: birthDateValue ? new Date(birthDateValue) : undefined,
       password: passwordValue,
-      location: userLocation,
+      location: userLocation.toLowerCase(),
       gender: userGender,
       role: userRole,
-    } as CreateUserDTO;
+    } as CreateUserDTO & UploadingFilePayload;
 
-    const isFormHasErrors = validateFields<CreateUserDTO>(userData, registrationValidationSchema);
+    if(userAvatar) {
+      userData['uploadingFile'] = userAvatar as FormData;
+    }
+
+    const [isFormHasErrors] = validateFields<CreateUserDTO>(userData, registrationValidationSchema);
 
     if (isFormHasErrors) {
-      toast.warn('Validation error. Please, correct marked fields and try send form again.');
-
-      return;
+      return false;
     }
 
     dispatch(registerUserAction(userData))
@@ -166,19 +168,19 @@ export default function Registration() {
                     {
                       // Location list
                       location &&
-                        <>
+                      <>
                         <div className="custom-select custom-select--not-selected" id="location">
                           <span className="custom-select__label">Ваша локация</span>
-
+                          <div className="custom-select__placeholder">ст. м. {upperCaseFirst(userLocation)}</div>
                           <CustomSelectBtn
-                            itemsList={location}
+                            itemsList={location.map((item) => upperCaseFirst(item))}
                             uniqCSSId='registration-location'
                             onItemSelect={setUserLocation}
                           />
 
                           <span className="custom-input__error"></span>
                         </div>
-                        </>
+                      </>
                     }
 
                     <div className="custom-input" id="password">
@@ -193,7 +195,17 @@ export default function Registration() {
 
                     {
                       // User gender
-                      gender && <RegistrationGender genderList={gender} onGenderChange={setUserGender} />
+                      gender &&
+                      <div className="sign-up__radio" id="gender">
+                        <span className="sign-up__label">Пол</span>
+                        <RadioGender
+                          genderList={gender}
+                          onGenderChange={setUserGender}
+                          selectedItem='женский'
+                          containerAdditionalClass='custom-toggle-radio--big'
+                        />
+                        <span className="custom-input__error"></span>
+                      </div>
                     }
                   </div>
 

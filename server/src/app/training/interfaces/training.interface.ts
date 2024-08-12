@@ -1,5 +1,6 @@
 import { CreatedUpdatedDatesInterface } from '@server/libs/interfaces';
 import { Gender, TrainingType, UserLevel } from '@server/libs/types';
+import { UserInterface } from '@server/user/interfaces';
 import { TrainingDuration } from '@shared/types/training-duration.enum';
 
 export interface TrainingInterface extends CreatedUpdatedDatesInterface {
@@ -16,6 +17,7 @@ export interface TrainingInterface extends CreatedUpdatedDatesInterface {
   gender: Gender;
   video: string;
   rating?: number;
-  trainersName: string;
+  trainersName?: string;
   isSpecial?: boolean;
+  userId: UserInterface['id'];
 }

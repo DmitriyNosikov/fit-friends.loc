@@ -1,18 +1,22 @@
 import { ReactElement } from 'react';
 
+import { getTrainingPromoByType } from '@client/src/utils/adapters';
+import { TrainingType } from '@shared/types/training-type.enum';
+
 type SpecialOffersItemProps = {
   training: {
+    id: string;
     title: string;
-    background: string;
     description: string;
     price: number;
     discount: number;
+    trainingType: TrainingType;
   }
 };
 
 export default function SpecialOffersItem({ training }: SpecialOffersItemProps): ReactElement {
-  const { title, background, description, price, discount } = training;
-
+  const { title, description, price, discount, trainingType } = training;
+  const trainingThumbnail = getTrainingPromoByType(trainingType);
   const newPrice: number = price - discount;
 
   return (
@@ -20,15 +24,10 @@ export default function SpecialOffersItem({ training }: SpecialOffersItemProps):
       <aside className="promo-slider">
         <div className="promo-slider__overlay" />
         <div className="promo-slider__image">
-          <img
-            src={background}
-            width={1040}
-            height={469}
-            alt="promo-photo"
-          />
+          <img src={`${trainingThumbnail}.png`}srcSet={`${trainingThumbnail}@2x.png 2x`} width="1040" height="469" alt="promo-photo" />
         </div>
         <div className="promo-slider__header">
-          <h3 className="promo-slider__title">{title}</h3>
+          <h3 className="promo-slider__title">{ title }</h3>
           <div className="promo-slider__logo">
             <svg width={74} height={74} aria-hidden="true">
               <use xlinkHref="#logotype" />

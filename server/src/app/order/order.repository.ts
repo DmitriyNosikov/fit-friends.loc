@@ -10,10 +10,9 @@ import { OrderFactory } from './order.factory';
 
 import { SortType, SortTypeEnum } from '@shared/types/sort/sort-type.enum';
 import { SortDirection } from '@shared/types/sort/sort-direction.enum';
-import { BaseSearchQuery, DefaultSearchParam } from '@shared/types/search/base-search-query.type';
+import { DefaultSearchParam } from '@shared/types/search/base-search-query.type';
 import { PaginationResult } from '@server/libs/interfaces';
-import { OrderSearchFilters } from '@shared/order';
-import { UserIdPayload } from '@shared/types';
+import { OrderSearchFilters, OrderSearchQuery } from '@shared/order';
 
 @Injectable()
 export class OrderRepository extends BasePostgresRepository<OrderEntity, OrderInterface> {
@@ -51,7 +50,7 @@ export class OrderRepository extends BasePostgresRepository<OrderEntity, OrderIn
     return result;
   }
 
-  public async search(query?: BaseSearchQuery & UserIdPayload): Promise<PaginationResult<OrderEntity>> {
+  public async search(query?: OrderSearchQuery): Promise<PaginationResult<OrderEntity>> {
     const skip = query?.page && query?.limit ? (query.page - 1) * query.limit : undefined;
     const take = (!query?.limit || query?.limit > DefaultSearchParam.MAX_ITEMS_PER_PAGE) ? DefaultSearchParam.MAX_ITEMS_PER_PAGE : query.limit;
     const { where, orderBy } = this.getSearchFilters(query);
@@ -60,6 +59,10 @@ export class OrderRepository extends BasePostgresRepository<OrderEntity, OrderIn
     const [items, totalItemsCount] = await Promise.all([
       this.dbClient.order.findMany({
         where,
+
+        include: {
+          training: true
+        },
 
         // Pagination
         take,
@@ -82,7 +85,11 @@ export class OrderRepository extends BasePostgresRepository<OrderEntity, OrderIn
 
   public async create(entity: OrderEntity): Promise<OrderEntity | null> {
     const order = await this.dbClient.order.create({
-      data: entity
+      data: entity as OrderEntity,
+       
+      include: {
+        training: true
+      }
     });
 
     if (!order) {
@@ -146,12 +153,21 @@ export class OrderRepository extends BasePostgresRepository<OrderEntity, OrderIn
   }
 
   //////////////////// Вспомогательные методы поиска и пагинации ////////////////////
-  private getSearchFilters(query: BaseSearchQuery & UserIdPayload): OrderSearchFilters {
+  private getSearchFilters(query: OrderSearchQuery): OrderSearchFilters {
     const where: Prisma.OrderWhereInput = {};
     const orderBy: Prisma.OrderOrderByWithRelationInput = {};
 
     if(query?.userId) {
       where.userId = query.userId;
+    }
+
+    // Поиск заказов тренировок у определенного тренера
+    if(query?.trainerId) {
+      where.training = { userId: query.trainerId }
+    }
+
+    if(query?.trainingId) {
+      where.trainingId = query.trainingId;
     }
 
     // Сортировка и направление сортировки

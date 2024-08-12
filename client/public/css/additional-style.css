@@ -24,6 +24,103 @@
   overflow: hidden;
 }
 
-.custom-select__text {
-  opacity: 1;
+.sign-up .custom-select__placeholder,
+.create-training .custom-select__placeholder {
+  top: 44px;
+}
+
+/* NoUISlider */
+.range-slider .noUi-horizontal .noUi-handle {
+  width: 16px;
+  height: 16px;
+  background-color: #121212;
+  border-radius: 50%;
+  -webkit-transition: .3s ease;
+  -o-transition: .3s ease;
+  transition: .3s ease;
+  border: 0;
+  cursor: pointer;
+  position: absolute;
+  top: -9px;
+  box-shadow: none;
+}
+
+.range-slider .noUi-handle:before,
+.range-slider .noUi-handle:after,
+.filter-range__bar{
+  display: none;
+}
+
+.range-slider .noUi-horizontal .noUi-origin:last-child .noUi-handle {
+  right: -2px;
+}
+
+.range-slider .noUi-horizontal .noUi-handle {
+  top: -8px;
+  /* right: -8px; */
+}
+
+.range-slider .noUi-target {
+  width: 312px;
+  height: 1px;
+  background-color: #aeaeae;
+  border: none;
+}
+
+
+.range-slider .noUi-connect {
+  background-color: #121212;
+}
+
+/* Reviews Simplebar Scrollbar styles */
+.reviews-side-bar__list .simplebar-scrollable-y .simplebar-track.simplebar-vertical {
+  width: 8px;
+}
+
+/* Errors highlight */
+.custom-input--error label textarea {
+  border: 1px solid #e4001b;
+  background-color: transparent;
+}
+
+/* Training info */
+.training-info__textarea {
+  position: relative;
+}
+
+.training-video__edit-buttons {
+  display: grid;
+}
+
+.training-video__thumbnail video {
+  width: 100%;
+}
+
+
+.training-video__button--stop {
+  display: block;
+}
+
+.training-info__discount {
+  display: inherit;
+}
+
+.training-video__drop-files {
+  display: block;
+}
+
+
+.user-card__status--disabled {
+  border-color: lightgray;
+  color: lightgray;
+}
+
+.user-card__status--disabled::after {
+  background-color: lightgray;
+}
+
+
+.checkboxes-list {
+  list-style: none;
+  padding: 0;
 }

@@ -22,7 +22,7 @@ datasource db {
 enum PaymentType {
   visa
   mir
-  umoney
+  iomoney
 }
 
 //////////////////// USERS ////////////////////
@@ -49,6 +49,8 @@ model User {
   dayCaloriesLimit  Int?      @map("day_calories_limit")
   isReadyToTraining Boolean?  @map("is_ready_to_training")
 
+  training Training[]
+  balance Balance[]
   order Order[]
   trainingReview TrainingReview[]
   refreshToken RefreshToken[]
@@ -73,11 +75,14 @@ model Training {
   gender            String
   video             String
   rating            Int?
-  trainersName      String    @map("trainers_name")
+  trainersName      String?    @map("trainers_name")
   isSpecial         Boolean?  @map("is_special")
+  userId            String    @map("user_id")
 
-  order Order[]
-  review TrainingReview[]
+  balance           Balance[]
+  order             Order[]
+  review            TrainingReview[]
+  user              User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("trainings")
 }
@@ -88,15 +93,14 @@ model Order {
   updatedAt               DateTime?   @updatedAt @map("updated_at")
 
   type                    String
-  serviceId               String      @map("service_id")
+  userId                  String      @map("user_id")
+  trainingId              String      @map("training_id")
   price                   Int
   trainingsCount          Int         @map("trainings_count")
   totalPrice              Int         @map("total_price")
   paymentType             PaymentType @map("payment_type")
-  userId                  String
 
-  balance Balance?
-  service Training @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+  training Training @relation(fields: [trainingId], references: [id], onDelete: Cascade)
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
   
   @@map("orders")
@@ -107,11 +111,15 @@ model Balance {
   createdAt               DateTime?   @default(now()) @map("created_at")
   updatedAt               DateTime?   @updatedAt @map("updated_at")
 
-  orderId                 String      @unique @map("service_id")
+  trainingId              String      @map("training_id")
+  userId                  String      @map("user_id")
   remainingTrainingsCount Int         @map("remaining_trainings_count")
 
-  order Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
-  
+  hasTrainingStarted      Boolean?     @map("has_training_started")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  training Training @relation(fields: [trainingId], references: [id], onDelete: Cascade)
+
   @@map("balances")
 }
 
@@ -120,8 +128,8 @@ model TrainingReview {
   createdAt               DateTime?   @default(now()) @map("created_at")
   updatedAt               DateTime?   @updatedAt @map("updated_at")
 
-  userId                  String
-  trainingId              String
+  userId                  String      @map("user_id")
+  trainingId              String      @map("training_id")
   rating                  Int
   text                    String
 

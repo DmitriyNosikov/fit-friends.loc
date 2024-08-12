@@ -2,10 +2,10 @@
 @port = 8000
 @baseUrl = http://{{host}}:{{port}}/api/balance
 
-@balanceId = 1e234900-14ae-4202-b3f8-61222d8676e4
-@serviceId = 62dd4f38-ab30-44a5-84df-04458c82596a
+@balanceId = 74b554be-8dd9-4d81-a63b-060446369439
+@trainingId = f3049cb4-4efe-45f6-b105-fc1ed696f647
 @orderId = 201c2a72-d2a9-4b03-8ee1-0f4a5fa1d272
-@authorization = Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJkZzM0Z2RmNS1kZmg0LWdoNDYtd2VmNC1nZmw3OGduNWhmaDUiLCJlbWFpbCI6Imlyb24tbWFuQHN0YXJraW5kdXN0cmllcy5pdCIsIm5hbWUiOiJUb255Iiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzIwMjA4NzY1LCJleHAiOjE3MjAyMDk2NjV9.s07HeFmOKhUdTf_JXVR-CzDArUyXZThhFVzL26KXwBg
+@authorization = Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJhOTQzMWFlMC0xYTQ2LTQ3ZGQtOGE1My03YWNkNzU4M2I3ZjIiLCJlbWFpbCI6Imlyb24tbWFuQHN0YXJraW5kdXN0cmllcy5pdCIsIm5hbWUiOiJUb255Iiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzIyMjYyMzg2LCJleHAiOjE3MjIyNjMyODZ9.euI8o5M3k5EdPyCqgVif_Q2Bx_oZG4EhN7Uhro6MrCI
 
 # Create new balance
 POST {{baseUrl}}/ HTTP/1.1
@@ -13,13 +13,19 @@ Content-Type: application/json
 {{authorization}}
 
 {
-  "orderId": "201c2a72-d2a9-4b03-8ee1-0f4a5fa1d272",
-  "remainingTrainingsCount": 10
+  "trainingId": "573eeb95-d518-476b-8f58-fcba4879a732",
+  "remainingTrainingsCount": 1
 }
 ###
 
 # Get user balance
 GET {{baseUrl}}/?limit=30 HTTP/1.1
+Content-Type: application/json
+{{authorization}}
+###
+
+# Get user balance by training id
+GET {{baseUrl}}/by-training/{{trainingId}} HTTP/1.1
 Content-Type: application/json
 {{authorization}}
 ###
@@ -36,7 +42,7 @@ Content-Type: application/json
 {{authorization}}
 
 {
-  "remainingTrainingsCount": 10
+  "remainingTrainingsCount": 2
 }
 ###
 
@@ -47,13 +53,23 @@ Content-Type: application/json
 ###
 
 # Decrease training balance
-PATCH {{baseUrl}}/{{balanceId}}/decrease/1 HTTP/1.1
+PATCH {{baseUrl}}/decrease HTTP/1.1
 Content-Type: application/json
 {{authorization}}
+
+{
+  "trainingId": "d87708e2-7ed3-45c3-87d3-1fd116010270",
+  "amount": 1
+}
 ###
 
 # Increase training balance
-PATCH {{baseUrl}}/{{balanceId}}/increase/2 HTTP/1.1
+PATCH {{baseUrl}}/increase HTTP/1.1
 Content-Type: application/json
 {{authorization}}
+
+{
+  "trainingId": "d87708e2-7ed3-45c3-87d3-1fd116010270",
+  "amount": 1
+}
 ###

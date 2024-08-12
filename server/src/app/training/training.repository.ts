@@ -25,10 +25,41 @@ export class TrainingRepository extends BasePostgresRepository<TrainingEntity, T
     super(entityFactory, dbClient);
   }
 
+  public async findAll(): Promise<TrainingEntity[] | null> {
+    const trainings = await this.dbClient.training.findMany();
+
+    if(!trainings) {
+      return null;
+    }
+
+    const trainingEntities = trainings.map((training) => this.getEntity(training));
+
+    return trainingEntities;
+  }
+
+  public async findByUserId(userId: string): Promise<TrainingEntity | null> {
+    const training = await this.dbClient.training.findFirst({
+      where: { userId },
+
+      include: {
+        user: true
+      }
+    });
+
+    if (!training) {
+      return null;
+    }
+
+    return this.getEntity(training);
+  }
 
   public async findById(trainingId: string): Promise<TrainingEntity | null> {
     const training = await this.dbClient.training.findFirst({
-      where: { id: trainingId }
+      where: { id: trainingId },
+
+      include: {
+        user: true
+      }
     });
 
     if (!training) {
@@ -48,6 +79,10 @@ export class TrainingRepository extends BasePostgresRepository<TrainingEntity, T
       this.dbClient.training.findMany({
         where,
 
+        include: {
+          user: true
+        },
+
         // Pagination
         take,
         skip,
@@ -60,11 +95,11 @@ export class TrainingRepository extends BasePostgresRepository<TrainingEntity, T
 
     return {
       entities: itemsEntities,
-      currentPage:  query?.page ?? 0,
+      currentPage:  query?.page ?? 1,
       totalPages: this.calculateItemsPage(totalItemsCount, take),
       totalItems: totalItemsCount,
       itemsPerPage: take ?? totalItemsCount,
-    }
+    };
   }
 
   public async create(entity: TrainingEntity): Promise<TrainingEntity | null> {
@@ -85,7 +120,11 @@ export class TrainingRepository extends BasePostgresRepository<TrainingEntity, T
   ): Promise<TrainingEntity | null> {
     const updatedTraining = await this.dbClient.training.update({
       where: { id: trainingId },
-      data: { ...fieldsToUpdate }
+      data: { ...fieldsToUpdate },
+      
+      include: {
+        user: true
+      }
     });
 
     if (!updatedTraining) {
@@ -130,6 +169,11 @@ export class TrainingRepository extends BasePostgresRepository<TrainingEntity, T
 
     where.AND = [];
     const andFilters: AndFilters = [];
+
+    // Поиск по пользователю
+    if(query?.userId) {
+      where.userId = query.userId;
+    }
 
     // Поиск по заголовку
     if(query?.title) {

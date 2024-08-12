@@ -1,8 +1,11 @@
 import { CreatedUpdatedDatesInterface } from '@server/libs/interfaces';
-import { OrderInterface } from '@server/order/interfaces/order.interface';
+import { TrainingInterface } from '@server/training/interfaces';
+import { UserInterface } from '@server/user/interfaces';
 
 export interface BalanceInterface extends CreatedUpdatedDatesInterface {
   id?: string;
-  orderId: OrderInterface['id'];
+  trainingId: TrainingInterface['id'];
+  userId?: UserInterface['id'];
   remainingTrainingsCount: number;
+  hasTrainingStarted?: boolean;
 }

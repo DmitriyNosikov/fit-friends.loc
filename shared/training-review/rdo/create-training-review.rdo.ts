@@ -2,7 +2,8 @@ import { ApiProperty } from '@nestjs/swagger';
 import { TrainingReviewValidation } from '@server/training-review/training-review.constant';
 import { TrainingInterface } from '@server/training/interfaces/training.interface';
 import { UserInterface } from '@server/user/interfaces';
-import { Expose } from 'class-transformer';
+import { UserRDO } from '@shared/user';
+import { Expose, Type } from 'class-transformer';
 
 export class CreateTrainingReviewRDO {
   @ApiProperty({
@@ -55,4 +56,11 @@ export class CreateTrainingReviewRDO {
   })
   @Expose()
   text!: String;
+
+  @ApiProperty({
+    description: 'Review`s author additional info',
+  })
+  @Expose()
+  @Type(() => UserRDO)
+  userInfo?: UserRDO;
 }

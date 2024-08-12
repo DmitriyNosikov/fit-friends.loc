@@ -1,5 +1,5 @@
 import { PrismaClient } from '@prisma/client'
-import { getOrders, getReviews, getTrainings, getUsers } from './mock-data';
+import { getOrders, getRandomIntInclusive, getReviews, getTrainings, getUsers } from './mock-data';
 
 async function seedDB(prismaClient: PrismaClient) {
   // Add users
@@ -10,8 +10,15 @@ async function seedDB(prismaClient: PrismaClient) {
 
   // Add trainings
   const trainings = getTrainings();
+
+  trainings.map((training) => {
+    const randomIndex = getRandomIntInclusive(0, users.length - 1);
+    training.userId = users[randomIndex].id;
+    training.trainersName = users[randomIndex].name
+  });
+
   await prismaClient.training.createMany({
-    data: trainings
+    data: trainings,
   });
 
   // Add orders + balance
@@ -19,14 +26,19 @@ async function seedDB(prismaClient: PrismaClient) {
   for(const order of orders) {
     // Order
     await prismaClient.order.create({
-      data: {
-        ...order,
-        balance: {
-          create: {
-            remainingTrainingsCount: order.trainingsCount,
-          }
-        }
-      }
+      data: order
+    });
+
+    // Balance
+    const balance = {
+      userId: order.userId,
+      trainingId: order.trainingId,
+      remainingTrainingsCount: order.trainingsCount,
+      hasTrainingStarted: Math.random() < 0.5 // Random boolean
+    };
+    
+    await prismaClient.balance.create({
+      data: balance
     });
   }
 

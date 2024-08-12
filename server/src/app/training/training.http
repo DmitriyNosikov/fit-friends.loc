@@ -7,15 +7,17 @@ Content-Type: application/json
 ###
 
 @trainingId = b3110e27-df4g-j456-3gf4-d71d697f03e9
-@authorization = Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJlYWYwOTZhMC0xYjdkLTRkZTMtOGI2NS0xOGY4NTI4NTdhNDMiLCJlbWFpbCI6Imlyb24tbWFuQHN0YXJraW5kdXN0cmllcy5pdCIsIm5hbWUiOiJUb255Iiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzIwNDQwNTY2LCJleHAiOjE3MjA0NDE0NjZ9.qbKgYliXPL9MPLKD7Lx8B41PF9e4rjl_taYzzXxFF7o
+@authorization = Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJjYzAxMWY3NC00OTI2LTQ2NTMtYTEyNi1kNzYwMjI1NDZmMmIiLCJlbWFpbCI6Imlyb24tbWFuQHN0YXJraW5kdXN0cmllcy5pdCIsIm5hbWUiOiJUb255Iiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzIzMDMzNDY5LCJleHAiOjE3MjMwMzQzNjl9.jX8q8vN70pmTIdvV7Vdh3hwGGPA34ZKtNzTVqSF1g4o
+
 
 # /////////////////////////////// CREATE ///////////////////////////////
 # Create new training
 POST {{baseUrl}}/ HTTP/1.1
 Content-Type: application/json
+{{authorization}}
 
 {
-  "title": "Run, Forest",
+  "title": "1Run, Forest",
   "background": "some/training/background.jpg",
   "userLevel": "профессионал",
   "trainingType": "кроссфит",
@@ -24,9 +26,7 @@ Content-Type: application/json
   "calories": 1500,
   "description": "impossible crossfit training for real beasts",
   "gender": "мужской",
-  "video": "add/video/later.avi",
-  "trainersName": "Evil",
-  "isSpecial": true
+  "video": "add/video/later.avi"
 }
 ###
 
@@ -82,6 +82,12 @@ Content-Type: application/json
 
 # /////////////////////////////// WITH RATING TRAININGS ///////////////////////////////
 GET {{baseUrl}}/with-rating HTTP/1.1
+Content-Type: application/json
+{{authorization}}
+###
+
+# /////////////////////////////// TRAINING FILTER PARAMS ///////////////////////////////
+GET {{baseUrl}}/filter-params HTTP/1.1
 Content-Type: application/json
 {{authorization}}
 ###

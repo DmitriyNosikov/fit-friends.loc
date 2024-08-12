@@ -1,10 +1,12 @@
 import { useEffect } from 'react';
-import { useAppDispatch } from '.';
+import { useAppDispatch, useAppSelector } from '.';
 import { fetchWithRatingTrainingsAction } from '../store/actions/api-training-action';
+import { getTrainingsWithRating } from '../store/slices/training-process/training-process.selectors';
 
 
 export default function useWithRatingTrainingsList() {
   const dispatch = useAppDispatch();
+  const trainingsWithRating = useAppSelector(getTrainingsWithRating);
 
   useEffect(() => {
     let isMounted = true;
@@ -17,4 +19,6 @@ export default function useWithRatingTrainingsList() {
       isMounted = false;
     };
   }, []);
+
+  return trainingsWithRating;
 }

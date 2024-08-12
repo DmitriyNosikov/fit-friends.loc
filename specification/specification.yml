@@ -66,7 +66,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/UserRDO"
+                $ref: "#/components/schemas/LoggedUserRDO"
         "401":
           description: Incorrect user email/password
       tags: *a1
@@ -81,7 +81,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/UserRDO"
+                $ref: "#/components/schemas/LoggedUserRDO"
         "404":
           description: User not found
       tags: *a1
@@ -101,6 +101,25 @@ paths:
             are empty"
       tags: *a1
   /api/users/{userId}:
+    get:
+      operationId: UserController_getUserById
+      summary: Get info about user by id
+      parameters:
+        - name: userId
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        "200":
+          description: User found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserRDO"
+        "404":
+          description: User not found
+      tags: *a1
     delete:
       operationId: UserController_deleteUser
       summary: Delete user
@@ -217,6 +236,12 @@ paths:
           description: Item's creation date
           example: 2024-05-29
           schema: {}
+        - name: userId
+          required: false
+          in: query
+          description: Creator id
+          example: g83h4y0943-nv934819843-jv934h8t-n923g48n9438
+          schema: {}
         - name: ratingTo
           required: false
           in: query
@@ -244,13 +269,13 @@ paths:
         - name: priceTo
           required: false
           in: query
-          description: Prisa end value
+          description: Price end value
           example: 5000
           schema: {}
         - name: priceForm
           required: false
           in: query
-          description: Prisa start value
+          description: Price start value
           example: 1000
           schema: {}
         - name: gender
@@ -274,7 +299,7 @@ paths:
               - йога
               - бег
               - бокс
-              - стрейчинг
+              - стретчинг
               - кроссфит
               - аэробика
               - пилатес
@@ -337,6 +362,21 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/TrainingsWithPaginationRDO"
+        "404":
+          description: Training not found
+      tags: *a2
+  /api/trainings/filter-params:
+    get:
+      operationId: TrainingController_getTrainingFIlterParams
+      summary: Get params for training filter
+      parameters: []
+      responses:
+        "200":
+          description: Training found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TrainingFilterParamsRDO"
         "404":
           description: Training not found
       tags: *a2
@@ -573,6 +613,24 @@ paths:
           description: Item's creation date
           example: 2024-05-29
           schema: {}
+        - name: trainingId
+          required: false
+          in: query
+          description: Orders by training id
+          example: g83h4y0943-nv934819843-jv934h8t-n923g48n9438
+          schema: {}
+        - name: trainerId
+          required: false
+          in: query
+          description: Trainer's orders
+          example: g83h4y0943-nv934819843-jv934h8t-n923g48n9438
+          schema: {}
+        - name: userId
+          required: false
+          in: query
+          description: Creator id
+          example: g83h4y0943-nv934819843-jv934h8t-n923g48n9438
+          schema: {}
       responses:
         "200":
           description: ""
@@ -710,6 +768,24 @@ paths:
         "404":
           description: Balance not found
       tags: *a5
+  /api/balance/by-training/{trainingId}:
+    get:
+      operationId: BalanceController_getUserBalance
+      summary: Get user`s balance by training id
+      parameters:
+        - name: trainingId
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        "201":
+          description: Balance has been successfully created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreateBalanceDTO"
+      tags: *a5
   /api/balance/count:
     get:
       operationId: BalanceController_countBalance
@@ -725,9 +801,51 @@ paths:
         "404":
           description: Balance not found
       tags: *a5
+  /api/balance/increase:
+    patch:
+      operationId: BalanceController_increaseBalance
+      summary: Increase training balance by passed amount
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ChangeBalanceDTO"
+      responses:
+        "200":
+          description: Balance found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreateBalanceRDO"
+        "404":
+          description: Balance not found
+      tags: *a5
+  /api/balance/decrease:
+    patch:
+      operationId: BalanceController_decreaseBalance
+      summary: Decrease training balance by passed amount
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ChangeBalanceDTO"
+      responses:
+        "200":
+          description: Balance found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreateBalanceRDO"
+        "404":
+          description: Balance not found
+      tags: *a5
   /api/balance/{balanceId}:
     patch:
-      operationId: BalanceController_updateTraining
+      operationId: BalanceController_update
       summary: Update balance info
       parameters:
         - name: balanceId
@@ -764,56 +882,6 @@ paths:
       responses:
         "200":
           description: Balance has been successfully deleted
-      tags: *a5
-  /api/balance/{balanceId}/increase/{amount}:
-    patch:
-      operationId: BalanceController_increaseBalance
-      summary: Increase training balance by passed amount
-      parameters:
-        - name: balanceId
-          required: true
-          in: path
-          schema:
-            type: string
-        - name: amount
-          required: true
-          in: path
-          schema:
-            type: number
-      responses:
-        "200":
-          description: Balance found
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/CreateBalanceRDO"
-        "404":
-          description: Balance not found
-      tags: *a5
-  /api/balance/{balanceId}/decrease/{amount}:
-    patch:
-      operationId: BalanceController_decreaseBalance
-      summary: Decrease training balance by passed amount
-      parameters:
-        - name: balanceId
-          required: true
-          in: path
-          schema:
-            type: string
-        - name: amount
-          required: true
-          in: path
-          schema:
-            type: number
-      responses:
-        "200":
-          description: Balance found
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/CreateBalanceRDO"
-        "404":
-          description: Balance not found
       tags: *a5
 info:
   title: The "Fit-Friends" service
@@ -906,7 +974,7 @@ components:
             - йога
             - бег
             - бокс
-            - стрейчинг
+            - стретчинг
             - кроссфит
             - аэробика
             - пилатес
@@ -991,7 +1059,7 @@ components:
           type: string
           description: User gender
           example: мужской
-          enum:
+          enum: &a6
             - мужской
             - женский
             - неважно
@@ -1008,7 +1076,7 @@ components:
           type: string
           description: User metro station
           example: звездная
-          enum:
+          enum: &a7
             - пионерская
             - петроградская
             - удельная
@@ -1022,7 +1090,7 @@ components:
           type: string
           description: User training level
           example: новичок
-          enum:
+          enum: &a8
             - новичок
             - любитель
             - профессионал
@@ -1030,11 +1098,11 @@ components:
           type: string
           description: User trainings type
           example: '["box", "crossfit", "running"]'
-          enum:
+          enum: &a9
             - йога
             - бег
             - бокс
-            - стрейчинг
+            - стретчинг
             - кроссфит
             - аэробика
             - пилатес
@@ -1042,7 +1110,7 @@ components:
           type: string
           description: User training time periods (in minutes)
           example: 10-30
-          enum:
+          enum: &a10
             - 10-30
             - 30-50
             - 50-80
@@ -1098,6 +1166,124 @@ components:
       required:
         - email
         - password
+    LoggedUserRDO:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Uniq user ID
+          example: g83h4y0943-nv934819843-jv934h8t-n923g48n9438
+        createdAt:
+          format: date-time
+          type: string
+          description: Created at date
+          example: 2024-04-26 13:02:24.847
+        updatedAt:
+          format: date-time
+          type: string
+          description: Updated at date
+          example: 2024-04-26 13:02:24.847
+        name:
+          type: string
+          description: User name
+          example: Tony
+          minimum: 1
+          maximum: 15
+        email:
+          type: string
+          description: User email
+          example: iron-man@starkindustries.it
+        avatar:
+          type: string
+          description: User avatar
+          example: some/interesting/avatar.jpg
+        role:
+          type: string
+          description: User role
+          example: admin
+        gender:
+          type: string
+          description: User gender
+          example: мужской
+          enum: *a6
+        birthDate:
+          format: date-time
+          type: string
+          description: User birth date
+          example: 26.09.1993
+        description:
+          type: string
+          description: User profile description
+          example: Some interesting profile description
+        location:
+          type: string
+          description: User metro station
+          example: звездная
+          enum: *a7
+        pageBackground:
+          type: string
+          description: User profile background. If not passed = User avatar
+          example: some/interesting/avatar.jpg
+        level:
+          type: string
+          description: User training level
+          example: новичок
+          enum: *a8
+        trainingType:
+          type: string
+          description: User trainings type
+          example: '["box", "crossfit", "running"]'
+          enum: *a9
+        trainingDuration:
+          type: string
+          description: User training time periods (in minutes)
+          example: 10-30
+          enum: *a10
+        loseCaloriesLimit:
+          type: number
+          description: User lose calories aim
+          example: "1000"
+          minimum: 1000
+          maximum: 5000
+        dayCaloriesLimit:
+          type: number
+          description: User calories per day limit
+          example: "5000"
+          minimum: 1000
+          maximum: 5000
+        isReadyToTraining:
+          type: boolean
+          description: Is user ready to training
+          example: "true"
+        accessToken:
+          type: string
+          description: User JWT Token
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpFVCJ9.eyJ1c2VySWQiOiI2NjM4ZDIzZDgyNGQ3ZTdkNzQ3NzNjYmIiLCJlbWFpbCI6Imlyb24tbWFuM0BzdGFya2luZHVzdHJpZXMuaXQiLCJmaXJzdG5hbWUiOiJUb255IiwibGFzdG5hbWUiOiJTdGFyazEyMyIsImlhdCI6MTcxNTAwMDYyMCwiZXhwIjoxNzE1MDAwOTIwfQ.TgH1861ix-vw6XGtoCLfDymnH_9yQIYp0Z3m7TT3jxY
+        refreshToken:
+          type: string
+          description: User JWT Refresh Token
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpFVCJ9.eyJ1c2VySWQiOiI2NjM4ZDIzZDgyNGQ3ZTdkNzQ3NzNjYmIiLCJlbWFpbCI6Imlyb24tbWFuM0BzdGFya2luZHVzdHJpZXMuaXQiLCJmaXJzdG5hbWUiOiJUb255IiwibGFzdG5hbWUiOiJTdGFyazEyMyIsImlhdCI6MTcxNTAwMDYyMCwiZXhwIjoxNzE1MDAwOTIwfQ.TgH1861ix-vw6XGtoCLfDymnH_9yQIYp0Z3m7TT3jxY
+      required:
+        - id
+        - createdAt
+        - updatedAt
+        - name
+        - email
+        - avatar
+        - role
+        - gender
+        - birthDate
+        - description
+        - location
+        - pageBackground
+        - level
+        - trainingType
+        - trainingDuration
+        - loseCaloriesLimit
+        - dayCaloriesLimit
+        - isReadyToTraining
+        - accessToken
+        - refreshToken
     CreateTrainingDTO:
       type: object
       properties:
@@ -1127,7 +1313,7 @@ components:
             - йога
             - бег
             - бокс
-            - стрейчинг
+            - стретчинг
             - кроссфит
             - аэробика
             - пилатес
@@ -1185,6 +1371,10 @@ components:
           type: boolean
           description: Is special offer or simple training
           example: false
+        userId:
+          type: string
+          description: Training creator`s ID
+          example: g83h4y0943-nv934819843-jv934h8t-n923g48n9438
       required:
         - title
         - background
@@ -1200,6 +1390,7 @@ components:
         - rating
         - trainersName
         - isSpecial
+        - userId
     CreateTrainingRDO:
       type: object
       properties:
@@ -1243,7 +1434,7 @@ components:
             - йога
             - бег
             - бокс
-            - стрейчинг
+            - стретчинг
             - кроссфит
             - аэробика
             - пилатес
@@ -1295,6 +1486,14 @@ components:
           type: string
           description: Training creator`s name
           example: Tony Stark
+        userId:
+          type: string
+          description: Training creator`s ID
+          example: g83h4y0943-nv934819843-jv934h8t-n923g48n9438
+        userInfo:
+          description: Training creator`s detail info
+          allOf:
+            - $ref: "#/components/schemas/UserRDO"
         isSpecial:
           type: boolean
           description: Is special offer or simple training
@@ -1316,6 +1515,8 @@ components:
         - video
         - rating
         - trainersName
+        - userId
+        - userInfo
         - isSpecial
     TrainingsWithPaginationRDO:
       type: object
@@ -1346,6 +1547,20 @@ components:
         - currentPage
         - itemsPerPage
         - entities
+    TrainingFilterParamsRDO:
+      type: object
+      properties:
+        price:
+          type: object
+          description: Training min/max price
+          example: "price: {       min: 1800;      max: 2900;    }"
+        calories:
+          type: object
+          description: Training min/max calories
+          example: "price: {       min: 2100;      max: 3300;    }"
+      required:
+        - price
+        - calories
     UpdateTrainingDTO:
       type: object
       properties:
@@ -1375,7 +1590,7 @@ components:
             - йога
             - бег
             - бокс
-            - стрейчинг
+            - стретчинг
             - кроссфит
             - аэробика
             - пилатес
@@ -1427,6 +1642,10 @@ components:
           type: string
           description: Training creator`s name
           example: Tony Stark
+        userId:
+          type: string
+          description: Training creator`s ID
+          example: g83h4y0943-nv934819843-jv934h8t-n923g48n9438
         isSpecial:
           type: boolean
           description: Is special offer or simple training
@@ -1445,6 +1664,7 @@ components:
         - video
         - rating
         - trainersName
+        - userId
         - isSpecial
     CreateTrainingReviewDTO:
       type: object
@@ -1507,6 +1727,10 @@ components:
           type: string
           description: Author review`s text
           example: it was amazing training
+        userInfo:
+          description: Review`s author additional info
+          allOf:
+            - $ref: "#/components/schemas/UserRDO"
       required:
         - id
         - createdAt
@@ -1515,6 +1739,7 @@ components:
         - trainingId
         - rating
         - text
+        - userInfo
     UpdateTrainingReviewDTO:
       type: object
       properties:
@@ -1550,7 +1775,7 @@ components:
           example: абонемент
           enum:
             - абонемент
-        serviceId:
+        trainingId:
           type: object
           description: Training ID
           example: d61ef04e-295a-41cb-a230-7e9e4570f14b
@@ -1567,14 +1792,14 @@ components:
           enum:
             - visa
             - mir
-            - umoney
+            - iomoney
         userId:
           type: object
           description: User ID
           example: d61ef04e-295a-41cb-a230-7e9e4570f14b
       required:
         - type
-        - serviceId
+        - trainingId
         - trainingsCount
         - paymentType
         - userId
@@ -1601,7 +1826,7 @@ components:
           example: абонемент
           enum:
             - абонемент
-        serviceId:
+        trainingId:
           type: object
           description: Training ID
           example: d61ef04e-295a-41cb-a230-7e9e4570f14b
@@ -1626,22 +1851,27 @@ components:
           enum:
             - visa
             - mir
-            - umoney
+            - iomoney
         userId:
           type: object
           description: User ID
           example: d61ef04e-295a-41cb-a230-7e9e4570f14b
+        trainingInfo:
+          description: Orders training additional info
+          allOf:
+            - $ref: "#/components/schemas/CreateTrainingRDO"
       required:
         - id
         - createdAt
         - updatedAt
         - type
-        - serviceId
+        - trainingId
         - price
         - trainingsCount
         - totalPrice
         - paymentType
         - userId
+        - trainingInfo
     UpdateOrderDTO:
       type: object
       properties:
@@ -1651,7 +1881,7 @@ components:
           example: абонемент
           enum:
             - абонемент
-        serviceId:
+        trainingId:
           type: object
           description: Training ID
           example: d61ef04e-295a-41cb-a230-7e9e4570f14b
@@ -1676,14 +1906,14 @@ components:
           enum:
             - visa
             - mir
-            - umoney
+            - iomoney
         userId:
           type: object
           description: User ID
           example: d61ef04e-295a-41cb-a230-7e9e4570f14b
       required:
         - type
-        - serviceId
+        - trainingId
         - price
         - trainingsCount
         - totalPrice
@@ -1692,9 +1922,13 @@ components:
     CreateBalanceDTO:
       type: object
       properties:
-        orderId:
+        userId:
           type: object
-          description: Order ID
+          description: User ID
+          example: d61ef04e-295a-41cb-a230-7e9e4570f14b
+        trainingId:
+          type: object
+          description: Training ID
           example: d61ef04e-295a-41cb-a230-7e9e4570f14b
         remainingTrainingsCount:
           type: number
@@ -1702,9 +1936,15 @@ components:
           example: 15
           minimum: 1
           maximum: 50
+        hasTrainingStarted:
+          type: boolean
+          description: Whether the user has started training
+          example: "false"
       required:
-        - orderId
+        - userId
+        - trainingId
         - remainingTrainingsCount
+        - hasTrainingStarted
     CreateBalanceRDO:
       type: object
       properties:
@@ -1722,13 +1962,9 @@ components:
           type: string
           description: Updated at date
           example: 2024-04-26 13:02:24.847
-        serviceId:
+        trainingId:
           type: object
           description: Training ID
-          example: d61ef04e-295a-41cb-a230-7e9e4570f14b
-        orderId:
-          type: object
-          description: Order ID
           example: d61ef04e-295a-41cb-a230-7e9e4570f14b
         remainingTrainingsCount:
           type: number
@@ -1736,23 +1972,51 @@ components:
           example: 15
           minimum: 1
           maximum: 50
+        hasTrainingStarted:
+          type: boolean
+          description: Whether the user has started training
+          example: "false"
+        trainingInfo:
+          description: Orders training additional info
+          allOf:
+            - $ref: "#/components/schemas/CreateTrainingRDO"
       required:
         - id
         - createdAt
         - updatedAt
-        - serviceId
-        - orderId
+        - trainingId
         - remainingTrainingsCount
-    UpdateBalanceDTO:
+        - hasTrainingStarted
+        - trainingInfo
+    ChangeBalanceDTO:
       type: object
       properties:
-        serviceId:
+        trainingId:
           type: object
           description: Training ID
           example: d61ef04e-295a-41cb-a230-7e9e4570f14b
-        orderId:
+        userId:
           type: object
-          description: Order ID
+          description: User ID
+          example: d61ef04e-295a-41cb-a230-7e9e4570f14b
+        amount:
+          type: number
+          description: How much trainings you want to add/remove from balance
+          example: 15
+      required:
+        - trainingId
+        - userId
+        - amount
+    UpdateBalanceDTO:
+      type: object
+      properties:
+        userId:
+          type: object
+          description: User ID
+          example: d61ef04e-295a-41cb-a230-7e9e4570f14b
+        trainingId:
+          type: object
+          description: Training ID
           example: d61ef04e-295a-41cb-a230-7e9e4570f14b
         remainingTrainingsCount:
           type: number
@@ -1760,12 +2024,12 @@ components:
           example: 15
           minimum: 1
           maximum: 50
-        userId:
-          type: object
-          description: User ID
-          example: d61ef04e-295a-41cb-a230-7e9e4570f14b
+        hasTrainingStarted:
+          type: boolean
+          description: Whether the user has started training
+          example: "false"
       required:
-        - serviceId
-        - orderId
-        - remainingTrainingsCount
         - userId
+        - trainingId
+        - remainingTrainingsCount
+        - hasTrainingStarted

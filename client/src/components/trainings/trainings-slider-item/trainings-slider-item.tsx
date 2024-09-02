@@ -1,25 +1,17 @@
 import { Link } from 'react-router-dom';
 import { ReactElement } from 'react';
-
 import { AppRoute } from '@client/src/const';
-import { getTrainingThumbnailByType } from '@client/src/utils/adapters';
-import { TrainingType } from '@shared/types/training-type.enum';
 
-type PopularTrainingsItemProps = {
-  training: {
-    id: string;
-    title: string;
-    description: string;
-    background: string;
-    calories: number;
-    rating: number;
-    price: number;
-    discount: number;
-    trainingType: TrainingType;
-  }
+import { CreateTrainingRDO } from '@shared/training';
+
+import { getTrainingThumbnailByType } from '@client/src/utils/adapters';
+
+type TrainingsSliderItemProps = {
+  item: CreateTrainingRDO,
+  itemClass?: string
 }
 
-export default function PopularTrainingsItem({ training }: PopularTrainingsItemProps): ReactElement {
+export default function TrainingsSliderItem({ item, itemClass }: TrainingsSliderItemProps): ReactElement {
   const {
     id,
     title,
@@ -29,13 +21,13 @@ export default function PopularTrainingsItem({ training }: PopularTrainingsItemP
     price,
     discount,
     trainingType
-  } = training;
+  } = item;
 
   const trainingThumbnail = getTrainingThumbnailByType(trainingType);
   const newPrice = discount ? price - discount : price;
 
   return (
-    <li className="popular-trainings__item">
+    <li className={itemClass}>
       <div className="thumbnail-training">
         <div className="thumbnail-training__inner">
           <div className="thumbnail-training__image">
@@ -75,16 +67,10 @@ export default function PopularTrainingsItem({ training }: PopularTrainingsItemP
             </p>
           </div>
           <div className="thumbnail-training__button-wrapper">
-            <Link
-              className="btn btn--small thumbnail-training__button-catalog"
-              to={`${AppRoute.TRAININGS}/${id}`}
-            >
+            <Link className="btn btn--small thumbnail-training__button-catalog" to={`${AppRoute.TRAININGS}/${id}`}>
               Подробнее
             </Link>
-            <Link
-              className="btn btn--small btn--outlined thumbnail-training__button-catalog"
-              to={`${AppRoute.TRAININGS}/${id}`}
-            >
+            <Link className="btn btn--small btn--outlined thumbnail-training__button-catalog" to={`${AppRoute.TRAININGS}/${id}`}>
               Отзывы
             </Link>
           </div>

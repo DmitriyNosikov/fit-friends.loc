@@ -21,6 +21,7 @@ import { Navigation } from 'swiper/modules';
 import 'swiper/css';
 import 'swiper/css/bundle';
 import { Link } from 'react-router-dom';
+import TrainingsSlider from '../../trainings/trainings-slider/trainings-slider';
 
 const START_PAGE = 1;
 
@@ -144,80 +145,19 @@ export default function PersonalCardTrainer({ userInfo }: PersonalCardTrainerPro
 
           {
             !isTrainingsLoadings && trainingsList &&
-            <Swiper
-              className='user-card-coach__training-list'
-              modules={[Navigation]}
-              spaceBetween={20}
-              slidesPerView={4}
-              slidesPerGroup={4}
-              allowTouchMove={false}
-              watchSlidesProgress
-              speed={1500}
-
-              navigation={{
-                enabled: true,
-                prevEl: '.user-card-coach__training-btn--prev',
-                nextEl: '.user-card-coach__training-btn--next',
-              }}
-            >
-              {
-                trainingsList.entities && trainingsList.entities.map((training) => {
-                  const {
-                    id,
-                    background,
-                    title,
-                    trainingType,
-                    calories,
-                    rating,
-                    description
-                  } = training;
-                  return (
-                    <SwiperSlide key={training.id}>
-                      <li className="user-card-coach__training-item">
-                        <div className="thumbnail-training">
-                          <div className="thumbnail-training__inner">
-                            <div className="thumbnail-training__image">
-                              <picture>
-                                <source type="image/webp" srcSet="img/content/user-card-coach/training-1.webp, img/content/user-card-coach/training-1@2x.webp 2x" />
-                                <img src={background} srcSet={background} width={330} height={190} />
-                              </picture>
-                            </div>
-                            <p className="thumbnail-training__price"><span className="thumbnail-training__price-value">1200</span><span>₽</span>
-                            </p>
-                            <h3 className="thumbnail-training__title">{title}</h3>
-                            <div className="thumbnail-training__info">
-                              <ul className="thumbnail-training__hashtags-list">
-                                <li className="thumbnail-training__hashtags-item">
-                                  <div className="hashtag thumbnail-training__hashtag"><span>#{trainingType}</span></div>
-                                </li>
-                                <li className="thumbnail-training__hashtags-item">
-                                  <div className="hashtag thumbnail-training__hashtag"><span>#{calories}ккал</span></div>
-                                </li>
-                              </ul>
-                              <div className="thumbnail-training__rate">
-                                <svg width={16} height={16} aria-hidden="true">
-                                  <use xlinkHref="#icon-star" />
-                                </svg><span className="thumbnail-training__rate-value">{rating}</span>
-                              </div>
-                            </div>
-                            <div className="thumbnail-training__text-wrapper">
-                              <p className="thumbnail-training__text">{description}</p>
-                            </div>
-                            <div className="thumbnail-training__button-wrapper">
-                              <Link className="btn btn--small thumbnail-training__button-catalog" to={`${AppRoute.TRAININGS}/${id}`}>Подробнее</Link>
-                              <Link className="btn btn--small btn--outlined thumbnail-training__button-catalog" to={`${AppRoute.TRAININGS}/${id}`}>Отзывы</Link>
-                            </div>
-                          </div>
-                        </div>
-                      </li>
-                    </SwiperSlide>
-                  )
-                })
-              }
-            </Swiper>
+              <TrainingsSlider
+                trainingsList={trainingsList}
+                sliderClass='user-card-coach__training-list'
+                prevBtnClass='user-card-coach__training-btn--prev'
+                nextBtnClass='user-card-coach__training-btn--next'
+                sliderItemClass='user-card-coach__training-item'
+              />
           }
 
           {/*
+            TODO: Реализовать запрос на тренировку
+            TODO: Реализовать рассылку уведомлений на почту
+          */}
           <form className="user-card-coach__training-form">
             <button className="btn user-card-coach__btn-training" type="button">Хочу персональную тренировку</button>
             <div className="user-card-coach__training-check">
@@ -231,7 +171,6 @@ export default function PersonalCardTrainer({ userInfo }: PersonalCardTrainerPro
               </div>
             </div>
           </form>
-           */}
         </div>
       </div>
     </section>

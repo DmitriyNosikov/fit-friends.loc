@@ -49,6 +49,8 @@ model User {
   dayCaloriesLimit  Int?      @map("day_calories_limit")
   isReadyToTraining Boolean?  @map("is_ready_to_training")
 
+  certificates      String[]
+
   training Training[]
   balance Balance[]
   order Order[]

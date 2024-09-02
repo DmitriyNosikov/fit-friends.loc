@@ -7,6 +7,8 @@ export class FileExtValidationPipe implements PipeTransform {
     // "value" is an object containing the file's attributes and metadata
     const allowedImgExtensions = ['jpg', 'jpeg', 'png']; // TODO: Перенeсти расширения в SetMetadata
     const allowedVideoExtensions = ['mov', 'mp4', 'avi'];
+    const allowedFilesExtensions = ['pdf'];
+    const allowedExtensions = allowedImgExtensions.concat(allowedVideoExtensions).concat(allowedFilesExtensions);
     const fileExtension = extension(value.mimetype) || value.mimetype.split('/')[1];
 
     // Неправильно определяется расширение, т.к. mime-type всегда: text/plain - TODO: Исправить
@@ -14,7 +16,7 @@ export class FileExtValidationPipe implements PipeTransform {
     console.log('Extension: ', fileExtension, typeof(value.mimetype));
     console.log('File Metadata: ', metadata);
 
-    if(!allowedImgExtensions.includes(fileExtension) && !allowedVideoExtensions.includes(fileExtension)) {
+    if(!allowedExtensions.includes(fileExtension)) {
       throw new BadRequestException(`Unsupported file extension. Allowed to upload: 
         ${ allowedImgExtensions.join(', ') } 
         ${ allowedVideoExtensions.join(', ') }. 

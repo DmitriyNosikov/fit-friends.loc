@@ -13,7 +13,7 @@ import { areArraysEqual, getImgPreviewLink, upperCaseFirst } from '@client/src/u
 
 import Specialization from '../specialization/specialization';
 import CustomSelectBtn from '../../custom-select-btn/custom-select-btn';
-import { updateUserAction, uploadFileAction } from '@client/src/store/actions/api-user-action';
+import { updateUserAction, uploadAvatarAction } from '@client/src/store/actions/api-user-action';
 
 
 import { clearErrors, validateFields } from '@client/src/validation/validation-tools';
@@ -101,7 +101,7 @@ export default function PersonalAccountForm({ userInfo }: PersonalAccountFormPro
       return;
     }
 
-    dispatch(uploadFileAction(newUserAvatar))
+    dispatch(uploadAvatarAction(newUserAvatar))
       .then((uploadAvatarResult) => {
         if ('error' in uploadAvatarResult) {
           return;

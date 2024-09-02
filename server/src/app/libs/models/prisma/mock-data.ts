@@ -44,6 +44,27 @@ export async function getUsers(): Promise<AuthUserInterface[]> {
 
     {
       id: randomUUID(),
+      email: "test0@test.ru",
+      name: "Dwain",
+      passwordHash,
+      avatar: "/img/content/avatars/users/photo-1.png",
+      gender: GenderEnum.MALE,
+      location: LocationEnum.SPORTIVNAYA,
+      role: UserRoleEnum.TRAINER,
+      level: UserLevelEnum.PRO,
+      dayCaloriesLimit: 3200,
+      loseCaloriesLimit: 4800,
+      trainingType: trainingTypeList.slice(1),
+      certificates: [
+        '/img/content/certificates/1.pdf',
+        '/img/content/certificates/2.pdf',
+        '/img/content/certificates/3.pdf',
+        '/img/content/certificates/4.pdf'
+      ]
+    },
+
+    {
+      id: randomUUID(),
       email: "test1@test.ru",
       name: "Alex",
       passwordHash,

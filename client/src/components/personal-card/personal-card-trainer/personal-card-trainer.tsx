@@ -92,11 +92,12 @@ export default function PersonalCardTrainer({ userInfo }: PersonalCardTrainerPro
               </svg><span>Посмотреть сертификаты</span>
             </button>
 
+            {/* Хэштеги */}
             <ul className="user-card-coach__hashtag-list">
               {
-                trainingType && trainingType.map((type) => {
+                trainingType && trainingType.map((type, index) => {
                   return (
-                    <li className="user-card-coach__hashtag-item">
+                    <li className="user-card-coach__hashtag-item" key={`${type}.${index}`}>
                       <div className="hashtag"><span>#{type}</span></div>
                     </li>
                   )

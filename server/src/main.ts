@@ -11,6 +11,7 @@ import { RequestLoggerInterceptor } from '@server/libs/interceptors/request-logg
 import * as bodyParser from 'body-parser';
 
 const GLOBAL_PREFIX = 'api';
+const FILES_UPLOADING_LIMIT = '150mb';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -22,7 +23,7 @@ async function bootstrap() {
   // Генерация Swagger-документации
   const swaggerConfig = new DocumentBuilder() // Настраиваем Swagger для формирования документации
   .setTitle('The "Fit-Friends" service')
-  .setDescription('"FIt-Friends" service API')
+  .setDescription('"Fit-Friends" service API')
   .setVersion('1.0')
   .build();
   const swaggerDocument = SwaggerModule.createDocument(app, swaggerConfig);
@@ -50,7 +51,7 @@ async function bootstrap() {
   app.enableCors();
 
   // Увеличиваем лимиты на загрузку файлов
-  app.use(bodyParser.json({limit: '150mb'}));
+  app.use(bodyParser.json({limit: FILES_UPLOADING_LIMIT}));
   app.use(bodyParser.urlencoded({
     limit: '150mb',
     extended: true

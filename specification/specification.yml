@@ -168,8 +168,16 @@ paths:
       responses:
         "201":
           description: ""
-      tags:
+      tags: &a2
         - files
+  /api/files/multiple-upload:
+    post:
+      operationId: FileVaultController_uploadFiles
+      parameters: []
+      responses:
+        "201":
+          description: ""
+      tags: *a2
   /api/trainings:
     post:
       operationId: TrainingController_create
@@ -188,7 +196,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/CreateTrainingDTO"
-      tags: &a2
+      tags: &a3
         - trainings
     get:
       operationId: TrainingController_index
@@ -319,7 +327,7 @@ paths:
                 $ref: "#/components/schemas/TrainingsWithPaginationRDO"
         "404":
           description: Training not found
-      tags: *a2
+      tags: *a3
   /api/trainings/convenient-trainings:
     get:
       operationId: TrainingController_getTrainingsForUser
@@ -334,7 +342,7 @@ paths:
                 $ref: "#/components/schemas/TrainingsWithPaginationRDO"
         "404":
           description: Training not found
-      tags: *a2
+      tags: *a3
   /api/trainings/with-discount:
     get:
       operationId: TrainingController_getTrainigsWithDiscount
@@ -349,7 +357,7 @@ paths:
                 $ref: "#/components/schemas/TrainingsWithPaginationRDO"
         "404":
           description: Training not found
-      tags: *a2
+      tags: *a3
   /api/trainings/with-rating:
     get:
       operationId: TrainingController_getTrainigsWithRating
@@ -364,7 +372,7 @@ paths:
                 $ref: "#/components/schemas/TrainingsWithPaginationRDO"
         "404":
           description: Training not found
-      tags: *a2
+      tags: *a3
   /api/trainings/filter-params:
     get:
       operationId: TrainingController_getTrainingFIlterParams
@@ -379,7 +387,7 @@ paths:
                 $ref: "#/components/schemas/TrainingFilterParamsRDO"
         "404":
           description: Training not found
-      tags: *a2
+      tags: *a3
   /api/trainings/{trainingId}:
     get:
       operationId: TrainingController_show
@@ -399,7 +407,7 @@ paths:
                 $ref: "#/components/schemas/CreateTrainingRDO"
         "404":
           description: Training not found
-      tags: *a2
+      tags: *a3
     patch:
       operationId: TrainingController_updateTraining
       summary: Update training info
@@ -425,7 +433,7 @@ paths:
         "400":
           description: "Can`t update Training. Possible reason: Object with fields to
             update are empty"
-      tags: *a2
+      tags: *a3
     delete:
       operationId: TrainingController_deleteTraining
       summary: Delete training
@@ -438,7 +446,7 @@ paths:
       responses:
         "200":
           description: Training has been successfully deleted
-      tags: *a2
+      tags: *a3
   /api/training-reviews/{trainingId}:
     get:
       operationId: TrainingReviewController_index
@@ -485,7 +493,7 @@ paths:
       responses:
         "200":
           description: ""
-      tags: &a3
+      tags: &a4
         - training-reviews
     post:
       operationId: TrainingReviewController_create
@@ -510,7 +518,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/CreateTrainingReviewRDO"
-      tags: *a3
+      tags: *a4
   /api/training-reviews/{trainingId}/{reviewId}:
     patch:
       operationId: TrainingReviewController_update
@@ -537,7 +545,7 @@ paths:
         "400":
           description: "Can`t update review. Possible reason: Object with fields to update
             are empty"
-      tags: *a3
+      tags: *a4
     delete:
       operationId: TrainingReviewController_delete
       summary: Delete training review
@@ -550,7 +558,7 @@ paths:
       responses:
         "200":
           description: Review has been successfully deleted
-      tags: *a3
+      tags: *a4
   /api/orders:
     post:
       operationId: OrderController_create
@@ -569,7 +577,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/CreateOrderDTO"
-      tags: &a4
+      tags: &a5
         - orders
     get:
       operationId: OrderController_index
@@ -634,7 +642,7 @@ paths:
       responses:
         "200":
           description: ""
-      tags: *a4
+      tags: *a5
   /api/orders/{orderId}:
     get:
       operationId: OrderController_show
@@ -654,7 +662,7 @@ paths:
                 $ref: "#/components/schemas/CreateOrderRDO"
         "404":
           description: Orders not found
-      tags: *a4
+      tags: *a5
     patch:
       operationId: OrderController_updateTraining
       summary: Update order info
@@ -680,7 +688,7 @@ paths:
         "400":
           description: "Can`t update order. Possible reason: Object with fields to update
             are empty"
-      tags: *a4
+      tags: *a5
     delete:
       operationId: OrderController_deleteOrder
       summary: Delete order
@@ -693,7 +701,7 @@ paths:
       responses:
         "200":
           description: Order has been successfully deleted
-      tags: *a4
+      tags: *a5
   /api/balance:
     post:
       operationId: BalanceController_create
@@ -712,7 +720,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/CreateBalanceDTO"
-      tags: &a5
+      tags: &a6
         - balance
     get:
       operationId: BalanceController_index
@@ -767,7 +775,7 @@ paths:
                   $ref: "#/components/schemas/CreateBalanceRDO"
         "404":
           description: Balance not found
-      tags: *a5
+      tags: *a6
   /api/balance/by-training/{trainingId}:
     get:
       operationId: BalanceController_getUserBalance
@@ -785,7 +793,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/CreateBalanceDTO"
-      tags: *a5
+      tags: *a6
   /api/balance/count:
     get:
       operationId: BalanceController_countBalance
@@ -800,7 +808,7 @@ paths:
                 type: number
         "404":
           description: Balance not found
-      tags: *a5
+      tags: *a6
   /api/balance/increase:
     patch:
       operationId: BalanceController_increaseBalance
@@ -821,7 +829,7 @@ paths:
                 $ref: "#/components/schemas/CreateBalanceRDO"
         "404":
           description: Balance not found
-      tags: *a5
+      tags: *a6
   /api/balance/decrease:
     patch:
       operationId: BalanceController_decreaseBalance
@@ -842,7 +850,7 @@ paths:
                 $ref: "#/components/schemas/CreateBalanceRDO"
         "404":
           description: Balance not found
-      tags: *a5
+      tags: *a6
   /api/balance/{balanceId}:
     patch:
       operationId: BalanceController_update
@@ -869,7 +877,7 @@ paths:
         "400":
           description: "Can`t update order. Possible reason: Object with fields to update
             are empty"
-      tags: *a5
+      tags: *a6
     delete:
       operationId: BalanceController_deleteOrder
       summary: Delete balance
@@ -882,10 +890,10 @@ paths:
       responses:
         "200":
           description: Balance has been successfully deleted
-      tags: *a5
+      tags: *a6
 info:
   title: The "Fit-Friends" service
-  description: '"FIt-Friends" service API'
+  description: '"Fit-Friends" service API'
   version: "1.0"
   contact: {}
 tags: []
@@ -1059,7 +1067,7 @@ components:
           type: string
           description: User gender
           example: мужской
-          enum: &a6
+          enum: &a7
             - мужской
             - женский
             - неважно
@@ -1076,7 +1084,7 @@ components:
           type: string
           description: User metro station
           example: звездная
-          enum: &a7
+          enum: &a8
             - пионерская
             - петроградская
             - удельная
@@ -1090,7 +1098,7 @@ components:
           type: string
           description: User training level
           example: новичок
-          enum: &a8
+          enum: &a9
             - новичок
             - любитель
             - профессионал
@@ -1098,7 +1106,7 @@ components:
           type: string
           description: User trainings type
           example: '["box", "crossfit", "running"]'
-          enum: &a9
+          enum: &a10
             - йога
             - бег
             - бокс
@@ -1110,7 +1118,7 @@ components:
           type: string
           description: User training time periods (in minutes)
           example: 10-30
-          enum: &a10
+          enum: &a11
             - 10-30
             - 30-50
             - 50-80
@@ -1205,7 +1213,7 @@ components:
           type: string
           description: User gender
           example: мужской
-          enum: *a6
+          enum: *a7
         birthDate:
           format: date-time
           type: string
@@ -1219,7 +1227,7 @@ components:
           type: string
           description: User metro station
           example: звездная
-          enum: *a7
+          enum: *a8
         pageBackground:
           type: string
           description: User profile background. If not passed = User avatar
@@ -1228,17 +1236,17 @@ components:
           type: string
           description: User training level
           example: новичок
-          enum: *a8
+          enum: *a9
         trainingType:
           type: string
           description: User trainings type
           example: '["box", "crossfit", "running"]'
-          enum: *a9
+          enum: *a10
         trainingDuration:
           type: string
           description: User training time periods (in minutes)
           example: 10-30
-          enum: *a10
+          enum: *a11
         loseCaloriesLimit:
           type: number
           description: User lose calories aim

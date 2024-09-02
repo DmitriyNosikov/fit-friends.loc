@@ -31,6 +31,7 @@ const APIAction = {
   USER_GET_BY_ID: `${APIUserPrefix}/get-by-id`,
   USER_GET_ADDITIONAL: `${APIUserPrefix}/get-additional`,
   USER_UPLOAD_AVATAR: `${APIUserPrefix}/upload-avatar`,
+  USER_UPLOAD_CERTIFICATES: `${APIUserPrefix}/upload-certificates`,
 } as const;
 
 // ASYNC ACTIONS
@@ -225,7 +226,7 @@ export const updateUserAction = createAsyncThunk<LoggedUserRDO, UpdateUserDTO, A
   }
 );
 
-export const uploadFileAction = createAsyncThunk<string | unknown, FormData, AsyncOptions>(
+export const uploadAvatarAction = createAsyncThunk<string | unknown, FormData, AsyncOptions>(
   APIAction.USER_UPLOAD_AVATAR,
   async (
     fileFormData, // Avatar Form Data
@@ -233,7 +234,6 @@ export const uploadFileAction = createAsyncThunk<string | unknown, FormData, Asy
   ) => {
     dispatch(setDataLoadingStatus(true));
 
-    // Аватар нужно загружать отдельно
     if(fileFormData) {
       try {
         const { data: avatarUrl } = await api.post<string>(ApiRoute.LOAD_FILES, fileFormData);
@@ -241,6 +241,36 @@ export const uploadFileAction = createAsyncThunk<string | unknown, FormData, Asy
         dispatch(setDataLoadingStatus(false));
 
         return avatarUrl;
+      } catch(err) {
+        toast.warn(`Can't load file: ${err}`);
+
+        dispatch(setDataLoadingStatus(false));
+
+        return rejectWithValue(err);
+      }
+    }
+  }
+);
+
+export const uploadCertificateAction = createAsyncThunk<string | unknown, FormData, AsyncOptions>(
+  APIAction.USER_UPLOAD_CERTIFICATES,
+  async (
+    fileFormData, // Files
+    { dispatch, rejectWithValue, extra: api } // AsyncOptions
+  ) => {
+    dispatch(setDataLoadingStatus(true));
+
+    console.log('Files: ', fileFormData);
+
+    if(fileFormData) {
+      try {
+        const { data } = await api.post<string>(ApiRoute.LOAD_MULTIPLE_FILES, fileFormData);
+
+        dispatch(setDataLoadingStatus(false));
+
+        console.log('Uploaded files data: ', data);
+
+        // return avatarUrl;
       } catch(err) {
         toast.warn(`Can't load file: ${err}`);
 

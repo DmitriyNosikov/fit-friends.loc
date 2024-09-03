@@ -1,12 +1,15 @@
 import classNames from 'classnames';
 import { ReactElement, useState } from 'react';
+import PdfPreview from '../../pdf-preview/pdf-preview';
+import { BASE_URL } from '@client/src/services/api';
 
 type CertificatesListItemProps = {
-  imageSrc: string
+  itemSrc: string
 }
 
-export default function CertificatesListItem({ imageSrc }: CertificatesListItemProps): ReactElement {
+export default function CertificatesListItem({ itemSrc }: CertificatesListItemProps): ReactElement {
   const [isEditing, setIsEditing] = useState(false);
+  const itemURL = `${BASE_URL}${itemSrc}`;
 
   function handleChangeBtnClick() {
     setIsEditing(true);
@@ -24,10 +27,7 @@ export default function CertificatesListItem({ imageSrc }: CertificatesListItemP
           { 'certificate-card--edit': isEditing })
       }>
         <div className="certificate-card__image">
-          <picture>
-            {/* <source type="image/webp" srcSet="img/content/certificates-and-diplomas/certificate-1.webp, img/content/certificates-and-diplomas/certificate-1@2x.webp 2x" /> */}
-            <img src={ imageSrc } width={294} height={360} alt="Сертификат - Биомеханика ударов в боксе" />
-          </picture>
+          <PdfPreview pdfFileUrl={itemURL} />
         </div>
         <div className="certificate-card__buttons">
           {

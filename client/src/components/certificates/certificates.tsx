@@ -1,37 +1,57 @@
 import { ReactElement, useRef } from 'react';
-import CertificatesList from './certificates-list/certificates-list';
-import { useAppDispatch } from '@client/src/hooks';
-import { uploadCertificateAction } from '@client/src/store/actions/api-user-action';
 
-const certificates = [
-  'img/content/certificates-and-diplomas/certificate-1.jpg',
-  'img/content/certificates-and-diplomas/certificate-2.jpg',
-  'img/content/certificates-and-diplomas/certificate-3.jpg',
-  'img/content/certificates-and-diplomas/certificate-4.jpg',
-  'img/content/certificates-and-diplomas/certificate-5.jpg',
-  'img/content/certificates-and-diplomas/certificate-6.jpg'
-]
+import CertificatesList from './certificates-list/certificates-list';
+
+import { useAppDispatch, useAppSelector } from '@client/src/hooks';
+import { updateUserAction, uploadCertificateAction } from '@client/src/store/actions/api-user-action';
+import { getCurrentUserInfo } from '@client/src/store/slices/user-process/user-process.selectors';
+import { toast } from 'react-toastify';
+
+// const certificates = [
+//   'img/content/certificates-and-diplomas/certificate-1.jpg',
+//   'img/content/certificates-and-diplomas/certificate-2.jpg',
+//   'img/content/certificates-and-diplomas/certificate-3.jpg',
+//   'img/content/certificates-and-diplomas/certificate-4.jpg',
+//   'img/content/certificates-and-diplomas/certificate-5.jpg',
+//   'img/content/certificates-and-diplomas/certificate-6.jpg'
+// ]
 
 export default function Certificates(): ReactElement {
   const dispatch = useAppDispatch();
-  const uploadedCertificates = useRef<HTMLInputElement>(null);
+  const userInfo = useAppSelector(getCurrentUserInfo);
+  const userCertificates = userInfo?.certificates ?? [];
+  const uploadingCertificates = useRef<HTMLInputElement>(null);
 
   function handleUploadCertificate() {
-    const certificates = uploadedCertificates?.current?.files;
+    const newCertificates = uploadingCertificates?.current?.files;
 
-    if(!certificates) {
+    if (!newCertificates) {
       return;
     }
 
     const formData = new FormData();
 
-    for(const certificate of certificates) {
-      formData.append('files', certificate);
+    for (const newCertificate of newCertificates) {
+      formData.append('files', newCertificate);
     }
 
     dispatch(uploadCertificateAction(formData))
-      .then((result) => {
-        console.log('Uploading certificates result: ', result);
+      .then((loadCertificatesResult) => {
+        console.log('Uploading certificates result: ', loadCertificatesResult);
+
+        const payload = loadCertificatesResult.payload;
+
+        if ('error' in loadCertificatesResult || (!Array.isArray(payload) || payload.length < 0)) {
+          return;
+        };
+
+        toast.success('Certificates has been successfully uploaded');
+
+        // Обновляем список сертификатов пользователя
+        const updatedCertificates = [...payload, ...userCertificates];
+        const updateUserData = { certificates: updatedCertificates }
+
+        dispatch(updateUserAction(updateUserData));
       })
   }
 
@@ -45,7 +65,7 @@ export default function Certificates(): ReactElement {
             <use xlinkHref="#icon-import" />
           </svg>
           <span>Загрузить</span>
-          <input className="visually-hidden" type="file" accept=".pdf" onChange={handleUploadCertificate} ref={uploadedCertificates} multiple />
+          <input className="visually-hidden" type="file" accept=".pdf" onChange={handleUploadCertificate} ref={uploadingCertificates} multiple />
         </label>
 
         <div className="personal-account-coach__controls">
@@ -62,7 +82,7 @@ export default function Certificates(): ReactElement {
         </div>
       </div>
 
-      <CertificatesList imagesSrc={certificates} />
+      <CertificatesList itemsSrcList={userCertificates} />
     </div>
   )
 }

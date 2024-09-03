@@ -6,12 +6,13 @@ import 'swiper/css';
 import 'swiper/css/bundle';
 
 import CertificatesListItem from '../certificates-list item/certificates-list-item';
+import Stub from '../../tools/stub/stub';
 
 type CertificatesListProps = {
-  imagesSrc: string[]
+  itemsSrcList: string[]
 }
 
-export default function CertificatesList({ imagesSrc }: CertificatesListProps): ReactElement {
+export default function CertificatesList({ itemsSrcList }: CertificatesListProps): ReactElement {
   return (
     <Swiper
       modules={[Navigation]}
@@ -30,10 +31,17 @@ export default function CertificatesList({ imagesSrc }: CertificatesListProps): 
       className='personal-account-coach__list'
     >
       {
-        imagesSrc.map((imageSrc) => {
+        itemsSrcList.length <= 0 &&
+          <SwiperSlide>
+            <Stub />
+          </SwiperSlide>
+      }
+
+      {
+        itemsSrcList.length > 0 && itemsSrcList.map((src) => {
           return (
-            <SwiperSlide key={imageSrc}>
-              <CertificatesListItem imageSrc={imageSrc} />
+            <SwiperSlide key={src}>
+              <CertificatesListItem itemSrc={src} />
             </SwiperSlide>
           )
         })

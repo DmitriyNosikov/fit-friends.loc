@@ -6,7 +6,7 @@ import { useAppSelector } from '@client/src/hooks';
 import useSearchTrainings from '@client/src/hooks/useSearchTrainings';
 import { getTrainingsListLoadingStatus } from '@client/src/store/slices/training-process/training-process.selectors';
 
-import { AppRoute, ITEMS_PER_PAGE } from '@client/src/const';
+import { ITEMS_PER_PAGE } from '@client/src/const';
 import { DEFAULT_TRAININGS_SORT_TYPE } from '../../trainings/trainings-list/trainings-list';
 
 import { UserRDO } from '@shared/user';
@@ -16,11 +16,6 @@ import { upperCaseFirst } from '@client/src/utils/common';
 import Spinner from '../../tools/spinner/spinner';
 import Stub from '../../tools/stub/stub';
 
-import { Swiper, SwiperSlide } from 'swiper/react';
-import { Navigation } from 'swiper/modules';
-import 'swiper/css';
-import 'swiper/css/bundle';
-import { Link } from 'react-router-dom';
 import TrainingsSlider from '../../trainings/trainings-slider/trainings-slider';
 
 const START_PAGE = 1;

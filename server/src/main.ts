@@ -53,7 +53,7 @@ async function bootstrap() {
   // Увеличиваем лимиты на загрузку файлов
   app.use(bodyParser.json({limit: FILES_UPLOADING_LIMIT}));
   app.use(bodyParser.urlencoded({
-    limit: '150mb',
+    limit: FILES_UPLOADING_LIMIT,
     extended: true
   }));
 
@@ -64,7 +64,8 @@ async function bootstrap() {
   await app.listen(port, host);
 
   Logger.log(`🚀 Application is running on: http://${host}:${port}/${GLOBAL_PREFIX}`);
-  Logger.log(`📝 Swagger OperAPI documentation is available by link: http://${host}:${port}/spec`);
-  Logger.log(`⏬ Swagger OperAPI's YAML-format is available by link: http://${host}:${port}/spec-yaml`);
+  Logger.log(`📝 Swagger OpenAPI documentation is available by link: http://${host}:${port}/spec`);
+  Logger.log(`⏬ Swagger OpenAPI's YAML-format is available by link: http://${host}:${port}/spec-yaml`);
 }
 bootstrap();
+``

@@ -268,9 +268,7 @@ export const uploadCertificateAction = createAsyncThunk<string | unknown, FormDa
 
         dispatch(setDataLoadingStatus(false));
 
-        console.log('Uploaded files data: ', data);
-
-        // return avatarUrl;
+        return data;
       } catch(err) {
         toast.warn(`Can't load file: ${err}`);
 

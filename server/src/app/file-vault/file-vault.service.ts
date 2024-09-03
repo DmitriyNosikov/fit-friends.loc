@@ -1,4 +1,4 @@
-import {  Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { join } from 'node:path';
 
 import { ConfigService } from '@nestjs/config';
@@ -9,6 +9,11 @@ import { ensureDir } from 'fs-extra';
 import { writeFile } from 'node:fs/promises';
 import { getCurrentDayTimeDirectory, getUniqFilenamePrefix } from '@server/libs/helpers';
 
+type SavingFileResult = {
+  fileUrl: string,
+  error?: string
+}
+
 @Injectable()
 export class FileVaultService {
   private readonly logger = new Logger(FileVaultService.name);
@@ -17,7 +22,7 @@ export class FileVaultService {
     private readonly configService: ConfigService
   ) {}
 
-  public async saveFile(file: Express.Multer.File): Promise<string> {
+  public async saveFile(file: Express.Multer.File, throwError: boolean = true): Promise<SavingFileResult> {
     try {
       const uploadDirectoryPath = this.getUploadDirectoryPath();
 
@@ -28,11 +33,39 @@ export class FileVaultService {
       await ensureDir(uploadDirectoryPath);
       await writeFile(filesDestination, file.buffer);
 
-      return staticUrl;
+      const savingResult: SavingFileResult = { fileUrl: staticUrl }
+
+      return savingResult;
     } catch (error) {
       this.logger.error(`Error while saving file: ${error.message}`);
-      throw new Error(`Can't save file`);
+
+      const savingResult: SavingFileResult = { 
+        fileUrl: '',
+        error: `Can't save file ${file.originalname}. Error: ${error.message}`
+       }
+
+      if(!throwError) {
+        return savingResult;
+      }
+
+      throw new Error(savingResult.error);
     }
+  }
+
+  public async saveFiles(files: Array<Express.Multer.File>): Promise<string[]> {
+    const uploadedFileURLs = [];
+
+    for(const file of files) {
+      const savingResult = await this.saveFile(file);
+
+      if(savingResult.error) {
+        this.logger.error(savingResult.error);
+      } else {
+        uploadedFileURLs.push(savingResult.fileUrl);
+      }
+    }
+
+    return uploadedFileURLs;
   }
 
   private getStaticUrl(filename: string) {

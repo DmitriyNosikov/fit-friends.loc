@@ -26,7 +26,7 @@ export default function Certificates(): ReactElement {
     const formData = new FormData();
 
     for(const certificate of certificates) {
-      formData.append('files[]', certificate);
+      formData.append('files', certificate);
     }
 
     dispatch(uploadCertificateAction(formData))

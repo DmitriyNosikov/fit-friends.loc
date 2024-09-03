@@ -1,8 +1,8 @@
 import { Controller, Post, UploadedFile, UploadedFiles, UseInterceptors, UsePipes } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { FileVaultService } from './file-vault.service';
-import { FileInterceptor } from '@nestjs/platform-express';
-import { FileExtValidationPipe } from '@server/libs/pipes/file-ext-validation.pipe';
+import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
+import { FilesExtValidationPipe } from '@server/libs/pipes/files-ext-validation.pipe';
 
 @ApiTags('files')
 @Controller('files')
@@ -12,16 +12,20 @@ export class FileVaultController {
   ) { }
 
   @Post('/upload')
-  @UsePipes(FileExtValidationPipe)
+  @UsePipes(FilesExtValidationPipe)
   @UseInterceptors(FileInterceptor('file'))
   public async uploadFile(@UploadedFile() file: Express.Multer.File) {
-    return this.fileVaultService.saveFile(file);
+    const savingResult = await this.fileVaultService.saveFile(file);
+
+    return savingResult.fileUrl;
   }
 
   @Post('/multiple-upload')
-  @UsePipes(FileExtValidationPipe)
-  @UseInterceptors(FileInterceptor('files'))
+  @UsePipes(FilesExtValidationPipe)
+  @UseInterceptors(FilesInterceptor('files'))
   public async uploadFiles(@UploadedFiles() files: Array<Express.Multer.File>) {
-    console.log('Uploading files: ', files);
+    const savingResult = await this.fileVaultService.saveFiles(files);
+
+    return savingResult
   }
 }

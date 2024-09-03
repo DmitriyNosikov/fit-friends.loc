@@ -171,4 +171,13 @@ export class UpdateUserDTO {
   @IsBoolean()
   @IsOptional()
   isReadyToTraining?: boolean;
+
+  @ApiProperty({
+    description: 'User certificates (for trainers only)',
+    example: '["/static/2024/09/03/224297181810-6.pdf", "/static/2024/09/03/224297181810-1.pdf", "/static/2024/09/03/224297181810-3.pdf"]',
+  })
+  @IsArray()
+  @IsString({ each: true })
+  @IsOptional()
+  certificates?: string[];
 }

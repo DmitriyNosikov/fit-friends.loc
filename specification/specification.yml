@@ -1011,6 +1011,14 @@ components:
           type: boolean
           description: Is user ready to training
           example: "true"
+        certificates:
+          description: User certificates (for trainers only)
+          example: '["/static/2024/09/03/224297181810-6.pdf",
+            "/static/2024/09/03/224297181810-1.pdf",
+            "/static/2024/09/03/224297181810-3.pdf"]'
+          type: array
+          items:
+            type: string
       required:
         - name
         - email
@@ -1028,6 +1036,7 @@ components:
         - loseCaloriesLimit
         - dayCaloriesLimit
         - isReadyToTraining
+        - certificates
     UserRDO:
       type: object
       properties:
@@ -1139,6 +1148,14 @@ components:
           type: boolean
           description: Is user ready to training
           example: "true"
+        certificates:
+          description: User certificates (for trainers only)
+          example: '["/static/2024/09/03/224297181810-6.pdf",
+            "/static/2024/09/03/224297181810-1.pdf",
+            "/static/2024/09/03/224297181810-3.pdf"]'
+          type: array
+          items:
+            type: string
       required:
         - id
         - createdAt
@@ -1158,6 +1175,7 @@ components:
         - loseCaloriesLimit
         - dayCaloriesLimit
         - isReadyToTraining
+        - certificates
     LoginUserDTO:
       type: object
       properties:
@@ -1263,6 +1281,14 @@ components:
           type: boolean
           description: Is user ready to training
           example: "true"
+        certificates:
+          description: User certificates (for trainers only)
+          example: '["/static/2024/09/03/224297181810-6.pdf",
+            "/static/2024/09/03/224297181810-1.pdf",
+            "/static/2024/09/03/224297181810-3.pdf"]'
+          type: array
+          items:
+            type: string
         accessToken:
           type: string
           description: User JWT Token
@@ -1290,6 +1316,7 @@ components:
         - loseCaloriesLimit
         - dayCaloriesLimit
         - isReadyToTraining
+        - certificates
         - accessToken
         - refreshToken
     CreateTrainingDTO:

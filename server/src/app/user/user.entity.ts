@@ -27,6 +27,8 @@ export class UserEntity extends Entity implements StorableEntityInterface<AuthUs
   public loseCaloriesLimit?: number;
   public dayCaloriesLimit?: number;
   public isReadyToTraining?: boolean;
+
+  public certificates?: string[];
   
   constructor(user?: AuthUserInterface) {
     super();
@@ -53,20 +55,20 @@ export class UserEntity extends Entity implements StorableEntityInterface<AuthUs
     this.location = user.location;
     this.pageBackground = user.pageBackground ?? this.avatar;
 
-    // TODO: Возможно, вынести в отдельную сущность "Опросник"
     this.level = user.level;
     this.trainingType = user.trainingType;
     this.trainingDuration = user.trainingDuration;
     this.loseCaloriesLimit = user.loseCaloriesLimit;
     this.dayCaloriesLimit = user.dayCaloriesLimit;
     this.isReadyToTraining = user.isReadyToTraining;
+
+    this.certificates = user.certificates;
   }
 
   public setPassword(password: string) {
     this.passwordHash = password;
   }
 
-  // TODO: Решить проблему с кастингом типов
   public toPOJO(): AuthUserInterface {
     return {
       id: this.id,
@@ -89,6 +91,8 @@ export class UserEntity extends Entity implements StorableEntityInterface<AuthUs
       loseCaloriesLimit: this.loseCaloriesLimit,
       dayCaloriesLimit: this.dayCaloriesLimit,
       isReadyToTraining: this.isReadyToTraining,
+
+      certificates: this.certificates
     };
   }
 }

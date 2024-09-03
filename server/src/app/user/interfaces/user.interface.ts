@@ -20,4 +20,6 @@ export interface UserInterface extends CreatedUpdatedDatesInterface {
   loseCaloriesLimit?: number;
   dayCaloriesLimit?: number;
   isReadyToTraining?: boolean;
+
+  certificates?: string[];
 }

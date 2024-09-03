@@ -1,4 +1,4 @@
-import { getImgPreviewLink } from '@client/src/utils/common';
+import { getFilePreviewLink } from '@client/src/utils/common';
 import { ReactElement, useRef } from 'react';
 
 type RegistrationAvatarProps = {
@@ -18,7 +18,7 @@ export default function RegistrationAvatar({ onAvatarUpload }: RegistrationAvata
 
     const avatar = target?.files[0];
 
-    getImgPreviewLink(avatar, (link: string | ArrayBuffer | null) => {
+    getFilePreviewLink(avatar, (link: string | ArrayBuffer | null) => {
       if(link) {
         avatarContainer?.setAttribute('style', `background-image: url(${link}); background-size: cover;`);
       }

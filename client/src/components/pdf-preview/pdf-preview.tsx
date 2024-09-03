@@ -26,7 +26,6 @@ type PdfPreviewProps = {
 }
 
 export default function PdfPreview({ pdfFileUrl }: PdfPreviewProps): ReactElement {
-  console.log('Accepted PDF file src: ', pdfFileUrl);
   return (
     <Document file={pdfFileUrl} options={options} >
       <Page pageNumber={PageParams.NUMBER} width={PageParams.WIDTH} />

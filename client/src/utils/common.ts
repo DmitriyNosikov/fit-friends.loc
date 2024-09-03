@@ -8,10 +8,10 @@ export function areArraysEqual(arrayA: unknown[], arrayB: unknown[]) {
   return arrayA.toString() === arrayB.toString();
 }
 
-export function getImgPreviewLink(img: File, onLoad?: Function) {
+export function getFilePreviewLink(file: File, onLoad?: Function) {
   const fileReader = new FileReader();
 
-    fileReader.readAsDataURL(img);
+    fileReader.readAsDataURL(file);
 
     fileReader.addEventListener('loadend', () => {
       if(!onLoad) {

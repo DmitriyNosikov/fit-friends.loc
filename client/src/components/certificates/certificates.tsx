@@ -55,6 +55,13 @@ export default function Certificates(): ReactElement {
       })
   }
 
+  function handleDeleteCertificate(url: string) {
+    const filteredCertificates = userCertificates.filter((item) => item !== url);
+
+    console.log('Previous certificates: ', userCertificates);
+    console.log('Filtered certificates: ', filteredCertificates);
+  }
+
   return (
     <div className="personal-account-coach__additional-info">
       <div className="personal-account-coach__label-wrapper">
@@ -82,7 +89,7 @@ export default function Certificates(): ReactElement {
         </div>
       </div>
 
-      <CertificatesList itemsSrcList={userCertificates} />
+      <CertificatesList itemsSrcList={userCertificates} onItemDelete={handleDeleteCertificate} />
     </div>
   )
 }

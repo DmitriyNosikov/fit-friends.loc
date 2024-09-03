@@ -1,7 +1,16 @@
+/* Tools */
+.animated {
+  -webkit-transition: all 0.5s ease-in-out;
+  -moz-transition: all 0.5s ease-in-out;
+  -ms-transition: all 0.5s ease-in-out;
+  -o-transition: all 0.5s ease-in-out;
+  transition: all 0.5s ease-in-out;
+}
+
 .special-offers__slider {
   --swiper-pagination-bottom: 24px;
   --swiper-pagination-bullet-horizontal-gap: 4px;
-  --swiper-pagination-color:  #c5ec2a;
+  --swiper-pagination-color: #c5ec2a;
   --swiper-pagination-bullet-size: 10px;
 
   --swiper-pagination-bullet-inactive-opacity: 1;
@@ -12,7 +21,7 @@
   justify-content: flex-end;
 }
 
-.input-load-avatar__avatar > img {
+.input-load-avatar__avatar>img {
   border-radius: 50%;
 }
 
@@ -47,7 +56,7 @@
 
 .range-slider .noUi-handle:before,
 .range-slider .noUi-handle:after,
-.filter-range__bar{
+.filter-range__bar {
   display: none;
 }
 
@@ -123,4 +132,32 @@
 .checkboxes-list {
   list-style: none;
   padding: 0;
+}
+
+/* Certificates */
+.certificate-card__image {
+  position: relative;
+}
+
+.certificate-card__image--delete {
+  opacity: 0.5;
+}
+
+.certificate-card__upload-form {
+  position: absolute;
+  left: 0;
+  top: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(51, 51, 51, 0.8);
+  z-index: 100;
+  cursor: pointer;
+}
+
+.certificate-card__upload-form span {
+  text-align: center;
+  color: #c5ec2a;
 }

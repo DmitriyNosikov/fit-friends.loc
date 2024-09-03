@@ -9,10 +9,13 @@ import CertificatesListItem from '../certificates-list item/certificates-list-it
 import Stub from '../../tools/stub/stub';
 
 type CertificatesListProps = {
-  itemsSrcList: string[]
+  itemsSrcList: string[],
+
+  onItemUpdate?: Function,
+  onItemDelete?: Function,
 }
 
-export default function CertificatesList({ itemsSrcList }: CertificatesListProps): ReactElement {
+export default function CertificatesList({ itemsSrcList, onItemUpdate, onItemDelete }: CertificatesListProps): ReactElement {
   return (
     <Swiper
       modules={[Navigation]}
@@ -41,7 +44,7 @@ export default function CertificatesList({ itemsSrcList }: CertificatesListProps
         itemsSrcList.length > 0 && itemsSrcList.map((src) => {
           return (
             <SwiperSlide key={src}>
-              <CertificatesListItem itemSrc={src} />
+              <CertificatesListItem itemSrc={src} onItemUpdate={onItemUpdate} onItemDelete={onItemDelete} />
             </SwiperSlide>
           )
         })

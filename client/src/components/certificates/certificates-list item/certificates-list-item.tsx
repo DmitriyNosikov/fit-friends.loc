@@ -1,8 +1,9 @@
 import classNames from 'classnames';
-import { ReactElement, useEffect, useRef, useState } from 'react';
+import { ReactElement, useRef, useState } from 'react';
 import PdfPreview from '../../pdf-preview/pdf-preview';
 import { BASE_URL } from '@client/src/services/api';
 import Spinner from '../../tools/spinner/spinner';
+import { getFilePreviewLink } from '@client/src/utils/common';
 
 type CertificatesListItemProps = {
   itemSrc: string,
@@ -16,8 +17,8 @@ export default function CertificatesListItem({ itemSrc, onItemUpdate, onItemDele
 
   const [currentCertificate, setCurrentCertificate] = useState(itemURL);
   const [isEditing, setIsEditing] = useState(false);
-  const [isDeleting, setIsDeleting] = useState(false);
   const uploadCertificateField = useRef<HTMLInputElement>(null);
+
 
   function handleChangeBtnClick() {
     setIsEditing(true);
@@ -25,24 +26,44 @@ export default function CertificatesListItem({ itemSrc, onItemUpdate, onItemDele
 
   function handleSaveBtnClick() {
     setIsEditing(false);
-  }
 
-  function handleUpdateCertificate() {
-    if (onItemUpdate) {
-      onItemUpdate(itemSrc);
+    // Если сертификат был обновлен
+    if (currentCertificate !== itemSrc && currentCertificate !== '' && onItemUpdate) {
+      const newCertificateField = uploadCertificateField?.current;
+
+      if (!newCertificateField || !newCertificateField.files) {
+        return;
+      }
+
+      onItemUpdate(itemSrc, newCertificateField.files[0]);
+
+      return;
+    }
+
+    // Если у нас нет нового сертификата и текущего - значит он был удален
+    if (currentCertificate === '' && onItemDelete) {
+      console.log('2');
+      onItemDelete(itemSrc);
+      return;
     }
   }
 
   function handleDeleteCertificate() {
-    setIsDeleting(true);
+    setCurrentCertificate('');
 
-    if (onItemDelete) {
-      onItemDelete(itemSrc);
+    if (uploadCertificateField.current) {
+      uploadCertificateField.current.value = '';
     }
   }
 
   function handleUploadNewCertificate() {
-    console.log(uploadCertificateField?.current?.files);
+    const target = uploadCertificateField?.current;
+
+    if (!target || !target.files) {
+      return;
+    }
+
+    getFilePreviewLink(target.files[0], setCurrentCertificate)
   }
 
   return (
@@ -52,18 +73,7 @@ export default function CertificatesListItem({ itemSrc, onItemUpdate, onItemDele
           'certificate-card',
           { 'certificate-card--edit': isEditing })
       }>
-        <div className={classNames(
-          'certificate-card__image',
-          { 'certificate-card__image--delete': isDeleting }
-        )}>
-          {
-            isEditing &&
-            <label className="certificate-card__upload-form">
-              <input className="visually-hidden" type="file" accept=".pdf" ref={uploadCertificateField} onChange={handleUploadNewCertificate} />
-              <span>Нажмите, чтобы загрузить новый сертификат</span>
-            </label>
-          }
-
+        <div className="certificate-card__image">
           {/* PDF Preview */}
           {
             !currentCertificate && <Spinner />
@@ -79,7 +89,8 @@ export default function CertificatesListItem({ itemSrc, onItemUpdate, onItemDele
             <button className="btn-flat btn-flat--underlined certificate-card__button certificate-card__button--edit" type="button" onClick={handleChangeBtnClick}>
               <svg width={12} height={12} aria-hidden="true">
                 <use xlinkHref="#icon-edit" />
-              </svg><span>Изменить</span>
+              </svg>
+              <span>Изменить</span>
             </button>
           }
 
@@ -98,9 +109,12 @@ export default function CertificatesListItem({ itemSrc, onItemUpdate, onItemDele
             isEditing &&
             <div className="certificate-card__controls">
               <button className="btn-icon certificate-card__control" type="button" aria-label="next">
-                <svg width={16} height={16} aria-hidden="true">
-                  <use xlinkHref="#icon-change" />
-                </svg>
+                <label className="certificate-card__controls--change" htmlFor='change-certificate'>
+                  <input id="change-certificate" className="visually-hidden" type="file" accept=".pdf" ref={uploadCertificateField} onChange={handleUploadNewCertificate} />
+                  <svg width={16} height={16} aria-hidden="true">
+                    <use xlinkHref="#icon-change" />
+                  </svg>
+                </label>
               </button>
               <button className="btn-icon certificate-card__control" type="button" aria-label="next" onClick={handleDeleteCertificate}>
                 <svg width={14} height={16} aria-hidden="true">

@@ -55,12 +55,40 @@ export default function Certificates(): ReactElement {
       })
   }
 
+  function handleUpdateCertificate(oldCertificateURL: string, newCertificate: File) {
+    const formData = new FormData();
+
+    formData.append('files', newCertificate);
+
+    console.log('New certificate: ', newCertificate);
+    console.log('Form data: ', formData);
+
+    dispatch(uploadCertificateAction(formData))
+      .then((loadCertificatesResult) => {
+        const payload = loadCertificatesResult.payload;
+
+        if ('error' in loadCertificatesResult || (!Array.isArray(payload) || payload.length < 0)) {
+          return;
+        };
+
+        toast.success('Certificate has been successfully uploaded');
+
+        // Обновляем список сертификатов пользователя (удаляем из списка старый сертификат)
+        const filteredCertificates = userCertificates.filter((item) => item !== oldCertificateURL);
+        const updatedCertificates = [ ...payload, ...filteredCertificates ]
+        const updateUserData = { certificates: updatedCertificates }
+
+        dispatch(updateUserAction(updateUserData));
+      })
+  }
+
   function handleDeleteCertificate(url: string) {
     const filteredCertificates = userCertificates.filter((item) => item !== url);
+    const updateUserData = { certificates: filteredCertificates }
 
-    console.log('Previous certificates: ', userCertificates);
-    console.log('Filtered certificates: ', filteredCertificates);
+    dispatch(updateUserAction(updateUserData));
   }
+
 
   return (
     <div className="personal-account-coach__additional-info">
@@ -89,7 +117,7 @@ export default function Certificates(): ReactElement {
         </div>
       </div>
 
-      <CertificatesList itemsSrcList={userCertificates} onItemDelete={handleDeleteCertificate} />
+      <CertificatesList itemsSrcList={userCertificates} onItemUpdate={handleUpdateCertificate} onItemDelete={handleDeleteCertificate} />
     </div>
   )
 }

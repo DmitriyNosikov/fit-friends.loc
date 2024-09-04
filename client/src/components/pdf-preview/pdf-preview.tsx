@@ -6,7 +6,8 @@ import 'react-pdf/dist/Page/TextLayer.css';
 
 const PageParams = {
   NUMBER: 1,
-  WIDTH: 294
+  WIDTH: 294,
+  HEIGHT: 360
 }
 
 const options = {
@@ -28,7 +29,7 @@ type PdfPreviewProps = {
 export default function PdfPreview({ pdfFileUrl }: PdfPreviewProps): ReactElement {
   return (
     <Document file={pdfFileUrl} options={options} >
-      <Page pageNumber={PageParams.NUMBER} width={PageParams.WIDTH} />
+      <Page pageNumber={PageParams.NUMBER} width={PageParams.WIDTH} height={PageParams.HEIGHT} />
     </Document>
   )
 }

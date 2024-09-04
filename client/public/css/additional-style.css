@@ -137,10 +137,25 @@
 /* Certificates */
 .certificate-card__image {
   position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
 }
 
 .certificate-card__image--delete {
   opacity: 0.5;
+}
+
+.certificate-card__control {
+  max-width: 36px;
+  max-height: 36px;
+  overflow: hidden;
+}
+
+.certificate-card__controls--change {
+  padding: 10px;
+  cursor: pointer;
 }
 
 .certificate-card__upload-form {

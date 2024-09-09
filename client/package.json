@@ -51,7 +51,7 @@
     "eslint-plugin-react-refresh": "0.4.1",
     "faker": "5.5.3",
     "jsdom": "22.1.0",
-    "typescript": "5.0.4",
+    "typescript": "5.5.4",
     "vite": "4.3.9",
     "vitest": "0.32.2"
   },

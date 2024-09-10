@@ -57,9 +57,13 @@ model User {
   trainingReview TrainingReview[]
   refreshToken RefreshToken[]
 
+  trainingRequestInitiator TrainingRequest[] @relation("initiator")
+  trainingRequestTrainer TrainingRequest[] @relation("trainer")
+
   @@map("users")
 }
 
+//////////////////// TRAINIGNS ////////////////////
 model Training {
   id                String    @id @default(uuid())
   createdAt         DateTime? @default(now()) @map("created_at")
@@ -89,6 +93,7 @@ model Training {
   @@map("trainings")
 }
 
+//////////////////// ORDERS ////////////////////
 model Order {
   id                      String      @id @default(uuid())
   createdAt               DateTime?   @default(now()) @map("created_at")
@@ -108,6 +113,7 @@ model Order {
   @@map("orders")
 }
 
+//////////////////// BALANCE ////////////////////
 model Balance {
   id                      String      @id @default(uuid())
   createdAt               DateTime?   @default(now()) @map("created_at")
@@ -125,15 +131,16 @@ model Balance {
   @@map("balances")
 }
 
+//////////////////// REVIEWS ////////////////////
 model TrainingReview {
-  id                      String      @id @default(uuid())
-  createdAt               DateTime?   @default(now()) @map("created_at")
-  updatedAt               DateTime?   @updatedAt @map("updated_at")
+  id         String      @id @default(uuid())
+  createdAt  DateTime?   @default(now()) @map("created_at")
+  updatedAt  DateTime?   @updatedAt @map("updated_at")
 
-  userId                  String      @map("user_id")
-  trainingId              String      @map("training_id")
-  rating                  Int
-  text                    String
+  userId     String      @map("user_id")
+  trainingId String      @map("training_id")
+  rating     Int
+  text       String
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
   training Training @relation(fields: [trainingId], references: [id], onDelete: Cascade)
@@ -141,6 +148,23 @@ model TrainingReview {
   @@map("training_reviews")
 }
 
+//////////////////// TRAINING REQUESTS ////////////////////
+model TrainingRequest {
+  id          String      @id @default(uuid())
+  createdAt   DateTime?   @default(now()) @map("created_at")
+  updatedAt   DateTime?   @updatedAt @map("updated_at")
+
+  initiatorId String      @map("initiator_id")
+  trainerId   String      @map("trainer_id")
+  status      String
+
+  initiator User @relation(name: "initiator", fields: [initiatorId], references: [id], onDelete: Cascade)
+  trainer User @relation(name: "trainer", fields: [trainerId], references: [id], onDelete: Cascade)
+  
+  @@map("training_requests")
+}
+
+//////////////////// TOKENS ////////////////////
 model RefreshToken {
   id        String    @id @default(uuid())
   createdAt DateTime? @default(now()) @map("created_at")

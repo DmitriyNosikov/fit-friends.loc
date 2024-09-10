@@ -8,7 +8,8 @@ import {
   TrainingTypeEnum,
   trainingTypeList,
   UserLevelEnum,
-  UserRoleEnum
+  UserRoleEnum,
+  TrainingRequestStatusEnum
 } from '../../types';
 import { TrainingInterface } from '../../../training/interfaces';
 import { AuthUserInterface } from '../../../user/interfaces';
@@ -239,6 +240,35 @@ export function getOrders(usersList: AuthUserInterface[], trainingsList: Trainin
   });
 
   return orders;
+}
+
+export function getTrainingRequests(usersList: AuthUserInterface[]) {
+  const requests = {};
+  const clients: AuthUserInterface[] = [];
+  const trainers: AuthUserInterface[] = [];
+
+  usersList.forEach((user) =>
+      (user.role === UserRoleEnum.CLIENT)
+      ? clients.push(user)
+      : trainers.push(user)
+  );
+
+  trainers.forEach((trainer) => {
+    const randomUserIdIndex = getRandomIntInclusive(0, clients.length - 1);
+    const randomUserId = clients[randomUserIdIndex].id;
+
+    if(!Object.keys(requests).includes(trainer.id) || requests[trainer.id].userId !== randomUserId) {
+      requests[trainer.id] = {
+        userId: randomUserId,
+        trainerId: trainer.id,
+        status: TrainingRequestStatusEnum.PROCESSING
+      }
+    }
+
+    const result = Object.values(requests);
+
+    return result;
+  });
 }
 
 const loremText = "Lorem Ipsum is simply dummy text of the printing and typesetting industry. \

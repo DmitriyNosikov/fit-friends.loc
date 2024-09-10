@@ -1,11 +1,10 @@
 import { ReactElement, useRef } from 'react';
-
-import CertificatesList from './certificates-slider/certificates-slider';
+import { toast } from 'react-toastify';
 
 import { useAppDispatch, useAppSelector } from '@client/src/hooks';
 import { updateUserAction, uploadCertificateAction } from '@client/src/store/actions/api-user-action';
 import { getCurrentUserInfo } from '@client/src/store/slices/user-process/user-process.selectors';
-import { toast } from 'react-toastify';
+
 import CertificatesSlider from './certificates-slider/certificates-slider';
 
 export default function Certificates(): ReactElement {

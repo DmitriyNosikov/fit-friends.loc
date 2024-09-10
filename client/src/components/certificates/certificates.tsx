@@ -1,20 +1,12 @@
 import { ReactElement, useRef } from 'react';
 
-import CertificatesList from './certificates-list/certificates-list';
+import CertificatesList from './certificates-slider/certificates-slider';
 
 import { useAppDispatch, useAppSelector } from '@client/src/hooks';
 import { updateUserAction, uploadCertificateAction } from '@client/src/store/actions/api-user-action';
 import { getCurrentUserInfo } from '@client/src/store/slices/user-process/user-process.selectors';
 import { toast } from 'react-toastify';
-
-// const certificates = [
-//   'img/content/certificates-and-diplomas/certificate-1.jpg',
-//   'img/content/certificates-and-diplomas/certificate-2.jpg',
-//   'img/content/certificates-and-diplomas/certificate-3.jpg',
-//   'img/content/certificates-and-diplomas/certificate-4.jpg',
-//   'img/content/certificates-and-diplomas/certificate-5.jpg',
-//   'img/content/certificates-and-diplomas/certificate-6.jpg'
-// ]
+import CertificatesSlider from './certificates-slider/certificates-slider';
 
 export default function Certificates(): ReactElement {
   const dispatch = useAppDispatch();
@@ -59,9 +51,6 @@ export default function Certificates(): ReactElement {
     const formData = new FormData();
 
     formData.append('files', newCertificate);
-
-    console.log('New certificate: ', newCertificate);
-    console.log('Form data: ', formData);
 
     dispatch(uploadCertificateAction(formData))
       .then((loadCertificatesResult) => {
@@ -117,7 +106,15 @@ export default function Certificates(): ReactElement {
         </div>
       </div>
 
-      <CertificatesList itemsSrcList={userCertificates} onItemUpdate={handleUpdateCertificate} onItemDelete={handleDeleteCertificate} />
+      <CertificatesSlider
+        slides={userCertificates}
+        sliderClass='personal-account-coach__list'
+        sliderItemClass='personal-account-coach__item'
+        prevElBtn='personal-account-coach__control--prev'
+        nextElBtn='personal-account-coach__control--next'
+        onItemUpdate={handleUpdateCertificate}
+        onItemDelete={handleDeleteCertificate}
+      />
     </div>
   )
 }

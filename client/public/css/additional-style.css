@@ -176,3 +176,23 @@
   text-align: center;
   color: #c5ec2a;
 }
+
+.popup__wrapper {
+  background-color: white;
+}
+
+.user-card-coach__certificates {
+  margin: 20px 0;
+}
+
+.user-card-coach__certificates .certificate-card {
+  margin: 0 auto;
+}
+
+.certificates__default-controls {
+  display: flex;
+  position: absolute;
+  right: 5%;
+  top: 0;
+  z-index: 1000;
+}

@@ -1,5 +1,5 @@
 import classNames from 'classnames';
-import { ReactElement } from 'react';
+import { ReactElement, useState } from 'react';
 import { toast } from 'react-toastify';
 
 import { useAppSelector } from '@client/src/hooks';
@@ -8,16 +8,19 @@ import { getTrainingsListLoadingStatus } from '@client/src/store/slices/training
 
 import { ITEMS_PER_PAGE } from '@client/src/const';
 import { DEFAULT_TRAININGS_SORT_TYPE } from '../../trainings/trainings-list/trainings-list';
+import { BASE_URL } from '@client/src/services/api';
+import { upperCaseFirst } from '@client/src/utils/common';
 
 import { UserRDO } from '@shared/user';
 import { TrainingSearchQuery } from '@shared/training';
 
-import { upperCaseFirst } from '@client/src/utils/common';
 import Spinner from '../../tools/spinner/spinner';
 import Stub from '../../tools/stub/stub';
-
-import TrainingsSlider from '../../trainings/trainings-slider/trainings-slider';
 import Popup from '../../popup/popup';
+import TrainingsSlider from '../../trainings/trainings-slider/trainings-slider';
+import CertificatesSlider from '../../certificates/certificates-slider/certificates-slider';
+
+
 
 const START_PAGE = 1;
 
@@ -26,8 +29,12 @@ type PersonalCardTrainerProps = {
 }
 
 export default function PersonalCardTrainer({ userInfo }: PersonalCardTrainerProps): ReactElement {
-  const { name, location, isReadyToTraining, description, trainingType, level } = userInfo;
+  const { name, location, isReadyToTraining, description, trainingType, certificates } = userInfo;
+
   const statusText = userInfo?.isReadyToTraining ? 'Готов тренировать' : 'Не готов тренировать';
+
+  const [isCertificatesModalOpened, setIsCertificatesModalOpened] = useState(false);
+
 
   let searchQuery: TrainingSearchQuery = {
     page: START_PAGE,
@@ -41,7 +48,7 @@ export default function PersonalCardTrainer({ userInfo }: PersonalCardTrainerPro
   const isTrainingsLoadings = useAppSelector(getTrainingsListLoadingStatus);
 
   function handleShowCertificatesClick() {
-    toast.info('Viewing certificates is not implemented yet')
+    setIsCertificatesModalOpened(true);
   }
 
   function handleAddToFriendsBtnCLick() {
@@ -86,7 +93,8 @@ export default function PersonalCardTrainer({ userInfo }: PersonalCardTrainerPro
               <button className="btn-flat user-card-coach__sertificate" type="button" onClick={handleShowCertificatesClick}>
                 <svg width={12} height={13} aria-hidden="true">
                   <use xlinkHref="#icon-teacher" />
-                </svg><span>Посмотреть сертификаты</span>
+                </svg>
+                <span>Посмотреть сертификаты</span>
               </button>
 
               {/* Хэштеги */}
@@ -172,14 +180,22 @@ export default function PersonalCardTrainer({ userInfo }: PersonalCardTrainerPro
           </div>
         </div>
       </section>
-{/*
-      <Popup
-        title='Сертификаты'
-        PopupContentComponent={<div></div>}
 
-        isOpened={true}
-      /> */}
-
+      {
+        certificates &&
+        <Popup
+          title='Сертификаты'
+          PopupContentComponent={CertificatesSlider}
+          PopupContentComponentProps={{
+            slides: certificates,
+            sliderClass: 'user-card-coach__certificates',
+            slidesPreviewCount: 1,
+            defaultControls: true,
+          }}
+          isOpened={isCertificatesModalOpened}
+          onClose={() => setIsCertificatesModalOpened(false)}
+        />
+      }
     </>
   )
 }

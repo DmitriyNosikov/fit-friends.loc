@@ -85,6 +85,24 @@ export class TrainingRequestRepository extends BasePostgresRepository<TrainingRe
     });
   }
 
+  // Серивсные методы
+  public async checkAccess(requestId: string, userId: string) {
+    const request = await this.dbClient.trainingRequest.findFirst({
+      where:  {
+        OR: [
+          { id: requestId, trainerId: userId },
+          { id: requestId, initiatorId: userId },
+        ]
+      },
+    });
+
+    if(!request) {
+      return false;
+    }
+
+    return true;
+  }
+
   private getEntity(document): TrainingRequestEntity {
     return this.createEntityFromDocument(document as unknown as TrainingRequestInterface);
   }

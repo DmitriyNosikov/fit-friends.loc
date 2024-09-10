@@ -2,44 +2,28 @@ import { ApiProperty } from '@nestjs/swagger';
 
 import { UserInterface } from '@server/user/interfaces';
 import { TrainingRequestStatus, TrainingRequestStatusEnum, trainingRequestStatusList } from '@shared/types/training-request-status.enum';
-import { UserRDO } from '@shared/user';
 
-import { Expose, Type } from 'class-transformer';
+import {
+  IsIn,
+  IsString,
+  IsOptional
+} from 'class-validator';
 
 export class UpdateTrainingRequestDTO {
-  @ApiProperty({
-    description: 'Uniq request ID',
-    example: 'g83h4y0943-nv934819843-jv934h8t-n923g48n9438',
-  })
-  @Expose()
-  public id?: string;
-
-  @ApiProperty({
-    description: 'Created at date',
-    example: '2024-04-26 13:02:24.847'
-  })
-  @Expose()
-  createdAt?: Date;
-
-  @ApiProperty({
-    description: 'Updated at date',
-    example: '2024-04-26 13:02:24.847'
-  })
-  @Expose()
-  updatedAt?: Date;
-
   @ApiProperty({
     description: 'Request initiator id',
     example: 'g83h4y0943-nv934819843-jv934h8t-n923g48n9438',
   })
-  @Expose()
+  @IsString()
+  @IsOptional()
   initiatorId?: UserInterface['id']
 
   @ApiProperty({
     description: 'Request trainer id',
     example: 'g83h4y0943-nv934819843-jv934h8t-n923g48n9438',
   })
-  @Expose()
+  @IsString()
+  @IsOptional()
   trainerId?: UserInterface['id']
 
   @ApiProperty({
@@ -47,20 +31,8 @@ export class UpdateTrainingRequestDTO {
     example: 'На рассмотрении',
     enum: TrainingRequestStatusEnum
   })
-  @Expose()
+  @IsIn(trainingRequestStatusList)
+  @IsString()
+  @IsOptional()
   status?: TrainingRequestStatus
-
-  @ApiProperty({
-    description: 'Request`s initiator additional info',
-  })
-  @Expose()
-  @Type(() => UserRDO)
-  initiatorInfo?: UserRDO;
-
-  @ApiProperty({
-    description: 'Request`s trainer additional info',
-  })
-  @Expose()
-  @Type(() => UserRDO)
-  trainerInfo?: UserRDO;
 }

@@ -49,7 +49,6 @@ export default function PersonalAccountCoach(): ReactElement {
         </div>
       </div>
 
-      {/* TODO: Реализовать загрузку и изменение сертификатов */}
       <Certificates />
     </div>
   )

@@ -15,7 +15,6 @@ const options = {
   standardFontDataUrl: '/standard_fonts/',
 };
 
-// @ts-expect-error This does not exist outside of polyfill which this is doing
 if (typeof Promise.withResolvers === 'undefined') {
   if (window)
       // @ts-expect-error This does not exist outside of polyfill which this is doing

@@ -719,7 +719,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/CreateBalanceDTO"
+                $ref: "#/components/schemas/CreateBalanceRDO"
       tags: &a6
         - balance
     get:

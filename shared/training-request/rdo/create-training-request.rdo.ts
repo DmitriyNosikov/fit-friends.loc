@@ -6,7 +6,7 @@ import { UserRDO } from '@shared/user';
 
 import { Expose, Type } from 'class-transformer';
 
-export class CreateTrainingRequestDTO {
+export class CreateTrainingRequestRDO {
   @ApiProperty({
     description: 'Uniq request ID',
     example: 'g83h4y0943-nv934819843-jv934h8t-n923g48n9438',

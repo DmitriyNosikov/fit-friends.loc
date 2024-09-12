@@ -14,14 +14,24 @@ export class TrainingRequestService {
     private readonly trainingRequestFactory: TrainingRequestFactory
   ) {}
 
-  public async getTrainersBalance(trainerId: string): Promise<TrainingRequestEntity | null> {
-    const request = await this.trainingRequestRepository.findTrainersRequests(trainerId);
+  public async getTrainersRequests(trainerId: string): Promise<TrainingRequestEntity[] | null> {
+    const requests = await this.trainingRequestRepository.findTrainersRequests(trainerId);
 
-    if(!request) {
+    if(!requests) {
       throw new NotFoundException(TrainingRequestMessage.ERROR.NOT_FOUND);
     }
 
-    return request;
+    return requests;
+  }
+
+  public async getRequestByUserAndTrainerId(userId: string, trainerId: string) {
+    const requests = await this.trainingRequestRepository.findByUserAndTrainerId(userId, trainerId);
+
+    if(!requests) {
+      throw new NotFoundException(TrainingRequestMessage.ERROR.NOT_FOUND);
+    }
+
+    return requests;
   }
 
   public async create(dto: CreateTrainingRequestDTO) {

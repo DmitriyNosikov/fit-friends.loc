@@ -39,16 +39,18 @@ export class TrainingRequestRepository extends BasePostgresRepository<TrainingRe
     return this.getEntity(trainingRequest);
   }
 
-  public async findTrainersRequests(trainerId: string): Promise<TrainingRequestEntity | null> {
-    const trainingRequest = await this.dbClient.trainingRequest.findFirst({
+  public async findTrainersRequests(trainerId: string): Promise<TrainingRequestEntity[] | null> {
+    const trainingRequests = await this.dbClient.trainingRequest.findMany({
       where: { trainerId }
     })
 
-    if(!trainingRequest) {
+    if(!trainingRequests) {
       return null;
     }
 
-    return this.getEntity(trainingRequest);
+    const requestEntities = trainingRequests.map((request) => this.getEntity(request));
+
+    return requestEntities;
   }
 
   public async create(entity: TrainingRequestEntity): Promise<TrainingRequestEntity | null> {

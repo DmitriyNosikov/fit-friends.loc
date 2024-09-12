@@ -1,5 +1,5 @@
 import { PrismaClient } from '@prisma/client'
-import { getOrders, getRandomIntInclusive, getReviews, getTrainings, getUsers } from './mock-data';
+import { getOrders, getRandomIntInclusive, getReviews, getTrainingRequests, getTrainings, getUsers } from './mock-data';
 
 async function seedDB(prismaClient: PrismaClient) {
   // Add users
@@ -69,6 +69,12 @@ async function seedDB(prismaClient: PrismaClient) {
       data: { rating: ratingAverage }
     })
   }
+
+  // Add training requests
+  const trainingRequests = getTrainingRequests(users);
+  await prismaClient.trainingRequest.createMany({
+    data: trainingRequests
+  })
 
   console.info('🤘️ Database was filled');
 }

@@ -1995,13 +1995,9 @@ components:
           description: Request trainer id
           example: g83h4y0943-nv934819843-jv934h8t-n923g48n9438
         status:
-          type: string
+          type: object
           description: Request status
           example: На рассмотрении
-          enum:
-            - На рассмотрении
-            - Принят
-            - Отклонен
         initiatorInfo:
           description: Request`s initiator additional info
           allOf:

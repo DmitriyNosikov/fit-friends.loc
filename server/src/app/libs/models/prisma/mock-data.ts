@@ -247,6 +247,8 @@ export function getTrainingRequests(usersList: AuthUserInterface[]) {
   const clients: AuthUserInterface[] = [];
   const trainers: AuthUserInterface[] = [];
 
+  let result = [];
+
   usersList.forEach((user) =>
       (user.role === UserRoleEnum.CLIENT)
       ? clients.push(user)
@@ -257,18 +259,18 @@ export function getTrainingRequests(usersList: AuthUserInterface[]) {
     const randomUserIdIndex = getRandomIntInclusive(0, clients.length - 1);
     const randomUserId = clients[randomUserIdIndex].id;
 
-    if(!Object.keys(requests).includes(trainer.id) || requests[trainer.id].userId !== randomUserId) {
+    if(!Object.keys(requests).includes(trainer.id) || requests[trainer.id].initiatorId !== randomUserId) {
       requests[trainer.id] = {
-        userId: randomUserId,
+        initiatorId: randomUserId,
         trainerId: trainer.id,
         status: TrainingRequestStatusEnum.PROCESSING
       }
     }
 
-    const result = Object.values(requests);
-
-    return result;
+    result = Object.values(requests);
   });
+
+  return result;
 }
 
 const loremText = "Lorem Ipsum is simply dummy text of the printing and typesetting industry. \

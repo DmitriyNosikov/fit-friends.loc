@@ -3,7 +3,7 @@ export { Gender, GenderEnum, genderTypeList } from './gender.enum';
 export { Location, LocationEnum, locationList } from './location.enum';
 export { TrainingDuration, TrainingDurationEnum, trainingDurationList } from '../../../../../shared/types/training-duration.enum';
 export { TrainingType, TrainingTypeEnum, trainingTypeList } from '../../../../../shared/types/training-type.enum';
-export { TrainingRequestStatus, TrainingRequestStatusEnum } from '../../../../../shared/types/training-request-status.enum';
+export { TrainingRequestStatus, TrainingRequestStatusEnum } from '../../../../../shared/types/request-status.enum';
 export { UserLevel, UserLevelEnum, userLevelList } from '../../../../../shared/types/user-level.enum';
 export { UserRole, UserRoleEnum, userRolesList } from '../../../../../shared/types/user-roles.enum';
 export { RequestWithUserId } from './request-with-user-id.type';

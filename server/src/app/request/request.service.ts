@@ -1,18 +1,18 @@
 import { BadRequestException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
-import { TrainingRequestEntity } from './training-request.entity';
-import { TrainingRequestFactory } from './training-request.factory';
-import { TrainingRequestRepository, UserAndTrainerIdsPayload } from './training-request.repository';
-import { TrainingRequestMessage } from './training-request.constant';
+import { RequestEntity } from './request.entity';
+import { RequestFactory } from './request.factory';
+import { RequestRepository, UserAndTrainerIdsPayload } from './request.repository';
+import { RequestMessage } from './request.constant';
 
-import { CreateTrainingRequestDTO, UpdateTrainingRequestDTO } from '@shared/training-request';
+import { CreateTrainingRequestDTO, UpdateTrainingRequestDTO } from '@shared/request';
 import { BaseSearchQuery, UserIdPayload } from '@shared/types';
 import { TrainingRequestStatusEnum } from '@shared/types/training-request-status.enum';
 
 @Injectable()
-export class TrainingRequestService {
+export class RequestService {
   constructor(
-    private readonly trainingRequestRepository: TrainingRequestRepository,
-    private readonly trainingRequestFactory: TrainingRequestFactory
+    private readonly trainingRequestRepository: RequestRepository,
+    private readonly trainingRequestFactory: RequestFactory
   ) {}
   public async create(dto: CreateTrainingRequestDTO & UserIdPayload) {
     const { initiatorId, trainerId } = dto;

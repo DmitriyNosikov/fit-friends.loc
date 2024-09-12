@@ -3,14 +3,14 @@ import { Body, Controller, Delete, Get, HttpStatus, Param, Patch, Post, Query, U
 import { JWTAuthGuard } from '@server/user/guards/jwt-auth.guard';
 import { InjectUserIdInterceptor } from '@server/libs/interceptors/inject-user-id.interceptor';
 
-import { TrainingRequestService } from './training-request.service';
+import { TrainingRequestService } from './request.service';
 
 import { SortDirectionEnum, SortTypeEnum, UserIdPayload } from '@shared/types';
-import { TrainingRequestMessage } from './training-request.constant';
+import { TrainingRequestMessage } from './request.constant';
 import { BaseSearchQuery, DefaultSearchParam } from '@shared/types/search/base-search-query.type';
-import { UserAndTrainerIdsPayload } from './training-request.repository';
+import { UserAndTrainerIdsPayload } from './request.repository';
 
-import { CreateTrainingRequestDTO, CreateTrainingRequestRDO, TrainingRequestsWithPaginationRDO, UpdateTrainingRequestDTO } from '@shared/training-request';
+import { CreateTrainingRequestDTO, CreateTrainingRequestRDO, TrainingRequestsWithPaginationRDO, UpdateTrainingRequestDTO } from '@shared/request';
 import { fillDTO } from '@server/libs/helpers';
 
 @ApiTags('training requests')

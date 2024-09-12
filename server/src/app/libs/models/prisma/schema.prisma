@@ -57,8 +57,8 @@ model User {
   trainingReview TrainingReview[]
   refreshToken RefreshToken[]
 
-  trainingRequestInitiator TrainingRequest[] @relation("initiator")
-  trainingRequestTrainer TrainingRequest[] @relation("trainer")
+  requestInitiatorUser Request[] @relation("initiatorUser")
+  requestTargetUser Request[] @relation("targetUser")
 
   @@map("users")
 }
@@ -149,17 +149,18 @@ model TrainingReview {
 }
 
 //////////////////// TRAINING REQUESTS ////////////////////
-model TrainingRequest {
+model Request {
   id          String      @id @default(uuid())
   createdAt   DateTime?   @default(now()) @map("created_at")
   updatedAt   DateTime?   @updatedAt @map("updated_at")
 
-  initiatorId String      @map("initiator_id")
-  trainerId   String      @map("trainer_id")
+  requestType String @map("request_type")
+  initiatorUserId String      @map("initiator_user_id")
+  targetUserId    String      @map("target_user_id")
   status      String
 
-  initiator User @relation(name: "initiator", fields: [initiatorId], references: [id], onDelete: Cascade)
-  trainer User @relation(name: "trainer", fields: [trainerId], references: [id], onDelete: Cascade)
+  initiatorUser User @relation(name: "initiatorUser", fields: [initiatorUserId], references: [id], onDelete: Cascade)
+  targetUser User @relation(name: "targetUser", fields: [targetUserId], references: [id], onDelete: Cascade)
   
   @@map("training_requests")
 }

@@ -2,45 +2,45 @@ import { Injectable } from '@nestjs/common';
 import { PrismaClientService } from '../prisma-client/prisma-client.service';
 
 import { BasePostgresRepository } from '@server/libs/data-access';
-import { TrainingRequestInterface } from './interfaces/training-request.interface';
-import { TrainingRequestEntity } from './training-request.entity';
-import { TrainingRequestFactory } from './training-request.factory';
+import { RequestInterface } from './interfaces/request.interface';
+import { RequestEntity } from './request.entity';
+import { RequestFactory } from './request.factory';
 import { BaseSearchQuery, SortDirection, SortType, SortTypeEnum } from '@shared/types';
 import { PaginationResult } from '@server/libs/interfaces';
 import { DefaultSearchParam } from '@shared/types/search/base-search-query.type';
-import { TrainingRequestSearchFilters } from '@shared/training-request';
+import { RequestSearchFilters } from '@shared/request';
 import { Prisma } from '@prisma/client';
 
-export type UserAndTrainerIdsPayload = {
+export type UserAndTargetUserIdsPayload = {
   userId?: string,
-  trainerId?: string
+  targetUserId?: string
 };
 
 @Injectable()
-export class TrainingRequestRepository extends BasePostgresRepository<TrainingRequestEntity, TrainingRequestInterface> {
+export class RequestRepository extends BasePostgresRepository<RequestEntity, RequestInterface> {
   constructor(
-    entityFactory: TrainingRequestFactory,
+    entityFactory: RequestFactory,
     readonly dbClient: PrismaClientService
   ) {
     super(entityFactory, dbClient);
   }
-  public async create(entity: TrainingRequestEntity): Promise<TrainingRequestEntity | null> {
-    const trainingRequest = await this.dbClient.trainingRequest.create({
+  public async create(entity: RequestEntity): Promise<RequestEntity | null> {
+    const request = await this.dbClient.request.create({
       data: entity
     });
 
-    if (!trainingRequest) {
+    if (!request) {
       return null;
     }
 
-    return this.getEntity(trainingRequest);
+    return this.getEntity(request);
   }
 
   public async updateById(
     requestId: string,
-    fieldsToUpdate: Partial<TrainingRequestEntity>
-  ): Promise<TrainingRequestEntity | null> {
-    const updatedRequest = await this.dbClient.trainingRequest.update({
+    fieldsToUpdate: Partial<RequestEntity>
+  ): Promise<RequestEntity | null> {
+    const updatedRequest = await this.dbClient.request.update({
       where: { id: requestId },
       data: { ...fieldsToUpdate }
     });
@@ -53,13 +53,13 @@ export class TrainingRequestRepository extends BasePostgresRepository<TrainingRe
   }
 
   public async deleteById(requestId: string): Promise<void> {
-    await this.dbClient.trainingRequest.delete({
+    await this.dbClient.request.delete({
       where: { id: requestId }
     });
   }
 
   // TODO: Унифицировать метод поиска
-  public async search(query?: BaseSearchQuery & UserAndTrainerIdsPayload): Promise<PaginationResult<TrainingRequestEntity>> {
+  public async search(query?: BaseSearchQuery & UserAndTargetUserIdsPayload): Promise<PaginationResult<RequestEntity>> {
     const itemsPerPage =  query?.limit;
     const page = query?.page;
     const { where, orderBy } = this.getSearchFilters(query);
@@ -70,8 +70,8 @@ export class TrainingRequestRepository extends BasePostgresRepository<TrainingRe
       orderBy,
 
       include: {
-        initiator: true,
-        trainer: true
+        initiatorUser: true,
+        targetUser: true
       }
     };
 
@@ -80,48 +80,48 @@ export class TrainingRequestRepository extends BasePostgresRepository<TrainingRe
     return paginatedResult;
   }
 
-  public async findById(requestId: string): Promise<TrainingRequestEntity | null> {
-    const trainingRequest = await this.dbClient.trainingRequest.findFirst({
+  public async findById(requestId: string): Promise<RequestEntity | null> {
+    const request = await this.dbClient.request.findFirst({
       where: { id: requestId }
     });
 
-    if (!trainingRequest) {
+    if (!request) {
       return null;
     }
 
-    return this.getEntity(trainingRequest);
+    return this.getEntity(request);
   }
 
-  public async findByUserAndTrainerId(userId: string, trainerId: string): Promise<TrainingRequestEntity | null> {
-    const trainingRequest = await this.dbClient.trainingRequest.findFirst({
-      where: { initiatorId: userId, trainerId: trainerId }
+  public async findByInitiatorAndTargetUserId(initiatorUserId: string, targetUserId: string): Promise<RequestEntity | null> {
+    const request = await this.dbClient.request.findFirst({
+      where: { initiatorUserId, targetUserId }
     })
 
-    if (!trainingRequest) {
+    if (!request) {
       return null;
     }
 
-    return this.getEntity(trainingRequest);
+    return this.getEntity(request);
   }
 
-  public async findTrainersRequests(trainerId: string): Promise<TrainingRequestEntity[] | null> {
-    const trainingRequests = await this.dbClient.trainingRequest.findMany({
-      where: { trainerId }
+  public async findTargetsRequests(targetUserId: string): Promise<RequestEntity[] | null> {
+    const requests = await this.dbClient.request.findMany({
+      where: { targetUserId }
     })
 
-    if (!trainingRequests) {
+    if (!requests) {
       return null;
     }
 
-    const requestEntities = trainingRequests.map((request) => this.getEntity(request));
+    const requestEntities = requests.map((request) => this.getEntity(request));
 
     return requestEntities;
   }
 
   // Серивсные методы
   public async checkAccess(requestId: string, userId: string) {
-    const request = await this.dbClient.trainingRequest.findFirst({
-      where: { id: requestId, initiatorId: userId },
+    const request = await this.dbClient.request.findFirst({
+      where: { id: requestId, initiatorUserId: userId },
     });
 
     if (!request) {
@@ -131,16 +131,16 @@ export class TrainingRequestRepository extends BasePostgresRepository<TrainingRe
     return true;
   }
 
-  private getEntity(document): TrainingRequestEntity {
-    return this.createEntityFromDocument(document as unknown as TrainingRequestInterface);
+  private getEntity(document): RequestEntity {
+    return this.createEntityFromDocument(document as unknown as RequestInterface);
   }
 
   //////////////////// Вспомогательные методы поиска и пагинации ////////////////////
   public async getPaginatedResult(
-    query: Prisma.TrainingRequestFindManyArgs,
+    query: Prisma.RequestFindManyArgs,
     itemsPerPage: number = DefaultSearchParam.MAX_ITEMS_PER_PAGE,
     page?: number
-  ): Promise<PaginationResult<TrainingRequestEntity>> {
+  ): Promise<PaginationResult<RequestEntity>> {
     const skip = (page && itemsPerPage)
       ? (page - 1) * itemsPerPage
       : undefined;
@@ -150,7 +150,7 @@ export class TrainingRequestRepository extends BasePostgresRepository<TrainingRe
 
     // Запрос на получение результата поиска
     const [items, totalItemsCount] = await Promise.all([
-      this.dbClient.trainingRequest.findMany({
+      this.dbClient.request.findMany({
         ...query,
 
         // Pagination
@@ -160,7 +160,7 @@ export class TrainingRequestRepository extends BasePostgresRepository<TrainingRe
       this.getItemsCount(query.where)
     ]);
 
-    const itemsEntities = items.map((item) => this.createEntityFromDocument(item as unknown as TrainingRequestInterface));
+    const itemsEntities = items.map((item) => this.createEntityFromDocument(item as unknown as RequestInterface));
 
     return {
       entities: itemsEntities,
@@ -171,16 +171,16 @@ export class TrainingRequestRepository extends BasePostgresRepository<TrainingRe
     }
   }
 
-  private getSearchFilters(query: BaseSearchQuery & UserAndTrainerIdsPayload): TrainingRequestSearchFilters {
-    const where: Prisma.TrainingRequestWhereInput = {};
-    const orderBy: Prisma.TrainingRequestOrderByWithRelationInput = {};
+  private getSearchFilters(query: BaseSearchQuery & UserAndTargetUserIdsPayload): RequestSearchFilters {
+    const where: Prisma.RequestWhereInput = {};
+    const orderBy: Prisma.RequestOrderByWithRelationInput = {};
 
     if (query?.userId) {
-      where.initiatorId = query.userId;
+      where.initiatorUserId = query.userId;
     }
 
-    if (query?.trainerId) {
-      where.trainerId = query.trainerId;
+    if (query?.targetUserId) {
+      where.targetUserId = query.targetUserId;
     }
 
     // Сортировка и направление сортировки
@@ -202,7 +202,7 @@ export class TrainingRequestRepository extends BasePostgresRepository<TrainingRe
     }
   }
 
-  private async getItemsCount(where: Prisma.TrainingRequestWhereInput): Promise<number> {
-    return this.dbClient.trainingRequest.count({ where });
+  private async getItemsCount(where: Prisma.RequestWhereInput): Promise<number> {
+    return this.dbClient.request.count({ where });
   }
 }

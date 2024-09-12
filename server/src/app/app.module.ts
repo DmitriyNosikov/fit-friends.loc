@@ -8,6 +8,7 @@ import { TrainingModule } from './training/training.module';
 import { OrderModule } from './order/order.module';
 import { BalanceModule } from './balance/balance.module';
 import { TrainingReviewModule } from './training-review/training-review.module';
+import { TrainingRequestModule } from './training-request/training-request.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { TrainingReviewModule } from './training-review/training-review.module';
     UserModule,
     TrainingModule,
     TrainingReviewModule,
+    TrainingRequestModule,
     OrderModule,
     BalanceModule
   ],

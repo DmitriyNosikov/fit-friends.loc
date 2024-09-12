@@ -1,0 +1,38 @@
+@host = 127.0.0.1
+@port = 8000
+@baseUrl = http://{{host}}:{{port}}/api/training-requests
+
+@trainingRequestId = 9e8e1099-ad12-4371-b4c5-798a2f38d1d0
+@trainerId = 5f5e211a-4295-4e5b-8893-787d7c435b9c
+@authorization = Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJjNDI5MmNlMC1lMWMzLTQ2YTMtOTEzMi03NmI5N2ZhZDI5NjgiLCJlbWFpbCI6Imlyb24tbWFuQHN0YXJraW5kdXN0cmllcy5pdCIsIm5hbWUiOiJUb255Iiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzI2MTQ4NjU5LCJleHAiOjE3MjYxNDk1NTl9.thhqRawY6mkmRs6_q1AeCOeHbpRe_c_KJ5ZroHAFuyE
+
+# Create new training request
+POST {{baseUrl}}/ HTTP/1.1
+Content-Type: application/json
+{{authorization}}
+
+{
+  "trainerId": "5f5e211a-4295-4e5b-8893-787d7c435b9c"
+}
+###
+
+# Update request
+PATCH {{baseUrl}}/{{trainingRequestId}} HTTP/1.1
+Content-Type: application/json
+{{authorization}}
+
+{
+  "status": "Принят"
+}
+###
+
+# Delete request
+DELETE {{baseUrl}}/{{trainingRequestId}} HTTP/1.1
+Content-Type: application/json
+{{authorization}}
+###
+
+# Get all trainer`s requests
+GET {{baseUrl}}/{{trainerId}} HTTP/1.1
+{{authorization}}
+###

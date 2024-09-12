@@ -144,7 +144,5 @@ export class TrainingReviewService {
     const newRating = await this.recountRating(trainingId);
 
     await this.trainingService.updateById(trainingId, { rating: newRating });
-
-    console.log('NEW RATING: ', newRating);
   }
 }

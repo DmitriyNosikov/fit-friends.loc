@@ -164,9 +164,9 @@ export class BalanceService {
   // Вспомогательные методы
   public filterQuery(query: BaseSearchQuery) {
     const filteredQuery = fillDTO(BaseSearchQuery, query);
-    const omitedQuery = omitUndefined(filteredQuery as Record<string, unknown>);
+    const omittedQuery = omitUndefined(filteredQuery as Record<string, unknown>);
 
-    return omitedQuery;
+    return omittedQuery;
   }
 
   private async checkAccess(balanceId: string, userId: string): Promise<boolean | void> {

@@ -5,7 +5,8 @@ import { TrainingRequestStatus, TrainingRequestStatusEnum, trainingRequestStatus
 
 import {
   IsIn,
-  IsString
+  IsString,
+  IsOptional
 } from 'class-validator';
 
 export class CreateTrainingRequestDTO {
@@ -30,5 +31,6 @@ export class CreateTrainingRequestDTO {
     })
     @IsIn(trainingRequestStatusList)
     @IsString()
-    status: TrainingRequestStatus
+    @IsOptional()
+    status?: TrainingRequestStatus
 }

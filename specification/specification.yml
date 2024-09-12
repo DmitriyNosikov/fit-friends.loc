@@ -559,6 +559,176 @@ paths:
         "200":
           description: Review has been successfully deleted
       tags: *a4
+  /api/training-requests:
+    post:
+      operationId: TrainingRequestController_create
+      summary: Add new training request
+      parameters: []
+      responses:
+        "201":
+          description: Training request has been successfully created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreateTrainingRequestRDO"
+      tags: &a5
+        - training requests
+  /api/training-requests/{requestId}:
+    patch:
+      operationId: TrainingRequestController_update
+      summary: Update request info
+      parameters:
+        - name: requestId
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        "201":
+          description: Training request has bees successfully updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreateTrainingRequestRDO"
+        "400":
+          description: "Can`t update training request. Possible reason: Object with fields
+            to update are empty"
+      tags: *a5
+    delete:
+      operationId: TrainingRequestController_delete
+      summary: Delete request
+      parameters:
+        - name: requestId
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Training request has been successfully deleted
+      tags: *a5
+  /api/training-requests/{trainerId}:
+    get:
+      operationId: TrainingRequestController_index
+      summary: Get trainer`s requests
+      parameters:
+        - name: trainerId
+          required: true
+          in: path
+          schema:
+            type: string
+        - name: sortDirection
+          required: false
+          in: query
+          description: "Sorting direction. Default direction: desc"
+          example: " desc"
+          schema:
+            enum:
+              - asc
+              - desc
+            type: string
+        - name: sortType
+          required: false
+          in: query
+          description: "Sorting type. Default sort type: createdAt"
+          example: createdAt
+          schema:
+            enum:
+              - createdAt
+            type: string
+        - name: page
+          required: false
+          in: query
+          description: 'Current page in pagination (if items count more than "limit").
+            Default page: 1'
+          example: "1"
+          schema: {}
+        - name: limit
+          required: false
+          in: query
+          description: "Items per page (pagination). Max limit: 50"
+          example: "50"
+          schema: {}
+        - name: createdAt
+          required: false
+          in: query
+          description: Item's creation date
+          example: 2024-05-29
+          schema: {}
+      responses:
+        "201":
+          description: Training request has been successfully created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreateTrainingRequestRDO"
+      tags: *a5
+  /api/training-requests/by-user:
+    get:
+      operationId: TrainingRequestController_findByUserAndTrainer
+      summary: Get training request by user and trainer
+      parameters: []
+      responses:
+        "201":
+          description: Training request has been successfully created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreateTrainingRequestRDO"
+      tags: *a5
+  /api/training-requests/search:
+    get:
+      operationId: TrainingRequestController_search
+      summary: Search by training requests
+      parameters:
+        - name: sortDirection
+          required: false
+          in: query
+          description: "Sorting direction. Default direction: desc"
+          example: " desc"
+          schema:
+            enum:
+              - asc
+              - desc
+            type: string
+        - name: sortType
+          required: false
+          in: query
+          description: "Sorting type. Default sort type: createdAt"
+          example: createdAt
+          schema:
+            enum:
+              - createdAt
+            type: string
+        - name: page
+          required: false
+          in: query
+          description: 'Current page in pagination (if items count more than "limit").
+            Default page: 1'
+          example: "1"
+          schema: {}
+        - name: limit
+          required: false
+          in: query
+          description: "Items per page (pagination). Max limit: 50"
+          example: "50"
+          schema: {}
+        - name: createdAt
+          required: false
+          in: query
+          description: Item's creation date
+          example: 2024-05-29
+          schema: {}
+      responses:
+        "200":
+          description: Training request found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TrainingRequestsWithPaginationRDO"
+        "404":
+          description: Training request not found
+      tags: *a5
   /api/orders:
     post:
       operationId: OrderController_create
@@ -577,7 +747,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/CreateOrderDTO"
-      tags: &a5
+      tags: &a6
         - orders
     get:
       operationId: OrderController_index
@@ -642,7 +812,7 @@ paths:
       responses:
         "200":
           description: ""
-      tags: *a5
+      tags: *a6
   /api/orders/{orderId}:
     get:
       operationId: OrderController_show
@@ -662,7 +832,7 @@ paths:
                 $ref: "#/components/schemas/CreateOrderRDO"
         "404":
           description: Orders not found
-      tags: *a5
+      tags: *a6
     patch:
       operationId: OrderController_updateTraining
       summary: Update order info
@@ -688,7 +858,7 @@ paths:
         "400":
           description: "Can`t update order. Possible reason: Object with fields to update
             are empty"
-      tags: *a5
+      tags: *a6
     delete:
       operationId: OrderController_deleteOrder
       summary: Delete order
@@ -701,7 +871,7 @@ paths:
       responses:
         "200":
           description: Order has been successfully deleted
-      tags: *a5
+      tags: *a6
   /api/balance:
     post:
       operationId: BalanceController_create
@@ -720,7 +890,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/CreateBalanceRDO"
-      tags: &a6
+      tags: &a7
         - balance
     get:
       operationId: BalanceController_index
@@ -773,7 +943,7 @@ paths:
                 $ref: "#/components/schemas/BalancesWithPaginationRDO"
         "404":
           description: Balance not found
-      tags: *a6
+      tags: *a7
   /api/balance/by-training/{trainingId}:
     get:
       operationId: BalanceController_getUserBalance
@@ -791,7 +961,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/CreateBalanceDTO"
-      tags: *a6
+      tags: *a7
   /api/balance/count:
     get:
       operationId: BalanceController_countBalance
@@ -806,7 +976,7 @@ paths:
                 type: number
         "404":
           description: Balance not found
-      tags: *a6
+      tags: *a7
   /api/balance/increase:
     patch:
       operationId: BalanceController_increaseBalance
@@ -827,7 +997,7 @@ paths:
                 $ref: "#/components/schemas/CreateBalanceRDO"
         "404":
           description: Balance not found
-      tags: *a6
+      tags: *a7
   /api/balance/decrease:
     patch:
       operationId: BalanceController_decreaseBalance
@@ -848,7 +1018,7 @@ paths:
                 $ref: "#/components/schemas/CreateBalanceRDO"
         "404":
           description: Balance not found
-      tags: *a6
+      tags: *a7
   /api/balance/{balanceId}:
     patch:
       operationId: BalanceController_update
@@ -875,7 +1045,7 @@ paths:
         "400":
           description: "Can`t update order. Possible reason: Object with fields to update
             are empty"
-      tags: *a6
+      tags: *a7
     delete:
       operationId: BalanceController_deleteOrder
       summary: Delete balance
@@ -888,7 +1058,7 @@ paths:
       responses:
         "200":
           description: Balance has been successfully deleted
-      tags: *a6
+      tags: *a7
 info:
   title: The "Fit-Friends" service
   description: '"Fit-Friends" service API'
@@ -1074,7 +1244,7 @@ components:
           type: string
           description: User gender
           example: мужской
-          enum: &a7
+          enum: &a8
             - мужской
             - женский
             - неважно
@@ -1091,7 +1261,7 @@ components:
           type: string
           description: User metro station
           example: звездная
-          enum: &a8
+          enum: &a9
             - пионерская
             - петроградская
             - удельная
@@ -1105,7 +1275,7 @@ components:
           type: string
           description: User training level
           example: новичок
-          enum: &a9
+          enum: &a10
             - новичок
             - любитель
             - профессионал
@@ -1113,7 +1283,7 @@ components:
           type: string
           description: User trainings type
           example: '["box", "crossfit", "running"]'
-          enum: &a10
+          enum: &a11
             - йога
             - бег
             - бокс
@@ -1125,7 +1295,7 @@ components:
           type: string
           description: User training time periods (in minutes)
           example: 10-30
-          enum: &a11
+          enum: &a12
             - 10-30
             - 30-50
             - 50-80
@@ -1229,7 +1399,7 @@ components:
           type: string
           description: User gender
           example: мужской
-          enum: *a7
+          enum: *a8
         birthDate:
           format: date-time
           type: string
@@ -1243,7 +1413,7 @@ components:
           type: string
           description: User metro station
           example: звездная
-          enum: *a8
+          enum: *a9
         pageBackground:
           type: string
           description: User profile background. If not passed = User avatar
@@ -1252,17 +1422,17 @@ components:
           type: string
           description: User training level
           example: новичок
-          enum: *a9
+          enum: *a10
         trainingType:
           type: string
           description: User trainings type
           example: '["box", "crossfit", "running"]'
-          enum: *a10
+          enum: *a11
         trainingDuration:
           type: string
           description: User training time periods (in minutes)
           example: 10-30
-          enum: *a11
+          enum: *a12
         loseCaloriesLimit:
           type: number
           description: User lose calories aim
@@ -1799,6 +1969,85 @@ components:
         - trainingId
         - rating
         - text
+    CreateTrainingRequestRDO:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Uniq request ID
+          example: g83h4y0943-nv934819843-jv934h8t-n923g48n9438
+        createdAt:
+          format: date-time
+          type: string
+          description: Created at date
+          example: 2024-04-26 13:02:24.847
+        updatedAt:
+          format: date-time
+          type: string
+          description: Updated at date
+          example: 2024-04-26 13:02:24.847
+        initiatorId:
+          type: object
+          description: Request initiator id
+          example: g83h4y0943-nv934819843-jv934h8t-n923g48n9438
+        trainerId:
+          type: object
+          description: Request trainer id
+          example: g83h4y0943-nv934819843-jv934h8t-n923g48n9438
+        status:
+          type: string
+          description: Request status
+          example: На рассмотрении
+          enum:
+            - На рассмотрении
+            - Принят
+            - Отклонен
+        initiatorInfo:
+          description: Request`s initiator additional info
+          allOf:
+            - $ref: "#/components/schemas/UserRDO"
+        trainerInfo:
+          description: Request`s trainer additional info
+          allOf:
+            - $ref: "#/components/schemas/UserRDO"
+      required:
+        - id
+        - createdAt
+        - updatedAt
+        - initiatorId
+        - trainerId
+        - status
+        - initiatorInfo
+        - trainerInfo
+    TrainingRequestsWithPaginationRDO:
+      type: object
+      properties:
+        totalPages:
+          type: number
+          description: Paginated item pages count
+          example: 2
+        totalItems:
+          type: number
+          description: Total items count
+          example: 23
+        currentPage:
+          type: number
+          description: Current page number in pagination
+          example: 1
+        itemsPerPage:
+          type: number
+          description: items per page
+          example: 7
+        entities:
+          description: Item entities array
+          allOf:
+            - $ref: "#/components/schemas/CreateTrainingRequestRDO"
+      required:
+        - totalPages
+        - totalItems
+        - currentPage
+        - itemsPerPage
+        - entities
     CreateOrderDTO:
       type: object
       properties:

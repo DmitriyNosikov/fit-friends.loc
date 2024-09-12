@@ -4,7 +4,7 @@ import { TrainingRequestStatus } from '@shared/types/training-request-status.enu
 
 export interface TrainingRequestInterface extends CreatedUpdatedDatesInterface {
   id?: string;
-  initiatorId?: UserInterface['id'];
-  trainerId?: UserInterface['id'];
-  status: TrainingRequestStatus
+  initiatorId: UserInterface['id'];
+  trainerId: UserInterface['id'];
+  status?: TrainingRequestStatus
 }

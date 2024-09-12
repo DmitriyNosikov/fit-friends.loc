@@ -70,7 +70,7 @@ export class BalanceController {
     required: false
   })
   @ApiResponse({
-    type: [CreateBalanceRDO],
+    type: BalancesWithPaginationRDO,
     status: HttpStatus.OK,
     description: BalanceMessage.SUCCESS.FOUND
   })

@@ -770,9 +770,7 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/CreateBalanceRDO"
+                $ref: "#/components/schemas/BalancesWithPaginationRDO"
         "404":
           description: Balance not found
       tags: *a6
@@ -2023,6 +2021,35 @@ components:
         - remainingTrainingsCount
         - hasTrainingStarted
         - trainingInfo
+    BalancesWithPaginationRDO:
+      type: object
+      properties:
+        totalPages:
+          type: number
+          description: Paginated item pages count
+          example: 2
+        totalItems:
+          type: number
+          description: Total items count
+          example: 23
+        currentPage:
+          type: number
+          description: Current page number in pagination
+          example: 1
+        itemsPerPage:
+          type: number
+          description: items per page
+          example: 7
+        entities:
+          description: Item entities array
+          allOf:
+            - $ref: "#/components/schemas/CreateBalanceRDO"
+      required:
+        - totalPages
+        - totalItems
+        - currentPage
+        - itemsPerPage
+        - entities
     ChangeBalanceDTO:
       type: object
       properties:

@@ -1,11 +1,11 @@
 import { BadRequestException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { TrainingRequestEntity } from './training-request.entity';
 import { TrainingRequestFactory } from './training-request.factory';
-import { TrainingRequestRepository } from './training-request.repository';
+import { TrainingRequestRepository, UserAndTrainerIdsPayload } from './training-request.repository';
 import { TrainingRequestMessage } from './training-request.constant';
 
 import { CreateTrainingRequestDTO, UpdateTrainingRequestDTO } from '@shared/training-request';
-import { UserIdPayload } from '@shared/types';
+import { BaseSearchQuery, UserIdPayload } from '@shared/types';
 
 @Injectable()
 export class TrainingRequestService {
@@ -13,6 +13,16 @@ export class TrainingRequestService {
     private readonly trainingRequestRepository: TrainingRequestRepository,
     private readonly trainingRequestFactory: TrainingRequestFactory
   ) {}
+
+  public async search(query?: BaseSearchQuery & UserAndTrainerIdsPayload) {
+    const requests = await this.trainingRequestRepository.search(query);
+
+    if (!requests && query) {
+      throw new NotFoundException(`Can't find products by passed params " ${query}"`);
+    }
+
+    return requests;
+  }
 
   public async getTrainersRequests(trainerId: string): Promise<TrainingRequestEntity[] | null> {
     const requests = await this.trainingRequestRepository.findTrainersRequests(trainerId);

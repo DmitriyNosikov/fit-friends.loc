@@ -1,13 +1,15 @@
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { Body, Controller, Delete, Get, HttpStatus, Param, Patch, Post, UseGuards, UseInterceptors } from '@nestjs/common';
+import { ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { Body, Controller, Delete, Get, HttpStatus, Param, Patch, Post, Query, UseGuards, UseInterceptors } from '@nestjs/common';
 import { JWTAuthGuard } from '@server/user/guards/jwt-auth.guard';
 
 import { TrainingRequestService } from './training-request.service';
-import { CreateTrainingRequestDTO, CreateTrainingRequestRDO, UpdateTrainingRequestDTO } from '@shared/training-request';
+import { CreateTrainingRequestDTO, CreateTrainingRequestRDO, TrainingRequestsWithPaginationRDO, UpdateTrainingRequestDTO } from '@shared/training-request';
 import { TrainingRequestMessage } from './training-request.constant';
 import { fillDTO } from '@server/libs/helpers';
 import { InjectUserIdInterceptor } from '@server/libs/interceptors/inject-user-id.interceptor';
-import { UserIdPayload } from '@shared/types';
+import { SortDirectionEnum, SortTypeEnum, UserIdPayload } from '@shared/types';
+import { BaseSearchQuery, DefaultSearchParam } from '@shared/types/search/base-search-query.type';
+import { UserAndTrainerIdsPayload } from './training-request.repository';
 
 @ApiTags('training requests')
 @Controller('training-requests')
@@ -45,6 +47,69 @@ export class TrainingRequestController {
     const requestsPOJO = requests.map((request) => fillDTO(CreateTrainingRequestRDO, request.toPOJO()));
 
     return requestsPOJO;
+  }
+
+  @Get('/search')
+  @ApiOperation({ summary: 'Search by training requests' })
+  @ApiQuery({
+    name: "createdAt",
+    description: `Item's creation date`,
+    example: "2024-05-29",
+    required: false
+  })
+  @ApiQuery({
+    name: "limit",
+    description: `Items per page (pagination). Max limit: ${DefaultSearchParam.MAX_ITEMS_PER_PAGE}`,
+    example: "50",
+    required: false
+  })
+  @ApiQuery({
+    name: "page",
+    description: `Current page in pagination (if items count more than "limit"). Default page: ${DefaultSearchParam.PAGE}`,
+    example: "1",
+    required: false
+  })
+  @ApiQuery({
+    name: "sortType",
+    description: `Sorting type. Default sort type: ${DefaultSearchParam.SORT.TYPE}`,
+    enum: SortTypeEnum,
+    example: "createdAt",
+    required: false
+  })
+  @ApiQuery({
+    name: "sortDirection",
+    description: `Sorting direction. Default direction: ${DefaultSearchParam.SORT.DIRECTION}`,
+    enum: SortDirectionEnum,
+    example: " desc",
+    required: false
+  })
+  @ApiResponse({
+    type: TrainingRequestsWithPaginationRDO,
+    status: HttpStatus.OK,
+    description: TrainingRequestMessage.SUCCESS.FOUND
+  })
+  @ApiResponse({
+    status: HttpStatus.NOT_FOUND,
+    description: TrainingRequestMessage.ERROR.NOT_FOUND
+  })
+  public async search(
+    @Query() query: BaseSearchQuery,
+    @Body() payload: UserAndTrainerIdsPayload
+  ): Promise<TrainingRequestsWithPaginationRDO> {
+    const { userId, trainerId } = payload;
+    const searchQuery = {
+      ...query,
+      userId,
+      trainerId
+    };
+    const requests = await this.trainingRequestService.search(searchQuery);
+
+    const result = {
+      ...requests,
+      entities:  requests.entities.map((request) => fillDTO(CreateTrainingRequestRDO, request.toPOJO()))
+    };
+
+    return result;
   }
 
   @Get('/by-user')

@@ -5,6 +5,16 @@ import { BasePostgresRepository } from '@server/libs/data-access';
 import { TrainingRequestInterface } from './interfaces/training-request.interface';
 import { TrainingRequestEntity } from './training-request.entity';
 import { TrainingRequestFactory } from './training-request.factory';
+import { BaseSearchQuery, SortDirection, SortType, SortTypeEnum } from '@shared/types';
+import { PaginationResult } from '@server/libs/interfaces';
+import { DefaultSearchParam } from '@shared/types/search/base-search-query.type';
+import { TrainingRequestSearchFilters } from '@shared/training-request';
+import { Prisma } from '@prisma/client';
+
+export type UserAndTrainerIdsPayload = {
+  userId?: string,
+  trainerId?: string
+};
 
 @Injectable()
 export class TrainingRequestRepository extends BasePostgresRepository<TrainingRequestEntity, TrainingRequestInterface> {
@@ -13,6 +23,41 @@ export class TrainingRequestRepository extends BasePostgresRepository<TrainingRe
     readonly dbClient: PrismaClientService
   ) {
     super(entityFactory, dbClient);
+  }
+
+  // TODO: Унифицировать метод поиска
+  public async search(query?: BaseSearchQuery & UserAndTrainerIdsPayload): Promise<PaginationResult<TrainingRequestEntity>> {
+    const skip = query?.page && query?.limit ? (query.page - 1) * query.limit : undefined;
+    const take = (!query?.limit || query?.limit > DefaultSearchParam.MAX_ITEMS_PER_PAGE) ? DefaultSearchParam.MAX_ITEMS_PER_PAGE : query.limit;
+    const { where, orderBy } = this.getSearchFilters(query);
+
+    // Запрос на получение результата поиска
+    const [items, totalItemsCount] = await Promise.all([
+      this.dbClient.trainingRequest.findMany({
+        where,
+
+        include: {
+          initiator: true,
+          trainer: true
+        },
+
+        // Pagination
+        take,
+        skip,
+        orderBy
+      }),
+      this.getItemsCount(where)
+    ]);
+
+    const itemsEntities = items.map((item) => this.createEntityFromDocument(item as unknown as TrainingRequestInterface));
+
+    return {
+      entities: itemsEntities,
+      currentPage:  query?.page ?? 0,
+      totalPages: this.calculateItemsPage(totalItemsCount, take),
+      totalItems: totalItemsCount,
+      itemsPerPage: take ?? totalItemsCount,
+    }
   }
 
   public async findById(requestId: string): Promise<TrainingRequestEntity | null> {
@@ -108,4 +153,40 @@ export class TrainingRequestRepository extends BasePostgresRepository<TrainingRe
   private getEntity(document): TrainingRequestEntity {
     return this.createEntityFromDocument(document as unknown as TrainingRequestInterface);
   }
+
+    //////////////////// Вспомогательные методы поиска и пагинации ////////////////////
+    private getSearchFilters(query: BaseSearchQuery & UserAndTrainerIdsPayload): TrainingRequestSearchFilters {
+      const where: Prisma.TrainingRequestWhereInput = {};
+      const orderBy: Prisma.TrainingRequestOrderByWithRelationInput = {};
+  
+      if(query?.userId) {
+        where.initiatorId = query.userId;
+      }
+
+      if(query?.trainerId) {
+        where.trainerId = query.trainerId;
+      }
+  
+      // Сортировка и направление сортировки
+      const { key, value } = this.getSortKeyValue(query.sortType, query.sortDirection);
+  
+      orderBy[key] = value;
+  
+      return { where, orderBy };
+    }
+  
+    private getSortKeyValue(sortType: SortType, sortDirection: SortDirection) {
+      switch(sortType) {
+        case(SortTypeEnum.CREATED_AT): {
+          return { key: 'createdAt', value: sortDirection };
+        }
+        default: {
+          return { key: DefaultSearchParam.SORT.TYPE, value: DefaultSearchParam.SORT.DIRECTION };
+        }
+      }
+    }
+  
+    private async getItemsCount(where: Prisma.TrainingRequestWhereInput): Promise<number> {
+      return this.dbClient.trainingRequest.count({ where });
+    }
 }

@@ -1,7 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
 
 import { UserInterface } from '@server/user/interfaces';
-import { RequestStatus, RequestStatusEnum } from '@shared/types/request-status.enum';
+import { RequestStatus, RequestStatusEnum } from '@shared/request/types/request-status.enum';
+import { RequestType, RequestTypeEnum } from '../types/request-type.enum';
 import { UserRDO } from '@shared/user';
 
 import { Expose, Type } from 'class-transformer';
@@ -30,10 +31,11 @@ export class CreateRequestRDO {
 
   @ApiProperty({
     description: 'Request type',
-    example: 'friendship | training',
+    example: 'friendship',
+    enum: RequestTypeEnum
   })
   @Expose()
-  requestType: string
+  requestType: RequestType
 
   @ApiProperty({
     description: 'Request initiator user id',

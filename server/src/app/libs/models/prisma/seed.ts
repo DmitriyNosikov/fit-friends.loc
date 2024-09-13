@@ -72,7 +72,7 @@ async function seedDB(prismaClient: PrismaClient) {
 
   // Add training requests
   const trainingRequests = getTrainingRequests(users);
-  await prismaClient.trainingRequest.createMany({
+  await prismaClient.request.createMany({
     data: trainingRequests
   })
 

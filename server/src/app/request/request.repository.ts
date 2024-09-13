@@ -1,20 +1,16 @@
 import { Injectable } from '@nestjs/common';
+import { Prisma } from '@prisma/client';
 import { PrismaClientService } from '../prisma-client/prisma-client.service';
+
+import { BaseSearchQuery, SortDirection, SortType, SortTypeEnum } from '@shared/types';
+import { DefaultSearchParam } from '@shared/types/search/base-search-query.type';
+import { PaginationResult } from '@server/libs/interfaces';
+import { RequestSearchFilters, UserAndTargetUserIdsPayload } from '@shared/request';
 
 import { BasePostgresRepository } from '@server/libs/data-access';
 import { RequestInterface } from './interfaces/request.interface';
 import { RequestEntity } from './request.entity';
 import { RequestFactory } from './request.factory';
-import { BaseSearchQuery, SortDirection, SortType, SortTypeEnum } from '@shared/types';
-import { PaginationResult } from '@server/libs/interfaces';
-import { DefaultSearchParam } from '@shared/types/search/base-search-query.type';
-import { RequestSearchFilters } from '@shared/request';
-import { Prisma } from '@prisma/client';
-
-export type UserAndTargetUserIdsPayload = {
-  userId?: string,
-  targetUserId?: string
-};
 
 @Injectable()
 export class RequestRepository extends BasePostgresRepository<RequestEntity, RequestInterface> {
@@ -28,6 +24,8 @@ export class RequestRepository extends BasePostgresRepository<RequestEntity, Req
     const request = await this.dbClient.request.create({
       data: entity
     });
+
+    console.log('Create request result: ', request);
 
     if (!request) {
       return null;
@@ -92,7 +90,10 @@ export class RequestRepository extends BasePostgresRepository<RequestEntity, Req
     return this.getEntity(request);
   }
 
-  public async findByInitiatorAndTargetUserId(initiatorUserId: string, targetUserId: string): Promise<RequestEntity | null> {
+  public async findByInitiatorAndTargetUserId(
+    initiatorUserId: string,
+    targetUserId: string
+  ): Promise<RequestEntity | null> {
     const request = await this.dbClient.request.findFirst({
       where: { initiatorUserId, targetUserId }
     })
@@ -104,7 +105,7 @@ export class RequestRepository extends BasePostgresRepository<RequestEntity, Req
     return this.getEntity(request);
   }
 
-  public async findTargetsRequests(targetUserId: string): Promise<RequestEntity[] | null> {
+  public async findTargetRequests(targetUserId: string): Promise<RequestEntity[] | null> {
     const requests = await this.dbClient.request.findMany({
       where: { targetUserId }
     })

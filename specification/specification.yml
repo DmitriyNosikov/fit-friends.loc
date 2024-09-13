@@ -559,23 +559,23 @@ paths:
         "200":
           description: Review has been successfully deleted
       tags: *a4
-  /api/training-requests:
+  /api/requests:
     post:
-      operationId: TrainingRequestController_create
+      operationId: RequestController_create
       summary: Add new training request
       parameters: []
       responses:
         "201":
-          description: Training request has been successfully created
+          description: Request has been successfully created
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/CreateTrainingRequestRDO"
+                $ref: "#/components/schemas/CreateRequestRDO"
       tags: &a5
-        - training requests
-  /api/training-requests/{requestId}:
+        - requests
+  /api/requests/{requestId}:
     patch:
-      operationId: TrainingRequestController_update
+      operationId: RequestController_update
       summary: Update request info
       parameters:
         - name: requestId
@@ -585,17 +585,17 @@ paths:
             type: string
       responses:
         "201":
-          description: Training request has bees successfully updated
+          description: Request has bees successfully updated
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/CreateTrainingRequestRDO"
+                $ref: "#/components/schemas/CreateRequestRDO"
         "400":
-          description: "Can`t update training request. Possible reason: Object with fields
-            to update are empty"
+          description: "Can`t update request. Possible reason: Object with fields to
+            update are empty"
       tags: *a5
     delete:
-      operationId: TrainingRequestController_delete
+      operationId: RequestController_delete
       summary: Delete request
       parameters:
         - name: requestId
@@ -605,14 +605,14 @@ paths:
             type: string
       responses:
         "200":
-          description: Training request has been successfully deleted
+          description: Request has been successfully deleted
       tags: *a5
-  /api/training-requests/{trainerId}:
+  /api/requests/{targetUserId}:
     get:
-      operationId: TrainingRequestController_index
-      summary: Get trainer`s requests
+      operationId: RequestController_index
+      summary: Get target user`s requests
       parameters:
-        - name: trainerId
+        - name: targetUserId
           required: true
           in: path
           schema:
@@ -657,29 +657,29 @@ paths:
           schema: {}
       responses:
         "201":
-          description: Training request has been successfully created
+          description: Request has been successfully created
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/CreateTrainingRequestRDO"
+                $ref: "#/components/schemas/CreateRequestRDO"
       tags: *a5
-  /api/training-requests/by-user:
+  /api/requests/by-users:
     get:
-      operationId: TrainingRequestController_findByUserAndTrainer
-      summary: Get training request by user and trainer
+      operationId: RequestController_findByInitiatorAndTargetUsers
+      summary: Get request by user and trainer
       parameters: []
       responses:
         "201":
-          description: Training request has been successfully created
+          description: Request has been successfully created
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/CreateTrainingRequestRDO"
+                $ref: "#/components/schemas/CreateRequestRDO"
       tags: *a5
-  /api/training-requests/search:
+  /api/requests/search:
     get:
-      operationId: TrainingRequestController_search
-      summary: Search by training requests
+      operationId: RequestController_search
+      summary: Search by requests
       parameters:
         - name: sortDirection
           required: false
@@ -725,9 +725,9 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/TrainingRequestsWithPaginationRDO"
+                $ref: "#/components/schemas/RequestsWithPaginationRDO"
         "404":
-          description: Training request not found
+          description: Request not found
       tags: *a5
   /api/orders:
     post:
@@ -1969,7 +1969,7 @@ components:
         - trainingId
         - rating
         - text
-    CreateTrainingRequestRDO:
+    CreateRequestRDO:
       type: object
       properties:
         id:
@@ -1986,23 +1986,34 @@ components:
           type: string
           description: Updated at date
           example: 2024-04-26 13:02:24.847
-        initiatorId:
+        requestType:
+          type: string
+          description: Request type
+          example: friendship
+          enum:
+            - friendship
+            - training
+        initiatorUserId:
           type: object
-          description: Request initiator id
+          description: Request initiator user id
           example: g83h4y0943-nv934819843-jv934h8t-n923g48n9438
-        trainerId:
+        targetUserId:
           type: object
-          description: Request trainer id
+          description: Request target user id
           example: g83h4y0943-nv934819843-jv934h8t-n923g48n9438
         status:
-          type: object
+          type: string
           description: Request status
           example: На рассмотрении
-        initiatorInfo:
+          enum:
+            - на рассмотрении
+            - принят
+            - отклонен
+        initiatorUserInfo:
           description: Request`s initiator additional info
           allOf:
             - $ref: "#/components/schemas/UserRDO"
-        trainerInfo:
+        trainerUserInfo:
           description: Request`s trainer additional info
           allOf:
             - $ref: "#/components/schemas/UserRDO"
@@ -2010,12 +2021,13 @@ components:
         - id
         - createdAt
         - updatedAt
-        - initiatorId
-        - trainerId
+        - requestType
+        - initiatorUserId
+        - targetUserId
         - status
-        - initiatorInfo
-        - trainerInfo
-    TrainingRequestsWithPaginationRDO:
+        - initiatorUserInfo
+        - trainerUserInfo
+    RequestsWithPaginationRDO:
       type: object
       properties:
         totalPages:
@@ -2037,7 +2049,7 @@ components:
         entities:
           description: Item entities array
           allOf:
-            - $ref: "#/components/schemas/CreateTrainingRequestRDO"
+            - $ref: "#/components/schemas/CreateRequestRDO"
       required:
         - totalPages
         - totalItems

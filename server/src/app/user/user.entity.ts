@@ -1,5 +1,5 @@
 
-import { TrainingDuration } from '@shared/types/training-duration.enum';
+import { TrainingDuration } from '@shared/training/types/training-duration.enum';
 import { Entity } from '../libs/entities';
 import { StorableEntityInterface } from '../libs/interfaces';
 import { AuthUserInterface } from './interfaces';

@@ -37,7 +37,7 @@ import { UserIdPayload } from '@shared/types';
 export class UserController {
   constructor(
     private readonly userService: UserService
-  ){}
+  ) { }
   @Get('additional')
   @ApiOperation({ summary: 'Return additional info about availible genders, locations, training types and training durations' })
   @ApiResponse({

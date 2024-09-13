@@ -1,14 +1,17 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
+
 import { appConfig, jwtConfig } from '../config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+
 import { UserModule } from './user/user.module';
 import { TrainingModule } from './training/training.module';
 import { OrderModule } from './order/order.module';
 import { BalanceModule } from './balance/balance.module';
 import { TrainingReviewModule } from './training-review/training-review.module';
-import { TrainingRequestModule } from './training-request/training-request.module';
+import { RequestModule } from './request/request.module';
+
 
 @Module({
   imports: [
@@ -22,7 +25,7 @@ import { TrainingRequestModule } from './training-request/training-request.modul
     UserModule,
     TrainingModule,
     TrainingReviewModule,
-    TrainingRequestModule,
+    RequestModule,
     OrderModule,
     BalanceModule
   ],

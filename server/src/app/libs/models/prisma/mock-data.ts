@@ -9,7 +9,8 @@ import {
   trainingTypeList,
   UserLevelEnum,
   UserRoleEnum,
-  TrainingRequestStatusEnum
+  RequestStatusEnum,
+  RequestTypeEnum
 } from '../../types';
 import { TrainingInterface } from '../../../training/interfaces';
 import { AuthUserInterface } from '../../../user/interfaces';
@@ -261,9 +262,10 @@ export function getTrainingRequests(usersList: AuthUserInterface[]) {
 
     if(!Object.keys(requests).includes(trainer.id) || requests[trainer.id].initiatorId !== randomUserId) {
       requests[trainer.id] = {
-        initiatorId: randomUserId,
-        trainerId: trainer.id,
-        status: TrainingRequestStatusEnum.PROCESSING
+        requestType: RequestTypeEnum.TRAINING,
+        initiatorUserId: randomUserId,
+        targetUserId: trainer.id,
+        status: RequestStatusEnum.PROCESSING
       }
     }
 

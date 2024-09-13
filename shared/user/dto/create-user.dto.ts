@@ -2,8 +2,8 @@ import { ApiProperty } from '@nestjs/swagger';
 import { Location, UserRole, UserRoleEnum, userRolesList } from '@server/libs/types';
 import { Gender, GenderEnum, genderTypeList } from '@server/libs/types/gender.enum';
 import { LocationEnum, locationList } from '@server/libs/types/location.enum';
-import { TrainingDuration, TrainingDurationEnum, trainingDurationList } from '@shared/types/training-duration.enum';
-import { TrainingType, TrainingTypeEnum, trainingTypeList } from '@shared/types/training-type.enum';
+import { TrainingDuration, TrainingDurationEnum, trainingDurationList } from '@shared/training/types/training-duration.enum';
+import { TrainingType, TrainingTypeEnum, trainingTypeList } from '@shared/training/types/training-type.enum';
 import { UserLevel, UserLevelEnum, userLevelList } from '@shared/types/user-level.enum';
 
 import {

@@ -1,47 +1,48 @@
 import { BadRequestException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
-import { RequestEntity } from './request.entity';
+
 import { RequestFactory } from './request.factory';
-import { RequestRepository, UserAndTrainerIdsPayload } from './request.repository';
+import { RequestRepository } from './request.repository';
 import { RequestMessage } from './request.constant';
 
-import { CreateTrainingRequestDTO, UpdateTrainingRequestDTO } from '@shared/request';
-import { BaseSearchQuery, UserIdPayload } from '@shared/types';
-import { TrainingRequestStatusEnum } from '@shared/types/training-request-status.enum';
+import { CreateRequestDTO, UpdateRequestDTO, UserAndTargetUserIdsPayload } from '@shared/request';
+import { BaseSearchQuery, RequestStatusEnum, UserIdPayload } from '@shared/types';
+import { RequestEntity } from './request.entity';
 
 @Injectable()
 export class RequestService {
   constructor(
-    private readonly trainingRequestRepository: RequestRepository,
-    private readonly trainingRequestFactory: RequestFactory
+    private readonly requestRepository: RequestRepository,
+    private readonly requestFactory: RequestFactory
   ) {}
-  public async create(dto: CreateTrainingRequestDTO & UserIdPayload) {
-    const { initiatorId, trainerId } = dto;
-    const existsRequest = await this.trainingRequestRepository.findByUserAndTrainerId(initiatorId ?? dto.userId, trainerId);
+  public async create(dto: CreateRequestDTO & UserIdPayload) {
+    const { initiatorUserId, targetUserId } = dto;
+    const existsRequest = await this.requestRepository
+      .findByInitiatorAndTargetUserId(initiatorUserId ?? dto.userId, targetUserId);
 
     if(existsRequest) {
-      throw new BadRequestException(TrainingRequestMessage.ERROR.ALREADY_EXISTS);
+      throw new BadRequestException(RequestMessage.ERROR.ALREADY_EXISTS);
     }
 
-    const preparedDto: CreateTrainingRequestDTO = {
+    const preparedDto: CreateRequestDTO = {
       ...dto,
-      initiatorId: dto.initiatorId ?? dto.userId,
-      status: dto.status ?? TrainingRequestStatusEnum.PROCESSING,
+      initiatorUserId: dto.initiatorUserId ?? dto.userId,
+      status: dto.status ?? RequestStatusEnum.PROCESSING,
     };
 
-    const requestEntity = this.trainingRequestFactory.create(preparedDto);
-    const request = await this.trainingRequestRepository.create(requestEntity);
+    const requestEntity = this.requestFactory.create(preparedDto);
+    const request = await this.requestRepository.create(requestEntity);
 
     return request;
   }
 
-  public async updateById(requestId: string, fieldsToUpdate: UpdateTrainingRequestDTO & UserIdPayload) {
+  public async updateById(requestId: string, fieldsToUpdate: UpdateRequestDTO & UserIdPayload) {
     const { userId } = fieldsToUpdate;
 
     await this.checkAccess(requestId, userId);
 
     fieldsToUpdate.userId = undefined;
 
-    const updatedRequest = await this.trainingRequestRepository.updateById(requestId, fieldsToUpdate);
+    const updatedRequest = await this.requestRepository.updateById(requestId, fieldsToUpdate);
 
     return updatedRequest;
   }
@@ -49,11 +50,11 @@ export class RequestService {
   public async delete(requestId: string, userId: string): Promise<void> {
     await this.checkAccess(requestId, userId);
 
-    return await this.trainingRequestRepository.deleteById(requestId);
+    return await this.requestRepository.deleteById(requestId);
   }
 
-  public async search(query?: BaseSearchQuery & UserAndTrainerIdsPayload) {
-    const requests = await this.trainingRequestRepository.search(query);
+  public async search(query?: BaseSearchQuery & UserAndTargetUserIdsPayload) {
+    const requests = await this.requestRepository.search(query);
 
     if (!requests && query) {
       throw new NotFoundException(`Can't find products by passed params " ${query}"`);
@@ -62,21 +63,21 @@ export class RequestService {
     return requests;
   }
 
-  public async getTrainersRequests(trainerId: string): Promise<TrainingRequestEntity[] | null> {
-    const requests = await this.trainingRequestRepository.findTrainersRequests(trainerId);
+  public async getTargetUserRequests(targetUserId: string): Promise<RequestEntity[] | null> {
+    const requests = await this.requestRepository.findTargetRequests(targetUserId);
 
     if(!requests) {
-      throw new NotFoundException(TrainingRequestMessage.ERROR.NOT_FOUND);
+      throw new NotFoundException(RequestMessage.ERROR.NOT_FOUND);
     }
 
     return requests;
   }
 
-  public async getRequestByUserAndTrainerId(userId: string, trainerId: string) {
-    const requests = await this.trainingRequestRepository.findByUserAndTrainerId(userId, trainerId);
+  public async getRequestByInitiatorAndTargetUserId(initiatorId: string, targetUserId: string) {
+    const requests = await this.requestRepository.findByInitiatorAndTargetUserId(initiatorId, targetUserId);
 
     if(!requests) {
-      throw new NotFoundException(TrainingRequestMessage.ERROR.NOT_FOUND);
+      throw new NotFoundException(RequestMessage.ERROR.NOT_FOUND);
     }
 
     return requests;
@@ -84,10 +85,10 @@ export class RequestService {
 
   // Сервисные методы
   private async checkAccess(requestId: string, userId: string): Promise<boolean | void> {
-    const isUserHaveAccessToBalance = await this.trainingRequestRepository.checkAccess(requestId, userId);
+    const isUserHaveAccessToRequest = await this.requestRepository.checkAccess(requestId, userId);
 
-    if (!isUserHaveAccessToBalance) {
-      throw new UnauthorizedException(`${TrainingRequestMessage.ERROR.HAVENT_ACCESS}. Request id: ${requestId}`);
+    if (!isUserHaveAccessToRequest) {
+      throw new UnauthorizedException(`${RequestMessage.ERROR.HAVENT_ACCESS}. Request id: ${requestId}`);
     }
 
     return true;

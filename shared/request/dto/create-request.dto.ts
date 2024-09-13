@@ -1,7 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
 
 import { UserInterface } from '@server/user/interfaces';
-import { RequestStatus, RequestStatusEnum, requestStatusList } from '@shared/types/request-status.enum';
+import { RequestStatus, RequestStatusEnum, requestStatusList } from '@shared/request/types/request-status.enum';
+import { RequestType, RequestTypeEnum, requestTypeList } from '../types/request-type.enum';
 
 import {
   IsIn,
@@ -12,10 +13,12 @@ import {
 export class CreateRequestDTO {
     @ApiProperty({
       description: 'Request type',
-      example: 'friendship | training',
+      example: 'friendship',
+      enum: RequestTypeEnum
     })
+    @IsIn(requestTypeList)
     @IsString()
-    requestType: string
+    requestType: RequestType
 
     @ApiProperty({
       description: 'Request initiator user id',

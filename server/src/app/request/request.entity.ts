@@ -2,13 +2,14 @@ import { StorableEntityInterface } from '@server/libs/interfaces';
 import { RequestInterface } from './interfaces/request.interface';
 import { UserInterface } from '@server/user/interfaces';
 import { RequestStatus } from '@shared/types';
+import { RequestType } from '@shared/request';
 import { Entity } from '@server/libs/entities';
 
 export class RequestEntity extends Entity implements StorableEntityInterface<RequestInterface> {
   public createdAt?: Date;
   public updatedAt?: Date;
 
-  public requestType: string;
+  public requestType: RequestType;
   public initiatorUserId: UserInterface['id']
   public targetUserId: UserInterface['id']
   public status: RequestStatus

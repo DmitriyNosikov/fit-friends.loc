@@ -155,7 +155,7 @@ export class UserService {
   }
 
   public async addFriendToUser(currentUserId: string, addingUserId: string) {
-    if(!currentUserId || addingUserId) {
+    if(!currentUserId || !addingUserId) {
       throw new BadRequestException('To add new friend you have to pass current and adding user ids.');
     }
 
@@ -174,14 +174,16 @@ export class UserService {
     await this.userRepository.addFriendToUser(addingUserId, currentUserId); // Целевому юзеру
 
     // Обновляем список друзей пользователя currentUserId
-    await this.userRepository.updateById(currentUserId, { friendsList: currentUserInfo.friendsList });
+    const updatedUser = await this.userRepository.updateById(currentUserId, { friendsList: currentUserInfo.friendsList });
     
     // Обновляем список друзей пользователя targetUserId
     await this.userRepository.updateById(currentUserId, { friendsList: addingUserInfo.friendsList });
+
+    return updatedUser;
   }
 
   public async removeFriendFromUser(currentUserId: string, removingUserId: string) {
-    if(!currentUserId || removingUserId) {
+    if(!currentUserId || !removingUserId) {
       throw new BadRequestException('To remove friend you have to pass current and removing user ids.');
     }
 
@@ -200,10 +202,12 @@ export class UserService {
     await this.userRepository.removeFriendFromUser(removingUserId, currentUserId); // У целевого юзера
 
     // Обновляем список друзей пользователя currentUserId
-    await this.userRepository.updateById(currentUserId, { friendsList: currentUserInfo.friendsList });
+    const updatedUser = await this.userRepository.updateById(currentUserId, { friendsList: currentUserInfo.friendsList });
     
     // Обновляем список друзей пользователя targetUserId
     await this.userRepository.updateById(currentUserId, { friendsList: removingUserInfo.friendsList });
+
+    return updatedUser;
   }
 
   public async verify(dto: LoginUserDTO): Promise<UserEntity> {

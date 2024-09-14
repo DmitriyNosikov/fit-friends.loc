@@ -23,7 +23,7 @@ import { fillDTO } from '../libs/helpers';
 
 import { RequestWithUser } from './interfaces/request-with-user.interface';
 
-import { AdditionalInfoRDO, CreateUserDTO, LoggedUserRDO, LoginUserDTO, UpdateUserDTO, UserRDO } from '../../../../shared/user/';
+import { AdditionalInfoRDO, CreateUserDTO, LoggedUserRDO, LoginUserDTO, ToggleUserFriendsDTO, UpdateUserDTO, UserRDO } from '../../../../shared/user/';
 import { trainingDurationList, genderTypeList, locationList, trainingTypeList, userRolesList, userLevelList } from '@server/libs/types';
 import { UserInterface } from './interfaces';
 import { UserMessage } from './user.constant';
@@ -102,6 +102,48 @@ export class UserController {
     };
 
     return fillDTO(LoggedUserRDO, loggedUserWithPayload);
+  }
+
+  @Post('friends')
+  @UseGuards(JWTAuthGuard)
+  @UseInterceptors(InjectUserIdInterceptor)
+  @ApiResponse({
+    type: UserRDO,
+    status: HttpStatus.OK,
+    description: UserMessage.SUCCESS.FRIEND_ADDED
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: UserMessage.ERROR.INCORRECT_CREDENTIALS
+  })
+  public async addFriend(
+    @Body() dto: ToggleUserFriendsDTO
+  ) {
+    const { userId, targetUserId } = dto;
+    const result = await this.userService.addFriendToUser(userId, targetUserId);
+
+    return fillDTO(UserRDO, result);
+  }
+
+  @Delete('friends')
+  @UseGuards(JWTAuthGuard)
+  @UseInterceptors(InjectUserIdInterceptor)
+  @ApiResponse({
+    type: UserRDO,
+    status: HttpStatus.OK,
+    description: UserMessage.SUCCESS.FRIEND_REMOVED
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: UserMessage.ERROR.INCORRECT_CREDENTIALS
+  })
+  public async removeFriend(
+    @Body() dto: ToggleUserFriendsDTO
+  ) {
+    const { userId, targetUserId } = dto;
+    const result = await this.userService.removeFriendFromUser(userId, targetUserId);
+
+    return fillDTO(UserRDO, result);
   }
 
   @Get('/')

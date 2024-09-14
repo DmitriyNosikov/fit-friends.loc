@@ -153,4 +153,11 @@ export class UserRDO {
   })
   @Expose()
   certificates!: string[];
+
+  @ApiProperty({
+    description: 'User friends list',
+    example: '["8c132bfa-b758-40ab-9663-b1f637848d04", "fe302885-fb20-4b7f-a381-862d9f1eb0c2"]',
+  })
+  @Expose()
+  friendsList!: string[];
 }

@@ -1,6 +1,7 @@
 import SpecialOffers from '@client/src/components/special-offers/special-offers';
 import SpecialForYou from '../../components/special-for-you/special-for-you';
 import PopularTrainings from '@client/src/components/popular-trainings/popular-trainings';
+import LookForCompany from '@client/src/components/look-for-company/look-for-company';
 
 export default function Main() {
   return (
@@ -19,7 +20,7 @@ export default function Main() {
       <PopularTrainings />
 
       {/* Ищут компанию для тренировки (на текущий момент не активно) */}
-      {/* <LookForCompany /> */}
+      <LookForCompany />
     </>
 
   );

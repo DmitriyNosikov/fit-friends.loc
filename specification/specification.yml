@@ -70,6 +70,33 @@ paths:
         "401":
           description: Incorrect user email/password
       tags: *a1
+  /api/users/friends:
+    post:
+      operationId: UserController_addFriend
+      parameters: []
+      responses:
+        "200":
+          description: Friend has been successfully added
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserRDO"
+        "401":
+          description: Incorrect user email/password
+      tags: *a1
+    delete:
+      operationId: UserController_removeFriend
+      parameters: []
+      responses:
+        "200":
+          description: Friend has been successfully removed
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserRDO"
+        "401":
+          description: Incorrect user email/password
+      tags: *a1
   /api/users:
     get:
       operationId: UserController_show
@@ -1187,6 +1214,13 @@ components:
           type: array
           items:
             type: string
+        friendsList:
+          description: User friends list
+          example: '["8c132bfa-b758-40ab-9663-b1f637848d04",
+            "fe302885-fb20-4b7f-a381-862d9f1eb0c2"]'
+          type: array
+          items:
+            type: string
       required:
         - name
         - email
@@ -1205,6 +1239,7 @@ components:
         - dayCaloriesLimit
         - isReadyToTraining
         - certificates
+        - friendsList
     UserRDO:
       type: object
       properties:
@@ -1324,6 +1359,13 @@ components:
           type: array
           items:
             type: string
+        friendsList:
+          description: User friends list
+          example: '["8c132bfa-b758-40ab-9663-b1f637848d04",
+            "fe302885-fb20-4b7f-a381-862d9f1eb0c2"]'
+          type: array
+          items:
+            type: string
       required:
         - id
         - createdAt
@@ -1344,6 +1386,7 @@ components:
         - dayCaloriesLimit
         - isReadyToTraining
         - certificates
+        - friendsList
     LoginUserDTO:
       type: object
       properties:
@@ -1457,6 +1500,13 @@ components:
           type: array
           items:
             type: string
+        friendsList:
+          description: User friends list
+          example: '["8c132bfa-b758-40ab-9663-b1f637848d04",
+            "fe302885-fb20-4b7f-a381-862d9f1eb0c2"]'
+          type: array
+          items:
+            type: string
         accessToken:
           type: string
           description: User JWT Token
@@ -1485,6 +1535,7 @@ components:
         - dayCaloriesLimit
         - isReadyToTraining
         - certificates
+        - friendsList
         - accessToken
         - refreshToken
     CreateTrainingDTO:

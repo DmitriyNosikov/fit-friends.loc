@@ -119,8 +119,9 @@ export class UserController {
   public async addFriend(
     @Body() dto: ToggleUserFriendsDTO
   ) {
-    const { userId, targetUserId } = dto;
-    const result = await this.userService.addFriendToUser(userId, targetUserId);
+    const { userId, targetUserId, otherCurrentUser } = dto;
+    const currentUser = otherCurrentUser ?? userId;
+    const result = await this.userService.addFriendToUser(currentUser, targetUserId);
 
     return fillDTO(UserRDO, result);
   }
@@ -140,8 +141,9 @@ export class UserController {
   public async removeFriend(
     @Body() dto: ToggleUserFriendsDTO
   ) {
-    const { userId, targetUserId } = dto;
-    const result = await this.userService.removeFriendFromUser(userId, targetUserId);
+    const { userId, targetUserId, otherCurrentUser } = dto;
+    const currentUser = otherCurrentUser ?? userId;
+    const result = await this.userService.removeFriendFromUser(currentUser, targetUserId);
 
     return fillDTO(UserRDO, result);
   }

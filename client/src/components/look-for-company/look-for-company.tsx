@@ -68,7 +68,7 @@ export default function LookForCompany(): ReactElement {
                   trainingType: 'пилатес'
                 },
               ].map((item) => {
-                return <LookForCompanyItem user={item} />
+                return <LookForCompanyItem user={item} key={item.avatar} />
               })
             }
           </ul>

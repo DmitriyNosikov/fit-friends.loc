@@ -7,7 +7,7 @@ Content-Type: application/json
 ###
 
 @userId = 61f2e83e-5b2b-407e-9004-516914ad3ad7
-@authorization = Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJmZTMwMjg4NS1mYjIwLTRiN2YtYTM4MS04NjJkOWYxZWIwYzIiLCJlbWFpbCI6Imlyb24tbWFuQHN0YXJraW5kdXN0cmllcy5pdCIsIm5hbWUiOiJUb255Iiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzI2MzE2NTAxLCJleHAiOjE3MjYzMTc0MDF9.Quw1yxNwDb8XFULW5QN5zvEK7OjmKYo76JKVRca7pGo
+@authorization = Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJmZTMwMjg4NS1mYjIwLTRiN2YtYTM4MS04NjJkOWYxZWIwYzIiLCJlbWFpbCI6Imlyb24tbWFuQHN0YXJraW5kdXN0cmllcy5pdCIsIm5hbWUiOiJUb255Iiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzI2MzE3NDE5LCJleHAiOjE3MjYzMTgzMTl9.4FeR6oCP5PrW-QGWyfc97nz_o1m_iA_yMf_Gczxpfrk
 @refresh = Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJmZTMwMjg4NS1mYjIwLTRiN2YtYTM4MS04NjJkOWYxZWIwYzIiLCJlbWFpbCI6Imlyb24tbWFuQHN0YXJraW5kdXN0cmllcy5pdCIsIm5hbWUiOiJUb255Iiwicm9sZSI6ImFkbWluIiwidG9rZW5JZCI6ImU0ZGVhZmFjLTUxYjYtNDQ2MS1iMmI1LWU0Y2U4NTc1ZDdmNCIsImlhdCI6MTcyNjMxNTU4OCwiZXhwIjoxNzI2MzE2NDg4fQ.eSZDvooBn7Z6G95kXWbJEcRJkN6fEO4kNjm7InHqPyo
 
 # /////////////////////////////////// AUTNENTICATION ///////////////////////////////////
@@ -97,3 +97,15 @@ Content-Type: application/json
 {
   "targetUserId": "83937b80-0168-41d6-9677-adb39391f71b"
 }
+###
+
+# Remove friend from other user
+DELETE {{baseUrl}}/friends HTTP/1.1
+Content-Type: application/json
+{{authorization}}
+
+{
+  "otherCurrentUser": "8c132bfa-b758-40ab-9663-b1f637848d04",
+  "targetUserId": "fe302885-fb20-4b7f-a381-862d9f1eb0c2"
+}
+###

@@ -177,7 +177,7 @@ export class UserService {
     const updatedUser = await this.userRepository.updateById(currentUserId, { friendsList: currentUserInfo.friendsList });
     
     // Обновляем список друзей пользователя targetUserId
-    await this.userRepository.updateById(currentUserId, { friendsList: addingUserInfo.friendsList });
+    await this.userRepository.updateById(addingUserId, { friendsList: addingUserInfo.friendsList });
 
     return updatedUser;
   }
@@ -194,18 +194,18 @@ export class UserService {
       return currentUserInfo;
     }
 
-    currentUserInfo.friendsList.filter((userId) => userId !== removingUserId);
-    removingUserInfo.friendsList.filter((userId) => userId !== currentUserId);
+    const currentUserUpdatedFriendsList = currentUserInfo.friendsList.filter((userId) => userId !== removingUserId);
+    const removingUserUpdatedFriendsList = removingUserInfo.friendsList.filter((userId) => userId !== currentUserId);
 
     // Удаляемся из друзей у обоих пользователей
     await this.userRepository.removeFriendFromUser(currentUserId, removingUserId); // У текущего юзера
     await this.userRepository.removeFriendFromUser(removingUserId, currentUserId); // У целевого юзера
 
     // Обновляем список друзей пользователя currentUserId
-    const updatedUser = await this.userRepository.updateById(currentUserId, { friendsList: currentUserInfo.friendsList });
+    const updatedUser = await this.userRepository.updateById(currentUserId, { friendsList: currentUserUpdatedFriendsList });
     
     // Обновляем список друзей пользователя targetUserId
-    await this.userRepository.updateById(currentUserId, { friendsList: removingUserInfo.friendsList });
+    await this.userRepository.updateById(removingUserId, { friendsList: removingUserUpdatedFriendsList });
 
     return updatedUser;
   }

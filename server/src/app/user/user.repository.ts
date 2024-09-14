@@ -82,6 +82,58 @@ export class UserRepository extends BasePostgresRepository<UserEntity, UserInter
     });
   }
 
+  public async addFriendToUser(userId: string, friendId: string): Promise<UserEntity> {
+    const updatedUser = await this.dbClient.user.update({
+      where: { id: userId },
+      data: {
+        friends: {
+          connect: { id: friendId }
+        }
+      }
+    });
+
+    /* т.к. запрос на дружбу принимается автоматически
+    нам также нужно добавить друга в список друзей
+    второго пользователя */
+    await this.dbClient.user.update({
+      where: { id: friendId },
+      data: {
+        friends: {
+          connect: { id: userId }
+        }
+      }
+    });
+
+    const userEntity = this.getEntity(updatedUser);
+
+    return userEntity;
+  }
+
+  public async removeFriendFromUser(userId: string, friendId: string): Promise<UserEntity> {
+    const updatedUser = await this.dbClient.user.update({
+      where: { id: userId },
+      data: {
+        friends: {
+          disconnect: { id: friendId }
+        }
+      }
+    });
+
+    /* удаляем друга у второго пользователя */
+    await this.dbClient.user.update({
+      where: { id: friendId },
+      data: {
+        friends: {
+          disconnect: { id: userId }
+        }
+      }
+    });
+
+    const userEntity = this.getEntity(updatedUser);
+
+    return userEntity;
+  }
+
   public async getUserRole(userId: string): Promise<string | null> {
     const { role } = await this.dbClient.user.findFirst({
       where: { id: userId },

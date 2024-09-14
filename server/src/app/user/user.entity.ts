@@ -29,6 +29,7 @@ export class UserEntity extends Entity implements StorableEntityInterface<AuthUs
   public isReadyToTraining?: boolean;
 
   public certificates?: string[];
+  public friendsList?: string[];
   
   constructor(user?: AuthUserInterface) {
     super();
@@ -63,6 +64,7 @@ export class UserEntity extends Entity implements StorableEntityInterface<AuthUs
     this.isReadyToTraining = user.isReadyToTraining;
 
     this.certificates = user.certificates;
+    this.friendsList = user.friendsList;
   }
 
   public setPassword(password: string) {
@@ -92,7 +94,8 @@ export class UserEntity extends Entity implements StorableEntityInterface<AuthUs
       dayCaloriesLimit: this.dayCaloriesLimit,
       isReadyToTraining: this.isReadyToTraining,
 
-      certificates: this.certificates
+      certificates: this.certificates,
+      friendsList: this.friendsList,
     };
   }
 }

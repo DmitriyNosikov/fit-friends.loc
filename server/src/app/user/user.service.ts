@@ -154,6 +154,58 @@ export class UserService {
     return await this.userRepository.deleteById(userId);
   }
 
+  public async addFriendToUser(currentUserId: string, addingUserId: string) {
+    if(!currentUserId || addingUserId) {
+      throw new BadRequestException('To add new friend you have to pass current and adding user ids.');
+    }
+
+    const currentUserInfo = await this.userRepository.findById(currentUserId);
+    const addingUserInfo = await this.userRepository.findById(addingUserId);
+
+    if(currentUserInfo.friendsList.includes(addingUserId)) {
+      return currentUserInfo;
+    }
+
+    currentUserInfo.friendsList.push(addingUserId);
+    addingUserInfo.friendsList.push(currentUserId);
+
+    // Добавляемся в друзья обоим пользователям
+    await this.userRepository.addFriendToUser(currentUserId, addingUserId); // Текущему юзеру
+    await this.userRepository.addFriendToUser(addingUserId, currentUserId); // Целевому юзеру
+
+    // Обновляем список друзей пользователя currentUserId
+    await this.userRepository.updateById(currentUserId, { friendsList: currentUserInfo.friendsList });
+    
+    // Обновляем список друзей пользователя targetUserId
+    await this.userRepository.updateById(currentUserId, { friendsList: addingUserInfo.friendsList });
+  }
+
+  public async removeFriendFromUser(currentUserId: string, removingUserId: string) {
+    if(!currentUserId || removingUserId) {
+      throw new BadRequestException('To remove friend you have to pass current and removing user ids.');
+    }
+
+    const currentUserInfo = await this.userRepository.findById(currentUserId);
+    const removingUserInfo = await this.userRepository.findById(removingUserId);
+
+    if(!currentUserInfo.friendsList.includes(removingUserId)) {
+      return currentUserInfo;
+    }
+
+    currentUserInfo.friendsList.filter((userId) => userId !== removingUserId);
+    removingUserInfo.friendsList.filter((userId) => userId !== currentUserId);
+
+    // Удаляемся из друзей у обоих пользователей
+    await this.userRepository.removeFriendFromUser(currentUserId, removingUserId); // У текущего юзера
+    await this.userRepository.removeFriendFromUser(removingUserId, currentUserId); // У целевого юзера
+
+    // Обновляем список друзей пользователя currentUserId
+    await this.userRepository.updateById(currentUserId, { friendsList: currentUserInfo.friendsList });
+    
+    // Обновляем список друзей пользователя targetUserId
+    await this.userRepository.updateById(currentUserId, { friendsList: removingUserInfo.friendsList });
+  }
+
   public async verify(dto: LoginUserDTO): Promise<UserEntity> {
     const { email, password } = dto;
     const user = await this.userRepository.findByEmail(email);

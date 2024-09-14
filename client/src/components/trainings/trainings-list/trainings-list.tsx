@@ -106,7 +106,7 @@ export default function TrainingsList(): ReactElement {
             <button className="btn show-more__button show-more__button--more" type="button" onClick={handleShowMoreBtnClick}>Показать еще</button>
           }
           {
-            trainingsList && (trainingsList.entities.length > ITEMS_PER_PAGE) &&
+            trainingsList && (trainingsList.currentPage > 1) &&
             <button className="btn show-more__button show-more__button--to-top" type="button" onClick={handleBackToBeginBtnClick}>Вернуться в начало</button>
           }
         </div>

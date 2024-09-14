@@ -50,12 +50,17 @@ model User {
   isReadyToTraining Boolean?  @map("is_ready_to_training")
 
   certificates      String[]
+  friendsList       String[]  @map("friends_list")
 
+  // Relations
   training Training[]
   balance Balance[]
   order Order[]
   trainingReview TrainingReview[]
   refreshToken RefreshToken[]
+
+  friends  User[]  @relation("User_friends")
+  symmetricFriends  User[]  @relation("User_friends")
 
   Request_InitiatorUser Request[] @relation("initiatorUser")
   Request_targetUser Request[] @relation("targetUser")

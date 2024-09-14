@@ -4,7 +4,7 @@ import { RequestFactory } from './request.factory';
 import { RequestRepository } from './request.repository';
 import { RequestMessage } from './request.constant';
 
-import { CreateRequestDTO, UpdateRequestDTO, UserAndTargetUserIdsPayload } from '@shared/request';
+import { CreateRequestDTO, RequestTypeEnum, UpdateRequestDTO, UserAndTargetUserIdsPayload } from '@shared/request';
 import { BaseSearchQuery, RequestStatusEnum, UserIdPayload } from '@shared/types';
 import { RequestEntity } from './request.entity';
 import { UserRepository } from '@server/user/user.repository';
@@ -20,13 +20,17 @@ export class RequestService {
     const { targetUserId } = dto;
     const initiatorUser = dto.initiatorUserId ?? dto.userId;
 
-    const isInitiatorUserExists = await this.userRepository.findById(initiatorUser);
-    const isTargetUserExists = await this.userRepository.findById(targetUserId);
+    if(initiatorUser === targetUserId) {
+      throw new BadRequestException(`Request User-initiator and User-target can't be same person.`);
+    }
+      
+    const isInitiatorUserExists = await this.userRepository.exists(initiatorUser);
+    const isTargetUserExists = await this.userRepository.exists(targetUserId);
 
     if(!isInitiatorUserExists || !isTargetUserExists) {
       throw new BadRequestException(`${RequestMessage.ERROR.USERS_DOES_NOT_EXIST}:
-        User-initiator: ${isInitiatorUserExists?.id},
-        User-target: ${isTargetUserExists?.id}`
+        User-initiator: ${isInitiatorUserExists},
+        User-target: ${isTargetUserExists}`
       );
     }
 
@@ -37,10 +41,14 @@ export class RequestService {
       throw new BadRequestException(RequestMessage.ERROR.ALREADY_EXISTS);
     }
 
+    const requestStatus = (dto.requestType === RequestTypeEnum.FRIENDSHIP)
+      ? RequestStatusEnum.ACCEPTED // Запросы на дружбу автоматически принимаются
+      : RequestStatusEnum.PROCESSING;
+
     const preparedDto: CreateRequestDTO = {
       ...dto,
       initiatorUserId: initiatorUser,
-      status: dto.status ?? RequestStatusEnum.PROCESSING,
+      status: requestStatus,
     };
 
     const requestEntity = this.requestFactory.create(preparedDto);
@@ -55,6 +63,22 @@ export class RequestService {
     await this.checkAccess(requestId, userId);
 
     fieldsToUpdate.userId = undefined;
+
+    if(fieldsToUpdate.initiatorUserId) {
+      const isInitiatorUserExists = await this.userRepository.exists(fieldsToUpdate.initiatorUserId);
+  
+      if(!isInitiatorUserExists) {
+        throw new BadRequestException(`User ${fieldsToUpdate.initiatorUserId} doesn't exist`);
+      }
+    }
+
+    if(fieldsToUpdate.targetUserId) {
+      const isTargetUserExists = await this.userRepository.exists(fieldsToUpdate.targetUserId);
+  
+      if(!isTargetUserExists) {
+        throw new BadRequestException(`User ${fieldsToUpdate.targetUserId} doesn't exist`);
+      }
+    }
 
     const updatedRequest = await this.requestRepository.updateById(requestId, fieldsToUpdate);
 

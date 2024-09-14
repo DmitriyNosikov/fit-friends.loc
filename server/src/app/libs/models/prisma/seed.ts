@@ -1,12 +1,36 @@
 import { PrismaClient } from '@prisma/client'
 import { getOrders, getRandomIntInclusive, getReviews, getTrainingRequests, getTrainings, getUsers } from './mock-data';
+import { UserRoleEnum } from '../../types';
 
 async function seedDB(prismaClient: PrismaClient) {
   // Add users
   const users = await getUsers();
+
   await prismaClient.user.createMany({
     data: users
   });
+
+  // Connect friends to users
+  for(const user of users) {
+    // Add random friends to user
+    if(user.role !== UserRoleEnum.ADMIN) {
+      const randomIndex = getRandomIntInclusive(0, users.length);
+      const randomUserId = users[randomIndex].id
+  
+      user.friendsList.push(randomUserId);
+    }
+
+    // Update user
+    await prismaClient.user.update({
+      where: { id: user.id },
+      data: {
+        friendsList: user.friendsList,
+        friends: (user.friendsList.length > 0) ? {
+          connect: user.friendsList.map((friend) => ({ id: friend }))
+        } : undefined
+      }
+    });
+  }
 
   // Add trainings
   const trainings = getTrainings();

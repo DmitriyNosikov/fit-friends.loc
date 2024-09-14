@@ -22,4 +22,5 @@ export interface UserInterface extends CreatedUpdatedDatesInterface {
   isReadyToTraining?: boolean;
 
   certificates?: string[];
+  friendsList?: string[];
 }

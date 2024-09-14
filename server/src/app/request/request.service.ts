@@ -7,17 +7,31 @@ import { RequestMessage } from './request.constant';
 import { CreateRequestDTO, UpdateRequestDTO, UserAndTargetUserIdsPayload } from '@shared/request';
 import { BaseSearchQuery, RequestStatusEnum, UserIdPayload } from '@shared/types';
 import { RequestEntity } from './request.entity';
+import { UserRepository } from '@server/user/user.repository';
 
 @Injectable()
 export class RequestService {
   constructor(
     private readonly requestRepository: RequestRepository,
-    private readonly requestFactory: RequestFactory
+    private readonly requestFactory: RequestFactory,
+    private readonly userRepository: UserRepository
   ) {}
   public async create(dto: CreateRequestDTO & UserIdPayload) {
-    const { initiatorUserId, targetUserId } = dto;
+    const { targetUserId } = dto;
+    const initiatorUser = dto.initiatorUserId ?? dto.userId;
+
+    const isInitiatorUserExists = await this.userRepository.findById(initiatorUser);
+    const isTargetUserExists = await this.userRepository.findById(targetUserId);
+
+    if(!isInitiatorUserExists || !isTargetUserExists) {
+      throw new BadRequestException(`${RequestMessage.ERROR.USERS_DOES_NOT_EXIST}:
+        User-initiator: ${isInitiatorUserExists?.id},
+        User-target: ${isTargetUserExists?.id}`
+      );
+    }
+
     const existsRequest = await this.requestRepository
-      .findByInitiatorAndTargetUserId(initiatorUserId ?? dto.userId, targetUserId);
+      .findByInitiatorAndTargetUserId(initiatorUser, targetUserId);
 
     if(existsRequest) {
       throw new BadRequestException(RequestMessage.ERROR.ALREADY_EXISTS);
@@ -25,7 +39,7 @@ export class RequestService {
 
     const preparedDto: CreateRequestDTO = {
       ...dto,
-      initiatorUserId: dto.initiatorUserId ?? dto.userId,
+      initiatorUserId: initiatorUser,
       status: dto.status ?? RequestStatusEnum.PROCESSING,
     };
 

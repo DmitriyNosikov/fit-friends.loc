@@ -2,9 +2,9 @@
 @port = 8000
 @baseUrl = http://{{host}}:{{port}}/api/requests
 
-@requestId = d11424fb-88c2-4ad9-8891-7a28c9aed279
-@targetUserId = 5f5e211a-4295-4e5b-8893-787d7c435b9c
-@authorization = Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIxNmM2NmFlZC0xMmEyLTQ3NjktYTY0NS02MDA0OTc0MGU3NjAiLCJlbWFpbCI6Imlyb24tbWFuQHN0YXJraW5kdXN0cmllcy5pdCIsIm5hbWUiOiJUb255Iiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzI2MjM5NTExLCJleHAiOjE3MjYyNDA0MTF9.eSkVGBygiBkCPaZPCwkoGUP-30WiuThQ132F2HvBZUc
+@requestId = 354dd173-8091-4094-8c65-04feda38e423
+@targetUserId = 88e22b85-1e96-4425-b9c7-a3f36e921617
+@authorization = Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIxOGViNmRiZi1mNWE2LTQ5YjktYWQ0Ni03NGFiMTdiMGJhN2UiLCJlbWFpbCI6Imlyb24tbWFuQHN0YXJraW5kdXN0cmllcy5pdCIsIm5hbWUiOiJUb255Iiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzI2MzA4NDQ5LCJleHAiOjE3MjYzMDkzNDl9.XKVyZJXnr-Fu5LDlj12l50cdk8XynNoQhxzJQSkYImU
 
 
 # Create new request
@@ -14,7 +14,7 @@ Content-Type: application/json
 
 {
   "requestType": "friendship",
-  "targetUserId": "5f5e211a-4295-4e5b-8893-787d7c435b9c"
+  "targetUserId": "88e22b85-1e96-4425-b9c7-a3f36e921617"
 }
 ###
 

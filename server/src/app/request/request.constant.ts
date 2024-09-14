@@ -6,6 +6,7 @@ export const RequestMessage: MessagesType = {
     CANT_UPDATE: 'Can`t update request. Possible reason: Object with fields to update are empty',
     HAVENT_ACCESS: 'Sorry, request is not exists or you haven`t permission to this',
     ALREADY_EXISTS: 'Request for target user from this user already exists',
+    USERS_DOES_NOT_EXIST: 'One of passed user doesn`t exist'
   },
   SUCCESS: {
     FOUND: 'Training request found',

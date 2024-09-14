@@ -4,8 +4,10 @@ import { RequestService } from './request.service';
 import { RequestFactory } from './request.factory';
 import { RequestRepository } from './request.repository';
 
+import { UserModule } from '@server/user/user.module';
+
 @Module({
-  imports: [],
+  imports: [UserModule],
   controllers: [RequestController],
   providers: [RequestService, RequestFactory, RequestRepository],
   exports: [RequestService]

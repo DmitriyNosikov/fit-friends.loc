@@ -57,11 +57,12 @@ model User {
   trainingReview TrainingReview[]
   refreshToken RefreshToken[]
 
-  Request_InitiatorUser Request[] @relation(name: "user_initiator")
-  Request_targetUser Request[] @relation(name: "user_target")
+  Request_InitiatorUser Request[] @relation("initiatorUser")
+  Request_targetUser Request[] @relation("targetUser")
 
-  // requestInitiatorUser Request[] @relation("initiatorUser")
-  // requestTargetUser Request[] @relation("targetUser")
+  // It works, but we can`t get related fields with request (initiatorUser & targetUser)
+  // Request_InitiatorUser Request[] @relation(name: "user_initiator")
+  // Request_targetUser Request[] @relation(name: "user_target")
 
   @@map("users")
 }
@@ -77,11 +78,12 @@ model Request {
   targetUserId    String    @map("target_user_id")
   status          String
 
-  initiatorUser User[] @relation(name: "user_initiator")
-  targetUser User[] @relation(name: "user_target")
+  initiatorUser User @relation(name: "initiatorUser", fields: [initiatorUserId], references: [id])
+  targetUser User @relation(name: "targetUser", fields: [targetUserId], references: [id])
 
-  // initiatorUser User @relation(name: "initiatorUser", fields: [initiatorUserId], references: [id])
-  // targetUser User @relation(name: "targetUser", fields: [targetUserId], references: [id])
+  // It works, but we can`t get related fields with request (initiatorUser & targetUser)
+  // initiatorUser User[] @relation(name: "user_initiator")
+  // targetUser User[] @relation(name: "user_target")
   
   @@map("requests")
 }

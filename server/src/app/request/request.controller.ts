@@ -101,9 +101,9 @@ export class RequestController {
     required: false
   })
   @ApiResponse({
-    type: CreateRequestRDO,
+    type: RequestsWithPaginationRDO,
     status: HttpStatus.CREATED,
-    description: RequestMessage.SUCCESS.CREATED
+    description: RequestMessage.SUCCESS.FOUND
   })
   public async index(
     @Param('targetUserId') targetUserId: string,

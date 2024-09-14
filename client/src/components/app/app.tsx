@@ -18,6 +18,7 @@ import Orders from '@client/src/pages/orders/orders';
 import Purchases from '@client/src/pages/purchases/purchases';
 import TrainingsCreate from '@client/src/pages/trainings/trainings-create/trainings-create';
 import PersonalCard from '@client/src/pages/personal-card/personal-card';
+import Users from '@client/src/pages/ users/users';
 
 // TODO: Нужен Helmet для смены заголовков
 
@@ -58,6 +59,12 @@ export default function App(): ReactElement {
         <Route path={`${AppRoute.PERSONAL_CARD}/:userId`} element={
           <PrivateRoute redirectTo={AppRoute.INTRO}>
             <PersonalCard />
+          </PrivateRoute>
+        } />
+
+        <Route path={AppRoute.USERS} element={
+          <PrivateRoute redirectTo={AppRoute.INTRO}>
+            <Users />
           </PrivateRoute>
         } />
 

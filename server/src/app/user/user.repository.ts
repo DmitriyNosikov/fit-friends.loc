@@ -1,11 +1,17 @@
 import { Injectable } from '@nestjs/common';
 
+import { Prisma } from '@prisma/client';
 import { PrismaClientService } from '../prisma-client/prisma-client.service';
 import { BasePostgresRepository } from '../libs/data-access';
 
 import { UserEntity } from './user.entity';
 import { UserFactory } from './user.factory';
 import { UserInterface } from './interfaces';
+
+import { BaseSearchQuery, SortDirection, SortType, SortTypeEnum } from '@shared/types';
+import { DefaultSearchParam } from '@shared/types/search/base-search-query.type';
+import { PaginationResult } from '@server/libs/interfaces';
+import { UserSearchFilters } from '@shared/user';
 
 @Injectable()
 export class UserRepository extends BasePostgresRepository<UserEntity, UserInterface> {
@@ -42,6 +48,22 @@ export class UserRepository extends BasePostgresRepository<UserEntity, UserInter
     const userEntity = this.getEntity(user);
 
     return userEntity;
+  }
+
+  public async search(query?: BaseSearchQuery): Promise<PaginationResult<UserEntity>> {
+    const itemsPerPage =  query?.limit;
+    const page = query?.page;
+    const { where, orderBy } = this.getSearchFilters(query);
+
+    // Запрос на получение результата поиска
+    const  preparedQuery = {
+      where,
+      orderBy
+    };
+
+    const paginatedResult = await this.getPaginatedResult(preparedQuery, itemsPerPage, page);
+
+    return paginatedResult;
   }
 
   public async create(entity: UserEntity): Promise<UserEntity | null> {
@@ -163,5 +185,68 @@ export class UserRepository extends BasePostgresRepository<UserEntity, UserInter
 
   private getEntity(document): UserEntity {
     return this.createEntityFromDocument(document as unknown as UserInterface);
+  }
+
+  //////////////////// Вспомогательные методы поиска и пагинации ////////////////////
+  public async getPaginatedResult(
+    query: Prisma.UserFindManyArgs,
+    itemsPerPage: number = DefaultSearchParam.MAX_ITEMS_PER_PAGE,
+    page?: number
+  ): Promise<PaginationResult<UserEntity>> {
+    const skip = (page && itemsPerPage)
+      ? (page - 1) * itemsPerPage
+      : undefined;
+    const take = (!itemsPerPage || itemsPerPage > DefaultSearchParam.MAX_ITEMS_PER_PAGE)
+      ? DefaultSearchParam.MAX_ITEMS_PER_PAGE
+      : itemsPerPage;
+
+    // Запрос на получение результата поиска
+    const [items, totalItemsCount] = await Promise.all([
+      this.dbClient.user.findMany({
+        ...query,
+
+        // Pagination
+        take,
+        skip,
+      }),
+      this.getItemsCount(query.where)
+    ]);
+
+    const itemsEntities = items.map((item) => this.createEntityFromDocument(item as unknown as UserInterface));
+
+    return {
+      entities: itemsEntities,
+      currentPage: page ?? 0,
+      totalPages: this.calculateItemsPage(totalItemsCount, take),
+      totalItems: totalItemsCount,
+      itemsPerPage: take ?? totalItemsCount,
+    }
+  }
+
+  private getSearchFilters(query: BaseSearchQuery): UserSearchFilters {
+    const where: Prisma.UserWhereInput = {};
+    const orderBy: Prisma.UserOrderByWithRelationInput = {};
+
+    // Сортировка и направление сортировки
+    const { key, value } = this.getSortKeyValue(query.sortType, query.sortDirection);
+
+    orderBy[key] = value;
+
+    return { where, orderBy };
+  }
+
+  private getSortKeyValue(sortType: SortType, sortDirection: SortDirection) {
+    switch (sortType) {
+      case (SortTypeEnum.CREATED_AT): {
+        return { key: 'createdAt', value: sortDirection };
+      }
+      default: {
+        return { key: DefaultSearchParam.SORT.TYPE, value: DefaultSearchParam.SORT.DIRECTION };
+      }
+    }
+  }
+
+  private async getItemsCount(where: Prisma.UserWhereInput): Promise<number> {
+    return this.dbClient.user.count({ where });
   }
 }

@@ -26,6 +26,7 @@ import { AuthUserInterface, UserInterface } from './interfaces';
 import { UserEntity } from './user.entity';
 import { UserFactory } from './user.factory';
 import { UserRepository } from './user.repository';
+import { BaseSearchQuery } from '@shared/types';
 
 
 
@@ -65,6 +66,16 @@ export class UserService {
     }
 
     return existUser;
+  }
+
+  public async search(query?: BaseSearchQuery) {
+    const users = await this.userRepository.search(query);
+
+    if (!users && query) {
+      throw new NotFoundException(`Can't find users by passed params " ${query}"`);
+    }
+
+    return users;
   }
 
   public async register(dto: CreateUserDTO): Promise<UserEntity> {

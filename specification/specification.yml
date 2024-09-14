@@ -7,6 +7,58 @@ paths:
       responses:
         "200":
           description: ""
+  /api/users/search:
+    get:
+      operationId: UserController_index
+      summary: Get users list
+      parameters:
+        - name: sortDirection
+          required: false
+          in: query
+          description: "Sorting direction. Default direction: desc"
+          example: " desc"
+          schema:
+            enum:
+              - asc
+              - desc
+            type: string
+        - name: sortType
+          required: false
+          in: query
+          description: "Sorting type. Default sort type: createdAt"
+          example: createdAt
+          schema:
+            enum:
+              - createdAt
+            type: string
+        - name: page
+          required: false
+          in: query
+          description: 'Current page in pagination (if items count more than "limit").
+            Default page: 1'
+          example: "1"
+          schema: {}
+        - name: limit
+          required: false
+          in: query
+          description: "Items per page (pagination). Max limit: 50"
+          example: "50"
+          schema: {}
+        - name: createdAt
+          required: false
+          in: query
+          description: Item's creation date
+          example: 2024-05-29
+          schema: {}
+      responses:
+        "201":
+          description: Users found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UsersWithPaginationRDO"
+      tags: &a1
+        - users
   /api/users/additional:
     get:
       operationId: UserController_getAdditionalInfo
@@ -26,8 +78,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/AdditionalInfoRDO"
-      tags: &a1
-        - users
+      tags: *a1
   /api/users/register:
     post:
       operationId: UserController_create
@@ -104,7 +155,7 @@ paths:
       parameters: []
       responses:
         "200":
-          description: User found
+          description: Users found
           content:
             application/json:
               schema:
@@ -139,7 +190,7 @@ paths:
             type: string
       responses:
         "200":
-          description: User found
+          description: Users found
           content:
             application/json:
               schema:
@@ -684,11 +735,11 @@ paths:
           schema: {}
       responses:
         "201":
-          description: Request has been successfully created
+          description: Requests found
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/CreateRequestRDO"
+                $ref: "#/components/schemas/RequestsWithPaginationRDO"
       tags: *a5
   /api/requests/by-users:
     get:
@@ -748,7 +799,7 @@ paths:
           schema: {}
       responses:
         "200":
-          description: Training request found
+          description: Requests found
           content:
             application/json:
               schema:
@@ -1095,151 +1146,6 @@ tags: []
 servers: []
 components:
   schemas:
-    AdditionalInfoRDO:
-      type: object
-      properties: {}
-    CreateUserDTO:
-      type: object
-      properties:
-        name:
-          type: string
-          description: User name
-          example: Tony
-          minimum: 1
-          maximum: 15
-        email:
-          type: string
-          description: User email
-          example: iron-man@starkindustries.it
-        avatar:
-          type: object
-          description: User avatar
-          example: some/interesting/avatar.jpg
-        password:
-          type: string
-          description: User password
-          example: jarvis-iron-hearth123
-          minimum: 12
-          maximum: 6
-        role:
-          type: string
-          description: User role
-          example: admin
-          enum:
-            - admin
-            - client
-            - trainer
-        gender:
-          type: string
-          description: User gender
-          example: мужской
-          enum:
-            - мужской
-            - женский
-            - неважно
-        birthDate:
-          format: date-time
-          type: string
-          description: User birth date
-          example: 1993-09-26
-        description:
-          format: date-time
-          type: string
-          description: User profile description
-          example: Some interesting profile description
-        location:
-          type: string
-          description: User metro station
-          example: звездная
-          enum:
-            - пионерская
-            - петроградская
-            - удельная
-            - звездная
-            - спортивная
-        pageBackground:
-          type: object
-          description: User profile background. If not passed = User avatar
-          example: some/interesting/avatar.jpg
-        level:
-          type: string
-          description: User training level
-          example: новичок
-          enum:
-            - новичок
-            - любитель
-            - профессионал
-        trainingType:
-          type: string
-          description: User trainings type
-          example: '["бокс", "кроссфит", "бег"]'
-          enum:
-            - йога
-            - бег
-            - бокс
-            - стретчинг
-            - кроссфит
-            - аэробика
-            - пилатес
-        trainingDuration:
-          type: string
-          description: User training time periods (duration in minutes)
-          example: 10-30
-          enum:
-            - 10-30
-            - 30-50
-            - 50-80
-            - 80-100
-        loseCaloriesLimit:
-          type: number
-          description: User lose calories aim
-          example: 1000
-          minimum: 1000
-          maximum: 5000
-        dayCaloriesLimit:
-          type: number
-          description: User calories per day limit
-          example: "5000"
-          minimum: 1000
-          maximum: 5000
-        isReadyToTraining:
-          type: boolean
-          description: Is user ready to training
-          example: "true"
-        certificates:
-          description: User certificates (for trainers only)
-          example: '["/static/2024/09/03/224297181810-6.pdf",
-            "/static/2024/09/03/224297181810-1.pdf",
-            "/static/2024/09/03/224297181810-3.pdf"]'
-          type: array
-          items:
-            type: string
-        friendsList:
-          description: User friends list
-          example: '["8c132bfa-b758-40ab-9663-b1f637848d04",
-            "fe302885-fb20-4b7f-a381-862d9f1eb0c2"]'
-          type: array
-          items:
-            type: string
-      required:
-        - name
-        - email
-        - avatar
-        - password
-        - role
-        - gender
-        - birthDate
-        - description
-        - location
-        - pageBackground
-        - level
-        - trainingType
-        - trainingDuration
-        - loseCaloriesLimit
-        - dayCaloriesLimit
-        - isReadyToTraining
-        - certificates
-        - friendsList
     UserRDO:
       type: object
       properties:
@@ -1373,6 +1279,180 @@ components:
         - name
         - email
         - avatar
+        - role
+        - gender
+        - birthDate
+        - description
+        - location
+        - pageBackground
+        - level
+        - trainingType
+        - trainingDuration
+        - loseCaloriesLimit
+        - dayCaloriesLimit
+        - isReadyToTraining
+        - certificates
+        - friendsList
+    UsersWithPaginationRDO:
+      type: object
+      properties:
+        totalPages:
+          type: number
+          description: Paginated item pages count
+          example: 2
+        totalItems:
+          type: number
+          description: Total items count
+          example: 23
+        currentPage:
+          type: number
+          description: Current page number in pagination
+          example: 1
+        itemsPerPage:
+          type: number
+          description: items per page
+          example: 7
+        entities:
+          description: Item entities array
+          allOf:
+            - $ref: "#/components/schemas/UserRDO"
+      required:
+        - totalPages
+        - totalItems
+        - currentPage
+        - itemsPerPage
+        - entities
+    AdditionalInfoRDO:
+      type: object
+      properties: {}
+    CreateUserDTO:
+      type: object
+      properties:
+        name:
+          type: string
+          description: User name
+          example: Tony
+          minimum: 1
+          maximum: 15
+        email:
+          type: string
+          description: User email
+          example: iron-man@starkindustries.it
+        avatar:
+          type: object
+          description: User avatar
+          example: some/interesting/avatar.jpg
+        password:
+          type: string
+          description: User password
+          example: jarvis-iron-hearth123
+          minimum: 12
+          maximum: 6
+        role:
+          type: string
+          description: User role
+          example: admin
+          enum:
+            - admin
+            - client
+            - trainer
+        gender:
+          type: string
+          description: User gender
+          example: мужской
+          enum:
+            - мужской
+            - женский
+            - неважно
+        birthDate:
+          format: date-time
+          type: string
+          description: User birth date
+          example: 1993-09-26
+        description:
+          format: date-time
+          type: string
+          description: User profile description
+          example: Some interesting profile description
+        location:
+          type: string
+          description: User metro station
+          example: звездная
+          enum:
+            - пионерская
+            - петроградская
+            - удельная
+            - звездная
+            - спортивная
+        pageBackground:
+          type: object
+          description: User profile background. If not passed = User avatar
+          example: some/interesting/avatar.jpg
+        level:
+          type: string
+          description: User training level
+          example: новичок
+          enum:
+            - новичок
+            - любитель
+            - профессионал
+        trainingType:
+          type: string
+          description: User trainings type
+          example: '["бокс", "кроссфит", "бег"]'
+          enum:
+            - йога
+            - бег
+            - бокс
+            - стретчинг
+            - кроссфит
+            - аэробика
+            - пилатес
+        trainingDuration:
+          type: string
+          description: User training time periods (duration in minutes)
+          example: 10-30
+          enum:
+            - 10-30
+            - 30-50
+            - 50-80
+            - 80-100
+        loseCaloriesLimit:
+          type: number
+          description: User lose calories aim
+          example: 1000
+          minimum: 1000
+          maximum: 5000
+        dayCaloriesLimit:
+          type: number
+          description: User calories per day limit
+          example: "5000"
+          minimum: 1000
+          maximum: 5000
+        isReadyToTraining:
+          type: boolean
+          description: Is user ready to training
+          example: "true"
+        certificates:
+          description: User certificates (for trainers only)
+          example: '["/static/2024/09/03/224297181810-6.pdf",
+            "/static/2024/09/03/224297181810-1.pdf",
+            "/static/2024/09/03/224297181810-3.pdf"]'
+          type: array
+          items:
+            type: string
+        friendsList:
+          description: User friends list
+          example: '["8c132bfa-b758-40ab-9663-b1f637848d04",
+            "fe302885-fb20-4b7f-a381-862d9f1eb0c2"]'
+          type: array
+          items:
+            type: string
+      required:
+        - name
+        - email
+        - avatar
+        - password
         - role
         - gender
         - birthDate

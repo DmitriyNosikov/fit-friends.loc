@@ -7,11 +7,12 @@ import {
   Param,
   Patch,
   Post,
+  Query,
   Req,
   UseGuards,
   UseInterceptors
 } from '@nestjs/common';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 
 import { JWTAuthGuard } from './guards/jwt-auth.guard';
 import { LocalAuthGuard } from './guards/local-auth.guard';
@@ -23,13 +24,14 @@ import { fillDTO } from '../libs/helpers';
 
 import { RequestWithUser } from './interfaces/request-with-user.interface';
 
-import { AdditionalInfoRDO, CreateUserDTO, LoggedUserRDO, LoginUserDTO, ToggleUserFriendsDTO, UpdateUserDTO, UserRDO } from '../../../../shared/user/';
+import { AdditionalInfoRDO, CreateUserDTO, LoggedUserRDO, LoginUserDTO, ToggleUserFriendsDTO, UpdateUserDTO, UserRDO, UsersWithPaginationRDO } from '../../../../shared/user/';
 import { trainingDurationList, genderTypeList, locationList, trainingTypeList, userRolesList, userLevelList } from '@server/libs/types';
 import { UserInterface } from './interfaces';
 import { UserMessage } from './user.constant';
 
 import { UserService } from './user.service';
-import { UserIdPayload } from '@shared/types';
+import { SortDirectionEnum, SortTypeEnum, UserIdPayload } from '@shared/types';
+import { BaseSearchQuery, DefaultSearchParam } from '@shared/types/search/base-search-query.type';
 
 
 @ApiTags('users')
@@ -38,6 +40,56 @@ export class UserController {
   constructor(
     private readonly userService: UserService
   ) { }
+  @Get('search')
+  @ApiOperation({ summary: 'Get users list' })
+  @ApiQuery({
+    name: "createdAt",
+    description: `Item's creation date`,
+    example: "2024-05-29",
+    required: false
+  })
+  @ApiQuery({
+    name: "limit",
+    description: `Items per page (pagination). Max limit: ${DefaultSearchParam.MAX_ITEMS_PER_PAGE}`,
+    example: "50",
+    required: false
+  })
+  @ApiQuery({
+    name: "page",
+    description: `Current page in pagination (if items count more than "limit"). Default page: ${DefaultSearchParam.PAGE}`,
+    example: "1",
+    required: false
+  })
+  @ApiQuery({
+    name: "sortType",
+    description: `Sorting type. Default sort type: ${DefaultSearchParam.SORT.TYPE}`,
+    enum: SortTypeEnum,
+    example: "createdAt",
+    required: false
+  })
+  @ApiQuery({
+    name: "sortDirection",
+    description: `Sorting direction. Default direction: ${DefaultSearchParam.SORT.DIRECTION}`,
+    enum: SortDirectionEnum,
+    example: " desc",
+    required: false
+  })
+  @ApiResponse({
+    type: UsersWithPaginationRDO,
+    status: HttpStatus.CREATED,
+    description: UserMessage.SUCCESS.FOUND
+  })
+  public async index(@Query() query: BaseSearchQuery) {
+    const users = await this.userService.search(query);
+
+    const result = {
+      ...users,
+      entities:  users.entities.map((user) => fillDTO(UserRDO, user.toPOJO()))
+    };
+
+    return result;
+  }
+
   @Get('additional')
   @ApiOperation({ summary: 'Return additional info about availible genders, locations, training types and training durations' })
   @ApiResponse({

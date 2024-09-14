@@ -10,6 +10,7 @@ export default function HeaderNav(): ReactElement {
   const mainPages: string[] = [
     AppRoute.MAIN,
     AppRoute.TRAININGS,
+    AppRoute.USERS,
     `${AppRoute.TRAININGS}/${params.trainingId}`
   ];
 

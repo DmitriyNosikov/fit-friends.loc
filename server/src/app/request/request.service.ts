@@ -95,7 +95,7 @@ export class RequestService {
     const requests = await this.requestRepository.search(query);
 
     if (!requests && query) {
-      throw new NotFoundException(`Can't find products by passed params " ${query}"`);
+      throw new NotFoundException(`Can't find requests by passed params " ${query}"`);
     }
 
     return requests;

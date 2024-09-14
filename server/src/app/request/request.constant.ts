@@ -9,7 +9,7 @@ export const RequestMessage: MessagesType = {
     USERS_DOES_NOT_EXIST: 'One of passed user doesn`t exist'
   },
   SUCCESS: {
-    FOUND: 'Training request found',
+    FOUND: 'Requests found',
     CREATED: 'Request has been successfully created',
     UPDATED: 'Request has bees successfully updated',
     DELETED: 'Request has been successfully deleted',

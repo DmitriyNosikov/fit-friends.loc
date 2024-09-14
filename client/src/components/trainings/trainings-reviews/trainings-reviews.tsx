@@ -56,7 +56,7 @@ export default function TrainingsReviews({ trainingId }: TrainingsReviewsProps):
             const userAvatar = avatarImg
               ? avatarImg.startsWith('/static') // Путь к загруженным на сервер аватаркам начинается с /static
                 ? `${BASE_URL}${avatarImg}` // Для аватарок, загруженных на сервер юзерами
-                : avatarImg // Для моковых изображений, которыя "захардкожены" в сидировании
+                : avatarImg // Для моковых изображений, которые "захардкожены" в сидировании
               : DEFAULT_AVATAR_URL; // Если аватарки нет
 
             return (

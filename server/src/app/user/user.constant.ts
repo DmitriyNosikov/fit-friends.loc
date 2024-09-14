@@ -57,7 +57,7 @@ export const UserMessage: MessagesType = {
     FRIEND_ADDED: 'Friend has been successfully added',
     FRIEND_REMOVED: 'Friend has been successfully removed',
 
-    FOUND: 'User found',
+    FOUND: 'Users found',
     DELETED: 'User has been successfully deleted',
     ADDITIONAL: 'Additional info found'
   },

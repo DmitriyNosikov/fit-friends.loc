@@ -1,6 +1,6 @@
 import { AppRoute } from '@client/src/const';
 import { getTrainingThumbnailByType } from '@client/src/utils/adapters';
-import { TrainingType } from '@shared/types/training-type.enum';
+import { TrainingType } from '@shared/training/types/training-type.enum';
 import { ReactElement } from 'react';
 import { Link } from 'react-router-dom';
 

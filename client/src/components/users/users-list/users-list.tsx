@@ -1,90 +1,105 @@
 import { ReactElement } from 'react';
+import { useNavigate } from 'react-router-dom';
+
+import { AppRoute, ITEMS_PER_PAGE } from '@client/src/const';
+import { UserRoleEnum } from '@shared/types/user-roles.enum';
+import { BaseSearchQuery } from '@shared/types';
+
+import { useAppDispatch, useAppSelector } from '@client/src/hooks';
+import useSearchUsers from '@client/src/hooks/useSearchUsers';
+
+import { getCurrentUserInfo, getUsersListLoadingStatus } from '@client/src/store/slices/user-process/user-process.selectors';
+import { searchUsersAction } from '@client/src/store/actions/api-user-action';
+
+import Spinner from '../../tools/spinner/spinner';
+import Stub from '../../tools/stub/stub';
+import UsersListItem from '../users-list-item/users-list-item';
+
+const START_PAGE = 1;
 
 export default function UsersList(): ReactElement {
+  const dispatch = useAppDispatch();
+  const userInfo = useAppSelector(getCurrentUserInfo);
+  const navigate = useNavigate();
+
+  const isTrainer = userInfo?.role === UserRoleEnum.TRAINER;
+
+  if (isTrainer) {
+    navigate(AppRoute.MAIN);
+  }
+
+  let searchQuery: BaseSearchQuery = {
+    page: START_PAGE,
+    limit: ITEMS_PER_PAGE
+  };
+
+
+  const usersList = useSearchUsers(searchQuery);
+  const isUsersLoading = useAppSelector(getUsersListLoadingStatus);
+
+  const isShowMoreBtnVisible = usersList?.totalPages
+    && usersList?.totalPages > START_PAGE
+    && usersList.currentPage !== usersList?.totalPages;
+
+  function handleShowMoreBtnClick() {
+    if (!usersList || !usersList.currentPage) {
+      return;
+    };
+
+    let currentPage = usersList.currentPage;
+
+    searchQuery = {
+      page: ++currentPage,
+      limit: ITEMS_PER_PAGE
+    };
+
+    dispatch(searchUsersAction({ searchQuery, appendItems: true }));
+  }
+
+  function handleBackToBeginBtnClick() {
+    searchQuery = {
+      page: START_PAGE,
+      limit: ITEMS_PER_PAGE
+    };
+
+    dispatch(searchUsersAction({ searchQuery }));
+  }
+
   return (
     <div className="inner-page__content">
       <div className="users-catalog">
-        <ul className="users-catalog__list">
-          <li className="users-catalog__item">
-            <div className="thumbnail-user thumbnail-user--role-user">
-              <div className="thumbnail-user__image">
-                <picture>
-                  <source type="image/webp" srcSet="img/content/thumbnails/user-01.webp, img/content/thumbnails/user-01@2x.webp 2x" /><img src="img/content/thumbnails/user-01.jpg" srcSet="img/content/thumbnails/user-01@2x.jpg 2x" width={82} height={82} />
-                </picture>
-              </div>
-              <div className="thumbnail-user__header">
-                <h3 className="thumbnail-user__name">Елизавета</h3>
-                <div className="thumbnail-user__location">
-                  <svg width={14} height={16} aria-hidden="true">
-                    <use xlinkHref="#icon-location" />
-                  </svg>
-                  <address className="thumbnail-user__location-address">Петроградская</address>
-                </div>
-              </div>
-              <ul className="thumbnail-user__hashtags-list">
-                <li className="thumbnail-user__hashtags-item">
-                  <div className="hashtag thumbnail-user__hashtag"><span>#стретчинг</span></div>
-                </li>
-                <li className="thumbnail-user__hashtags-item">
-                  <div className="hashtag thumbnail-user__hashtag"><span>#йога</span></div>
-                </li>
-              </ul>
-              <a className="btn btn--medium thumbnail-user__button" href="#">Подробнее</a>
-            </div>
-          </li>
-          <li className="users-catalog__item">
-            <div className="thumbnail-user thumbnail-user--role-coach">
-              <div className="thumbnail-user__image">
-                <picture>
-                  <source type="image/webp" srcSet="img/content/thumbnails/user-02.webp, img/content/thumbnails/user-02@2x.webp 2x" /><img src="img/content/thumbnails/user-02.jpg" srcSet="img/content/thumbnails/user-02@2x.jpg 2x" width={82} height={82} />
-                </picture>
-              </div>
-              <div className="thumbnail-user__header">
-                <h3 className="thumbnail-user__name">Дарья</h3>
-                <div className="thumbnail-user__location">
-                  <svg width={14} height={16} aria-hidden="true">
-                    <use xlinkHref="#icon-location" />
-                  </svg>
-                  <address className="thumbnail-user__location-address">Адмиралтейская</address>
-                </div>
-              </div>
-              <ul className="thumbnail-user__hashtags-list">
-                <li className="thumbnail-user__hashtags-item">
-                  <div className="hashtag thumbnail-user__hashtag"><span>#стретчинг</span></div>
-                </li>
-              </ul>
-              <a className="btn btn--dark-bg btn--medium thumbnail-user__button" href="#">Подробнее</a>
-            </div>
-          </li>
-          <li className="users-catalog__item">
-            <div className="thumbnail-user thumbnail-user--role-coach">
-              <div className="thumbnail-user__image">
-                <picture>
-                  <source type="image/webp" srcSet="img/content/thumbnails/user-03.webp, img/content/thumbnails/user-03@2x.webp 2x" /><img src="img/content/thumbnails/user-03.jpg" srcSet="img/content/thumbnails/user-03@2x.jpg 2x" width={82} height={82} />
-                </picture>
-              </div>
-              <div className="thumbnail-user__header">
-                <h3 className="thumbnail-user__name">Наталья</h3>
-                <div className="thumbnail-user__location">
-                  <svg width={14} height={16} aria-hidden="true">
-                    <use xlinkHref="#icon-location" />
-                  </svg>
-                  <address className="thumbnail-user__location-address">Василеостровская</address>
-                </div>
-              </div>
-              <ul className="thumbnail-user__hashtags-list">
-                <li className="thumbnail-user__hashtags-item">
-                  <div className="hashtag thumbnail-user__hashtag"><span>#пилатес</span></div>
-                </li>
-              </ul>
-              <a className="btn btn--dark-bg btn--medium thumbnail-user__button" href="#">Подробнее</a>
-            </div>
-          </li>
-        </ul>
+        {
+          isUsersLoading &&
+          <Spinner />
+        }
+
+        {
+          !usersList && !isUsersLoading &&
+          <Stub />
+        }
+
+        {
+          usersList &&
+          <ul className="users-catalog__list">
+            {
+              usersList?.entities && usersList.entities.map((user) => {
+                return (
+                  <UsersListItem user={user} key={user.id} />
+                )
+              })
+            }
+          </ul>
+        }
 
         <div className="show-more users-catalog__show-more">
-          <button className="btn show-more__button show-more__button--more" type="button">Показать еще</button>
-          <button className="btn show-more__button show-more__button--to-top" type="button">Вернуться в начало</button>
+          {
+            isShowMoreBtnVisible &&
+            <button className="btn show-more__button show-more__button--more" type="button" onClick={handleShowMoreBtnClick}>Показать еще</button>
+          }
+          {
+            usersList && (usersList.entities.length > ITEMS_PER_PAGE) &&
+            <button className="btn show-more__button show-more__button--to-top" type="button" onClick={handleBackToBeginBtnClick}>Вернуться в начало</button>
+          }
         </div>
       </div>
     </div>

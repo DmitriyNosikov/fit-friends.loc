@@ -3,9 +3,9 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 import { toast } from 'react-toastify';
 
 import { setDataLoadingStatus } from '../slices/main-process/main-process';
-import { setAdditionalInfo, setUserAuthStatus, setCurrentUserInfo, setUserInfo } from '../slices/user-process/user-process';
+import { setAdditionalInfo, setUserAuthStatus, setCurrentUserInfo, setUserInfo, appendUsersAction, setUsersAction } from '../slices/user-process/user-process';
 
-import { AdditionalInfoRDO, CreateUserDTO, LoggedUserRDO, LoginUserDTO, UpdateUserDTO, UserRDO } from '@shared/user';
+import { AdditionalInfoRDO, CreateUserDTO, LoggedUserRDO, LoginUserDTO, UpdateUserDTO, UserRDO, UsersWithPaginationRDO } from '@shared/user';
 import { redirectToRoute } from '../middlewares/redirect-action';
 
 
@@ -16,6 +16,8 @@ import { ApiRoute, AppRoute, AuthorizationStatus, Namespace } from '@client/src/
 import { TokenPayload } from '@client/src/types/token-payload';
 import { deleteToken, REFRESH_TOKEN_KEY, setToken } from '@client/src/services/token';
 import { UploadingFilePayload } from '@client/src/types/payloads';
+import { BaseSearchQuery } from '@shared/types';
+import { createSearchURL } from '@client/src/utils/adapters';
 
 
 
@@ -32,6 +34,9 @@ const APIAction = {
   USER_GET_ADDITIONAL: `${APIUserPrefix}/get-additional`,
   USER_UPLOAD_AVATAR: `${APIUserPrefix}/upload-avatar`,
   USER_UPLOAD_CERTIFICATES: `${APIUserPrefix}/upload-certificates`,
+
+  PAGINATION_GET_PAGE: `${APIUserPrefix}/get-pagination-page`,
+  SEARCH: `${APIUserPrefix}/search`,
 } as const;
 
 // ASYNC ACTIONS
@@ -297,6 +302,77 @@ export const fetchAdditionalInfoAction = createAsyncThunk<AdditionalInfoRDO, voi
       dispatch(setAdditionalInfo(null));
       dispatch(setDataLoadingStatus(false));
 
+      return rejectWithValue(err);
+    }
+  }
+);
+
+// Пагинация
+type PageNumber = number;
+
+export const getPaginationPage = createAsyncThunk<void, PageNumber, AsyncOptions>(
+  APIAction.PAGINATION_GET_PAGE,
+  async (
+    pageNumber,
+    { dispatch, extra: api }
+  ) => {
+    dispatch(setDataLoadingStatus(true));
+
+    try {
+      const { data } = await api.get<UsersWithPaginationRDO>(`${ApiRoute.USER_API}/search/?page=${pageNumber}`);
+
+      dispatch(appendUsersAction(data));
+    } catch (err) {
+      toast.error(`Cant't get pagination page ${pageNumber}. Error: ${err}`);
+    }
+
+    dispatch(setDataLoadingStatus(false));
+  }
+);
+
+type SearchPayload = {
+  searchQuery: BaseSearchQuery,
+  appendItems?: boolean
+};
+
+export const searchUsersAction = createAsyncThunk<UsersWithPaginationRDO, SearchPayload, AsyncOptions>(
+  APIAction.SEARCH,
+  async (
+    { searchQuery, appendItems },
+    { dispatch, rejectWithValue, extra: api }
+  ) => {
+    dispatch(setDataLoadingStatus(true));
+
+    let url = createSearchURL(`${ApiRoute.USER_API}/search`, searchQuery as Record<string, unknown>);
+
+    // Запрашиваем данные с сервера
+    try {
+      const { data } = await api.get<UsersWithPaginationRDO>(url);
+
+      if (!data) {
+        toast.info('No users found by passed filter');
+      }
+
+      if (!appendItems) {
+        dispatch(setUsersAction(data));
+
+        dispatch(setDataLoadingStatus(false));
+        return data;
+      }
+
+      // Если передан параметр appendItems, это значит
+      // что результат запроса нужно добавить к текущему
+      // состоянию, а не заменить им все состояние, т.е.
+      // в данном случае, к текущему списку пользователей добавить
+      // полученные от сервера
+      dispatch(appendUsersAction(data));
+
+      dispatch(setDataLoadingStatus(false));
+      return data;
+    } catch (err) {
+      toast.error(`Can't get users. Error: ${err}`);
+
+      dispatch(setDataLoadingStatus(false));
       return rejectWithValue(err);
     }
   }

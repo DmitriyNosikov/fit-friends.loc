@@ -81,25 +81,24 @@ export default function TrainingsList(): ReactElement {
         }
 
         {
-          trainingsList && (
-            <ul className="my-trainings__list">
-              {
-                trainingsList?.entities && trainingsList.entities.map((trainingItem) => {
-                  const item = {
-                    ...trainingItem,
-                    id: trainingItem.id as string,
-                    rating: trainingItem.rating as number
-                  };
+          trainingsList &&
+          <ul className="my-trainings__list">
+            {
+              trainingsList?.entities && trainingsList.entities.map((trainingItem) => {
+                const item = {
+                  ...trainingItem,
+                  id: trainingItem.id as string,
+                  rating: trainingItem.rating as number
+                };
 
-                  return (
-                    <li className="my-trainings__item" key={item.id}>
-                      <TrainingsListItem item={item} />
-                    </li>
-                  )
-                })
-              }
-            </ul>
-          )
+                return (
+                  <li className="my-trainings__item" key={item.id}>
+                    <TrainingsListItem item={item} />
+                  </li>
+                )
+              })
+            }
+          </ul>
         }
         <div className="show-more my-trainings__show-more">
           {

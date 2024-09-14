@@ -165,7 +165,7 @@ export const trainingProcess = createSlice({
         state.isTrainingsLoading = false;
       })
 
-       // Search trainings
+      // Search trainings
       .addCase(searchTrainingsAction.pending, (state) => {
         state.isTrainingsLoading = true;
       })

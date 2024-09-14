@@ -55,7 +55,7 @@ export default function PersonalCardUser({ userInfo }: PersonalCardUserProps): R
               {
                 trainingType && trainingType.map((type) => {
                   return (
-                    <li className="user-card__hashtag-item">
+                    <li className="user-card__hashtag-item" key={type}>
                       <div className="hashtag"><span>#{type}</span></div>
                     </li>
                   )

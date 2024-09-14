@@ -1,6 +1,6 @@
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
-import { AdditionalInfoRDO, LoggedUserRDO, UserRDO } from '@shared/user/';
-import { checkUserAuthAction, loginUserAction } from '../../actions/api-user-action';
+import { AdditionalInfoRDO, LoggedUserRDO, UserRDO, UsersWithPaginationRDO } from '@shared/user/';
+import { checkUserAuthAction, loginUserAction, searchUsersAction } from '../../actions/api-user-action';
 
 import { AuthorizationStatus, AuthorizationStatusList, Namespace } from '@client/src/const';
 import { getToken } from '@client/src/services/token';
@@ -9,7 +9,10 @@ export type UserProcess = {
   authorizationStatus: keyof typeof AuthorizationStatus,
   currentUserInfo: LoggedUserRDO | null,
   userInfo: UserRDO | null,
-  additionalInfo: AdditionalInfoRDO | null
+  additionalInfo: AdditionalInfoRDO | null,
+
+  paginatedUsers: UsersWithPaginationRDO | null,
+  isUsersLoading: boolean
 };
 
 
@@ -18,6 +21,9 @@ const initialState: UserProcess = {
   currentUserInfo: null,
   userInfo: null,
   additionalInfo: null,
+  paginatedUsers: null,
+
+  isUsersLoading: false
 };
 
 export const userProcess = createSlice({
@@ -38,7 +44,24 @@ export const userProcess = createSlice({
 
     setUserAuthStatus: (state, action: PayloadAction<AuthorizationStatusList>) => {
       state.authorizationStatus = action.payload;
-    }
+    },
+
+    // Список пользователей
+    setUsersAction: (state, action: PayloadAction<UsersWithPaginationRDO | null>) => {
+      state.paginatedUsers = action.payload;
+    },
+
+    // Добавление пользователей при нажатии а кнопку "Показать еще"
+    appendUsersAction: (state, action: PayloadAction<UsersWithPaginationRDO | null>) => {
+      const addingUsers = action.payload;
+
+      if(!state.paginatedUsers || !addingUsers) {
+        return;
+      }
+
+      addingUsers?.entities.forEach((user) => state.paginatedUsers?.entities.push(user));
+      state.paginatedUsers.currentPage = addingUsers.currentPage; // Обновляем текущую страницу
+    },
   },
   extraReducers(builder) {
     builder
@@ -62,6 +85,17 @@ export const userProcess = createSlice({
       .addCase(loginUserAction.rejected, (state) => {
         state.authorizationStatus = AuthorizationStatus.NO_AUTH;
       })
+
+      // SEARCH USERS
+      .addCase(searchUsersAction.pending, (state) => {
+        state.isUsersLoading = true;
+      })
+      .addCase(searchUsersAction.fulfilled, (state) => {
+        state.isUsersLoading = false;
+      })
+      .addCase(searchUsersAction.rejected, (state) => {
+        state.isUsersLoading = false;
+      })
   },
 });
 
@@ -69,5 +103,7 @@ export const {
   setCurrentUserInfo,
   setUserInfo,
   setAdditionalInfo,
-  setUserAuthStatus
+  setUserAuthStatus,
+  setUsersAction,
+  appendUsersAction
 } = userProcess.actions;

@@ -3,7 +3,7 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 import { toast } from 'react-toastify';
 
 import { setDataLoadingStatus } from '../slices/main-process/main-process';
-import { setAdditionalInfo, setUserAuthStatus, setCurrentUserInfo, setUserInfo, appendUsersAction, setUsersAction } from '../slices/user-process/user-process';
+import { setAdditionalInfo, setUserAuthStatus, setCurrentUserInfo, setUserInfo, appendUsersAction, setUsersAction, setUserFriendsAction } from '../slices/user-process/user-process';
 
 import { AdditionalInfoRDO, CreateUserDTO, LoggedUserRDO, LoginUserDTO, UpdateUserDTO, UserRDO, UserSearchQuery, UsersWithPaginationRDO } from '@shared/user';
 import { redirectToRoute } from '../middlewares/redirect-action';
@@ -17,6 +17,7 @@ import { TokenPayload } from '@client/src/types/token-payload';
 import { deleteToken, REFRESH_TOKEN_KEY, setToken } from '@client/src/services/token';
 import { UploadingFilePayload } from '@client/src/types/payloads';
 import { createSearchURL } from '@client/src/utils/adapters';
+import { BaseSearchQuery } from '@shared/types';
 
 
 
@@ -31,8 +32,11 @@ const APIAction = {
   USER_GET_DETAIL: `${APIUserPrefix}/get-detail`,
   USER_GET_BY_ID: `${APIUserPrefix}/get-by-id`,
   USER_GET_ADDITIONAL: `${APIUserPrefix}/get-additional`,
+
   USER_UPLOAD_AVATAR: `${APIUserPrefix}/upload-avatar`,
   USER_UPLOAD_CERTIFICATES: `${APIUserPrefix}/upload-certificates`,
+
+  USER_GET_FRIENDS: `${APIUserPrefix}/get-friends`,
 
   PAGINATION_GET_PAGE: `${APIUserPrefix}/get-pagination-page`,
   SEARCH: `${APIUserPrefix}/search`,
@@ -306,7 +310,42 @@ export const fetchAdditionalInfoAction = createAsyncThunk<AdditionalInfoRDO, voi
   }
 );
 
-// Пагинация
+// Friends
+export type SearchUserFriendsData = {
+  searchQuery: BaseSearchQuery & UserIdPayload,
+  appendItems?: boolean
+};
+
+export const fetchUserFriendsAction = createAsyncThunk<UsersWithPaginationRDO, SearchUserFriendsData, AsyncOptions>(
+  APIAction.USER_GET_FRIENDS,
+  async (
+    { searchQuery, appendItems },
+    { dispatch, rejectWithValue, extra: api }
+  ) => {
+    dispatch(setDataLoadingStatus(true));
+
+    try {
+      let url = createSearchURL(`${ApiRoute.USER_SEARCH}/`, searchQuery as unknown as Record<string, unknown>);
+      const { data } = await api.get<UsersWithPaginationRDO>(url);
+
+      dispatch(setUserFriendsAction(data));
+      dispatch(setDataLoadingStatus(false));
+
+      return data;
+    } catch(err) {
+      toast.warn(`Can't get user's detail info: ${err}. Please, try to login again`);
+
+      dispatch(setDataLoadingStatus(false));
+      deleteToken();
+      dispatch(setUserAuthStatus(AuthorizationStatus.NO_AUTH));
+      dispatch(redirectToRoute(AppRoute.INTRO));
+
+      return rejectWithValue(err);
+    }
+  }
+);
+
+// Pagination
 type PageNumber = number;
 
 export const getPaginationPage = createAsyncThunk<void, PageNumber, AsyncOptions>(
@@ -318,7 +357,7 @@ export const getPaginationPage = createAsyncThunk<void, PageNumber, AsyncOptions
     dispatch(setDataLoadingStatus(true));
 
     try {
-      const { data } = await api.get<UsersWithPaginationRDO>(`${ApiRoute.USER_API}/search/?page=${pageNumber}`);
+      const { data } = await api.get<UsersWithPaginationRDO>(`${ApiRoute.USER_SEARCH}/?page=${pageNumber}`);
 
       dispatch(appendUsersAction(data));
     } catch (err) {
@@ -329,12 +368,12 @@ export const getPaginationPage = createAsyncThunk<void, PageNumber, AsyncOptions
   }
 );
 
-type SearchPayload = {
+type SearchUsersData = {
   searchQuery: UserSearchQuery,
   appendItems?: boolean
 };
 
-export const searchUsersAction = createAsyncThunk<UsersWithPaginationRDO, SearchPayload, AsyncOptions>(
+export const searchUsersAction = createAsyncThunk<UsersWithPaginationRDO, SearchUsersData, AsyncOptions>(
   APIAction.SEARCH,
   async (
     { searchQuery, appendItems },
@@ -342,7 +381,7 @@ export const searchUsersAction = createAsyncThunk<UsersWithPaginationRDO, Search
   ) => {
     dispatch(setDataLoadingStatus(true));
 
-    let url = createSearchURL(`${ApiRoute.USER_API}/search/`, searchQuery as Record<string, unknown>);
+    let url = createSearchURL(`${ApiRoute.USER_SEARCH}/`, searchQuery as Record<string, unknown>);
 
     // Запрашиваем данные с сервера
     try {

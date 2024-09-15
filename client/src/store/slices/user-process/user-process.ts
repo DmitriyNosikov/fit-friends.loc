@@ -1,6 +1,6 @@
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 import { AdditionalInfoRDO, LoggedUserRDO, UserRDO, UsersWithPaginationRDO } from '@shared/user/';
-import { checkUserAuthAction, fetchAdditionalInfoAction, loginUserAction, searchUsersAction } from '../../actions/api-user-action';
+import { checkUserAuthAction, fetchAdditionalInfoAction, fetchUserFriendsAction, loginUserAction, searchUsersAction } from '../../actions/api-user-action';
 
 import { AuthorizationStatus, AuthorizationStatusList, Namespace } from '@client/src/const';
 import { getToken } from '@client/src/services/token';
@@ -11,6 +11,9 @@ export type UserProcess = {
   userInfo: UserRDO | null,
   additionalInfo: AdditionalInfoRDO | null,
   isAdditionalInfoLoading: boolean,
+
+  userFriends: UsersWithPaginationRDO | null,
+  isUserFriendsLoading: boolean
 
   paginatedUsers: UsersWithPaginationRDO | null,
   isUsersLoading: boolean
@@ -23,6 +26,9 @@ const initialState: UserProcess = {
   userInfo: null,
   additionalInfo: null,
   isAdditionalInfoLoading: false,
+
+  userFriends: null,
+  isUserFriendsLoading: false,
 
   paginatedUsers: null,
   isUsersLoading: false
@@ -64,6 +70,11 @@ export const userProcess = createSlice({
       addingUsers?.entities.forEach((user) => state.paginatedUsers?.entities.push(user));
       state.paginatedUsers.currentPage = addingUsers.currentPage; // Обновляем текущую страницу
     },
+
+    // Список друзей
+    setUserFriendsAction: (state, action: PayloadAction<UsersWithPaginationRDO | null>) => {
+      state.userFriends = action.payload;
+    },
   },
   extraReducers(builder) {
     builder
@@ -99,7 +110,18 @@ export const userProcess = createSlice({
         state.isUsersLoading = false;
       })
 
-      // SEARCH USERS
+      // FETCH FRIENDS
+      .addCase(fetchUserFriendsAction.pending, (state) => {
+        state.isUserFriendsLoading = true;
+      })
+      .addCase(fetchUserFriendsAction.fulfilled, (state) => {
+        state.isUserFriendsLoading = false;
+      })
+      .addCase(fetchUserFriendsAction.rejected, (state) => {
+        state.isUserFriendsLoading = false;
+      })
+
+      // FETCH ADDITIONAL INFO
       .addCase(fetchAdditionalInfoAction.pending, (state) => {
         state.isAdditionalInfoLoading = true;
       })
@@ -117,6 +139,9 @@ export const {
   setUserInfo,
   setAdditionalInfo,
   setUserAuthStatus,
+
+  setUserFriendsAction,
+
   setUsersAction,
   appendUsersAction
 } = userProcess.actions;

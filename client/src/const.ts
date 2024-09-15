@@ -19,6 +19,8 @@ const BACKEND_API_URL = {
 }
 export const ApiRoute = {
   USER_API: BACKEND_API_URL.USERS,
+  USER_FRIENDS: `${BACKEND_API_URL.USERS}/friends`,
+  USER_SEARCH: `${BACKEND_API_URL.USERS}/search`,
 
   REGISTER: `${BACKEND_API_URL.USERS}/register`,
   LOGIN: `${BACKEND_API_URL.USERS}/login`,
@@ -53,6 +55,7 @@ export const AppRoute = {
   ACCOUNT: '/account',
   PERSONAL_CARD: '/personal-card',
   USERS: '/users',
+  FRIENDS: '/friends',
   TRAININGS: '/trainings',
   TRAININGS_CREATE: '/trainings-create',
   ORDERS: '/orders',

@@ -11,6 +11,7 @@ export default function HeaderNav(): ReactElement {
     AppRoute.MAIN,
     AppRoute.TRAININGS,
     AppRoute.USERS,
+    AppRoute.FRIENDS,
     `${AppRoute.TRAININGS}/${params.trainingId}`
   ];
 

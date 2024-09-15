@@ -58,7 +58,7 @@ export async function getUsers(): Promise<AuthUserInterface[]> {
       level: UserLevelEnum.PRO,
       dayCaloriesLimit: 3200,
       loseCaloriesLimit: 4800,
-      trainingType: trainingTypeList.slice(1),
+      trainingType: trainingTypeList.slice(1, 3),
       certificates: [
         '/img/content/certificates/1.pdf',
         '/img/content/certificates/2.pdf',
@@ -80,7 +80,7 @@ export async function getUsers(): Promise<AuthUserInterface[]> {
       level: UserLevelEnum.REGULAR,
       dayCaloriesLimit: 2500,
       loseCaloriesLimit: 3800,
-      trainingType: trainingTypeList.slice(2),
+      trainingType: trainingTypeList.slice(2, 3),
       certificates: [],
       friendsList: []
     },

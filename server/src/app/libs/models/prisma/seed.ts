@@ -15,6 +15,11 @@ async function seedDB(prismaClient: PrismaClient) {
     // Add random friends to user
     if(user.role !== UserRoleEnum.ADMIN) {
       const randomIndex = getRandomIntInclusive(0, users.length);
+
+      if(!users[randomIndex]) {
+        continue;
+      }
+
       const randomUserId = users[randomIndex].id
   
       user.friendsList.push(randomUserId);

@@ -9,7 +9,6 @@ type LookForCompanyItemProps = {
 }
 
 export default function LookForCompanyItem({ user }: LookForCompanyItemProps): ReactElement {
-  console.log('User: ', user);
   const { avatar, name, location, trainingType } = user;
   const userAvatar = getAvatarByUrl(avatar);
 
@@ -41,7 +40,7 @@ export default function LookForCompanyItem({ user }: LookForCompanyItemProps): R
           <ul className="thumbnail-user__hashtags-list">
             {
               trainingType.slice(0, 3).map((type) => (
-                <li className="thumbnail-user__hashtags-item">
+                <li className="thumbnail-user__hashtags-item" key={type}>
                   <div className="hashtag thumbnail-user__hashtag">
                     <span>#{type}</span>
                   </div>

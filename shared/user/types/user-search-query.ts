@@ -4,9 +4,12 @@ import {
   IsIn,
   IsOptional,
   IsArray,
-  ArrayMaxSize
+  ArrayMaxSize,
+  IsDateString,
+  IsNumber,
+  Max
 } from 'class-validator';
-import { Expose } from 'class-transformer';
+import { Expose, Transform } from 'class-transformer';
 
 import {
   Location,
@@ -16,13 +19,14 @@ import {
   locationList,
   trainingTypeList,
   userLevelList,
-  userRolesList
 } from '@server/libs/types';
-import { BaseSearchQuery, userRolesListWithoutAdmin } from '@shared/types';
-import { USER_DEFAULT, UserValidation } from '@server/user/user.constant';
+import { SortDirection, SortDirectionEnum, userRolesListWithoutAdmin } from '@shared/types';
+import { UserValidation } from '@server/user/user.constant';
 import { TransformValueToArray, TransformValueToBoolean } from '@shared/utils/common';
+import { DefaultSearchParam } from '@shared/types/search/base-search-query.type';
+import { UserSortType, UserSortTypeEnum } from './user-sort-type.enum';
 
-export class UserSearchQuery extends BaseSearchQuery {
+export class UserSearchQuery {
   @Expose()
   @TransformValueToArray()
   @IsIn(locationList, { each: true })
@@ -57,4 +61,34 @@ export class UserSearchQuery extends BaseSearchQuery {
   @IsBoolean()
   @IsOptional()
   isReadyToTraining?: boolean;
+
+  // Пока так и не получилось extends от BaseSearchQuery
+  // из за того, что нельзя переопределять sortType в классе-наследнике
+  // (не соответствует тип TypeScript)
+  @Expose()
+  @IsDateString()
+  @IsOptional()
+  public createdAt?: Date;
+
+  @Expose()
+  @Transform(({ value }) => Number(value) || DefaultSearchParam.MAX_ITEMS_PER_PAGE)
+  @Max(DefaultSearchParam.MAX_ITEMS_PER_PAGE)
+  @IsNumber()
+  @IsOptional()
+  public limit?: number = DefaultSearchParam.MAX_ITEMS_PER_PAGE;
+
+  @Expose()
+  @IsIn(Object.values(UserSortTypeEnum))
+  @IsOptional()
+  public sortType?: UserSortType = DefaultSearchParam.SORT.TYPE;
+
+  @Expose()
+  @IsIn(Object.values(SortDirectionEnum))
+  @IsOptional()
+  public sortDirection?: SortDirection = DefaultSearchParam.SORT.DIRECTION;
+
+  @Expose()
+  @Transform(({ value }) => Number(value) || DefaultSearchParam.PAGE)
+  @IsOptional()
+  public page?: number = DefaultSearchParam.PAGE;
 }

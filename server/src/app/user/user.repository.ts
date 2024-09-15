@@ -8,10 +8,11 @@ import { UserEntity } from './user.entity';
 import { UserFactory } from './user.factory';
 import { UserInterface } from './interfaces';
 
-import { BaseSearchQuery, SortDirection, SortType, SortTypeEnum } from '@shared/types';
+import { SortDirection, UserRoleEnum } from '@shared/types';
 import { DefaultSearchParam } from '@shared/types/search/base-search-query.type';
 import { PaginationResult } from '@server/libs/interfaces';
 import { UserSearchFilters, UserSearchQuery } from '@shared/user';
+import { UserSortType, UserSortTypeEnum } from '@shared/user/types/user-sort-type.enum';
 
 @Injectable()
 export class UserRepository extends BasePostgresRepository<UserEntity, UserInterface> {
@@ -213,7 +214,7 @@ export class UserRepository extends BasePostgresRepository<UserEntity, UserInter
     ]);
 
     const itemsEntities = items.map((item) => this.createEntityFromDocument(item as unknown as UserInterface));
-
+    
     return {
       entities: itemsEntities,
       currentPage: page ?? 0,
@@ -252,6 +253,11 @@ export class UserRepository extends BasePostgresRepository<UserEntity, UserInter
       where.role = {
         in: query.role
       }
+    } else {
+      // Если не передана никакая роль, ищем по всем, кроме админов
+      where.role = {
+        not: UserRoleEnum.ADMIN
+      }
     }
 
     if('isReadyToTraining' in query) {
@@ -263,15 +269,16 @@ export class UserRepository extends BasePostgresRepository<UserEntity, UserInter
 
     orderBy[key] = value;
 
-    console.log('Search filters: ', { where, orderBy });
-
     return { where, orderBy };
   }
 
-  private getSortKeyValue(sortType: SortType, sortDirection: SortDirection) {
+  private getSortKeyValue(sortType: UserSortType, sortDirection: SortDirection) {
     switch (sortType) {
-      case (SortTypeEnum.CREATED_AT): {
+      case (UserSortTypeEnum.CREATED_AT): {
         return { key: 'createdAt', value: sortDirection };
+      }
+      case (UserSortTypeEnum.ROLE): {
+        return { key: 'role', value: sortDirection };
       }
       default: {
         return { key: DefaultSearchParam.SORT.TYPE, value: DefaultSearchParam.SORT.DIRECTION };

@@ -1,6 +1,6 @@
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 import { AdditionalInfoRDO, LoggedUserRDO, UserRDO, UsersWithPaginationRDO } from '@shared/user/';
-import { checkUserAuthAction, loginUserAction, searchUsersAction } from '../../actions/api-user-action';
+import { checkUserAuthAction, fetchAdditionalInfoAction, loginUserAction, searchUsersAction } from '../../actions/api-user-action';
 
 import { AuthorizationStatus, AuthorizationStatusList, Namespace } from '@client/src/const';
 import { getToken } from '@client/src/services/token';
@@ -10,6 +10,7 @@ export type UserProcess = {
   currentUserInfo: LoggedUserRDO | null,
   userInfo: UserRDO | null,
   additionalInfo: AdditionalInfoRDO | null,
+  isAdditionalInfoLoading: boolean,
 
   paginatedUsers: UsersWithPaginationRDO | null,
   isUsersLoading: boolean
@@ -21,8 +22,9 @@ const initialState: UserProcess = {
   currentUserInfo: null,
   userInfo: null,
   additionalInfo: null,
-  paginatedUsers: null,
+  isAdditionalInfoLoading: false,
 
+  paginatedUsers: null,
   isUsersLoading: false
 };
 
@@ -95,6 +97,17 @@ export const userProcess = createSlice({
       })
       .addCase(searchUsersAction.rejected, (state) => {
         state.isUsersLoading = false;
+      })
+
+      // SEARCH USERS
+      .addCase(fetchAdditionalInfoAction.pending, (state) => {
+        state.isAdditionalInfoLoading = true;
+      })
+      .addCase(fetchAdditionalInfoAction.fulfilled, (state) => {
+        state.isAdditionalInfoLoading = false;
+      })
+      .addCase(fetchAdditionalInfoAction.rejected, (state) => {
+        state.isAdditionalInfoLoading = false;
       })
   },
 });

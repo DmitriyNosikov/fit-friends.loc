@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { AppRoute, ITEMS_PER_PAGE } from '@client/src/const';
 import { UserRoleEnum } from '@shared/types/user-roles.enum';
 import { UserSearchQuery } from '@shared/user';
+import { UsersFilterDefaultParams } from '../users-filter/users-filter';
 
 import { useAppDispatch, useAppSelector } from '@client/src/hooks';
 import useSearchUsers from '@client/src/hooks/useSearchUsers';
@@ -30,15 +31,20 @@ export default function UsersList(): ReactElement {
 
   let searchQuery: UserSearchQuery = {
     page: START_PAGE,
-    limit: ITEMS_PER_PAGE
+    limit: ITEMS_PER_PAGE,
+    level: [UsersFilterDefaultParams.CHECKED_USER_LEVEL],
+    sortType: UsersFilterDefaultParams.SORT_TYPE,
+    sortDirection: UsersFilterDefaultParams.SORT_DIRECTION
   };
 
   const usersList = useSearchUsers(searchQuery);
   const isUsersLoading = useAppSelector(getUsersListLoadingStatus);
 
-  const isShowMoreBtnVisible = usersList?.totalPages
+  const isShowMoreBtnVisible = Boolean(
+    usersList?.totalPages
     && usersList?.totalPages > START_PAGE
-    && usersList.currentPage !== usersList?.totalPages;
+    && usersList.currentPage !== usersList?.totalPages
+  );
 
   function handleShowMoreBtnClick() {
     if (!usersList || !usersList.currentPage) {
@@ -49,7 +55,10 @@ export default function UsersList(): ReactElement {
 
     searchQuery = {
       page: ++currentPage,
-      limit: ITEMS_PER_PAGE
+      limit: ITEMS_PER_PAGE,
+      level: [UsersFilterDefaultParams.CHECKED_USER_LEVEL],
+      sortType: UsersFilterDefaultParams.SORT_TYPE,
+      sortDirection: UsersFilterDefaultParams.SORT_DIRECTION
     };
 
     dispatch(searchUsersAction({ searchQuery, appendItems: true }));
@@ -58,7 +67,10 @@ export default function UsersList(): ReactElement {
   function handleBackToBeginBtnClick() {
     searchQuery = {
       page: START_PAGE,
-      limit: ITEMS_PER_PAGE
+      limit: ITEMS_PER_PAGE,
+      level: [UsersFilterDefaultParams.CHECKED_USER_LEVEL],
+      sortType: UsersFilterDefaultParams.SORT_TYPE,
+      sortDirection: UsersFilterDefaultParams.SORT_DIRECTION
     };
 
     dispatch(searchUsersAction({ searchQuery }));
@@ -74,12 +86,12 @@ export default function UsersList(): ReactElement {
         }
 
         {
-          !usersList && !isUsersLoading &&
+          (usersList?.entities && usersList?.entities.length <= 0 && !isUsersLoading) &&
           <Stub />
         }
 
         {
-          usersList &&
+          usersList?.entities && usersList.entities.length > 0 &&
           <ul className="users-catalog__list">
             {
               usersList?.entities && usersList.entities.map((user) => {

@@ -22,6 +22,10 @@ export function getUsersList(state: UserStateNamespace): UsersWithPaginationRDO 
   return state[Namespace.USER].paginatedUsers;
 }
 
+export function getUserFriendsList(state: UserStateNamespace): UsersWithPaginationRDO | null {
+  return state[Namespace.USER].userFriends;
+}
+
 
 // Loading statuses
 export function getUsersListLoadingStatus(state: UserStateNamespace): boolean {

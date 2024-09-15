@@ -41,7 +41,7 @@ export default function TrainingsSlider({
       }}
     >
       {
-        trainingsList.entities && trainingsList.entities.map((training) => {
+        trainingsList?.entities && trainingsList.entities.map((training) => {
 
           return (
             <SwiperSlide key={training.id}>

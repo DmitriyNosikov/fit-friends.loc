@@ -1,12 +1,12 @@
 import { useEffect } from 'react';
 import { useAppDispatch, useAppSelector } from '.';
 import { UsersWithPaginationRDO } from '@shared/user';
-import { getUsersList } from '../store/slices/user-process/user-process.selectors';
+import { getUserFriendsList } from '../store/slices/user-process/user-process.selectors';
 import { fetchUserFriendsAction, SearchUserFriendsData } from '../store/actions/api-user-action';
 
 export default function useFetchUserFriends(searchQuery: SearchUserFriendsData): UsersWithPaginationRDO | null {
   const dispatch = useAppDispatch();
-  const trainingsList = useAppSelector(getUsersList);
+  const userFriends = useAppSelector(getUserFriendsList);
 
   useEffect(() => {
     let isMounted = true;
@@ -20,5 +20,5 @@ export default function useFetchUserFriends(searchQuery: SearchUserFriendsData):
     };
   }, []);
 
-  return trainingsList;
+  return userFriends;
 }

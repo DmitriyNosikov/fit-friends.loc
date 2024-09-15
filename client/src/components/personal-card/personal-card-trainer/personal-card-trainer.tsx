@@ -2,7 +2,7 @@ import classNames from 'classnames';
 import { ReactElement, useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 
-import { useAppSelector } from '@client/src/hooks';
+import { useAppDispatch, useAppSelector } from '@client/src/hooks';
 import useSearchTrainings from '@client/src/hooks/useSearchTrainings';
 import { getTrainingsListLoadingStatus } from '@client/src/store/slices/training-process/training-process.selectors';
 
@@ -12,15 +12,16 @@ import { upperCaseFirst } from '@client/src/utils/common';
 
 import { UserRDO } from '@shared/user';
 import { TrainingSearchQuery } from '@shared/training';
+import { UserRoleEnum } from '@shared/types/user-roles.enum';
 
 import Spinner from '../../tools/spinner/spinner';
 import Stub from '../../tools/stub/stub';
 import Popup from '../../popup/popup';
 import TrainingsSlider from '../../trainings/trainings-slider/trainings-slider';
 import CertificatesSlider from '../../certificates/certificates-slider/certificates-slider';
+
 import { getCurrentUserInfo } from '@client/src/store/slices/user-process/user-process.selectors';
-
-
+import { addUserToFriends, removeUserFromFriends } from '@client/src/store/actions/api-user-action';
 
 const START_PAGE = 1;
 
@@ -29,27 +30,30 @@ type PersonalCardTrainerProps = {
 }
 
 export default function PersonalCardTrainer({ userInfo }: PersonalCardTrainerProps): ReactElement {
+  const dispatch = useAppDispatch();
+
   const {
+    id,
     name,
     location,
     isReadyToTraining,
     description,
     trainingType,
-    certificates,
-    friendsList
+    certificates
   } = userInfo;
-  const userViewerInfo = useAppSelector(getCurrentUserInfo);
+  const currentLoggedUserInfo = useAppSelector(getCurrentUserInfo);
 
-  const [isCurrentUserFriend, setIsCurrentUserFriend] = useState(false);
+  const isCurrentUserTrainer = (currentLoggedUserInfo?.role === UserRoleEnum.TRAINER);
+  const isUserInFriends = currentLoggedUserInfo?.friendsList.includes(id);
   const [isCertificatesModalOpened, setIsCertificatesModalOpened] = useState(false);
 
-  const addToFriendsBtnText = isCurrentUserFriend ? 'Удалить из друзей' : 'Добавить в друзья';
-  const statusText = userInfo?.isReadyToTraining ? 'Готов тренировать' : 'Не готов тренировать';
+  const statusText = isReadyToTraining ? 'Готов тренировать' : 'Не готов тренировать';
+  const addToFriendsBtnText = isUserInFriends ? 'Удалить из друзей' : 'Добавить в друзья';
 
   let searchQuery: TrainingSearchQuery = {
     page: START_PAGE,
     limit: ITEMS_PER_PAGE,
-    userId: userInfo.id,
+    userId: id,
     sortType: DEFAULT_TRAININGS_SORT_TYPE,
   };
 
@@ -61,21 +65,15 @@ export default function PersonalCardTrainer({ userInfo }: PersonalCardTrainerPro
     setIsCertificatesModalOpened(true);
   }
 
-  function handleAddToFriendsBtnCLick() {
-    toast.info('Adding to friends is not implemented yet.');
+  function handleToggleFriendsBtnCLick() {
+    const targetUser = { targetUserId: id };
+
+    if (isUserInFriends) {
+      dispatch(removeUserFromFriends(targetUser));
+    } else {
+      dispatch(addUserToFriends(targetUser));
+    }
   }
-
-  useEffect(() => {
-    let isMounted = true;
-
-    if(userViewerInfo) {
-      setIsCurrentUserFriend(friendsList.includes(userViewerInfo.id));
-    }
-
-    return () => {
-      isMounted = false;
-    }
-  }, [isCurrentUserFriend])
 
   return (
     <>
@@ -131,7 +129,17 @@ export default function PersonalCardTrainer({ userInfo }: PersonalCardTrainerPro
                   })
                 }
               </ul>
-              <button className="btn user-card-coach__btn" type="button" onClick={handleAddToFriendsBtnCLick}>{ addToFriendsBtnText }</button>
+
+              {
+                !isCurrentUserTrainer &&
+                <button
+                  className="btn user-card-coach__btn"
+                  type="button"
+                  onClick={handleToggleFriendsBtnCLick}
+                >
+                  {addToFriendsBtnText}
+                </button>
+              }
             </div>
 
             <div className="user-card-coach__gallary">

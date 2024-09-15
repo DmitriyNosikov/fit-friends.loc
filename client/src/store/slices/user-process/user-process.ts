@@ -1,5 +1,5 @@
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
-import { AdditionalInfoRDO, LoggedUserRDO, UserRDO, UsersWithPaginationRDO } from '@shared/user/';
+import { AdditionalInfoRDO, UserRDO, UsersWithPaginationRDO } from '@shared/user/';
 import { checkUserAuthAction, fetchAdditionalInfoAction, fetchUserFriendsAction, loginUserAction, searchUsersAction } from '../../actions/api-user-action';
 
 import { AuthorizationStatus, AuthorizationStatusList, Namespace } from '@client/src/const';
@@ -7,7 +7,7 @@ import { getToken } from '@client/src/services/token';
 
 export type UserProcess = {
   authorizationStatus: keyof typeof AuthorizationStatus,
-  currentUserInfo: LoggedUserRDO | null,
+  currentUserInfo: UserRDO | null,
   userInfo: UserRDO | null,
   additionalInfo: AdditionalInfoRDO | null,
   isAdditionalInfoLoading: boolean,
@@ -38,7 +38,7 @@ export const userProcess = createSlice({
   name: Namespace.USER,
   initialState,
   reducers: {
-    setCurrentUserInfo: (state, action: PayloadAction<LoggedUserRDO | null>) => {
+    setCurrentUserInfo: (state, action: PayloadAction<UserRDO | null>) => {
       state.currentUserInfo = action.payload;
     },
 
@@ -74,6 +74,17 @@ export const userProcess = createSlice({
     // Список друзей
     setUserFriendsAction: (state, action: PayloadAction<UsersWithPaginationRDO | null>) => {
       state.userFriends = action.payload;
+    },
+
+    appendFriendsAction: (state, action: PayloadAction<UsersWithPaginationRDO | null>) => {
+      const addingUsers = action.payload;
+
+      if(!state.userFriends || !addingUsers) {
+        return;
+      }
+
+      addingUsers?.entities.forEach((user) => state.userFriends?.entities.push(user));
+      state.userFriends.currentPage = addingUsers.currentPage; // Обновляем текущую страницу
     },
   },
   extraReducers(builder) {
@@ -141,6 +152,7 @@ export const {
   setUserAuthStatus,
 
   setUserFriendsAction,
+  appendFriendsAction,
 
   setUsersAction,
   appendUsersAction

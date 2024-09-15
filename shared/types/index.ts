@@ -13,5 +13,3 @@ export { PaymentType, PaymentTypeEnum, paymentTypeList } from './payment-type.en
 export { RequestStatus, RequestStatusEnum, requestStatusList } from '../request/types/request-status.enum';
 
 export { Location, LocationEnum, locationList } from './location.enum';
-
-export { UserRole, UserRoleEnum, userRolesList, userRolesListWithoutAdmin } from './user-roles.enum';

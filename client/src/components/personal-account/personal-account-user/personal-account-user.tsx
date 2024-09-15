@@ -35,6 +35,8 @@ export default function PersonalAccountUser({ userInfo }: PersonalAccountUserPro
           </div>
           <span className="thumbnail-link__text">Мои покупки</span>
         </Link>
+
+        <Stub />
       </div>
     </div>
   )

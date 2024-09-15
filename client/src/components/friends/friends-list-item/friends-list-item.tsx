@@ -3,27 +3,42 @@ import { ReactElement } from 'react';
 import { UserRDO } from '@shared/user';
 import { getAvatarByUrl, upperCaseFirst } from '@client/src/utils/common';
 import classNames from 'classnames';
+import { UserRoleEnum } from '@shared/types/user-roles.enum';
+import { toast } from 'react-toastify';
+import { Link } from 'react-router-dom';
+import { AppRoute } from '@client/src/const';
 
 type FriendsListItemProps = {
   user: UserRDO
 }
 
 export default function FriendsListItem({ user }: FriendsListItemProps): ReactElement {
-  const { name, avatar, location, trainingType, isReadyToTraining } = user;
+  const { id, name, avatar, location, trainingType, isReadyToTraining, role } = user;
   const userAvatar = getAvatarByUrl(avatar);
   const readyToTrainingStatusText = isReadyToTraining ? 'Готов к тренировке' : 'Не готов к тренировке';
+  const isTrainer = (role === UserRoleEnum.TRAINER);
+
+  function handleSendRequestToTraining() {
+    toast.info('Sorry, sending requests to you friends for training has not implemented yet');
+  }
 
   return (
     <li className="friends-list__item">
       <div className="thumbnail-friend">
-        <div className="thumbnail-friend__info thumbnail-friend__info--theme-light">
+        <div className={classNames(
+          'thumbnail-friend__info',
+          { 'thumbnail-friend__info--theme-light': !isTrainer },
+          { 'thumbnail-friend__info--theme-dark': isTrainer }
+        )}>
           <div className="thumbnail-friend__image-status">
-            <div className="thumbnail-friend__image">
-              <picture>
-                <img src={userAvatar} srcSet={`${userAvatar}@2x.jpg 2x`} width={78} height={78} />
-              </picture>
-              {/*<div class="thumbnail-friend__online-status thumbnail-friend__online-status--is-online"></div>*/}
-            </div>
+            <Link to={`${AppRoute.PERSONAL_CARD}/${id}`}>
+              <div className="thumbnail-friend__image">
+                <picture>
+                  <img src={userAvatar} srcSet={`${userAvatar}@2x.jpg 2x`} width={78} height={78} />
+                </picture>
+                {/*<div class="thumbnail-friend__online-status thumbnail-friend__online-status--is-online"></div>*/}
+              </div>
+            </Link>
           </div>
           <div className="thumbnail-friend__header">
             <h2 className="thumbnail-friend__name">{name}</h2>
@@ -53,16 +68,20 @@ export default function FriendsListItem({ user }: FriendsListItemProps): ReactEl
           <div className="thumbnail-friend__activity-bar">
             <div className={classNames(
               'thumbnail-friend__ready-status',
-              { 'thumbnail-friend__ready-status--is-ready': isReadyToTraining }
+              { 'thumbnail-friend__ready-status--is-ready': isReadyToTraining },
+              { 'thumbnail-friend__ready-status--is-not-ready': !isReadyToTraining }
             )}>
               <span>{readyToTrainingStatusText}</span>
             </div>
 
-            <button className="thumbnail-friend__invite-button" type="button">
-              <svg width={43} height={46} aria-hidden="true" focusable="false">
-                <use xlinkHref="#icon-invite" />
-              </svg><span className="visually-hidden">Пригласить друга на совместную тренировку</span>
-            </button>
+            {
+              !isTrainer &&
+              <button className="thumbnail-friend__invite-button" type="button" onClick={handleSendRequestToTraining}>
+                <svg width={43} height={46} aria-hidden="true" focusable="false">
+                  <use xlinkHref="#icon-invite" />
+                </svg><span className="visually-hidden">Пригласить друга на совместную тренировку</span>
+              </button>
+            }
           </div>
         </div>
 

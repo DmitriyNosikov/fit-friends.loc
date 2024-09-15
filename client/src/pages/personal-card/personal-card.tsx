@@ -13,7 +13,7 @@ import useFetchUserById from '@client/src/hooks/useFetchUserById';
 export default function PersonalCard(): ReactElement {
   const param = useParams<{ userId: string }>();
   const userId = param.userId as string;
-  const userInfo = useFetchUserById(userId)
+  const userInfo = useFetchUserById(userId);
 
   if (!userInfo) {
     return <Spinner />

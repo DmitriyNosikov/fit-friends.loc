@@ -8,11 +8,13 @@ import { UserEntity } from './user.entity';
 import { UserFactory } from './user.factory';
 import { UserInterface } from './interfaces';
 
-import { SortDirection, UserIdPayload, UserRoleEnum } from '@shared/types';
+
 import { BaseSearchQuery, DefaultSearchParam } from '@shared/types/search/base-search-query.type';
 import { PaginationResult } from '@server/libs/interfaces';
 import { UserSearchFilters, UserSearchQuery } from '@shared/user';
 import { UserSortType, UserSortTypeEnum } from '@shared/user/types/user-sort-type.enum';
+import { SortDirection, UserIdPayload } from '@shared/types';
+import { UserRoleEnum } from '@shared/types/user-roles.enum';
 
 @Injectable()
 export class UserRepository extends BasePostgresRepository<UserEntity, UserInterface> {
@@ -109,9 +111,11 @@ export class UserRepository extends BasePostgresRepository<UserEntity, UserInter
     const itemsPerPage =  query?.limit;
     const page = query?.page;
     const { where, orderBy } = this.getSearchFilters(query);
+    const userId = query.userId;
 
-    where.friendsList = {
-      has: query.userId
+    where.AND = {
+      id: { not: userId },
+      friendsList: { has: userId }
     }
 
     // Запрос на получение результата поиска
@@ -119,7 +123,7 @@ export class UserRepository extends BasePostgresRepository<UserEntity, UserInter
       where,
       orderBy
     };
-
+    
     const paginatedResult = await this.getPaginatedResult(preparedQuery, itemsPerPage, page);
 
     return paginatedResult;
@@ -254,8 +258,8 @@ export class UserRepository extends BasePostgresRepository<UserEntity, UserInter
       }
     }
 
-    // т.к. в бд TrainingType = массив, и в запросе query.trainingType - масси
-    // надо проверить, что массив TrainingType содержит все значиния из query.trainingType
+    // т.к. в бд TrainingType = массив, и в запросе query.trainingType - массив
+    // надо проверить, что массив TrainingType содержит все значения из query.trainingType
     // через hasEvery
     if(query?.trainingType && Array.isArray(query.trainingType)) {
       where.trainingType = {

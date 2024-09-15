@@ -7,7 +7,7 @@ Content-Type: application/json
 ###
 
 @userId = fe302885-fb20-4b7f-a381-862d9f1eb0c2
-@authorization = Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJmZTMwMjg4NS1mYjIwLTRiN2YtYTM4MS04NjJkOWYxZWIwYzIiLCJlbWFpbCI6Imlyb24tbWFuQHN0YXJraW5kdXN0cmllcy5pdCIsIm5hbWUiOiJUb255Iiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzI2NDMxMTg1LCJleHAiOjE3MjY0MzIwODV9.vD8iz_TIqMBV0PVqr-y_OpAZEw6APTW5P0MxXKr2tAU
+@authorization = Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIxMmQyNjE3NC00Y2RkLTRmZjktODMyOS03MzViNDI4MGI0YWIiLCJlbWFpbCI6Imlyb24tbWFuQHN0YXJraW5kdXN0cmllcy5pdCIsIm5hbWUiOiJUb255Iiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzI2NDM1MzY5LCJleHAiOjE3MjY0MzYyNjl9.1xvEsBdq3E4XnnKezLwLwgXQ1senZ59butNvILuNcok
 @refresh = Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJmZTMwMjg4NS1mYjIwLTRiN2YtYTM4MS04NjJkOWYxZWIwYzIiLCJlbWFpbCI6Imlyb24tbWFuQHN0YXJraW5kdXN0cmllcy5pdCIsIm5hbWUiOiJUb255Iiwicm9sZSI6ImFkbWluIiwidG9rZW5JZCI6ImJkMGZlZGJkLWY1MzctNDlmNS04MWM1LWY3OGE1ODcyZDVmMSIsImlhdCI6MTcyNjM5ODY0MSwiZXhwIjoxNzI2Mzk5NTQxfQ.KenTHvB3m33IQRzm2IfYkwmmctRA4BonFA-dSiUyBtU
 
 # /////////////////////////////////// AUTNENTICATION ///////////////////////////////////
@@ -97,7 +97,7 @@ Content-Type: application/json
 {{authorization}}
 
 {
-  "targetUserId": "6cc72360-96e7-4c88-ad60-649b31d2af4a"
+  "targetUserId": "4ebff09a-b596-470c-b462-171df67e4631"
 }
 ###
 
@@ -107,7 +107,7 @@ Content-Type: application/json
 {{authorization}}
 
 {
-  "targetUserId": "6cc72360-96e7-4c88-ad60-649b31d2af4a"
+  "targetUserId": "4ebff09a-b596-470c-b462-171df67e4631"
 }
 ###
 
@@ -118,7 +118,7 @@ Content-Type: application/json
 
 {
   "otherCurrentUser": "8c132bfa-b758-40ab-9663-b1f637848d04",
-  "targetUserId": "6cc72360-96e7-4c88-ad60-649b31d2af4a"
+  "targetUserId": "4ebff09a-b596-470c-b462-171df67e4631"
 }
 ###
 

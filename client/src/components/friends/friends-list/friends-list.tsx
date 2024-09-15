@@ -6,8 +6,8 @@ import Spinner from '@client/src/components/tools/spinner/spinner';
 import { ITEMS_PER_PAGE } from '@client/src/const';
 
 import { useAppDispatch, useAppSelector } from '@client/src/hooks';
-import { BaseSearchQuery, UserIdPayload } from '@shared/types';
-import { getCurrentUserInfo, getUserFriendsLoadingStatus } from '@client/src/store/slices/user-process/user-process.selectors';
+import { BaseSearchQuery } from '@shared/types';
+import {  getUserFriendsLoadingStatus } from '@client/src/store/slices/user-process/user-process.selectors';
 import useFetchUserFriends from '@client/src/hooks/useFetchUserFriends';
 import { fetchUserFriendsAction } from '@client/src/store/actions/api-user-action';
 import Stub from '../../tools/stub/stub';
@@ -16,16 +16,10 @@ const START_PAGE = 1;
 
 export default function FriendsList(): ReactElement {
   const dispatch = useAppDispatch();
-  const userInfo = useAppSelector(getCurrentUserInfo);
 
-  if (!userInfo) {
-    return <Spinner />
-  }
-
-  let searchQuery: BaseSearchQuery & UserIdPayload = {
+  let searchQuery: BaseSearchQuery = {
     page: START_PAGE,
-    limit: ITEMS_PER_PAGE,
-    userId: userInfo.id
+    limit: ITEMS_PER_PAGE
   };
 
   const friendsList = useFetchUserFriends({ searchQuery });
@@ -38,7 +32,7 @@ export default function FriendsList(): ReactElement {
   );
 
   function handleShowMoreBtnClick() {
-    if (!userInfo || !friendsList || !friendsList.currentPage) {
+    if (!friendsList || !friendsList.currentPage) {
       return;
     };
 
@@ -46,22 +40,16 @@ export default function FriendsList(): ReactElement {
 
     searchQuery = {
       page: ++currentPage,
-      limit: ITEMS_PER_PAGE,
-      userId: userInfo.id
+      limit: ITEMS_PER_PAGE
     };
 
     dispatch(fetchUserFriendsAction({ searchQuery, appendItems: true }));
   }
 
   function handleBackToBeginBtnClick() {
-    if (!userInfo) {
-      return;
-    }
-
     searchQuery = {
       page: START_PAGE,
-      limit: ITEMS_PER_PAGE,
-      userId: userInfo.id
+      limit: ITEMS_PER_PAGE
     };
 
     dispatch(fetchUserFriendsAction({ searchQuery }));

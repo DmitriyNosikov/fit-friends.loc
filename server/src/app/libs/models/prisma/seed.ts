@@ -1,6 +1,6 @@
 import { PrismaClient } from '@prisma/client'
 import { getOrders, getRandomIntInclusive, getReviews, getTrainingRequests, getTrainings, getUsers } from './mock-data';
-import { UserRoleEnum } from '../../types';
+import { RequestTypeEnum, RequestStatusEnum, UserRoleEnum } from '../../types';
 
 async function seedDB(prismaClient: PrismaClient) {
   // Add users
@@ -11,30 +11,57 @@ async function seedDB(prismaClient: PrismaClient) {
   });
 
   // Connect friends to users
-  for(const user of users) {
+  for (const currentUser of users) {
+    if(currentUser.role !== UserRoleEnum.ADMIN) {
+      continue;
+    }
     // Add random friends to user
-    if(user.role !== UserRoleEnum.ADMIN) {
-      const randomIndex = getRandomIntInclusive(0, users.length);
-
-      if(!users[randomIndex]) {
-        continue;
-      }
-
-      const randomUserId = users[randomIndex].id
-  
-      user.friendsList.push(randomUserId);
+    const randomIndex = getRandomIntInclusive(0, users.length);
+    const randomUser = users[randomIndex];
+    
+    if (!randomUser || randomUser.id == currentUser.id) {
+      continue;
     }
 
-    // Update user
+    const randomUserId = users[randomIndex].id
+
+    // Update current user
+    currentUser.friendsList.push(randomUserId);
+
     await prismaClient.user.update({
-      where: { id: user.id },
+      where: { id: currentUser.id },
       data: {
-        friendsList: user.friendsList,
-        friends: (user.friendsList.length > 0) ? {
-          connect: user.friendsList.map((friend) => ({ id: friend }))
+        friendsList: currentUser.friendsList,
+        friends: (currentUser.friendsList.length > 0) ? {
+          connect: currentUser.friendsList.map((friend) => ({ id: friend }))
         } : undefined
       }
     });
+
+    // Update opposite user
+    randomUser.friendsList.push(currentUser.id);
+
+    await prismaClient.user.update({
+      where: { id: randomUserId },
+      data: {
+        friendsList: randomUser.friendsList,
+        friends: (randomUser.friendsList.length > 0) ? {
+          connect: randomUser.friendsList.map((friend) => ({ id: friend }))
+        } : undefined
+      }
+    });
+
+    // Add friendship request
+    const friendshipRequestData = {
+      requestType: RequestTypeEnum.FRIENDSHIP,
+      initiatorUserId: currentUser.id,
+      targetUserId: randomUserId,
+      status: RequestStatusEnum.ACCEPTED
+    };
+
+    await prismaClient.request.create({
+      data: friendshipRequestData
+    })
   }
 
   // Add trainings
@@ -52,7 +79,7 @@ async function seedDB(prismaClient: PrismaClient) {
 
   // Add orders + balance
   const orders = getOrders(users, trainings);
-  for(const order of orders) {
+  for (const order of orders) {
     // Order
     await prismaClient.order.create({
       data: order
@@ -65,7 +92,7 @@ async function seedDB(prismaClient: PrismaClient) {
       remainingTrainingsCount: order.trainingsCount,
       hasTrainingStarted: Math.random() < 0.5 // Random boolean
     };
-    
+
     await prismaClient.balance.create({
       data: balance
     });
@@ -78,12 +105,12 @@ async function seedDB(prismaClient: PrismaClient) {
   })
 
   // Recount trainings rating via reviews
-  for(const training of trainings) {
+  for (const training of trainings) {
     const reviews = await prismaClient.trainingReview.findMany({
       where: { trainingId: training.id }
     });
 
-    if(!reviews) {
+    if (!reviews) {
       continue;
     }
 

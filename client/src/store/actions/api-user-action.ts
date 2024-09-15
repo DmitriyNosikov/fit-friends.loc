@@ -3,9 +3,9 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 import { toast } from 'react-toastify';
 
 import { setDataLoadingStatus } from '../slices/main-process/main-process';
-import { setAdditionalInfo, setUserAuthStatus, setCurrentUserInfo, setUserInfo, appendUsersAction, setUsersAction, setUserFriendsAction } from '../slices/user-process/user-process';
+import { setAdditionalInfo, setUserAuthStatus, setCurrentUserInfo, setUserInfo, appendUsersAction, setUsersAction, setUserFriendsAction, appendFriendsAction } from '../slices/user-process/user-process';
 
-import { AdditionalInfoRDO, CreateUserDTO, LoggedUserRDO, LoginUserDTO, UpdateUserDTO, UserRDO, UserSearchQuery, UsersWithPaginationRDO } from '@shared/user';
+import { AdditionalInfoRDO, CreateUserDTO, LoggedUserRDO, LoginUserDTO, ToggleUserFriendsDTO, UpdateUserDTO, UserRDO, UserSearchQuery, UsersWithPaginationRDO } from '@shared/user';
 import { redirectToRoute } from '../middlewares/redirect-action';
 
 
@@ -37,6 +37,8 @@ const APIAction = {
   USER_UPLOAD_CERTIFICATES: `${APIUserPrefix}/upload-certificates`,
 
   USER_GET_FRIENDS: `${APIUserPrefix}/get-friends`,
+  USER_ADD_TO_FRIENDS: `${APIUserPrefix}/add-to-friends`,
+  USER_REMOVE_FROM_FRIENDS: `${APIUserPrefix}/remove-from-friends`,
 
   PAGINATION_GET_PAGE: `${APIUserPrefix}/get-pagination-page`,
   SEARCH: `${APIUserPrefix}/search`,
@@ -207,7 +209,7 @@ export const loginUserAction = createAsyncThunk<void, LoginUserDTO, AsyncOptions
   }
 );
 
-export const updateUserAction = createAsyncThunk<LoggedUserRDO, UpdateUserDTO, AsyncOptions>(
+export const updateUserAction = createAsyncThunk<UserRDO, UpdateUserDTO, AsyncOptions>(
   APIAction.USER_UPDATE,
   async (
     updateUserData, // New User Data
@@ -216,7 +218,7 @@ export const updateUserAction = createAsyncThunk<LoggedUserRDO, UpdateUserDTO, A
     dispatch(setDataLoadingStatus(true));
 
     try {
-      const { data } = await api.patch<LoggedUserRDO>(ApiRoute.USER_API, updateUserData);
+      const { data } = await api.patch<UserRDO>(ApiRoute.USER_API, updateUserData);
 
       dispatch(setCurrentUserInfo(data));
       dispatch(setDataLoadingStatus(false));
@@ -312,7 +314,7 @@ export const fetchAdditionalInfoAction = createAsyncThunk<AdditionalInfoRDO, voi
 
 // Friends
 export type SearchUserFriendsData = {
-  searchQuery: BaseSearchQuery & UserIdPayload,
+  searchQuery: BaseSearchQuery,
   appendItems?: boolean
 };
 
@@ -325,20 +327,86 @@ export const fetchUserFriendsAction = createAsyncThunk<UsersWithPaginationRDO, S
     dispatch(setDataLoadingStatus(true));
 
     try {
-      let url = createSearchURL(`${ApiRoute.USER_SEARCH}/`, searchQuery as unknown as Record<string, unknown>);
+      let url = createSearchURL(`${ApiRoute.USER_FRIENDS}/`, searchQuery as unknown as Record<string, unknown>);
       const { data } = await api.get<UsersWithPaginationRDO>(url);
 
-      dispatch(setUserFriendsAction(data));
+      if (!appendItems) {
+        dispatch(setUserFriendsAction(data));
+
+        dispatch(setDataLoadingStatus(false));
+        return data;
+      }
+
+      dispatch(appendFriendsAction(data));
       dispatch(setDataLoadingStatus(false));
 
       return data;
     } catch(err) {
-      toast.warn(`Can't get user's detail info: ${err}. Please, try to login again`);
+      toast.warn(`Can't get user's friends: ${err}`);
 
       dispatch(setDataLoadingStatus(false));
-      deleteToken();
-      dispatch(setUserAuthStatus(AuthorizationStatus.NO_AUTH));
-      dispatch(redirectToRoute(AppRoute.INTRO));
+
+      return rejectWithValue(err);
+    }
+  }
+);
+
+export type TargetUserIdPayload = {
+  targetUserId: string
+}
+
+export const addUserToFriends = createAsyncThunk<UserRDO, TargetUserIdPayload, AsyncOptions>(
+  APIAction.USER_ADD_TO_FRIENDS,
+  async (
+    addingUserData,
+    { dispatch, rejectWithValue, extra: api }
+  ) => {
+    dispatch(setDataLoadingStatus(true));
+
+    const { targetUserId } = addingUserData;
+
+    try {
+      const { data } = await api.post<UserRDO>(ApiRoute.USER_FRIENDS, addingUserData);
+
+      toast.success(`User ${targetUserId} has been successfully added to friends`);
+
+      dispatch(setCurrentUserInfo(data));
+      dispatch(setDataLoadingStatus(false));
+
+      return data;
+    } catch(err) {
+      toast.warn(`Can't add user ${targetUserId} to friends: ${err}`);
+
+      dispatch(setDataLoadingStatus(false));
+
+      return rejectWithValue(err);
+    }
+  }
+);
+
+export const removeUserFromFriends = createAsyncThunk<UserRDO, TargetUserIdPayload, AsyncOptions>(
+  APIAction.USER_REMOVE_FROM_FRIENDS,
+  async (
+    removingUserData,
+    { dispatch, rejectWithValue, extra: api }
+  ) => {
+    dispatch(setDataLoadingStatus(true));
+
+    const { targetUserId } = removingUserData;
+
+    try {
+      const { data } = await api.delete<UserRDO>(ApiRoute.USER_FRIENDS, { data: removingUserData });
+
+      toast.success(`User ${targetUserId} has been successfully removed from friends`);
+
+      dispatch(setCurrentUserInfo(data));
+      dispatch(setDataLoadingStatus(false));
+
+      return data;
+    } catch(err) {
+      toast.warn(`Can't remove user ${targetUserId} from friends: ${err}`);
+
+      dispatch(setDataLoadingStatus(false));
 
       return rejectWithValue(err);
     }

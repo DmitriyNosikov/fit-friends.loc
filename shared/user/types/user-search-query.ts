@@ -20,11 +20,12 @@ import {
   trainingTypeList,
   userLevelList,
 } from '@server/libs/types';
-import { SortDirection, SortDirectionEnum, userRolesListWithoutAdmin } from '@shared/types';
 import { UserValidation } from '@server/user/user.constant';
 import { TransformValueToArray, TransformValueToBoolean } from '@shared/utils/common';
 import { DefaultSearchParam } from '@shared/types/search/base-search-query.type';
 import { UserSortType, UserSortTypeEnum } from './user-sort-type.enum';
+import { userRolesListWithoutAdmin } from '@shared/types/user-roles.enum';
+import { SortDirection, SortDirectionEnum } from '@shared/types';
 
 export class UserSearchQuery {
   @Expose()

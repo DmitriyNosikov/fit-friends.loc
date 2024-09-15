@@ -20,10 +20,10 @@ const START_PAGE = 1;
 
 export default function UsersList(): ReactElement {
   const dispatch = useAppDispatch();
-  const userInfo = useAppSelector(getCurrentUserInfo);
+  const currentUserInfo = useAppSelector(getCurrentUserInfo);
   const navigate = useNavigate();
 
-  const isTrainer = userInfo?.role === UserRoleEnum.TRAINER;
+  const isTrainer = currentUserInfo?.role === UserRoleEnum.TRAINER;
 
   if (isTrainer) {
     navigate(AppRoute.MAIN);
@@ -95,6 +95,11 @@ export default function UsersList(): ReactElement {
           <ul className="users-catalog__list">
             {
               usersList?.entities && usersList.entities.map((user) => {
+
+                if(user.id === currentUserInfo?.id) {
+                  return;
+                }
+
                 return (
                   <UsersListItem user={user} key={user.id} />
                 )

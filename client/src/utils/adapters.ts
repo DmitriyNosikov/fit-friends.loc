@@ -1,4 +1,4 @@
-import { TrainingType } from '@shared/types/training-type.enum';
+import { TrainingType } from '@server/libs/types';
 import { UserLevelEnum } from '@shared/types/user-level.enum';
 
 export function createSearchURL<T extends Record<string, unknown>>(baseURL: string, searchQuery?: T) {

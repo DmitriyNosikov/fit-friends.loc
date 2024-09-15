@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 
 import { AppRoute, ITEMS_PER_PAGE } from '@client/src/const';
 import { UserRoleEnum } from '@shared/types/user-roles.enum';
-import { BaseSearchQuery } from '@shared/types';
+import { UserSearchQuery } from '@shared/user';
 
 import { useAppDispatch, useAppSelector } from '@client/src/hooks';
 import useSearchUsers from '@client/src/hooks/useSearchUsers';
@@ -28,11 +28,10 @@ export default function UsersList(): ReactElement {
     navigate(AppRoute.MAIN);
   }
 
-  let searchQuery: BaseSearchQuery = {
+  let searchQuery: UserSearchQuery = {
     page: START_PAGE,
     limit: ITEMS_PER_PAGE
   };
-
 
   const usersList = useSearchUsers(searchQuery);
   const isUsersLoading = useAppSelector(getUsersListLoadingStatus);
@@ -69,28 +68,6 @@ export default function UsersList(): ReactElement {
   return (
     <div className="inner-page__content">
       <div className="users-catalog">
-        {
-          isUsersLoading &&
-          <Spinner />
-        }
-
-        {
-          !usersList && !isUsersLoading &&
-          <Stub />
-        }
-
-        {
-          usersList &&
-          <ul className="users-catalog__list">
-            {
-              usersList?.entities && usersList.entities.map((user) => {
-                return (
-                  <UsersListItem user={user} key={user.id} />
-                )
-              })
-            }
-          </ul>
-        }
         {
           isUsersLoading &&
           <Spinner />

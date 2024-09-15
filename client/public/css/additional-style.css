@@ -21,6 +21,10 @@
   justify-content: flex-end;
 }
 
+.thumbnail-user--dark {
+  min-height: 265px;
+}
+
 .input-load-avatar__avatar>img {
   border-radius: 50%;
 }

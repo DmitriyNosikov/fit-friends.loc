@@ -8,7 +8,7 @@ import 'swiper/css';
 import 'swiper/css/bundle';
 import TrainingsSliderItem from '../trainings-slider-item/trainings-slider-item';
 
-type TreainingsSliderProps = {
+type TrainingsSliderProps = {
   trainingsList: TrainingsWithPaginationRDO,
   sliderClass?: string,
   prevBtnClass?: string,
@@ -22,7 +22,7 @@ export default function TrainingsSlider({
   prevBtnClass,
   nextBtnClass,
   sliderItemClass
-}: TreainingsSliderProps): ReactElement {
+}: TrainingsSliderProps): ReactElement {
   return (
     <Swiper
       className={sliderClass}

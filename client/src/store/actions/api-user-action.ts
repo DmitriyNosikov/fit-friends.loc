@@ -5,7 +5,7 @@ import { toast } from 'react-toastify';
 import { setDataLoadingStatus } from '../slices/main-process/main-process';
 import { setAdditionalInfo, setUserAuthStatus, setCurrentUserInfo, setUserInfo, appendUsersAction, setUsersAction } from '../slices/user-process/user-process';
 
-import { AdditionalInfoRDO, CreateUserDTO, LoggedUserRDO, LoginUserDTO, UpdateUserDTO, UserRDO, UsersWithPaginationRDO } from '@shared/user';
+import { AdditionalInfoRDO, CreateUserDTO, LoggedUserRDO, LoginUserDTO, UpdateUserDTO, UserRDO, UserSearchQuery, UsersWithPaginationRDO } from '@shared/user';
 import { redirectToRoute } from '../middlewares/redirect-action';
 
 
@@ -331,7 +331,7 @@ export const getPaginationPage = createAsyncThunk<void, PageNumber, AsyncOptions
 );
 
 type SearchPayload = {
-  searchQuery: BaseSearchQuery,
+  searchQuery: UserSearchQuery,
   appendItems?: boolean
 };
 
@@ -343,7 +343,7 @@ export const searchUsersAction = createAsyncThunk<UsersWithPaginationRDO, Search
   ) => {
     dispatch(setDataLoadingStatus(true));
 
-    let url = createSearchURL(`${ApiRoute.USER_API}/search`, searchQuery as Record<string, unknown>);
+    let url = createSearchURL(`${ApiRoute.USER_API}/search/`, searchQuery as Record<string, unknown>);
 
     // Запрашиваем данные с сервера
     try {

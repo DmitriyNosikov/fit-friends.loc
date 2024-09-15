@@ -361,12 +361,68 @@ paths:
         "200":
           description: Request has been successfully deleted
       tags: *a3
-  /api/requests/{targetUserId}:
+  /api/requests/by-target/{targetUserId}:
     get:
-      operationId: RequestController_index
-      summary: Get target user`s requests
+      operationId: RequestController_getAllRequestsToTarget
+      summary: Get all requests to target user
       parameters:
         - name: targetUserId
+          required: true
+          in: path
+          schema:
+            type: string
+        - name: sortDirection
+          required: false
+          in: query
+          description: "Sorting direction. Default direction: desc"
+          example: " desc"
+          schema:
+            enum:
+              - asc
+              - desc
+            type: string
+        - name: sortType
+          required: false
+          in: query
+          description: "Sorting type. Default sort type: createdAt"
+          example: createdAt
+          schema:
+            enum:
+              - createdAt
+            type: string
+        - name: page
+          required: false
+          in: query
+          description: 'Current page in pagination (if items count more than "limit").
+            Default page: 1'
+          example: "1"
+          schema: {}
+        - name: limit
+          required: false
+          in: query
+          description: "Items per page (pagination). Max limit: 50"
+          example: "50"
+          schema: {}
+        - name: createdAt
+          required: false
+          in: query
+          description: Item's creation date
+          example: 2024-05-29
+          schema: {}
+      responses:
+        "201":
+          description: Requests found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RequestsWithPaginationRDO"
+      tags: *a3
+  /api/requests/by-initiator/{initiatorUserId}:
+    get:
+      operationId: RequestController_getAllRequestsByInitiator
+      summary: Get all requests from initiator user
+      parameters:
+        - name: initiatorUserId
           required: true
           in: path
           schema:

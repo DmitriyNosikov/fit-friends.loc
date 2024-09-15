@@ -66,8 +66,8 @@ export class RequestController {
     await this.requestService.delete(requestId, userId);
   }
 
-  @Get(':targetUserId')
-  @ApiOperation({ summary: 'Get target user`s requests' })
+  @Get('/by-target/:targetUserId')
+  @ApiOperation({ summary: 'Get all requests to target user' })
   @ApiQuery({
     name: "createdAt",
     description: `Item's creation date`,
@@ -105,11 +105,65 @@ export class RequestController {
     status: HttpStatus.CREATED,
     description: RequestMessage.SUCCESS.FOUND
   })
-  public async index(
+  public async getAllRequestsToTarget(
     @Param('targetUserId') targetUserId: string,
     @Query() query: BaseSearchQuery
   ) {
     const preparedQuery = { ...query, targetUserId };
+    const requests = await this.requestService.search(preparedQuery);
+
+    const result = {
+      ...requests,
+      entities:  requests.entities.map((request) => fillDTO(CreateRequestRDO, request.toPOJO()))
+    };
+
+    return result;
+  }
+
+  @Get('/by-initiator/:initiatorUserId')
+  @ApiOperation({ summary: 'Get all requests from initiator user' })
+  @ApiQuery({
+    name: "createdAt",
+    description: `Item's creation date`,
+    example: "2024-05-29",
+    required: false
+  })
+  @ApiQuery({
+    name: "limit",
+    description: `Items per page (pagination). Max limit: ${DefaultSearchParam.MAX_ITEMS_PER_PAGE}`,
+    example: "50",
+    required: false
+  })
+  @ApiQuery({
+    name: "page",
+    description: `Current page in pagination (if items count more than "limit"). Default page: ${DefaultSearchParam.PAGE}`,
+    example: "1",
+    required: false
+  })
+  @ApiQuery({
+    name: "sortType",
+    description: `Sorting type. Default sort type: ${DefaultSearchParam.SORT.TYPE}`,
+    enum: SortTypeEnum,
+    example: "createdAt",
+    required: false
+  })
+  @ApiQuery({
+    name: "sortDirection",
+    description: `Sorting direction. Default direction: ${DefaultSearchParam.SORT.DIRECTION}`,
+    enum: SortDirectionEnum,
+    example: " desc",
+    required: false
+  })
+  @ApiResponse({
+    type: RequestsWithPaginationRDO,
+    status: HttpStatus.CREATED,
+    description: RequestMessage.SUCCESS.FOUND
+  })
+  public async getAllRequestsByInitiator(
+    @Param('initiatorUserId') initiatorUserId: string,
+    @Query() query: BaseSearchQuery
+  ) {
+    const preparedQuery = { ...query, initiatorUserId };
     const requests = await this.requestService.search(preparedQuery);
 
     const result = {

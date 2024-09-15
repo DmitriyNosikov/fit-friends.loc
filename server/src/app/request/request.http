@@ -3,8 +3,9 @@
 @baseUrl = http://{{host}}:{{port}}/api/requests
 
 @requestId = 354dd173-8091-4094-8c65-04feda38e423
-@targetUserId = 88e22b85-1e96-4425-b9c7-a3f36e921617
-@authorization = Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIxOGViNmRiZi1mNWE2LTQ5YjktYWQ0Ni03NGFiMTdiMGJhN2UiLCJlbWFpbCI6Imlyb24tbWFuQHN0YXJraW5kdXN0cmllcy5pdCIsIm5hbWUiOiJUb255Iiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzI2MzA4NDQ5LCJleHAiOjE3MjYzMDkzNDl9.XKVyZJXnr-Fu5LDlj12l50cdk8XynNoQhxzJQSkYImU
+@initiatorUserId = fe302885-fb20-4b7f-a381-862d9f1eb0c2
+@targetUserId = fe302885-fb20-4b7f-a381-862d9f1eb0c2
+@authorization = Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJmZTMwMjg4NS1mYjIwLTRiN2YtYTM4MS04NjJkOWYxZWIwYzIiLCJlbWFpbCI6Imlyb24tbWFuQHN0YXJraW5kdXN0cmllcy5pdCIsIm5hbWUiOiJUb255Iiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzI2NDI4MDg4LCJleHAiOjE3MjY0Mjg5ODh9.VtP39NP5TSfANLIuL_fausSi6KblhI0psZpX9ic4niQ
 
 
 # Create new request
@@ -34,7 +35,12 @@ Content-Type: application/json
 {{authorization}}
 ###
 
-# Get all target`s requests
-GET {{baseUrl}}/{{targetUserId}} HTTP/1.1
+# Get all requests to target user
+GET {{baseUrl}}/by-target/{{targetUserId}} HTTP/1.1
+{{authorization}}
+###
+
+# Get all requests by initiator user
+GET {{baseUrl}}/by-initiator/{{initiatorUserId}} HTTP/1.1
 {{authorization}}
 ###

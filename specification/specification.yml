@@ -50,6 +50,63 @@ paths:
           description: Item's creation date
           example: 2024-05-29
           schema: {}
+        - name: isReadyToTraining
+          required: false
+          in: query
+          description: User's preparation for training status
+          example: "true"
+          schema: {}
+        - name: role
+          required: false
+          in: query
+          description: User's role
+          example: "['client', 'trainer']"
+          schema:
+            enum:
+              - admin
+              - client
+              - trainer
+            type: string
+        - name: level
+          required: false
+          in: query
+          description: User's training level
+          example: "['новичок', 'любитель', 'профессионал']"
+          schema:
+            enum:
+              - новичок
+              - любитель
+              - профессионал
+            type: string
+        - name: trainingType
+          required: false
+          in: query
+          description: User's specialization (training types)
+          example: "['йога', 'бег', 'бокс', 'стретчинг', 'кроссфит', 'аэробика',
+            'пилатес']"
+          schema:
+            enum:
+              - йога
+              - бег
+              - бокс
+              - стретчинг
+              - кроссфит
+              - аэробика
+              - пилатес
+            type: string
+        - name: location
+          required: false
+          in: query
+          description: User's location
+          example: "['пионерская', 'петроградская', 'удельная', 'звездная', 'спортивная']"
+          schema:
+            enum:
+              - пионерская
+              - петроградская
+              - удельная
+              - звездная
+              - спортивная
+            type: string
       responses:
         "201":
           description: Users found
@@ -62,7 +119,7 @@ paths:
   /api/users/additional:
     get:
       operationId: UserController_getAdditionalInfo
-      summary: Return additional info about availible genders, locations, training
+      summary: Return additional info about available genders, locations, training
         types and training durations
       parameters: []
       responses:

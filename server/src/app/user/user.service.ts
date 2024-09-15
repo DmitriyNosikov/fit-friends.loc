@@ -18,7 +18,7 @@ import { ConfigType } from '@nestjs/config';
 import { RefreshTokenService } from '../refresh-token/refresh-token.service';
 import { GenderEnum, RequestWithUserId } from '@server/libs/types';
 
-import { CreateUserDTO, LoginUserDTO, UpdateUserDTO } from '@shared/user'; 
+import { CreateUserDTO, LoginUserDTO, UpdateUserDTO, UserSearchQuery } from '@shared/user'; 
 
 import { USER_DEFAULT, UserMessage } from './user.constant';
 import { AuthUserInterface, UserInterface } from './interfaces';
@@ -26,7 +26,6 @@ import { AuthUserInterface, UserInterface } from './interfaces';
 import { UserEntity } from './user.entity';
 import { UserFactory } from './user.factory';
 import { UserRepository } from './user.repository';
-import { BaseSearchQuery } from '@shared/types';
 
 
 
@@ -68,7 +67,7 @@ export class UserService {
     return existUser;
   }
 
-  public async search(query?: BaseSearchQuery) {
+  public async search(query?: UserSearchQuery) {
     const users = await this.userRepository.search(query);
 
     if (!users && query) {

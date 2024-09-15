@@ -9,3 +9,4 @@ export { UsersWithPaginationRDO } from './rdo/users-with-pagination.rdo';
 export { AdditionalInfoRDO } from './rdo/additional-info.rdo';
 
 export { UserSearchFilters } from './types/user-search-filters';
+export { UserSearchQuery } from './types/user-search-query';

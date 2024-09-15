@@ -24,14 +24,14 @@ import { fillDTO } from '../libs/helpers';
 
 import { RequestWithUser } from './interfaces/request-with-user.interface';
 
-import { AdditionalInfoRDO, CreateUserDTO, LoggedUserRDO, LoginUserDTO, ToggleUserFriendsDTO, UpdateUserDTO, UserRDO, UsersWithPaginationRDO } from '../../../../shared/user/';
-import { trainingDurationList, genderTypeList, locationList, trainingTypeList, userRolesList, userLevelList } from '@server/libs/types';
+import { AdditionalInfoRDO, CreateUserDTO, LoggedUserRDO, LoginUserDTO, ToggleUserFriendsDTO, UpdateUserDTO, UserRDO, UserSearchQuery, UsersWithPaginationRDO } from '../../../../shared/user/';
+import { trainingDurationList, genderTypeList, locationList, trainingTypeList, userRolesList, userLevelList, LocationEnum, TrainingTypeEnum, UserLevelEnum, UserRoleEnum } from '@server/libs/types';
 import { UserInterface } from './interfaces';
 import { UserMessage } from './user.constant';
 
 import { UserService } from './user.service';
 import { SortDirectionEnum, SortTypeEnum, UserIdPayload } from '@shared/types';
-import { BaseSearchQuery, DefaultSearchParam } from '@shared/types/search/base-search-query.type';
+import { DefaultSearchParam } from '@shared/types/search/base-search-query.type';
 
 
 @ApiTags('users')
@@ -42,6 +42,40 @@ export class UserController {
   ) { }
   @Get('search')
   @ApiOperation({ summary: 'Get users list' })
+  @ApiQuery({
+    name: "location",
+    description: `User's location`,
+    enum: LocationEnum,
+    example: "['пионерская', 'петроградская', 'удельная', 'звездная', 'спортивная']",
+    required: false
+  })
+  @ApiQuery({
+    name: "trainingType",
+    description: `User's specialization (training types)`,
+    enum: TrainingTypeEnum,
+    example: "['йога', 'бег', 'бокс', 'стретчинг', 'кроссфит', 'аэробика', 'пилатес']",
+    required: false
+  })
+  @ApiQuery({
+    name: "level",
+    description: `User's training level`,
+    enum: UserLevelEnum,
+    example: "['новичок', 'любитель', 'профессионал']",
+    required: false
+  })
+  @ApiQuery({
+    name: "role",
+    description: `User's role`,
+    enum: UserRoleEnum,
+    example: "['client', 'trainer']",
+    required: false
+  })
+  @ApiQuery({
+    name: "isReadyToTraining",
+    description: `User's preparation for training status`,
+    example: "true",
+    required: false
+  })
   @ApiQuery({
     name: "createdAt",
     description: `Item's creation date`,
@@ -79,7 +113,7 @@ export class UserController {
     status: HttpStatus.CREATED,
     description: UserMessage.SUCCESS.FOUND
   })
-  public async index(@Query() query: BaseSearchQuery) {
+  public async index(@Query() query: UserSearchQuery) {
     const users = await this.userService.search(query);
 
     const result = {
@@ -91,7 +125,7 @@ export class UserController {
   }
 
   @Get('additional')
-  @ApiOperation({ summary: 'Return additional info about availible genders, locations, training types and training durations' })
+  @ApiOperation({ summary: 'Return additional info about available genders, locations, training types and training durations' })
   @ApiResponse({
     type: AdditionalInfoRDO,
     status: HttpStatus.OK,

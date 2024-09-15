@@ -29,7 +29,7 @@ export default function LookForCompany(): ReactElement {
             <h2 className="look-for-company__title">
               Ищут компанию для тренировки
             </h2>
-            <button className="btn-flat btn-flat--light look-for-company__button" type="button" onDoubleClick={handleSeeAllBtnClick}>
+            <button className="btn-flat btn-flat--light look-for-company__button" type="button" onClick={handleSeeAllBtnClick}>
               <span>Смотреть все</span>
               <svg width={14} height={10} aria-hidden="true">
                 <use xlinkHref="#arrow-right" />

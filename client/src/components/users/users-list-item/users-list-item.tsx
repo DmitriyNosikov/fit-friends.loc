@@ -1,5 +1,4 @@
-import { AppRoute, DEFAULT_AVATAR_URL } from '@client/src/const';
-import { BASE_URL } from '@client/src/services/api';
+import { AppRoute } from '@client/src/const';
 import { getAvatarByUrl } from '@client/src/utils/common';
 import { TrainingType } from '@shared/training/types/training-type.enum';
 import { Location } from '@shared/types';

@@ -7,8 +7,8 @@ Content-Type: application/json
 ###
 
 @userId = 61f2e83e-5b2b-407e-9004-516914ad3ad7
-@authorization = Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJmZTMwMjg4NS1mYjIwLTRiN2YtYTM4MS04NjJkOWYxZWIwYzIiLCJlbWFpbCI6Imlyb24tbWFuQHN0YXJraW5kdXN0cmllcy5pdCIsIm5hbWUiOiJUb255Iiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzI2MzE3NDE5LCJleHAiOjE3MjYzMTgzMTl9.4FeR6oCP5PrW-QGWyfc97nz_o1m_iA_yMf_Gczxpfrk
-@refresh = Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJmZTMwMjg4NS1mYjIwLTRiN2YtYTM4MS04NjJkOWYxZWIwYzIiLCJlbWFpbCI6Imlyb24tbWFuQHN0YXJraW5kdXN0cmllcy5pdCIsIm5hbWUiOiJUb255Iiwicm9sZSI6ImFkbWluIiwidG9rZW5JZCI6ImU0ZGVhZmFjLTUxYjYtNDQ2MS1iMmI1LWU0Y2U4NTc1ZDdmNCIsImlhdCI6MTcyNjMxNTU4OCwiZXhwIjoxNzI2MzE2NDg4fQ.eSZDvooBn7Z6G95kXWbJEcRJkN6fEO4kNjm7InHqPyo
+@authorization = Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJmZTMwMjg4NS1mYjIwLTRiN2YtYTM4MS04NjJkOWYxZWIwYzIiLCJlbWFpbCI6Imlyb24tbWFuQHN0YXJraW5kdXN0cmllcy5pdCIsIm5hbWUiOiJUb255Iiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzI2Mzk4NjQxLCJleHAiOjE3MjYzOTk1NDF9.TtVxhyYiUk0c09TbfocMAul0OVC4kyCKzZBYJdTYjpQ
+@refresh = Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJmZTMwMjg4NS1mYjIwLTRiN2YtYTM4MS04NjJkOWYxZWIwYzIiLCJlbWFpbCI6Imlyb24tbWFuQHN0YXJraW5kdXN0cmllcy5pdCIsIm5hbWUiOiJUb255Iiwicm9sZSI6ImFkbWluIiwidG9rZW5JZCI6ImJkMGZlZGJkLWY1MzctNDlmNS04MWM1LWY3OGE1ODcyZDVmMSIsImlhdCI6MTcyNjM5ODY0MSwiZXhwIjoxNzI2Mzk5NTQxfQ.KenTHvB3m33IQRzm2IfYkwmmctRA4BonFA-dSiUyBtU
 
 # /////////////////////////////////// AUTNENTICATION ///////////////////////////////////
 # Create new user
@@ -114,4 +114,35 @@ Content-Type: application/json
   "otherCurrentUser": "8c132bfa-b758-40ab-9663-b1f637848d04",
   "targetUserId": "fe302885-fb20-4b7f-a381-862d9f1eb0c2"
 }
+###
+
+# /////////////////////////////////// SEARCH ///////////////////////////////////
+# Default
+GET {{baseUrl}}/search/ HTTP/1.1
+{{authorization}}
+###
+
+# By role
+GET {{baseUrl}}/search/?role=client HTTP/1.1
+{{authorization}}
+###
+
+# By level
+GET {{baseUrl}}/search/?level=профессионал HTTP/1.1
+{{authorization}}
+###
+
+# By TrainingType
+GET {{baseUrl}}/search/?trainingType=йога&trainingType=стретчинг HTTP/1.1
+{{authorization}}
+###
+
+# isReadyToTraining
+GET {{baseUrl}}/search/?isReadyToTraining=false HTTP/1.1
+{{authorization}}
+###
+
+# Complex: By level & Role
+GET {{baseUrl}}/search/?level=профессионал&role=trainer HTTP/1.1
+{{authorization}}
 ###

@@ -11,7 +11,7 @@ import { UserInterface } from './interfaces';
 import { BaseSearchQuery, SortDirection, SortType, SortTypeEnum } from '@shared/types';
 import { DefaultSearchParam } from '@shared/types/search/base-search-query.type';
 import { PaginationResult } from '@server/libs/interfaces';
-import { UserSearchFilters } from '@shared/user';
+import { UserSearchFilters, UserSearchQuery } from '@shared/user';
 
 @Injectable()
 export class UserRepository extends BasePostgresRepository<UserEntity, UserInterface> {
@@ -50,7 +50,7 @@ export class UserRepository extends BasePostgresRepository<UserEntity, UserInter
     return userEntity;
   }
 
-  public async search(query?: BaseSearchQuery): Promise<PaginationResult<UserEntity>> {
+  public async search(query?: UserSearchQuery): Promise<PaginationResult<UserEntity>> {
     const itemsPerPage =  query?.limit;
     const page = query?.page;
     const { where, orderBy } = this.getSearchFilters(query);
@@ -223,14 +223,47 @@ export class UserRepository extends BasePostgresRepository<UserEntity, UserInter
     }
   }
 
-  private getSearchFilters(query: BaseSearchQuery): UserSearchFilters {
+  private getSearchFilters(query: UserSearchQuery): UserSearchFilters {
     const where: Prisma.UserWhereInput = {};
     const orderBy: Prisma.UserOrderByWithRelationInput = {};
+
+    if(query?.location && Array.isArray(query.location)) {
+      where.location = {
+        in: query.location
+      }
+    }
+
+    // т.к. в бд TrainingType = массив, и в запросе query.trainingType - масси
+    // надо проверить, что массив TrainingType содержит все значиния из query.trainingType
+    // через hasEvery
+    if(query?.trainingType && Array.isArray(query.trainingType)) {
+      where.trainingType = {
+        hasEvery: query.trainingType
+      }
+    }
+
+    if(query?.level && Array.isArray(query.level)) {
+      where.level = {
+        in: query.level
+      }
+    }
+
+    if(query?.role && Array.isArray(query.role)) {
+      where.role = {
+        in: query.role
+      }
+    }
+
+    if('isReadyToTraining' in query) {
+      where.isReadyToTraining = query.isReadyToTraining;
+    }
 
     // Сортировка и направление сортировки
     const { key, value } = this.getSortKeyValue(query.sortType, query.sortDirection);
 
     orderBy[key] = value;
+
+    console.log('Search filters: ', { where, orderBy });
 
     return { where, orderBy };
   }

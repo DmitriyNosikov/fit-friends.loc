@@ -14,6 +14,7 @@ import {
 import { TrainingValidation } from '@server/training/training.constant';
 import { TrainingSortType, TrainingSortTypeEnum } from './training-sort-type.enum';
 import { SortDirection, SortDirectionEnum } from '@shared/types';
+import { TransformValueToArray, TransformValueToBoolean, TransformValueToNumber } from '@shared/utils/common';
 
 export const DefaultTrainingSearchParam = {
   PRICE_FROM: 0,
@@ -26,26 +27,14 @@ export class TrainingSearchQuery {
   public title?: string;
 
   @Expose()
-  @Transform(({ value }) => {
-    if(value && !Array.isArray(value)) {
-      value = [value];
-    }
-
-    return value;
-  })
+  @TransformValueToArray()
   @IsIn(trainingTypeList, { each: true })
   @IsString({ each: true })
   @IsOptional()
   public trainingType?: TrainingType | TrainingType[];
 
   @Expose()
-  @Transform(({ value }) => {
-    if(value && !Array.isArray(value)) {
-      value = [value];
-    }
-
-    return value;
-  })
+  @TransformValueToArray()
   @IsIn(trainingDurationList, { each: true })
   @IsString({ each: true })
   @IsOptional()
@@ -64,78 +53,46 @@ export class TrainingSearchQuery {
   public gender?: Gender;
 
   @Expose()
-  @Transform((field) => {
-    if(field.value) {
-      return Number(field.value);
-    }
-  })
+  @TransformValueToNumber()
   @Min(TrainingValidation.PRICE.MIN)
   @IsNumber()
   @IsOptional()
   public priceFrom?: number = DefaultTrainingSearchParam.PRICE_FROM;
 
   @Expose()
-  @Transform((field) => {
-    if(field.value) {
-      return Number(field.value);
-    }
-  })
+  @TransformValueToNumber()
   @IsNumber()
   @IsOptional()
   public priceTo?: number;
 
   @Expose()
-  @Transform((field) => {
-    if(field.value) {
-      return Number(field.value);
-    }
-  })
+  @TransformValueToNumber()
   @IsNumber()
   @IsOptional()
   public dayCaloriesFrom?: number;
 
   @Expose()
-  @Transform((field) => {
-    if(field.value) {
-      return Number(field.value);
-    }
-  })
+  @TransformValueToNumber()
   @IsNumber()
   @IsOptional()
   public dayCaloriesTo?: number;
 
   @Expose()
-  @Transform((field) => {
-    if(field.value) {
-      return Number(field.value);
-    }
-  })
+  @TransformValueToNumber()
   @Min(TrainingValidation.RATING.MIN)
   @IsNumber()
   @IsOptional()
   public ratingFrom?: number;
 
   @Expose()
-  @Transform((field) => {
-    if(field.value) {
-      return Number(field.value);
-    }
-  })
+  @TransformValueToNumber()
   @Max(TrainingValidation.RATING.MAX)
   @IsNumber()
   @IsOptional()
   public ratingTo?: number;
 
   @Expose()
-  @Transform((field) => {
-    if(field.value) {
-      if(field.value === 'false' || parseInt(field.value) <= 0) {
-        return false;
-      }
-
-      return !!field.value;
-    }
-  })
+  @TransformValueToBoolean()
   @IsBoolean()
   @IsOptional()
   public isSpecial?: boolean;
@@ -146,15 +103,7 @@ export class TrainingSearchQuery {
   public userId?: string;
 
   @Expose()
-  @Transform((field) => {
-    if(field.value) {
-      if(field.value === 'false' || parseInt(field.value) <= 0) {
-        return false;
-      }
-
-      return !!field.value;
-    }
-  })
+  @TransformValueToBoolean()
   @IsBoolean()
   @IsOptional()
   public withDiscount?: boolean;

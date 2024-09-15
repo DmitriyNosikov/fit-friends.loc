@@ -16,23 +16,6 @@ import Stub from '../../tools/stub/stub';
 import UsersListItem from '../users-list-item/users-list-item';
 
 const START_PAGE = 1;
-import { useNavigate } from 'react-router-dom';
-
-import { AppRoute, ITEMS_PER_PAGE } from '@client/src/const';
-import { UserRoleEnum } from '@shared/types/user-roles.enum';
-import { BaseSearchQuery } from '@shared/types';
-
-import { useAppDispatch, useAppSelector } from '@client/src/hooks';
-import useSearchUsers from '@client/src/hooks/useSearchUsers';
-
-import { getCurrentUserInfo, getUsersListLoadingStatus } from '@client/src/store/slices/user-process/user-process.selectors';
-import { searchUsersAction } from '@client/src/store/actions/api-user-action';
-
-import Spinner from '../../tools/spinner/spinner';
-import Stub from '../../tools/stub/stub';
-import UsersListItem from '../users-list-item/users-list-item';
-
-const START_PAGE = 1;
 
 export default function UsersList(): ReactElement {
   const dispatch = useAppDispatch();

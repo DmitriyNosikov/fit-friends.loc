@@ -1,6 +1,7 @@
 import {
   BadRequestException,
   ConflictException,
+  forwardRef,
   HttpException,
   HttpStatus,
   Inject,
@@ -40,6 +41,7 @@ export class UserService {
     private readonly userRepository: UserRepository,
     private readonly userFactory: UserFactory,
 
+    @Inject(forwardRef(() => RequestService))
     private readonly requestService: RequestService,
 
     @Inject('Hasher')
@@ -177,6 +179,17 @@ export class UserService {
     const currentUserInfo = await this.userRepository.findById(currentUserId);
     const addingUserInfo = await this.userRepository.findById(addingUserId);
 
+    const isCurrentUserExists = await this.exists(currentUserId);
+    const isAddingUserExists = await this.exists(addingUserId);
+
+    if(!isCurrentUserExists) {
+      throw new BadRequestException(`Friendship initiator (${currentUserId}) doesn't exist`);
+    }
+
+    if(!isAddingUserExists) {
+      throw new BadRequestException(`Adding user (${addingUserId}) doesn't exist`);
+    }
+
     if(currentUserInfo.friendsList.includes(addingUserId)) {
       return currentUserInfo;
     }
@@ -211,10 +224,22 @@ export class UserService {
       throw new BadRequestException('To remove friend you have to pass current and removing user ids.');
     }
 
+    const isCurrentUserExists = await this.exists(currentUserId);
+    const isRemovingUserExists = await this.exists(removingUserId);
+
+    if(!isCurrentUserExists) {
+      throw new BadRequestException(`Initiator user (${currentUserId}) doesn't exist`);
+    }
+
+    if(!isRemovingUserExists) {
+      throw new BadRequestException(`Removing user (${removingUserId}) doesn't exist`);
+    }
+
     const currentUserInfo = await this.userRepository.findById(currentUserId);
     const removingUserInfo = await this.userRepository.findById(removingUserId);
 
     if(!currentUserInfo.friendsList.includes(removingUserId)) {
+      console.log('Тут');
       return currentUserInfo;
     }
 
@@ -278,5 +303,11 @@ export class UserService {
 
       throw new HttpException('Can`t create JWT Token.', HttpStatus.INTERNAL_SERVER_ERROR);
     }
+  }
+
+  public async exists(userId: string): Promise<boolean> {
+    const isUserExists = await this.userRepository.exists(userId);
+
+    return isUserExists;
   }
 }

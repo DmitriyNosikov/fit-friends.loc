@@ -6,8 +6,8 @@ GET https://jsonplaceholder.typicode.com/todos/1 HTTP/1.1
 Content-Type: application/json
 ###
 
-@userId = 61f2e83e-5b2b-407e-9004-516914ad3ad7
-@authorization = Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJmZTMwMjg4NS1mYjIwLTRiN2YtYTM4MS04NjJkOWYxZWIwYzIiLCJlbWFpbCI6Imlyb24tbWFuQHN0YXJraW5kdXN0cmllcy5pdCIsIm5hbWUiOiJUb255Iiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzI2Mzk4NjQxLCJleHAiOjE3MjYzOTk1NDF9.TtVxhyYiUk0c09TbfocMAul0OVC4kyCKzZBYJdTYjpQ
+@userId = fe302885-fb20-4b7f-a381-862d9f1eb0c2
+@authorization = Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJmZTMwMjg4NS1mYjIwLTRiN2YtYTM4MS04NjJkOWYxZWIwYzIiLCJlbWFpbCI6Imlyb24tbWFuQHN0YXJraW5kdXN0cmllcy5pdCIsIm5hbWUiOiJUb255Iiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzI2NDI3MTE0LCJleHAiOjE3MjY0MjgwMTR9.FEmIWDHdN9YsTGdubpEb2UHA5qbzp0M198Z1A778i_Q
 @refresh = Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJmZTMwMjg4NS1mYjIwLTRiN2YtYTM4MS04NjJkOWYxZWIwYzIiLCJlbWFpbCI6Imlyb24tbWFuQHN0YXJraW5kdXN0cmllcy5pdCIsIm5hbWUiOiJUb255Iiwicm9sZSI6ImFkbWluIiwidG9rZW5JZCI6ImJkMGZlZGJkLWY1MzctNDlmNS04MWM1LWY3OGE1ODcyZDVmMSIsImlhdCI6MTcyNjM5ODY0MSwiZXhwIjoxNzI2Mzk5NTQxfQ.KenTHvB3m33IQRzm2IfYkwmmctRA4BonFA-dSiUyBtU
 
 # /////////////////////////////////// AUTNENTICATION ///////////////////////////////////
@@ -91,7 +91,7 @@ Content-Type: application/json
 {{authorization}}
 
 {
-  "targetUserId": "83937b80-0168-41d6-9677-adb39391f71b"
+  "targetUserId": "6cc72360-96e7-4c88-ad60-649b31d2af4a"
 }
 ###
 
@@ -101,7 +101,7 @@ Content-Type: application/json
 {{authorization}}
 
 {
-  "targetUserId": "83937b80-0168-41d6-9677-adb39391f71b"
+  "targetUserId": "6cc72360-96e7-4c88-ad60-649b31d2af4a"
 }
 ###
 
@@ -112,7 +112,7 @@ Content-Type: application/json
 
 {
   "otherCurrentUser": "8c132bfa-b758-40ab-9663-b1f637848d04",
-  "targetUserId": "fe302885-fb20-4b7f-a381-862d9f1eb0c2"
+  "targetUserId": "6cc72360-96e7-4c88-ad60-649b31d2af4a"
 }
 ###
 

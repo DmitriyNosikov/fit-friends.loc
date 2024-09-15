@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, forwardRef, Inject, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 
 import { RequestFactory } from './request.factory';
 import { RequestRepository } from './request.repository';
@@ -7,7 +7,7 @@ import { RequestMessage } from './request.constant';
 import { CreateRequestDTO, RequestTypeEnum, UpdateRequestDTO, UserAndTargetUserIdsPayload } from '@shared/request';
 import { BaseSearchQuery, RequestStatusEnum, UserIdPayload } from '@shared/types';
 import { RequestEntity } from './request.entity';
-import { UserRepository } from '@server/user/user.repository';
+import { UserService } from '@server/user/user.service';
 import { RequestInterface } from './interfaces/request.interface';
 
 @Injectable()
@@ -15,7 +15,9 @@ export class RequestService {
   constructor(
     private readonly requestRepository: RequestRepository,
     private readonly requestFactory: RequestFactory,
-    private readonly userRepository: UserRepository
+    
+    @Inject(forwardRef(() => UserService))
+    private readonly userService: UserService
   ) {}
   public async create(dto: CreateRequestDTO & UserIdPayload) {
     const { targetUserId } = dto;
@@ -25,8 +27,8 @@ export class RequestService {
       throw new BadRequestException(`Request User-initiator and User-target can't be same person.`);
     }
       
-    const isInitiatorUserExists = await this.userRepository.exists(initiatorUser);
-    const isTargetUserExists = await this.userRepository.exists(targetUserId);
+    const isInitiatorUserExists = await this.userService.exists(initiatorUser);
+    const isTargetUserExists = await this.userService.exists(targetUserId);
 
     if(!isInitiatorUserExists || !isTargetUserExists) {
       throw new BadRequestException(`${RequestMessage.ERROR.USERS_DOES_NOT_EXIST}:
@@ -66,7 +68,7 @@ export class RequestService {
     fieldsToUpdate.userId = undefined;
 
     if(fieldsToUpdate.initiatorUserId) {
-      const isInitiatorUserExists = await this.userRepository.exists(fieldsToUpdate.initiatorUserId);
+      const isInitiatorUserExists = await this.userService.exists(fieldsToUpdate.initiatorUserId);
   
       if(!isInitiatorUserExists) {
         throw new BadRequestException(`User ${fieldsToUpdate.initiatorUserId} doesn't exist`);
@@ -74,7 +76,7 @@ export class RequestService {
     }
 
     if(fieldsToUpdate.targetUserId) {
-      const isTargetUserExists = await this.userRepository.exists(fieldsToUpdate.targetUserId);
+      const isTargetUserExists = await this.userService.exists(fieldsToUpdate.targetUserId);
   
       if(!isTargetUserExists) {
         throw new BadRequestException(`User ${fieldsToUpdate.targetUserId} doesn't exist`);

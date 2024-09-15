@@ -7,7 +7,7 @@ Content-Type: application/json
 ###
 
 @userId = fe302885-fb20-4b7f-a381-862d9f1eb0c2
-@authorization = Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJmZTMwMjg4NS1mYjIwLTRiN2YtYTM4MS04NjJkOWYxZWIwYzIiLCJlbWFpbCI6Imlyb24tbWFuQHN0YXJraW5kdXN0cmllcy5pdCIsIm5hbWUiOiJUb255Iiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzI2NDI4MDg4LCJleHAiOjE3MjY0Mjg5ODh9.VtP39NP5TSfANLIuL_fausSi6KblhI0psZpX9ic4niQ
+@authorization = Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJmZTMwMjg4NS1mYjIwLTRiN2YtYTM4MS04NjJkOWYxZWIwYzIiLCJlbWFpbCI6Imlyb24tbWFuQHN0YXJraW5kdXN0cmllcy5pdCIsIm5hbWUiOiJUb255Iiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzI2NDMxMTg1LCJleHAiOjE3MjY0MzIwODV9.vD8iz_TIqMBV0PVqr-y_OpAZEw6APTW5P0MxXKr2tAU
 @refresh = Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJmZTMwMjg4NS1mYjIwLTRiN2YtYTM4MS04NjJkOWYxZWIwYzIiLCJlbWFpbCI6Imlyb24tbWFuQHN0YXJraW5kdXN0cmllcy5pdCIsIm5hbWUiOiJUb255Iiwicm9sZSI6ImFkbWluIiwidG9rZW5JZCI6ImJkMGZlZGJkLWY1MzctNDlmNS04MWM1LWY3OGE1ODcyZDVmMSIsImlhdCI6MTcyNjM5ODY0MSwiZXhwIjoxNzI2Mzk5NTQxfQ.KenTHvB3m33IQRzm2IfYkwmmctRA4BonFA-dSiUyBtU
 
 # /////////////////////////////////// AUTNENTICATION ///////////////////////////////////
@@ -84,6 +84,12 @@ GET {{baseUrl}}/additional HTTP/1.1
 ###
 
 # /////////////////////////////////// FRIENDSHIP ///////////////////////////////////
+# Get current user's friends
+GET {{baseUrl}}/friends HTTP/1.1
+Content-Type: application/json
+{{authorization}}
+###
+
 
 # Add friend to current user
 POST {{baseUrl}}/friends HTTP/1.1

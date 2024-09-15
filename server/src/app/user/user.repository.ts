@@ -8,8 +8,8 @@ import { UserEntity } from './user.entity';
 import { UserFactory } from './user.factory';
 import { UserInterface } from './interfaces';
 
-import { SortDirection, UserRoleEnum } from '@shared/types';
-import { DefaultSearchParam } from '@shared/types/search/base-search-query.type';
+import { SortDirection, UserIdPayload, UserRoleEnum } from '@shared/types';
+import { BaseSearchQuery, DefaultSearchParam } from '@shared/types/search/base-search-query.type';
 import { PaginationResult } from '@server/libs/interfaces';
 import { UserSearchFilters, UserSearchQuery } from '@shared/user';
 import { UserSortType, UserSortTypeEnum } from '@shared/user/types/user-sort-type.enum';
@@ -103,6 +103,26 @@ export class UserRepository extends BasePostgresRepository<UserEntity, UserInter
     await this.dbClient.user.delete({
       where: { id: userId }
     });
+  }
+
+  public async getUserFriends(query?: BaseSearchQuery & UserIdPayload): Promise<PaginationResult<UserEntity>> {
+    const itemsPerPage =  query?.limit;
+    const page = query?.page;
+    const { where, orderBy } = this.getSearchFilters(query);
+
+    where.friendsList = {
+      has: query.userId
+    }
+
+    // Запрос на получение результата поиска
+    const  preparedQuery = {
+      where,
+      orderBy
+    };
+
+    const paginatedResult = await this.getPaginatedResult(preparedQuery, itemsPerPage, page);
+
+    return paginatedResult;
   }
 
   public async addFriendToUser(userId: string, friendId: string): Promise<UserEntity> {

@@ -31,7 +31,7 @@ import { UserMessage } from './user.constant';
 
 import { UserService } from './user.service';
 import { SortDirectionEnum, SortTypeEnum, UserIdPayload } from '@shared/types';
-import { DefaultSearchParam } from '@shared/types/search/base-search-query.type';
+import { BaseSearchQuery, DefaultSearchParam } from '@shared/types/search/base-search-query.type';
 
 
 @ApiTags('users')
@@ -190,7 +190,64 @@ export class UserController {
     return fillDTO(LoggedUserRDO, loggedUserWithPayload);
   }
 
+  @Get('friends')
+  @ApiOperation({ summary: 'Get all current user`s friends' })
+  @UseGuards(JWTAuthGuard)
+  @UseInterceptors(InjectUserIdInterceptor)
+  @ApiQuery({
+    name: "createdAt",
+    description: `Item's creation date`,
+    example: "2024-05-29",
+    required: false
+  })
+  @ApiQuery({
+    name: "limit",
+    description: `Items per page (pagination). Max limit: ${DefaultSearchParam.MAX_ITEMS_PER_PAGE}`,
+    example: "50",
+    required: false
+  })
+  @ApiQuery({
+    name: "page",
+    description: `Current page in pagination (if items count more than "limit"). Default page: ${DefaultSearchParam.PAGE}`,
+    example: "1",
+    required: false
+  })
+  @ApiQuery({
+    name: "sortType",
+    description: `Sorting type. Default sort type: ${DefaultSearchParam.SORT.TYPE}`,
+    enum: SortTypeEnum,
+    example: "createdAt",
+    required: false
+  })
+  @ApiQuery({
+    name: "sortDirection",
+    description: `Sorting direction. Default direction: ${DefaultSearchParam.SORT.DIRECTION}`,
+    enum: SortDirectionEnum,
+    example: " desc",
+    required: false
+  })
+  @ApiResponse({
+    type: UsersWithPaginationRDO,
+    status: HttpStatus.CREATED,
+    description: UserMessage.SUCCESS.FOUND
+  })
+  public async getFriends(
+    @Query() query: BaseSearchQuery,
+    @Body('userId') userId: string
+  ) {
+    const preparedQuery = { ...query, userId }
+    const friends = await this.userService.getUserFriends(preparedQuery);
+
+    const result = {
+      ...friends,
+      entities:  friends.entities.map((friend) => fillDTO(UserRDO, friend.toPOJO()))
+    };
+
+    return result;
+  }
+
   @Post('friends')
+  @ApiOperation({ summary: 'Add new friend to current user' })
   @UseGuards(JWTAuthGuard)
   @UseInterceptors(InjectUserIdInterceptor)
   @ApiResponse({
@@ -213,6 +270,7 @@ export class UserController {
   }
 
   @Delete('friends')
+  @ApiOperation({ summary: 'Delete friend from current user' })
   @UseGuards(JWTAuthGuard)
   @UseInterceptors(InjectUserIdInterceptor)
   @ApiResponse({

@@ -179,8 +179,59 @@ paths:
           description: Incorrect user email/password
       tags: *a1
   /api/users/friends:
+    get:
+      operationId: UserController_getFriends
+      summary: Get all current user`s friends
+      parameters:
+        - name: sortDirection
+          required: false
+          in: query
+          description: "Sorting direction. Default direction: desc"
+          example: " desc"
+          schema:
+            enum:
+              - asc
+              - desc
+            type: string
+        - name: sortType
+          required: false
+          in: query
+          description: "Sorting type. Default sort type: createdAt"
+          example: createdAt
+          schema:
+            enum:
+              - createdAt
+            type: string
+        - name: page
+          required: false
+          in: query
+          description: 'Current page in pagination (if items count more than "limit").
+            Default page: 1'
+          example: "1"
+          schema: {}
+        - name: limit
+          required: false
+          in: query
+          description: "Items per page (pagination). Max limit: 50"
+          example: "50"
+          schema: {}
+        - name: createdAt
+          required: false
+          in: query
+          description: Item's creation date
+          example: 2024-05-29
+          schema: {}
+      responses:
+        "201":
+          description: Users found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UsersWithPaginationRDO"
+      tags: *a1
     post:
       operationId: UserController_addFriend
+      summary: Add new friend to current user
       parameters: []
       responses:
         "200":
@@ -194,6 +245,7 @@ paths:
       tags: *a1
     delete:
       operationId: UserController_removeFriend
+      summary: Delete friend from current user
       parameters: []
       responses:
         "200":

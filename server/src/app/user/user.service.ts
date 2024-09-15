@@ -29,7 +29,7 @@ import { UserFactory } from './user.factory';
 import { UserRepository } from './user.repository';
 import { RequestService } from '../request/request.service';
 import { CreateRequestDTO, RequestTypeEnum } from '@shared/request';
-import { UserIdPayload } from '@shared/types';
+import { BaseSearchQuery, UserIdPayload } from '@shared/types';
 
 
 
@@ -171,22 +171,32 @@ export class UserService {
     return await this.userRepository.deleteById(userId);
   }
 
+  public async getUserFriends(query?: BaseSearchQuery & UserIdPayload) {
+    const currentUserInfo = await this.userRepository.findById(query.userId);
+
+    if(!currentUserInfo) {
+      throw new BadRequestException(`User (${currentUserInfo}) doesn't exist`);
+    }
+
+    const userFriends = await this.userRepository.getUserFriends(query);
+
+    return userFriends;
+  }
+
   public async addFriendToUser(currentUserId: string, addingUserId: string) {
     if(!currentUserId || !addingUserId) {
       throw new BadRequestException('To add new friend you have to pass current and adding user ids.');
     }
 
     const currentUserInfo = await this.userRepository.findById(currentUserId);
-    const addingUserInfo = await this.userRepository.findById(addingUserId);
 
-    const isCurrentUserExists = await this.exists(currentUserId);
-    const isAddingUserExists = await this.exists(addingUserId);
-
-    if(!isCurrentUserExists) {
+    if(!currentUserInfo) {
       throw new BadRequestException(`Friendship initiator (${currentUserId}) doesn't exist`);
     }
 
-    if(!isAddingUserExists) {
+    const addingUserInfo = await this.userRepository.findById(addingUserId);
+
+    if(!addingUserInfo) {
       throw new BadRequestException(`Adding user (${addingUserId}) doesn't exist`);
     }
 
@@ -224,22 +234,19 @@ export class UserService {
       throw new BadRequestException('To remove friend you have to pass current and removing user ids.');
     }
 
-    const isCurrentUserExists = await this.exists(currentUserId);
-    const isRemovingUserExists = await this.exists(removingUserId);
-
-    if(!isCurrentUserExists) {
+    const currentUserInfo = await this.userRepository.findById(currentUserId);
+   
+    if(!currentUserInfo) {
       throw new BadRequestException(`Initiator user (${currentUserId}) doesn't exist`);
     }
 
-    if(!isRemovingUserExists) {
+    const removingUserInfo = await this.userRepository.findById(removingUserId);
+
+    if(!removingUserInfo) {
       throw new BadRequestException(`Removing user (${removingUserId}) doesn't exist`);
     }
 
-    const currentUserInfo = await this.userRepository.findById(currentUserId);
-    const removingUserInfo = await this.userRepository.findById(removingUserId);
-
     if(!currentUserInfo.friendsList.includes(removingUserId)) {
-      console.log('Тут');
       return currentUserInfo;
     }
 

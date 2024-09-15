@@ -25,7 +25,7 @@ export class CreateRequestDTO {
       example: 'g83h4y0943-nv934819843-jv934h8t-n923g48n9438',
     })
     @IsString()
-    initiatorUserId: UserInterface['id']
+    initiatorUserId?: UserInterface['id']
 
     @ApiProperty({
       description: 'Request target user id',

@@ -16,7 +16,6 @@ import { ApiRoute, AppRoute, AuthorizationStatus, Namespace } from '@client/src/
 import { TokenPayload } from '@client/src/types/token-payload';
 import { deleteToken, REFRESH_TOKEN_KEY, setToken } from '@client/src/services/token';
 import { UploadingFilePayload } from '@client/src/types/payloads';
-import { BaseSearchQuery } from '@shared/types';
 import { createSearchURL } from '@client/src/utils/adapters';
 
 

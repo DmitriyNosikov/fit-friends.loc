@@ -22,7 +22,7 @@ export default function CertificatesSliderItem({
   onItemUpdate,
   onItemDelete
 }: CertificatesSliderItemProps): ReactElement {
-  const slideURL = `${BASE_URL}${slide}`;
+  const slideURL = (slide.startsWith('static')) ?  `${BASE_URL}${slide}` : slide;
 
   const [currentCertificate, setCurrentCertificate] = useState(slideURL);
   const [isEditing, setIsEditing] = useState(false);

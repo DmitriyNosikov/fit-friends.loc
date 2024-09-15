@@ -9,7 +9,7 @@ import 'swiper/css/bundle';
 import TrainingsSliderItem from '../trainings-slider-item/trainings-slider-item';
 
 type TrainingsSliderProps = {
-  trainingsList: TrainingsWithPaginationRDO,
+  trainingsList: TrainingsWithPaginationRDO | null,
   sliderClass?: string,
   prevBtnClass?: string,
   nextBtnClass?: string,

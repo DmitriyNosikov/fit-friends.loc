@@ -8,6 +8,7 @@ import { CreateRequestDTO, RequestTypeEnum, UpdateRequestDTO, UserAndTargetUserI
 import { BaseSearchQuery, RequestStatusEnum, UserIdPayload } from '@shared/types';
 import { RequestEntity } from './request.entity';
 import { UserRepository } from '@server/user/user.repository';
+import { RequestInterface } from './interfaces/request.interface';
 
 @Injectable()
 export class RequestService {
@@ -45,7 +46,7 @@ export class RequestService {
       ? RequestStatusEnum.ACCEPTED // Запросы на дружбу автоматически принимаются
       : RequestStatusEnum.PROCESSING;
 
-    const preparedDto: CreateRequestDTO = {
+    const preparedDto: RequestInterface = {
       ...dto,
       initiatorUserId: initiatorUser,
       status: requestStatus,

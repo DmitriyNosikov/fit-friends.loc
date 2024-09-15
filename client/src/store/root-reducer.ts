@@ -8,6 +8,7 @@ import { trainingProcess } from './slices/training-process/training-process';
 import { trainingReviewsProcess } from './slices/training-reviews-process/training-reviews-process';
 import { orderProcess } from './slices/order-process/order-process';
 import { balanceProcess } from './slices/balance-process/balance-process';
+import { requestProcess } from './slices/request-process/request-process';
 
 export const rootReducer = combineReducers({
   [Namespace.MAIN]: mainProcess.reducer,
@@ -16,4 +17,5 @@ export const rootReducer = combineReducers({
   [Namespace.TRAINING_REVIEWS]: trainingReviewsProcess.reducer,
   [Namespace.ORDER]: orderProcess.reducer,
   [Namespace.BALANCE]: balanceProcess.reducer,
+  [Namespace.REQUEST]: requestProcess.reducer,
 });

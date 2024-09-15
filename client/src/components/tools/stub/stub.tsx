@@ -13,11 +13,11 @@ export default function Stub({ text }: StubProps): ReactElement {
         <picture>
           <source
             type="image/webp"
-            srcSet="img/content/thumbnails/nearest-gym-01.webp, img/content/thumbnails/nearest-gym-01@2x.webp 2x"
+            srcSet="/img/content/thumbnails/nearest-gym-01.webp, /img/content/thumbnails/nearest-gym-01@2x.webp 2x"
           />
           <img
-            src="img/content/thumbnails/nearest-gym-01.jpg"
-            srcSet="img/content/thumbnails/nearest-gym-01@2x.jpg 2x"
+            src="/img/content/thumbnails/nearest-gym-01.jpg"
+            srcSet="/img/content/thumbnails/nearest-gym-01@2x.jpg 2x"
             width={330}
             height={190}
             alt=""

@@ -26,6 +26,9 @@ import { AuthUserInterface, UserInterface } from './interfaces';
 import { UserEntity } from './user.entity';
 import { UserFactory } from './user.factory';
 import { UserRepository } from './user.repository';
+import { RequestService } from '../request/request.service';
+import { CreateRequestDTO, RequestTypeEnum } from '@shared/request';
+import { UserIdPayload } from '@shared/types';
 
 
 
@@ -36,6 +39,8 @@ export class UserService {
   constructor(
     private readonly userRepository: UserRepository,
     private readonly userFactory: UserFactory,
+
+    private readonly requestService: RequestService,
 
     @Inject('Hasher')
     private readonly hasher: BCryptHasher,
@@ -189,6 +194,15 @@ export class UserService {
     // Обновляем список друзей пользователя targetUserId
     await this.userRepository.updateById(addingUserId, { friendsList: addingUserInfo.friendsList });
 
+    // Добавляем соответствующий запрос в таблицу запросов
+    const requestData: CreateRequestDTO & UserIdPayload = {
+      requestType: RequestTypeEnum.FRIENDSHIP,
+      userId: currentUserId,
+      targetUserId: addingUserId
+    };
+
+    await this.requestService.create(requestData);
+
     return updatedUser;
   }
 
@@ -216,6 +230,13 @@ export class UserService {
     
     // Обновляем список друзей пользователя targetUserId
     await this.userRepository.updateById(removingUserId, { friendsList: removingUserUpdatedFriendsList });
+
+    // Удаляем запрос из таблицы запросов
+    const request = await this.requestService.getRequestByInitiatorAndTargetUserId(currentUserId, removingUserId);
+    
+    if(request) {
+      await this.requestService.delete(request.id, currentUserId);
+    }
 
     return updatedUser;
   }

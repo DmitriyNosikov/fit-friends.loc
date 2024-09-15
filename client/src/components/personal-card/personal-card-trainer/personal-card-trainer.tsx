@@ -1,5 +1,5 @@
 import classNames from 'classnames';
-import { ReactElement, useState } from 'react';
+import { ReactElement, useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 
 import { useAppSelector } from '@client/src/hooks';
@@ -8,7 +8,6 @@ import { getTrainingsListLoadingStatus } from '@client/src/store/slices/training
 
 import { ITEMS_PER_PAGE } from '@client/src/const';
 import { DEFAULT_TRAININGS_SORT_TYPE } from '../../trainings/trainings-list/trainings-list';
-import { BASE_URL } from '@client/src/services/api';
 import { upperCaseFirst } from '@client/src/utils/common';
 
 import { UserRDO } from '@shared/user';
@@ -19,6 +18,7 @@ import Stub from '../../tools/stub/stub';
 import Popup from '../../popup/popup';
 import TrainingsSlider from '../../trainings/trainings-slider/trainings-slider';
 import CertificatesSlider from '../../certificates/certificates-slider/certificates-slider';
+import { getCurrentUserInfo } from '@client/src/store/slices/user-process/user-process.selectors';
 
 
 
@@ -29,12 +29,22 @@ type PersonalCardTrainerProps = {
 }
 
 export default function PersonalCardTrainer({ userInfo }: PersonalCardTrainerProps): ReactElement {
-  const { name, location, isReadyToTraining, description, trainingType, certificates } = userInfo;
+  const {
+    name,
+    location,
+    isReadyToTraining,
+    description,
+    trainingType,
+    certificates,
+    friendsList
+  } = userInfo;
+  const userViewerInfo = useAppSelector(getCurrentUserInfo);
 
-  const statusText = userInfo?.isReadyToTraining ? 'Готов тренировать' : 'Не готов тренировать';
-
+  const [isCurrentUserFriend, setIsCurrentUserFriend] = useState(false);
   const [isCertificatesModalOpened, setIsCertificatesModalOpened] = useState(false);
 
+  const addToFriendsBtnText = isCurrentUserFriend ? 'Удалить из друзей' : 'Добавить в друзья';
+  const statusText = userInfo?.isReadyToTraining ? 'Готов тренировать' : 'Не готов тренировать';
 
   let searchQuery: TrainingSearchQuery = {
     page: START_PAGE,
@@ -54,6 +64,18 @@ export default function PersonalCardTrainer({ userInfo }: PersonalCardTrainerPro
   function handleAddToFriendsBtnCLick() {
     toast.info('Adding to friends is not implemented yet.');
   }
+
+  useEffect(() => {
+    let isMounted = true;
+
+    if(userViewerInfo) {
+      setIsCurrentUserFriend(friendsList.includes(userViewerInfo.id));
+    }
+
+    return () => {
+      isMounted = false;
+    }
+  }, [isCurrentUserFriend])
 
   return (
     <>
@@ -109,7 +131,7 @@ export default function PersonalCardTrainer({ userInfo }: PersonalCardTrainerPro
                   })
                 }
               </ul>
-              <button className="btn user-card-coach__btn" type="button" disabled onClick={handleAddToFriendsBtnCLick}>Добавить в друзья</button>
+              <button className="btn user-card-coach__btn" type="button" onClick={handleAddToFriendsBtnCLick}>{ addToFriendsBtnText }</button>
             </div>
 
             <div className="user-card-coach__gallary">
@@ -149,30 +171,36 @@ export default function PersonalCardTrainer({ userInfo }: PersonalCardTrainerPro
               !isTrainingsLoadings && !trainingsList && <Stub />
             }
 
-            {
-              !isTrainingsLoadings && trainingsList &&
-              <TrainingsSlider
-                trainingsList={trainingsList}
-                sliderClass='user-card-coach__training-list'
-                prevBtnClass='user-card-coach__training-btn--prev'
-                nextBtnClass='user-card-coach__training-btn--next'
-                sliderItemClass='user-card-coach__training-item'
-              />
-            }
+            <TrainingsSlider
+              trainingsList={trainingsList}
+              sliderClass='user-card-coach__training-list'
+              prevBtnClass='user-card-coach__training-btn--prev'
+              nextBtnClass='user-card-coach__training-btn--next'
+              sliderItemClass='user-card-coach__training-item'
+            />
 
-          {/*
-            TODO: Реализовать запрос на тренировку
-            TODO: Реализовать рассылку уведомлений на почту
-          */}
+            {/*
+              TODO: Реализовать запрос на тренировку
+              TODO: Реализовать рассылку уведомлений на почту
+            */}
             <form className="user-card-coach__training-form">
-              <button className="btn user-card-coach__btn-training" type="button">Хочу персональную тренировку</button>
+              {
+                // Если тренер готов тренировать - показываем юзерам кнопку для
+                // запроса на персональную тренировку
+                isReadyToTraining &&
+                <button className="btn user-card-coach__btn-training" type="button">Хочу персональную тренировку</button>
+              }
+
               <div className="user-card-coach__training-check">
                 <div className="custom-toggle custom-toggle--checkbox">
                   <label>
-                    <input type="checkbox" defaultValue="user-agreement-1" name="user-agreement" defaultChecked /><span className="custom-toggle__icon">
+                    <input type="checkbox" defaultValue="user-agreement-1" name="user-agreement" defaultChecked />
+                    <span className="custom-toggle__icon">
                       <svg width={9} height={6} aria-hidden="true">
                         <use xlinkHref="#arrow-check" />
-                      </svg></span><span className="custom-toggle__label">Получать уведомление на почту о новой тренировке</span>
+                      </svg>
+                    </span>
+                    <span className="custom-toggle__label">Получать уведомление на почту о новой тренировке</span>
                   </label>
                 </div>
               </div>

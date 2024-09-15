@@ -2,6 +2,7 @@ import {
   BalanceNamespace,
   MainNamespace,
   OrderNamespace,
+  RequestNamespace,
   TrainingNamespace,
   TrainingReviewsNamespace,
   UserNamespace
@@ -14,3 +15,4 @@ export type TrainingStateNamespace = Pick<State, TrainingNamespace>;
 export type TrainingReviewsStateNamespace = Pick<State, TrainingReviewsNamespace>;
 export type OrderStateNamespace = Pick<State, OrderNamespace>;
 export type BalanceStateNamespace = Pick<State, BalanceNamespace>;
+export type RequestStateNamespace = Pick<State, RequestNamespace>;

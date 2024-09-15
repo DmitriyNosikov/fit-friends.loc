@@ -15,6 +15,7 @@ const BACKEND_API_URL = {
   TRAINING_REVIEWS: `${BASE_URL}/api/training-reviews`,
   ORDERS: `${BASE_URL}/api/orders`,
   BALANCE: `${BASE_URL}/api/balance`,
+  REQUEST: `${BASE_URL}/api/requests`,
 }
 export const ApiRoute = {
   USER_API: BACKEND_API_URL.USERS,
@@ -38,7 +39,9 @@ export const ApiRoute = {
 
   ORDERS_API: BACKEND_API_URL.ORDERS,
 
-  BALANCE_API: BACKEND_API_URL.BALANCE
+  BALANCE_API: BACKEND_API_URL.BALANCE,
+
+  REQUEST_API: BACKEND_API_URL.REQUEST
 } as const;
 
 // -- App
@@ -64,6 +67,7 @@ export const Namespace = {
   USER: 'USER',
   TRAINING: 'TRAINING',
   TRAINING_REVIEWS: 'TRAINING_REVIEWS',
+  REQUEST: 'REQUEST',
   ORDER: 'ORDER',
   BALANCE: 'BALANCE'
 } as const;

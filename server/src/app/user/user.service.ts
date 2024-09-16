@@ -263,12 +263,9 @@ export class UserService {
     // Обновляем список друзей пользователя targetUserId
     await this.userRepository.updateById(removingUserId, { friendsList: removingUserUpdatedFriendsList });
 
-    // Удаляем запрос из таблицы запросов
-    const request = await this.requestService.getRequestByInitiatorAndTargetUserId(currentUserId, removingUserId);
+    // Удаляем все совместные запросы
+    await this.requestService.deleteAllByUsers(currentUserId, removingUserId);
     
-    if(request) {
-      await this.requestService.delete(request.id, currentUserId);
-    }
 
     return updatedUser;
   }

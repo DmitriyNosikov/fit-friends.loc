@@ -42,8 +42,6 @@ export class RequestService {
       .findByInitiatorAndTargetUserId(initiatorUser, targetUserId, dto.requestType);
 
     // Можно делать только по одному запросу каждого типа
-    console.log('User request: ', dto);
-    console.log('Exist request: ', existsRequest);
     if(existsRequest) {
       throw new BadRequestException(RequestMessage.ERROR.ALREADY_EXISTS);
     }
@@ -96,6 +94,10 @@ export class RequestService {
     await this.checkAccess(requestId, userId);
 
     return await this.requestRepository.deleteById(requestId);
+  }
+
+  public async deleteAllByUsers(initiatorUserId: string, targetUserId: string): Promise<void> {
+    return await this.requestRepository.deleteAllUserRequests(initiatorUserId, targetUserId);
   }
 
   public async search(query?: BaseSearchQuery & UserAndTargetUserIdsPayload) {

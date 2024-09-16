@@ -55,6 +55,31 @@ export class RequestRepository extends BasePostgresRepository<RequestEntity, Req
     });
   }
 
+  public async deleteAllUserRequests(initiatorUserId: string, targetUserId: string) {
+    const relatedUserRequests = await this.dbClient.request.findMany({
+      where: {
+        OR: [
+          { initiatorUserId, targetUserId },
+          { initiatorUserId: targetUserId, targetUserId: initiatorUserId }
+        ]
+      },
+
+      select: { id: true }
+    })
+
+    if(!relatedUserRequests || relatedUserRequests.length <= 0) {
+      return;
+    }
+
+    const deleteIds = relatedUserRequests.map((request) => request.id);
+
+    await this.dbClient.request.deleteMany({
+      where: {
+        id: { in: deleteIds }
+      }
+    });
+  }
+
   // TODO: Унифицировать метод поиска
   public async search(query?: BaseSearchQuery & UserAndTargetUserIdsPayload): Promise<PaginationResult<RequestEntity>> {
     const itemsPerPage = query?.limit;
@@ -79,8 +104,6 @@ export class RequestRepository extends BasePostgresRepository<RequestEntity, Req
 
   // TODO: Унифицировать метод поиска
   public async getAllUserRequests(userId: string, requestType?: RequestType): Promise<RequestEntity[]> {
-    console.log('User id: ', userId, ' Request type: ', requestType);
-    
     const where: Prisma.RequestWhereInput = {};
 
     // Все запросы пользователя, где он либо инициатор
@@ -90,7 +113,7 @@ export class RequestRepository extends BasePostgresRepository<RequestEntity, Req
       { targetUserId: userId }
     ]
 
-    if(requestType) {
+    if (requestType) {
       where.requestType = requestType;
     }
 
@@ -156,7 +179,7 @@ export class RequestRepository extends BasePostgresRepository<RequestEntity, Req
     return requestEntities;
   }
 
-  // Серивсные методы
+  // Сервисные методы
   public async checkAccess(requestId: string, userId: string) {
     const request = await this.dbClient.request.findFirst({
       where: { id: requestId, initiatorUserId: userId },

@@ -379,6 +379,56 @@ paths:
                 $ref: "#/components/schemas/CreateRequestRDO"
       tags: &a3
         - requests
+    get:
+      operationId: RequestController_getAllUserRequests
+      summary: Get all user requests, where he either initiator or target
+      parameters:
+        - name: sortDirection
+          required: false
+          in: query
+          description: "Sorting direction. Default direction: desc"
+          example: " desc"
+          schema:
+            enum:
+              - asc
+              - desc
+            type: string
+        - name: sortType
+          required: false
+          in: query
+          description: "Sorting type. Default sort type: createdAt"
+          example: createdAt
+          schema:
+            enum:
+              - createdAt
+            type: string
+        - name: page
+          required: false
+          in: query
+          description: 'Current page in pagination (if items count more than "limit").
+            Default page: 1'
+          example: "1"
+          schema: {}
+        - name: limit
+          required: false
+          in: query
+          description: "Items per page (pagination). Max limit: 50"
+          example: "50"
+          schema: {}
+        - name: createdAt
+          required: false
+          in: query
+          description: Item's creation date
+          example: 2024-05-29
+          schema: {}
+      responses:
+        "201":
+          description: Requests found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RequestsWithPaginationRDO"
+      tags: *a3
   /api/requests/{requestId}:
     patch:
       operationId: RequestController_update

@@ -104,6 +104,16 @@ export class RequestService {
     return requests;
   }
 
+  public async getAllUserRequests(query?: BaseSearchQuery & UserIdPayload) {
+    const requests = await this.requestRepository.getAllUserRequests(query);
+
+    if (!requests && query) {
+      throw new NotFoundException(`Can't find requests by passed params " ${query}"`);
+    }
+
+    return requests;
+  }
+
   public async getTargetUserRequests(targetUserId: string): Promise<RequestEntity[] | null> {
     const requests = await this.requestRepository.findTargetRequests(targetUserId);
 

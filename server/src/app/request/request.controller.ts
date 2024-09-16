@@ -250,4 +250,59 @@ export class RequestController {
 
     return result;
   }
+
+  @Get('/')
+  @ApiOperation({ summary: 'Get all user requests, where he either initiator or target' })
+  @ApiQuery({
+    name: "createdAt",
+    description: `Item's creation date`,
+    example: "2024-05-29",
+    required: false
+  })
+  @ApiQuery({
+    name: "limit",
+    description: `Items per page (pagination). Max limit: ${DefaultSearchParam.MAX_ITEMS_PER_PAGE}`,
+    example: "50",
+    required: false
+  })
+  @ApiQuery({
+    name: "page",
+    description: `Current page in pagination (if items count more than "limit"). Default page: ${DefaultSearchParam.PAGE}`,
+    example: "1",
+    required: false
+  })
+  @ApiQuery({
+    name: "sortType",
+    description: `Sorting type. Default sort type: ${DefaultSearchParam.SORT.TYPE}`,
+    enum: SortTypeEnum,
+    example: "createdAt",
+    required: false
+  })
+  @ApiQuery({
+    name: "sortDirection",
+    description: `Sorting direction. Default direction: ${DefaultSearchParam.SORT.DIRECTION}`,
+    enum: SortDirectionEnum,
+    example: " desc",
+    required: false
+  })
+  @ApiResponse({
+    type: RequestsWithPaginationRDO,
+    status: HttpStatus.CREATED,
+    description: RequestMessage.SUCCESS.FOUND
+  })
+  public async getAllUserRequests(
+    @Query() query: BaseSearchQuery,
+    @Body('userId') userId: string
+  ) {
+    const preparedQuery = { ...query, userId };
+    const requests = await this.requestService.getAllUserRequests(preparedQuery);
+
+    const result = {
+      ...requests,
+      entities:  requests.entities.map((request) => fillDTO(CreateRequestRDO, request.toPOJO()))
+    };
+
+    return result;
+  }
+
 }

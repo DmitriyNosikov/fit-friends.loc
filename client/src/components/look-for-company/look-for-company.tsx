@@ -19,6 +19,7 @@ import { UserRoleEnum } from '@shared/types/user-roles.enum';
 import { UserSearchQuery } from '@shared/user';
 import useSearchUsers from '@client/src/hooks/useSearchUsers';
 
+
 const START_PAGE = 1;
 const ITEMS_PER_PAGE = 8;
 

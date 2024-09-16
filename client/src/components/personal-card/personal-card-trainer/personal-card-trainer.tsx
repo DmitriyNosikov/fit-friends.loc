@@ -1,6 +1,5 @@
 import classNames from 'classnames';
-import { ReactElement, useEffect, useState } from 'react';
-import { toast } from 'react-toastify';
+import { ReactElement, useState } from 'react';
 
 import { useAppDispatch, useAppSelector } from '@client/src/hooks';
 import useSearchTrainings from '@client/src/hooks/useSearchTrainings';

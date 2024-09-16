@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { PrismaClientService } from '../prisma-client/prisma-client.service';
 
-import { BaseSearchQuery, SortDirection, SortType, SortTypeEnum } from '@shared/types';
+import { BaseSearchQuery, SortDirection, SortType, SortTypeEnum, UserIdPayload } from '@shared/types';
 import { DefaultSearchParam } from '@shared/types/search/base-search-query.type';
 import { PaginationResult } from '@server/libs/interfaces';
 import { RequestSearchFilters, UserAndTargetUserIdsPayload } from '@shared/request';
@@ -24,8 +24,6 @@ export class RequestRepository extends BasePostgresRepository<RequestEntity, Req
     const request = await this.dbClient.request.create({
       data: entity
     });
-
-    console.log('Create request result: ', request);
 
     if (!request) {
       return null;
@@ -58,12 +56,12 @@ export class RequestRepository extends BasePostgresRepository<RequestEntity, Req
 
   // TODO: Унифицировать метод поиска
   public async search(query?: BaseSearchQuery & UserAndTargetUserIdsPayload): Promise<PaginationResult<RequestEntity>> {
-    const itemsPerPage =  query?.limit;
+    const itemsPerPage = query?.limit;
     const page = query?.page;
     const { where, orderBy } = this.getSearchFilters(query);
 
     // Запрос на получение результата поиска
-    const  preparedQuery = {
+    const preparedQuery = {
       where,
       orderBy,
 
@@ -72,6 +70,39 @@ export class RequestRepository extends BasePostgresRepository<RequestEntity, Req
         targetUser: true
       }
     };
+
+    console.log('Query: ', preparedQuery);
+
+    const paginatedResult = await this.getPaginatedResult(preparedQuery, itemsPerPage, page);
+
+    return paginatedResult;
+  }
+
+  // TODO: Унифицировать метод поиска
+  public async getAllUserRequests(query?: BaseSearchQuery & UserIdPayload): Promise<PaginationResult<RequestEntity>> {
+    const itemsPerPage = query?.limit;
+    const page = query?.page;
+    const where: Prisma.RequestWhereInput = {};
+    const userId = query.userId;
+
+    // Все запросы пользователя, где он либо инициатор
+    // либо цель запроса
+    where.OR = [
+      { initiatorUserId: userId },
+      { targetUserId: userId }
+    ]
+
+    // Запрос на получение результата поиска
+    const preparedQuery = {
+      where,
+
+      include: {
+        initiatorUser: true,
+        targetUser: true
+      }
+    };
+
+    console.log('Query: ', preparedQuery);
 
     const paginatedResult = await this.getPaginatedResult(preparedQuery, itemsPerPage, page);
 
@@ -176,8 +207,8 @@ export class RequestRepository extends BasePostgresRepository<RequestEntity, Req
     const where: Prisma.RequestWhereInput = {};
     const orderBy: Prisma.RequestOrderByWithRelationInput = {};
 
-    if (query?.userId) {
-      where.initiatorUserId = query.userId;
+    if (query?.userId || query?.initiatorUserId) {
+      where.initiatorUserId = query.userId ?? query?.initiatorUserId;
     }
 
     if (query?.targetUserId) {

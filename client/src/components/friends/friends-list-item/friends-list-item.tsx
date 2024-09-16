@@ -28,8 +28,9 @@ export default function FriendsListItem({ user, userRequests }: FriendsListItemP
   const { id, name, avatar, location, trainingType, isReadyToTraining, role } = user;
   const userAvatar = getAvatarByUrl(avatar);
 
-  const readyToTrainingStatusText = isReadyToTraining ? 'Готов к тренировке' : 'Не готов к тренировке';
   const isTrainer = (role === UserRoleEnum.TRAINER);
+  const readyToTrainingStatusText = isReadyToTraining ? 'Готов к тренировке' : 'Не готов к тренировке';
+  const requestNotificationText = isTrainer ? 'персональную' : 'совместную';
 
   // Исходящие и входящие запросы пользователя на тренировки
   const outgoingRequests: CreateRequestRDO[] = [];
@@ -51,10 +52,15 @@ export default function FriendsListItem({ user, userRequests }: FriendsListItemP
 
   const incomingTrainingRequest = currentLoggedUserInfo ? incomingRequests.find((request) => request.targetUserId === currentLoggedUserInfo.id) : undefined;
   const outTrainingRequest = currentLoggedUserInfo ? outgoingRequests.find((request) => request.initiatorUserId === currentLoggedUserInfo.id) : undefined;
-  const isTrainingRequestSended = outTrainingRequest && outTrainingRequest.status === RequestStatusEnum.PROCESSING;
 
-  // Сюда можно добавлять условия отображения блока уведомлений под карточкой пользователя
-  const isNotificationBlockVisible = isTrainingRequestSended || incomingTrainingRequest;
+  const isCurrentUserCanSendRequest = !isTrainer // Не тренер
+    && !incomingTrainingRequest // Это не входящий запрос (если входящий - у нас уже по факту есть запрос)
+    && !(outTrainingRequest && outTrainingRequest.status === RequestStatusEnum.PROCESSING) // Запрос еще не был отправлен
+    && outTrainingRequest?.status !== RequestStatusEnum.DECLINED; // Запрос не был отклонен. Отклоняют один раз.
+
+  // Если пользователь по каким-то причинам больше не может отправлять запросы
+  // значит оно уже с каким то статусом и мы спокойно можем показать блок уведомлений
+  const isNotificationBlockVisible = !isCurrentUserCanSendRequest;
 
   function handleSendRequestToTraining() {
     const requestData: CreateRequestDTO = {
@@ -66,11 +72,11 @@ export default function FriendsListItem({ user, userRequests }: FriendsListItemP
   }
 
   function handleAcceptRequestBtnClick() {
-    if(!incomingTrainingRequest) {
+    if (!incomingTrainingRequest) {
       return;
     }
 
-    const updateRequestData: UpdateRequestDTO  & RequestIdPayload = {
+    const updateRequestData: UpdateRequestDTO & RequestIdPayload = {
       requestId: incomingTrainingRequest.id as string,
       status: RequestStatusEnum.ACCEPTED
     };
@@ -79,11 +85,11 @@ export default function FriendsListItem({ user, userRequests }: FriendsListItemP
   }
 
   function handleDeclineRequestBtnClick() {
-    if(!incomingTrainingRequest) {
+    if (!incomingTrainingRequest) {
       return;
     }
 
-    const updateRequestData: UpdateRequestDTO  & RequestIdPayload = {
+    const updateRequestData: UpdateRequestDTO & RequestIdPayload = {
       requestId: incomingTrainingRequest.id as string,
       status: RequestStatusEnum.DECLINED
     }
@@ -144,7 +150,7 @@ export default function FriendsListItem({ user, userRequests }: FriendsListItemP
             </div>
 
             {
-              !isTrainer && !isTrainingRequestSended && !incomingTrainingRequest &&
+              isCurrentUserCanSendRequest &&
               <button className="thumbnail-friend__invite-button" type="button" disabled={!isReadyToTraining} onClick={handleSendRequestToTraining}>
                 <svg width={43} height={46} aria-hidden="true" focusable="false">
                   <use xlinkHref="#icon-invite" />
@@ -169,20 +175,20 @@ export default function FriendsListItem({ user, userRequests }: FriendsListItemP
             }
 
             {
-              isTrainingRequestSended && outTrainingRequest.status === RequestStatusEnum.PROCESSING &&
-              <p className="thumbnail-friend__request-text">Запрос на&nbsp;совместную тренировку отправлен</p>
+              (outTrainingRequest && outTrainingRequest.status === RequestStatusEnum.PROCESSING) &&
+              <p className="thumbnail-friend__request-text">{`Запрос на ${requestNotificationText} тренировку отправлен`}</p>
             }
 
             { // Запрос принят, если: 1) Мы отправили запрос и его приняли 2)  Нам отправили запрос и мы его приняли
-               (isTrainingRequestSended && outTrainingRequest.status === RequestStatusEnum.ACCEPTED) ||
-               (incomingTrainingRequest && incomingTrainingRequest.status === RequestStatusEnum.ACCEPTED) &&
-              <p className="thumbnail-friend__request-text">Запрос на&nbsp;совместную тренировку принят</p>
+              ((outTrainingRequest && outTrainingRequest.status === RequestStatusEnum.ACCEPTED) ||
+                (incomingTrainingRequest && incomingTrainingRequest.status === RequestStatusEnum.ACCEPTED)) &&
+              <p className="thumbnail-friend__request-text">{`Запрос на ${requestNotificationText} тренировку принят`}</p>
             }
 
             { //  Запрос принят, если: 1) Мы отправили запрос и его отклонили 2)  Нам отправили запрос и мы его отклонили
-              (isTrainingRequestSended && outTrainingRequest.status === RequestStatusEnum.DECLINED) ||
-              (incomingTrainingRequest && incomingTrainingRequest.status === RequestStatusEnum.DECLINED) &&
-              <p className="thumbnail-friend__request-text">Запрос на&nbsp;совместную тренировку отклонён</p>
+              ((outTrainingRequest && outTrainingRequest.status === RequestStatusEnum.DECLINED) ||
+                (incomingTrainingRequest && incomingTrainingRequest.status === RequestStatusEnum.DECLINED)) &&
+              <p className="thumbnail-friend__request-text">{`Запрос на ${requestNotificationText} тренировку отклонён`}</p>
             }
           </div>
         }

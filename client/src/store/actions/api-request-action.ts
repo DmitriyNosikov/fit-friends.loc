@@ -6,7 +6,7 @@ import { AsyncOptions } from '@client/src/types/async-options.type';
 import { setDataLoadingStatus } from '../slices/main-process/main-process';
 
 import { CreateRequestDTO, CreateRequestRDO, RequestsWithPaginationRDO, UpdateRequestDTO } from '@shared/request';
-import { deleteUserRequestAction, setTargetRequestsAction, setUserRequestsAction, updateUserRequestsAction } from '../slices/request-process/request-process';
+import { addNewRequestAction, deleteUserRequestAction, setTargetRequestsAction, setUserRequestsAction, updateUserRequestsAction } from '../slices/request-process/request-process';
 import { RequestType } from '@server/libs/types';
 
 
@@ -33,8 +33,6 @@ export const createRequestAction = createAsyncThunk<CreateRequestRDO | null, Cre
   ) => {
     dispatch(setDataLoadingStatus(true));
 
-    console.log('Request data: ', requestData);
-
     try {
       const result = await api.post<CreateRequestRDO>(ApiRoute.REQUEST_API, requestData);
 
@@ -43,6 +41,9 @@ export const createRequestAction = createAsyncThunk<CreateRequestRDO | null, Cre
       }
 
       const { data } = result;
+
+      dispatch(addNewRequestAction(data));
+      dispatch(setDataLoadingStatus(false));
 
       toast.success(`Request ${data.id} has been successfully created`);
 

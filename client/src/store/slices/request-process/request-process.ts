@@ -4,14 +4,14 @@ import { CreateRequestRDO, RequestsWithPaginationRDO } from '@shared/request';
 import { fetchAllCurrentUserRequests } from '../../actions/api-request-action';
 
 export type RequestProcess = {
-  allUserRequests: CreateRequestRDO[] | null,
+  allUserRequests: CreateRequestRDO[],
   paginatedTargetRequests: RequestsWithPaginationRDO | null,
 
   isRequestsLoading: boolean
 }
 
 const initialState: RequestProcess = {
-  allUserRequests: null,
+  allUserRequests: [],
   paginatedTargetRequests: null,
 
   isRequestsLoading: false
@@ -21,8 +21,18 @@ export const requestProcess = createSlice({
   name: Namespace.REQUEST,
   initialState,
   reducers: {
-    setUserRequestsAction: (state, action: PayloadAction<CreateRequestRDO[] | null>) => {
+    setUserRequestsAction: (state, action: PayloadAction<CreateRequestRDO[]>) => {
       state.allUserRequests = action.payload;
+    },
+
+    addNewRequestAction: (state, action: PayloadAction<CreateRequestRDO | null>) => {
+      const newRequest = action.payload;
+
+      if(!newRequest) {
+        return;
+      }
+
+      state.allUserRequests?.push(newRequest);
     },
 
     setTargetRequestsAction: (state, action: PayloadAction<RequestsWithPaginationRDO | null>) => {
@@ -70,6 +80,7 @@ export const requestProcess = createSlice({
 
 export const {
   setUserRequestsAction,
+  addNewRequestAction,
   setTargetRequestsAction,
   updateUserRequestsAction,
   deleteUserRequestAction,

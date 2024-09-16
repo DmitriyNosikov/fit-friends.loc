@@ -9,3 +9,7 @@ export { UserIdPayload } from './user-id-payload.type';
 export { TrainingIdPayload } from './training-id-payload.type';
 
 export { PaymentType, PaymentTypeEnum, paymentTypeList } from './payment-type.enum';
+
+export { RequestStatus, RequestStatusEnum, requestStatusList } from '../request/types/request-status.enum';
+
+export { Location, LocationEnum, locationList } from './location.enum';

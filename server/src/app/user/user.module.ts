@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 
 import { ConfigEnvironment } from '../../config';
 import { BCryptHasher, getJWTOptions } from '../libs/helpers';
@@ -14,6 +14,7 @@ import { UserFactory } from './user.factory';
 import { UserRepository } from './user.repository';
 import { UserService } from './user.service';
 import { FileVaultModule } from '../file-vault/file-vault.module';
+import { RequestModule } from '../request/request.module';
 
 
 @Module({
@@ -25,7 +26,8 @@ import { FileVaultModule } from '../file-vault/file-vault.module';
       getJWTOptions(ConfigEnvironment.JWT)
     ),
 
-    FileVaultModule
+    FileVaultModule,
+    forwardRef(() => RequestModule)
   ],
   controllers: [UserController],
   providers: [

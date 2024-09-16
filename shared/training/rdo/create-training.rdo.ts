@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Gender, GenderEnum, TrainingType, TrainingTypeEnum, UserLevel, UserLevelEnum } from '@server/libs/types';
-import { TrainingDuration, TrainingDurationEnum } from '@shared/types/training-duration.enum';
+import { TrainingDuration, TrainingDurationEnum } from '@shared/training/types/training-duration.enum';
 import { TrainingValidation } from '@server/training/training.constant';
 import { Expose, Type } from 'class-transformer';
 import { UserRDO } from '@shared/user';

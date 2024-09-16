@@ -1,19 +1,15 @@
 import { ReactElement } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { Swiper, SwiperSlide } from 'swiper/react';
-import { Navigation } from 'swiper/modules';
-import 'swiper/css';
-import 'swiper/css/bundle';
-
 import { AppRoute, POPULAR_MAX_SLIDES_COUNT } from '@client/src/const';
 import { useAppSelector } from '@client/src/hooks';
 import { getWithRatingTrainingsLoadingStatus } from '@client/src/store/slices/training-process/training-process.selectors';
 import useWithRatingTrainingsList from '@client/src/hooks/useWithRatingTrainingsList';
 
 import Spinner from '../tools/spinner/spinner';
-import PopularTrainingsItem from './popular-trainings-item/popular-trainings-item';
 import Stub from '../tools/stub/stub';
+import TrainingsSlider from '../trainings/trainings-slider/trainings-slider';
+
 import { getCurrentUserInfo } from '@client/src/store/slices/user-process/user-process.selectors';
 import { UserRoleEnum } from '@shared/types/user-roles.enum';
 
@@ -93,38 +89,13 @@ export default function PopularTrainings(): ReactElement {
 
           {
             trainings &&
-            <Swiper
-              className='popular-trainings__list'
-              modules={[Navigation]}
-              spaceBetween={20}
-              slidesPerView={4}
-              slidesPerGroup={4}
-              allowTouchMove={false}
-              speed={1500}
-
-              navigation={{
-                enabled: true,
-                prevEl: '.popular-trainings__control--prev',
-                nextEl: '.popular-trainings__control--next',
-              }}
-            >
-              {
-                slides && slides.map((training) => {
-                  const itemProps = {
-                    ...training,
-                    id: training.id as string,
-                    rating: training.rating as number,
-                    discount: training.discount as number,
-                  };
-
-                  return (
-                    <SwiperSlide key={training.id}>
-                      <PopularTrainingsItem training={itemProps} />
-                    </SwiperSlide>
-                  )
-                })
-              }
-            </Swiper>
+            <TrainingsSlider
+              trainingsList={trainings}
+              sliderClass='popular-trainings__list'
+              prevBtnClass='popular-trainings__control--prev'
+              nextBtnClass='popular-trainings__control--next'
+              sliderItemClass='popular-trainings__item'
+            />
           }
         </div>
       </div>

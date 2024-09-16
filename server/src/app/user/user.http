@@ -6,9 +6,9 @@ GET https://jsonplaceholder.typicode.com/todos/1 HTTP/1.1
 Content-Type: application/json
 ###
 
-@userId = 61f2e83e-5b2b-407e-9004-516914ad3ad7
-@authorization = Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIwNTY5N2IxYS1jMDI3LTQ5OWItYTAyZS1jMzMyOGY4MzMzYTIiLCJlbWFpbCI6Imlyb24tbWFuQHN0YXJraW5kdXN0cmllcy5pdCIsIm5hbWUiOiJUb255Iiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzIyNDQxMDE3LCJleHAiOjE3MjI0NDE5MTd9.iN12e5loILcTbjyHx_0Mz73koj8lBHjv1O6bFKuQj30
-@refresh = Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIwNTY5N2IxYS1jMDI3LTQ5OWItYTAyZS1jMzMyOGY4MzMzYTIiLCJlbWFpbCI6Imlyb24tbWFuQHN0YXJraW5kdXN0cmllcy5pdCIsIm5hbWUiOiJUb255Iiwicm9sZSI6ImFkbWluIiwidG9rZW5JZCI6IjdlMDE0ZjQ0LTg0M2ItNDc3ZS1hY2VkLTIyODAwZDI2OGFhZiIsImlhdCI6MTcyMjQzNzY4NSwiZXhwIjoxNzIyNDM4NTg1fQ._DudEzkZl9ZjgGi4Ee4X-B0rZBknHPzYDPeOf_emuDY
+@userId = fe302885-fb20-4b7f-a381-862d9f1eb0c2
+@authorization = Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIxMmQyNjE3NC00Y2RkLTRmZjktODMyOS03MzViNDI4MGI0YWIiLCJlbWFpbCI6Imlyb24tbWFuQHN0YXJraW5kdXN0cmllcy5pdCIsIm5hbWUiOiJUb255Iiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzI2NDM1MzY5LCJleHAiOjE3MjY0MzYyNjl9.1xvEsBdq3E4XnnKezLwLwgXQ1senZ59butNvILuNcok
+@refresh = Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJmZTMwMjg4NS1mYjIwLTRiN2YtYTM4MS04NjJkOWYxZWIwYzIiLCJlbWFpbCI6Imlyb24tbWFuQHN0YXJraW5kdXN0cmllcy5pdCIsIm5hbWUiOiJUb255Iiwicm9sZSI6ImFkbWluIiwidG9rZW5JZCI6ImJkMGZlZGJkLWY1MzctNDlmNS04MWM1LWY3OGE1ODcyZDVmMSIsImlhdCI6MTcyNjM5ODY0MSwiZXhwIjoxNzI2Mzk5NTQxfQ.KenTHvB3m33IQRzm2IfYkwmmctRA4BonFA-dSiUyBtU
 
 # /////////////////////////////////// AUTNENTICATION ///////////////////////////////////
 # Create new user
@@ -52,6 +52,12 @@ POST {{baseUrl}}/refresh/ HTTP/1.1
 ###
 
 # /////////////////////////////////// USER ///////////////////////////////////
+# Get users list
+GET {{baseUrl}}/search HTTP/1.1
+Content-Type: application/json
+{{authorization}}
+###
+
 # Get detail info about user
 GET {{baseUrl}}/ HTTP/1.1
 Content-Type: application/json
@@ -75,4 +81,74 @@ DELETE {{baseUrl}}/{{userId}} HTTP/1.1
 
 # Get additional info
 GET {{baseUrl}}/additional HTTP/1.1
+###
+
+# /////////////////////////////////// FRIENDSHIP ///////////////////////////////////
+# Get current user's friends
+GET {{baseUrl}}/friends HTTP/1.1
+Content-Type: application/json
+{{authorization}}
+###
+
+
+# Add friend to current user
+POST {{baseUrl}}/friends HTTP/1.1
+Content-Type: application/json
+{{authorization}}
+
+{
+  "targetUserId": "4ebff09a-b596-470c-b462-171df67e4631"
+}
+###
+
+# Remove friend from current user
+DELETE {{baseUrl}}/friends HTTP/1.1
+Content-Type: application/json
+{{authorization}}
+
+{
+  "targetUserId": "4ebff09a-b596-470c-b462-171df67e4631"
+}
+###
+
+# Remove friend from other user
+DELETE {{baseUrl}}/friends HTTP/1.1
+Content-Type: application/json
+{{authorization}}
+
+{
+  "otherCurrentUser": "8c132bfa-b758-40ab-9663-b1f637848d04",
+  "targetUserId": "4ebff09a-b596-470c-b462-171df67e4631"
+}
+###
+
+# /////////////////////////////////// SEARCH ///////////////////////////////////
+# Default
+GET {{baseUrl}}/search/ HTTP/1.1
+{{authorization}}
+###
+
+# By role
+GET {{baseUrl}}/search/?role=client HTTP/1.1
+{{authorization}}
+###
+
+# By level
+GET {{baseUrl}}/search/?level=профессионал HTTP/1.1
+{{authorization}}
+###
+
+# By TrainingType
+GET {{baseUrl}}/search/?trainingType=йога&trainingType=стретчинг HTTP/1.1
+{{authorization}}
+###
+
+# isReadyToTraining
+GET {{baseUrl}}/search/?isReadyToTraining=false HTTP/1.1
+{{authorization}}
+###
+
+# Complex: By level & Role
+GET {{baseUrl}}/search/?level=профессионал&role=trainer HTTP/1.1
+{{authorization}}
 ###

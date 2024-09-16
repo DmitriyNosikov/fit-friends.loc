@@ -1,22 +1,41 @@
 import { ReactElement } from 'react';
+import classNames from 'classnames';
 
-import { toast } from 'react-toastify';
 
 import Spinner from '../../tools/spinner/spinner';
-import classNames from 'classnames';
+
 import { upperCaseFirst } from '@client/src/utils/common';
+
 import { UserRDO } from '@shared/user';
+import { UserRoleEnum } from '@shared/types/user-roles.enum';
+
+import { useAppDispatch, useAppSelector } from '@client/src/hooks';
+import { getCurrentUserInfo } from '@client/src/store/slices/user-process/user-process.selectors';
+import { addUserToFriends, removeUserFromFriends } from '@client/src/store/actions/api-user-action';
 
 type PersonalCardUserProps = {
   userInfo: UserRDO
 }
 
 export default function PersonalCardUser({ userInfo }: PersonalCardUserProps): ReactElement {
-  const { name, location, isReadyToTraining, description, trainingType, level } = userInfo;
-  const statusText = userInfo?.isReadyToTraining ? 'Готов к тренировке' : 'Не готов к тренировке';
+  const dispatch = useAppDispatch();
 
-  function handleAddToFriendsBtnCLick() {
-    toast.info('Adding to friends is not implemented yet.');
+  const { id, name, location, isReadyToTraining, description, trainingType, level } = userInfo;
+  const statusText = isReadyToTraining ? 'Готов к тренировке' : 'Не готов к тренировке';
+  const currentLoggedUserInfo = useAppSelector(getCurrentUserInfo);
+
+  const isCurrentUserTrainer = (currentLoggedUserInfo?.role === UserRoleEnum.TRAINER);
+  const isUserInFriends = currentLoggedUserInfo?.friendsList.includes(id);
+  const addToFriendsBtnText = isUserInFriends ? 'Удалить из друзей' : 'Добавить в друзья';
+
+  function handleToggleFriendsBtnCLick() {
+    const targetUser = { targetUserId: id };
+
+    if (isUserInFriends) {
+      dispatch(removeUserFromFriends(targetUser));
+    } else {
+      dispatch(addUserToFriends(targetUser));
+    }
   }
 
   return (
@@ -32,14 +51,14 @@ export default function PersonalCardUser({ userInfo }: PersonalCardUserProps): R
         <div className="user-card__wrapper">
           <div className="user-card__content">
             <div className="user-card__head">
-              <h2 className="user-card__title">{ name }</h2>
+              <h2 className="user-card__title">{name}</h2>
             </div>
             <div className="user-card__label">
               <a href="">
                 <svg className="user-card-coach__icon-location" width={12} height={14} aria-hidden="true">
                   <use xlinkHref="#icon-location" />
                 </svg>
-                <span>{ upperCaseFirst(location) }</span>
+                <span>{upperCaseFirst(location)}</span>
               </a>
             </div>
             <div className={classNames(
@@ -49,13 +68,13 @@ export default function PersonalCardUser({ userInfo }: PersonalCardUserProps): R
             >
               <span>{statusText}</span>
             </div>
-            <div className="user-card__text">{ description }</div>
+            <div className="user-card__text">{description}</div>
 
             <ul className="user-card__hashtag-list">
               {
                 trainingType && trainingType.map((type) => {
                   return (
-                    <li className="user-card__hashtag-item">
+                    <li className="user-card__hashtag-item" key={type}>
                       <div className="hashtag"><span>#{type}</span></div>
                     </li>
                   )
@@ -65,11 +84,20 @@ export default function PersonalCardUser({ userInfo }: PersonalCardUserProps): R
               {
                 level &&
                 <li className="user-card__hashtag-item">
-                  <div className="hashtag"><span>#{ level }</span></div>
+                  <div className="hashtag"><span>#{level}</span></div>
                 </li>
               }
             </ul>
-            <button className="btn user-card__btn" type="button" disabled onClick={ handleAddToFriendsBtnCLick }>Добавить в друзья</button>
+
+            {
+              !isCurrentUserTrainer &&
+              <button
+                className="btn user-card__btn"
+                type="button"
+                onClick={handleToggleFriendsBtnCLick}>
+                {addToFriendsBtnText}
+              </button>
+            }
           </div>
 
           <div className="user-card__gallary">

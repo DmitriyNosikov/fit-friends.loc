@@ -26,8 +26,7 @@ export default function PersonalAccountCoach(): ReactElement {
           <span className="thumbnail-link__text">Создать тренировку</span>
         </Link>
 
-        {/*
-        <Link className="thumbnail-link thumbnail-link--theme-light" to={AppRoute.ACCOUNT}>
+        <Link className="thumbnail-link thumbnail-link--theme-light" to={AppRoute.FRIENDS}>
           <div className="thumbnail-link__icon thumbnail-link__icon--theme-light">
             <svg width={30} height={26} aria-hidden="true">
               <use xlinkHref="#icon-friends" />
@@ -35,7 +34,6 @@ export default function PersonalAccountCoach(): ReactElement {
           </div>
           <span className="thumbnail-link__text">Мои друзья</span>
         </Link>
-        */}
 
         <Link className="thumbnail-link thumbnail-link--theme-light" to={AppRoute.ORDERS}>
           <div className="thumbnail-link__icon thumbnail-link__icon--theme-light">
@@ -51,7 +49,6 @@ export default function PersonalAccountCoach(): ReactElement {
         </div>
       </div>
 
-      {/* TODO: Реализовать загрузку и изменение сертификатов */}
       <Certificates />
     </div>
   )

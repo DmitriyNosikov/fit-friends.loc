@@ -1,9 +1,7 @@
 import axios, { AxiosError, AxiosInstance, AxiosRequestConfig } from 'axios';
 import { StatusCodes } from 'http-status-codes';
 import { toast } from 'react-toastify';
-import { AUTH_TOKEN_KEY, deleteToken, getToken, REFRESH_TOKEN_KEY, setToken } from './token';
-import { useNavigate } from 'react-router-dom';
-import { AppRoute } from '../const';
+import { AUTH_TOKEN_KEY, deleteToken, getToken } from './token';
 
 export const HOST = '127.0.0.1';
 export const PORT = 8000;

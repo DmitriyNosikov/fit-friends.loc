@@ -1,32 +1,25 @@
 import { AppRoute } from '@client/src/const';
+import { getAvatarByUrl } from '@client/src/utils/common';
+import { UserRDO } from '@shared/user';
 import { ReactElement } from 'react';
 import { Link } from 'react-router-dom';
 
 type LookForCompanyItemProps = {
-  user: {
-    avatar: string,
-    name: string,
-    location: string,
-    trainingType: string
-  }
+  user: UserRDO
 }
 
 export default function LookForCompanyItem({ user }: LookForCompanyItemProps): ReactElement {
   const { avatar, name, location, trainingType } = user;
-  const [ avatarUrl, _ ] = avatar.split('.');
+  const userAvatar = getAvatarByUrl(avatar);
 
   return (
     <li className="look-for-company__item">
       <div className="thumbnail-user thumbnail-user--role-user thumbnail-user--dark">
         <div className="thumbnail-user__image">
           <picture>
-            <source
-              type="image/webp"
-              srcSet={`${avatarUrl}.webp, ${avatarUrl}@2x.webp 2x`}
-            />
             <img
-              src={avatar}
-              srcSet={`${avatarUrl}@2x.jpg 2x`}
+              src={userAvatar}
+              srcSet={`${userAvatar}@2x.jpg 2x`}
               width={82}
               height={82}
               alt=""
@@ -42,13 +35,20 @@ export default function LookForCompanyItem({ user }: LookForCompanyItemProps): R
             <address className="thumbnail-user__location-address">{location}</address>
           </div>
         </div>
-        <ul className="thumbnail-user__hashtags-list">
-          <li className="thumbnail-user__hashtags-item">
-            <div className="hashtag thumbnail-user__hashtag">
-              <span>#{trainingType}</span>
-            </div>
-          </li>
-        </ul>
+        {
+          trainingType &&
+          <ul className="thumbnail-user__hashtags-list">
+            {
+              trainingType.slice(0, 3).map((type) => (
+                <li className="thumbnail-user__hashtags-item" key={type}>
+                  <div className="hashtag thumbnail-user__hashtag">
+                    <span>#{type}</span>
+                  </div>
+                </li>
+              ))
+            }
+          </ul>
+        }
         <Link
           className="btn btn--outlined btn--dark-bg btn--medium thumbnail-user__button"
           to={AppRoute.MAIN}

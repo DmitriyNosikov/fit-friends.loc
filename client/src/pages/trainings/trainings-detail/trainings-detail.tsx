@@ -98,6 +98,8 @@ export default function TrainingsDetail(): ReactElement | undefined {
     calories
   } = trainingItem;
 
+  console.log('trainingItem: ', trainingItem);
+
   const trainingPrice = discount ? price - discount : price;
   const discountBtnText = trainingItem.discount ? 'Отменить скидку' : 'Сделать скидку 10%';
 
@@ -259,7 +261,15 @@ export default function TrainingsDetail(): ReactElement | undefined {
                 >Оставить отзыв</button>
               </aside>
 
-              {/* TODO: Вынести в отдельный компонент */}
+              {/*
+                TODO:
+                - Вынести в отдельный компонент
+                - Сделать возможность перехода на каточку
+                тренера при клике по аватарке (для этого, при создании
+                тренировки нужно заносить не просто имя тренера, а его
+                идентификатор, чтобы в дальнейшем иметь возможность получить
+                по нему информацию о тренере)
+              */}
               <div className="training-card">
                 <div className="training-info">
                   <h2 className="visually-hidden">Информация о тренировке</h2>

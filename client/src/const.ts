@@ -15,9 +15,12 @@ const BACKEND_API_URL = {
   TRAINING_REVIEWS: `${BASE_URL}/api/training-reviews`,
   ORDERS: `${BASE_URL}/api/orders`,
   BALANCE: `${BASE_URL}/api/balance`,
+  REQUEST: `${BASE_URL}/api/requests`,
 }
 export const ApiRoute = {
   USER_API: BACKEND_API_URL.USERS,
+  USER_FRIENDS: `${BACKEND_API_URL.USERS}/friends`,
+  USER_SEARCH: `${BACKEND_API_URL.USERS}/search`,
 
   REGISTER: `${BACKEND_API_URL.USERS}/register`,
   LOGIN: `${BACKEND_API_URL.USERS}/login`,
@@ -26,6 +29,7 @@ export const ApiRoute = {
   GET_ADDITIONAL_INFO: `${BACKEND_API_URL.USERS}/additional`,
 
   LOAD_FILES: `${BACKEND_API_URL.LOAD_FILES}/upload`,
+  LOAD_MULTIPLE_FILES: `${BACKEND_API_URL.LOAD_FILES}/multiple-upload`,
 
   TRAININGS_API: BACKEND_API_URL.TRAININGS,
   CONVENIENT_TRAININGS_API: `${BACKEND_API_URL.TRAININGS}/convenient-trainings`,
@@ -37,7 +41,9 @@ export const ApiRoute = {
 
   ORDERS_API: BACKEND_API_URL.ORDERS,
 
-  BALANCE_API: BACKEND_API_URL.BALANCE
+  BALANCE_API: BACKEND_API_URL.BALANCE,
+
+  REQUEST_API: BACKEND_API_URL.REQUEST
 } as const;
 
 // -- App
@@ -48,6 +54,8 @@ export const AppRoute = {
   REGISTRATION: '/registration',
   ACCOUNT: '/account',
   PERSONAL_CARD: '/personal-card',
+  USERS: '/users',
+  FRIENDS: '/friends',
   TRAININGS: '/trainings',
   TRAININGS_CREATE: '/trainings-create',
   ORDERS: '/orders',
@@ -62,6 +70,7 @@ export const Namespace = {
   USER: 'USER',
   TRAINING: 'TRAINING',
   TRAINING_REVIEWS: 'TRAINING_REVIEWS',
+  REQUEST: 'REQUEST',
   ORDER: 'ORDER',
   BALANCE: 'BALANCE'
 } as const;

@@ -27,7 +27,7 @@ enum PaymentType {
 
 //////////////////// USERS ////////////////////
 model User {
-  id                String    @id @default(uuid())
+  id                String    @id @default(uuid()) @unique
   createdAt         DateTime? @default(now()) @map("created_at")
   updatedAt         DateTime? @updatedAt @map("updated_at")
 
@@ -49,15 +49,51 @@ model User {
   dayCaloriesLimit  Int?      @map("day_calories_limit")
   isReadyToTraining Boolean?  @map("is_ready_to_training")
 
+  certificates      String[]
+  friendsList       String[]  @map("friends_list")
+
+  // Relations
   training Training[]
   balance Balance[]
   order Order[]
   trainingReview TrainingReview[]
   refreshToken RefreshToken[]
 
+  friends  User[]  @relation("User_friends")
+  symmetricFriends  User[]  @relation("User_friends")
+
+  Request_InitiatorUser Request[] @relation("initiatorUser")
+  Request_targetUser Request[] @relation("targetUser")
+
+  // It works, but we can`t get related fields with request (initiatorUser & targetUser)
+  // Request_InitiatorUser Request[] @relation(name: "user_initiator")
+  // Request_targetUser Request[] @relation(name: "user_target")
+
   @@map("users")
 }
 
+//////////////////// REQUESTS ////////////////////
+model Request {
+  id              String    @id @default(uuid())
+  createdAt       DateTime? @default(now()) @map("created_at")
+  updatedAt       DateTime? @updatedAt @map("updated_at")
+
+  requestType     String    @map("request_type")
+  initiatorUserId String    @map("initiator_user_id")
+  targetUserId    String    @map("target_user_id")
+  status          String
+
+  initiatorUser User @relation(name: "initiatorUser", fields: [initiatorUserId], references: [id])
+  targetUser User @relation(name: "targetUser", fields: [targetUserId], references: [id])
+
+  // It works, but we can`t get related fields with request (initiatorUser & targetUser)
+  // initiatorUser User[] @relation(name: "user_initiator")
+  // targetUser User[] @relation(name: "user_target")
+  
+  @@map("requests")
+}
+
+//////////////////// TRAINIGNS ////////////////////
 model Training {
   id                String    @id @default(uuid())
   createdAt         DateTime? @default(now()) @map("created_at")
@@ -87,6 +123,7 @@ model Training {
   @@map("trainings")
 }
 
+//////////////////// ORDERS ////////////////////
 model Order {
   id                      String      @id @default(uuid())
   createdAt               DateTime?   @default(now()) @map("created_at")
@@ -106,6 +143,7 @@ model Order {
   @@map("orders")
 }
 
+//////////////////// BALANCE ////////////////////
 model Balance {
   id                      String      @id @default(uuid())
   createdAt               DateTime?   @default(now()) @map("created_at")
@@ -123,15 +161,16 @@ model Balance {
   @@map("balances")
 }
 
+//////////////////// REVIEWS ////////////////////
 model TrainingReview {
-  id                      String      @id @default(uuid())
-  createdAt               DateTime?   @default(now()) @map("created_at")
-  updatedAt               DateTime?   @updatedAt @map("updated_at")
+  id         String      @id @default(uuid())
+  createdAt  DateTime?   @default(now()) @map("created_at")
+  updatedAt  DateTime?   @updatedAt @map("updated_at")
 
-  userId                  String      @map("user_id")
-  trainingId              String      @map("training_id")
-  rating                  Int
-  text                    String
+  userId     String      @map("user_id")
+  trainingId String      @map("training_id")
+  rating     Int
+  text       String
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
   training Training @relation(fields: [trainingId], references: [id], onDelete: Cascade)
@@ -139,6 +178,7 @@ model TrainingReview {
   @@map("training_reviews")
 }
 
+//////////////////// TOKENS ////////////////////
 model RefreshToken {
   id        String    @id @default(uuid())
   createdAt DateTime? @default(now()) @map("created_at")

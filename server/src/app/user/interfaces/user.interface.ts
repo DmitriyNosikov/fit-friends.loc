@@ -1,6 +1,6 @@
 import { Gender, Location, TrainingType, UserLevel, UserRole } from '../../libs/types';
 import { CreatedUpdatedDatesInterface } from '../../libs/interfaces/created-updated-dates.interface';
-import { TrainingDuration } from '@shared/types/training-duration.enum';
+import { TrainingDuration } from '@shared/training/types/training-duration.enum';
 
 export interface UserInterface extends CreatedUpdatedDatesInterface {
   id?: string;
@@ -20,4 +20,7 @@ export interface UserInterface extends CreatedUpdatedDatesInterface {
   loseCaloriesLimit?: number;
   dayCaloriesLimit?: number;
   isReadyToTraining?: boolean;
+
+  certificates?: string[];
+  friendsList?: string[];
 }

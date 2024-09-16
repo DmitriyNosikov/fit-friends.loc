@@ -6,3 +6,4 @@ export const UserRoleEnum = {
 
 export type UserRole = (typeof UserRoleEnum)[keyof typeof UserRoleEnum];
 export const userRolesList: UserRole[] = ['admin', 'client', 'trainer'];
+export const userRolesListWithoutAdmin: UserRole[] = ['client', 'trainer'];

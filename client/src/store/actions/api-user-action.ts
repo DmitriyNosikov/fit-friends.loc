@@ -3,9 +3,9 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 import { toast } from 'react-toastify';
 
 import { setDataLoadingStatus } from '../slices/main-process/main-process';
-import { setAdditionalInfo, setUserAuthStatus, setCurrentUserInfo, setUserInfo } from '../slices/user-process/user-process';
+import { setAdditionalInfo, setUserAuthStatus, setCurrentUserInfo, setUserInfo, appendUsersAction, setUsersAction, setUserFriendsAction, appendFriendsAction } from '../slices/user-process/user-process';
 
-import { AdditionalInfoRDO, CreateUserDTO, LoggedUserRDO, LoginUserDTO, UpdateUserDTO, UserRDO } from '@shared/user';
+import { AdditionalInfoRDO, CreateUserDTO, LoggedUserRDO, LoginUserDTO, ToggleUserFriendsDTO, UpdateUserDTO, UserRDO, UserSearchQuery, UsersWithPaginationRDO } from '@shared/user';
 import { redirectToRoute } from '../middlewares/redirect-action';
 
 
@@ -16,6 +16,8 @@ import { ApiRoute, AppRoute, AuthorizationStatus, Namespace } from '@client/src/
 import { TokenPayload } from '@client/src/types/token-payload';
 import { deleteToken, REFRESH_TOKEN_KEY, setToken } from '@client/src/services/token';
 import { UploadingFilePayload } from '@client/src/types/payloads';
+import { createSearchURL } from '@client/src/utils/adapters';
+import { BaseSearchQuery } from '@shared/types';
 
 
 
@@ -30,7 +32,16 @@ const APIAction = {
   USER_GET_DETAIL: `${APIUserPrefix}/get-detail`,
   USER_GET_BY_ID: `${APIUserPrefix}/get-by-id`,
   USER_GET_ADDITIONAL: `${APIUserPrefix}/get-additional`,
+
   USER_UPLOAD_AVATAR: `${APIUserPrefix}/upload-avatar`,
+  USER_UPLOAD_CERTIFICATES: `${APIUserPrefix}/upload-certificates`,
+
+  USER_GET_FRIENDS: `${APIUserPrefix}/get-friends`,
+  USER_ADD_TO_FRIENDS: `${APIUserPrefix}/add-to-friends`,
+  USER_REMOVE_FROM_FRIENDS: `${APIUserPrefix}/remove-from-friends`,
+
+  PAGINATION_GET_PAGE: `${APIUserPrefix}/get-pagination-page`,
+  SEARCH: `${APIUserPrefix}/search`,
 } as const;
 
 // ASYNC ACTIONS
@@ -198,7 +209,7 @@ export const loginUserAction = createAsyncThunk<void, LoginUserDTO, AsyncOptions
   }
 );
 
-export const updateUserAction = createAsyncThunk<LoggedUserRDO, UpdateUserDTO, AsyncOptions>(
+export const updateUserAction = createAsyncThunk<UserRDO, UpdateUserDTO, AsyncOptions>(
   APIAction.USER_UPDATE,
   async (
     updateUserData, // New User Data
@@ -207,7 +218,7 @@ export const updateUserAction = createAsyncThunk<LoggedUserRDO, UpdateUserDTO, A
     dispatch(setDataLoadingStatus(true));
 
     try {
-      const { data } = await api.patch<LoggedUserRDO>(ApiRoute.USER_API, updateUserData);
+      const { data } = await api.patch<UserRDO>(ApiRoute.USER_API, updateUserData);
 
       dispatch(setCurrentUserInfo(data));
       dispatch(setDataLoadingStatus(false));
@@ -225,7 +236,7 @@ export const updateUserAction = createAsyncThunk<LoggedUserRDO, UpdateUserDTO, A
   }
 );
 
-export const uploadFileAction = createAsyncThunk<string | unknown, FormData, AsyncOptions>(
+export const uploadAvatarAction = createAsyncThunk<string | unknown, FormData, AsyncOptions>(
   APIAction.USER_UPLOAD_AVATAR,
   async (
     fileFormData, // Avatar Form Data
@@ -233,7 +244,6 @@ export const uploadFileAction = createAsyncThunk<string | unknown, FormData, Asy
   ) => {
     dispatch(setDataLoadingStatus(true));
 
-    // Аватар нужно загружать отдельно
     if(fileFormData) {
       try {
         const { data: avatarUrl } = await api.post<string>(ApiRoute.LOAD_FILES, fileFormData);
@@ -241,6 +251,34 @@ export const uploadFileAction = createAsyncThunk<string | unknown, FormData, Asy
         dispatch(setDataLoadingStatus(false));
 
         return avatarUrl;
+      } catch(err) {
+        toast.warn(`Can't load file: ${err}`);
+
+        dispatch(setDataLoadingStatus(false));
+
+        return rejectWithValue(err);
+      }
+    }
+  }
+);
+
+export const uploadCertificateAction = createAsyncThunk<string | unknown, FormData, AsyncOptions>(
+  APIAction.USER_UPLOAD_CERTIFICATES,
+  async (
+    fileFormData, // Files
+    { dispatch, rejectWithValue, extra: api } // AsyncOptions
+  ) => {
+    dispatch(setDataLoadingStatus(true));
+
+    console.log('Files: ', fileFormData);
+
+    if(fileFormData) {
+      try {
+        const { data } = await api.post<string>(ApiRoute.LOAD_MULTIPLE_FILES, fileFormData);
+
+        dispatch(setDataLoadingStatus(false));
+
+        return data;
       } catch(err) {
         toast.warn(`Can't load file: ${err}`);
 
@@ -269,6 +307,178 @@ export const fetchAdditionalInfoAction = createAsyncThunk<AdditionalInfoRDO, voi
       dispatch(setAdditionalInfo(null));
       dispatch(setDataLoadingStatus(false));
 
+      return rejectWithValue(err);
+    }
+  }
+);
+
+// Friends
+export type SearchUserFriendsData = {
+  searchQuery: BaseSearchQuery,
+  appendItems?: boolean
+};
+
+export const fetchUserFriendsAction = createAsyncThunk<UsersWithPaginationRDO, SearchUserFriendsData, AsyncOptions>(
+  APIAction.USER_GET_FRIENDS,
+  async (
+    { searchQuery, appendItems },
+    { dispatch, rejectWithValue, extra: api }
+  ) => {
+    dispatch(setDataLoadingStatus(true));
+
+    try {
+      let url = createSearchURL(`${ApiRoute.USER_FRIENDS}/`, searchQuery as unknown as Record<string, unknown>);
+      const { data } = await api.get<UsersWithPaginationRDO>(url);
+
+      if (!appendItems) {
+        dispatch(setUserFriendsAction(data));
+
+        dispatch(setDataLoadingStatus(false));
+        return data;
+      }
+
+      dispatch(appendFriendsAction(data));
+      dispatch(setDataLoadingStatus(false));
+
+      return data;
+    } catch(err) {
+      toast.warn(`Can't get user's friends: ${err}`);
+
+      dispatch(setDataLoadingStatus(false));
+
+      return rejectWithValue(err);
+    }
+  }
+);
+
+export type TargetUserIdPayload = {
+  targetUserId: string
+}
+
+export const addUserToFriends = createAsyncThunk<UserRDO, TargetUserIdPayload, AsyncOptions>(
+  APIAction.USER_ADD_TO_FRIENDS,
+  async (
+    addingUserData,
+    { dispatch, rejectWithValue, extra: api }
+  ) => {
+    dispatch(setDataLoadingStatus(true));
+
+    const { targetUserId } = addingUserData;
+
+    try {
+      const { data } = await api.post<UserRDO>(ApiRoute.USER_FRIENDS, addingUserData);
+
+      toast.success(`User ${targetUserId} has been successfully added to friends`);
+
+      dispatch(setCurrentUserInfo(data));
+      dispatch(setDataLoadingStatus(false));
+
+      return data;
+    } catch(err) {
+      toast.warn(`Can't add user ${targetUserId} to friends: ${err}`);
+
+      dispatch(setDataLoadingStatus(false));
+
+      return rejectWithValue(err);
+    }
+  }
+);
+
+export const removeUserFromFriends = createAsyncThunk<UserRDO, TargetUserIdPayload, AsyncOptions>(
+  APIAction.USER_REMOVE_FROM_FRIENDS,
+  async (
+    removingUserData,
+    { dispatch, rejectWithValue, extra: api }
+  ) => {
+    dispatch(setDataLoadingStatus(true));
+
+    const { targetUserId } = removingUserData;
+
+    try {
+      const { data } = await api.delete<UserRDO>(ApiRoute.USER_FRIENDS, { data: removingUserData });
+
+      toast.success(`User ${targetUserId} has been successfully removed from friends`);
+
+      dispatch(setCurrentUserInfo(data));
+      dispatch(setDataLoadingStatus(false));
+
+      return data;
+    } catch(err) {
+      toast.warn(`Can't remove user ${targetUserId} from friends: ${err}`);
+
+      dispatch(setDataLoadingStatus(false));
+
+      return rejectWithValue(err);
+    }
+  }
+);
+
+// Pagination
+type PageNumber = number;
+
+export const getPaginationPage = createAsyncThunk<void, PageNumber, AsyncOptions>(
+  APIAction.PAGINATION_GET_PAGE,
+  async (
+    pageNumber,
+    { dispatch, extra: api }
+  ) => {
+    dispatch(setDataLoadingStatus(true));
+
+    try {
+      const { data } = await api.get<UsersWithPaginationRDO>(`${ApiRoute.USER_SEARCH}/?page=${pageNumber}`);
+
+      dispatch(appendUsersAction(data));
+    } catch (err) {
+      toast.error(`Cant't get pagination page ${pageNumber}. Error: ${err}`);
+    }
+
+    dispatch(setDataLoadingStatus(false));
+  }
+);
+
+type SearchUsersData = {
+  searchQuery: UserSearchQuery,
+  appendItems?: boolean
+};
+
+export const searchUsersAction = createAsyncThunk<UsersWithPaginationRDO, SearchUsersData, AsyncOptions>(
+  APIAction.SEARCH,
+  async (
+    { searchQuery, appendItems },
+    { dispatch, rejectWithValue, extra: api }
+  ) => {
+    dispatch(setDataLoadingStatus(true));
+
+    let url = createSearchURL(`${ApiRoute.USER_SEARCH}/`, searchQuery as Record<string, unknown>);
+
+    // Запрашиваем данные с сервера
+    try {
+      const { data } = await api.get<UsersWithPaginationRDO>(url);
+
+      if (!data) {
+        toast.info('No users found by passed filter');
+      }
+
+      if (!appendItems) {
+        dispatch(setUsersAction(data));
+
+        dispatch(setDataLoadingStatus(false));
+        return data;
+      }
+
+      // Если передан параметр appendItems, это значит
+      // что результат запроса нужно добавить к текущему
+      // состоянию, а не заменить им все состояние, т.е.
+      // в данном случае, к текущему списку пользователей добавить
+      // полученные от сервера
+      dispatch(appendUsersAction(data));
+
+      dispatch(setDataLoadingStatus(false));
+      return data;
+    } catch (err) {
+      toast.error(`Can't get users. Error: ${err}`);
+
+      dispatch(setDataLoadingStatus(false));
       return rejectWithValue(err);
     }
   }

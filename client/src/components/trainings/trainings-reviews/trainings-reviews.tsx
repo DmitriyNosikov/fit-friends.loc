@@ -12,8 +12,7 @@ import { getTrainingsReviewsLoadingStatus } from '@client/src/store/slices/train
 import useFetchTrainingReviewsList from '@client/src/hooks/useFetchTrainingReviewsList';
 
 import Spinner from '../../tools/spinner/spinner';
-
-
+import { getAvatarByUrl } from '@client/src/utils/common';
 
 const REVIEWS_CONTAINER_MAX_HEIGHT = 976;
 
@@ -50,14 +49,7 @@ export default function TrainingsReviews({ trainingId }: TrainingsReviewsProps):
         {
           reviewsList && reviewsList.map((review) => {
             const { userInfo, rating, text } = review;
-
-            const avatarImg = userInfo?.avatar;
-
-            const userAvatar = avatarImg
-              ? avatarImg.startsWith('/static') // Путь к загруженным на сервер аватаркам начинается с /static
-                ? `${BASE_URL}${avatarImg}` // Для аватарок, загруженных на сервер юзерами
-                : avatarImg // Для моковых изображений, которыя "захардкожены" в сидировании
-              : DEFAULT_AVATAR_URL; // Если аватарки нет
+            const userAvatar = getAvatarByUrl(userInfo?.avatar);
 
             return (
               <li className="reviews-side-bar__item" key={review.id}>

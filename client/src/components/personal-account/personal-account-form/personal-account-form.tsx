@@ -9,11 +9,11 @@ import { LoggedUserRDO, UpdateUserDTO } from '@shared/user';
 import { BASE_URL } from '@client/src/services/api';
 
 import { getAdaptedUserLevel } from '@client/src/utils/adapters';
-import { areArraysEqual, getImgPreviewLink, upperCaseFirst } from '@client/src/utils/common';
+import { areArraysEqual, getFilePreviewLink, upperCaseFirst } from '@client/src/utils/common';
 
 import Specialization from '../specialization/specialization';
 import CustomSelectBtn from '../../custom-select-btn/custom-select-btn';
-import { updateUserAction, uploadFileAction } from '@client/src/store/actions/api-user-action';
+import { updateUserAction, uploadAvatarAction } from '@client/src/store/actions/api-user-action';
 
 
 import { clearErrors, validateFields } from '@client/src/validation/validation-tools';
@@ -83,7 +83,7 @@ export default function PersonalAccountForm({ userInfo }: PersonalAccountFormPro
 
     const avatar = target?.files[0];
 
-    getImgPreviewLink(avatar, (link: string | ArrayBuffer | null) => {
+    getFilePreviewLink(avatar, (link: string | ArrayBuffer | null) => {
       if (link) {
         avatarContainer?.setAttribute('src', link as string);
       }
@@ -101,7 +101,7 @@ export default function PersonalAccountForm({ userInfo }: PersonalAccountFormPro
       return;
     }
 
-    dispatch(uploadFileAction(newUserAvatar))
+    dispatch(uploadAvatarAction(newUserAvatar))
       .then((uploadAvatarResult) => {
         if ('error' in uploadAvatarResult) {
           return;
@@ -206,11 +206,23 @@ export default function PersonalAccountForm({ userInfo }: PersonalAccountFormPro
               onChange={handleAvatarChange}
               disabled={!formEditable}
             />
-            <Link to={`${AppRoute.PERSONAL_CARD}/${userInfo.id}`}>
+
+            {
+              formEditable &&
               <span className="input-load-avatar__avatar">
                 <img src={userAvatarUrl} width={98} height={98} alt="user photo" />
               </span>
-            </Link>
+            }
+
+            {
+              !formEditable &&
+              <Link to={`${AppRoute.PERSONAL_CARD}/${userInfo.id}`}>
+                <span className="input-load-avatar__avatar">
+                  <img src={userAvatarUrl} width={98} height={98} alt="user photo" />
+                </span>
+              </Link>
+            }
+
           </label>
         </div>
         <div className={

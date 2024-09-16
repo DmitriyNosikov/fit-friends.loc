@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Gender, GenderEnum, TrainingType, TrainingTypeEnum, UserLevel, UserLevelEnum, genderTypeList, trainingTypeList, userLevelList } from '@server/libs/types';
-import { TrainingDuration, TrainingDurationEnum, trainingDurationList } from '@shared/types/training-duration.enum';
+import { TrainingDuration, TrainingDurationEnum, trainingDurationList } from '@shared/training/types/training-duration.enum';
 import { TRAINING_DEFAULT, TrainingValidation } from '@server/training/training.constant';
 import {
     IsBoolean,

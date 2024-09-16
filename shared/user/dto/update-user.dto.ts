@@ -171,4 +171,22 @@ export class UpdateUserDTO {
   @IsBoolean()
   @IsOptional()
   isReadyToTraining?: boolean;
+
+  @ApiProperty({
+    description: 'User certificates (for trainers only)',
+    example: '["/static/2024/09/03/224297181810-6.pdf", "/static/2024/09/03/224297181810-1.pdf", "/static/2024/09/03/224297181810-3.pdf"]',
+  })
+  @IsArray()
+  @IsString({ each: true })
+  @IsOptional()
+  certificates?: string[];
+
+  @ApiProperty({
+    description: 'User friends list',
+    example: '["8c132bfa-b758-40ab-9663-b1f637848d04", "fe302885-fb20-4b7f-a381-862d9f1eb0c2"]',
+  })
+  @IsArray()
+  @IsString({ each: true })
+  @IsOptional()
+  friendsList?: string[];
 }

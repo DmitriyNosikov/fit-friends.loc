@@ -7,10 +7,119 @@ paths:
       responses:
         "200":
           description: ""
+  /api/users/search:
+    get:
+      operationId: UserController_index
+      summary: Get users list
+      parameters:
+        - name: sortDirection
+          required: false
+          in: query
+          description: "Sorting direction. Default direction: desc"
+          example: " desc"
+          schema:
+            enum:
+              - asc
+              - desc
+            type: string
+        - name: sortType
+          required: false
+          in: query
+          description: "Sorting type. Default sort type: createdAt"
+          example: createdAt
+          schema:
+            enum:
+              - createdAt
+            type: string
+        - name: page
+          required: false
+          in: query
+          description: 'Current page in pagination (if items count more than "limit").
+            Default page: 1'
+          example: "1"
+          schema: {}
+        - name: limit
+          required: false
+          in: query
+          description: "Items per page (pagination). Max limit: 50"
+          example: "50"
+          schema: {}
+        - name: createdAt
+          required: false
+          in: query
+          description: Item's creation date
+          example: 2024-05-29
+          schema: {}
+        - name: isReadyToTraining
+          required: false
+          in: query
+          description: User's preparation for training status
+          example: "true"
+          schema: {}
+        - name: role
+          required: false
+          in: query
+          description: User's role
+          example: "['client', 'trainer']"
+          schema:
+            enum:
+              - admin
+              - client
+              - trainer
+            type: string
+        - name: level
+          required: false
+          in: query
+          description: User's training level
+          example: "['новичок', 'любитель', 'профессионал']"
+          schema:
+            enum:
+              - новичок
+              - любитель
+              - профессионал
+            type: string
+        - name: trainingType
+          required: false
+          in: query
+          description: User's specialization (training types)
+          example: "['йога', 'бег', 'бокс', 'стретчинг', 'кроссфит', 'аэробика',
+            'пилатес']"
+          schema:
+            enum:
+              - йога
+              - бег
+              - бокс
+              - стретчинг
+              - кроссфит
+              - аэробика
+              - пилатес
+            type: string
+        - name: location
+          required: false
+          in: query
+          description: User's location
+          example: "['пионерская', 'петроградская', 'удельная', 'звездная', 'спортивная']"
+          schema:
+            enum:
+              - пионерская
+              - петроградская
+              - удельная
+              - звездная
+              - спортивная
+            type: string
+      responses:
+        "201":
+          description: Users found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UsersWithPaginationRDO"
+      tags: &a1
+        - users
   /api/users/additional:
     get:
       operationId: UserController_getAdditionalInfo
-      summary: Return additional info about availible genders, locations, training
+      summary: Return additional info about available genders, locations, training
         types and training durations
       parameters: []
       responses:
@@ -26,8 +135,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/AdditionalInfoRDO"
-      tags: &a1
-        - users
+      tags: *a1
   /api/users/register:
     post:
       operationId: UserController_create
@@ -70,6 +178,85 @@ paths:
         "401":
           description: Incorrect user email/password
       tags: *a1
+  /api/users/friends:
+    get:
+      operationId: UserController_getFriends
+      summary: Get all current user`s friends
+      parameters:
+        - name: sortDirection
+          required: false
+          in: query
+          description: "Sorting direction. Default direction: desc"
+          example: " desc"
+          schema:
+            enum:
+              - asc
+              - desc
+            type: string
+        - name: sortType
+          required: false
+          in: query
+          description: "Sorting type. Default sort type: createdAt"
+          example: createdAt
+          schema:
+            enum:
+              - createdAt
+            type: string
+        - name: page
+          required: false
+          in: query
+          description: 'Current page in pagination (if items count more than "limit").
+            Default page: 1'
+          example: "1"
+          schema: {}
+        - name: limit
+          required: false
+          in: query
+          description: "Items per page (pagination). Max limit: 50"
+          example: "50"
+          schema: {}
+        - name: createdAt
+          required: false
+          in: query
+          description: Item's creation date
+          example: 2024-05-29
+          schema: {}
+      responses:
+        "201":
+          description: Users found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UsersWithPaginationRDO"
+      tags: *a1
+    post:
+      operationId: UserController_addFriend
+      summary: Add new friend to current user
+      parameters: []
+      responses:
+        "200":
+          description: Friend has been successfully added
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserRDO"
+        "401":
+          description: Incorrect user email/password
+      tags: *a1
+    delete:
+      operationId: UserController_removeFriend
+      summary: Delete friend from current user
+      parameters: []
+      responses:
+        "200":
+          description: Friend has been successfully removed
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserRDO"
+        "401":
+          description: Incorrect user email/password
+      tags: *a1
   /api/users:
     get:
       operationId: UserController_show
@@ -77,7 +264,7 @@ paths:
       parameters: []
       responses:
         "200":
-          description: User found
+          description: Users found
           content:
             application/json:
               schema:
@@ -112,7 +299,7 @@ paths:
             type: string
       responses:
         "200":
-          description: User found
+          description: Users found
           content:
             application/json:
               schema:
@@ -168,8 +355,264 @@ paths:
       responses:
         "201":
           description: ""
-      tags:
+      tags: &a2
         - files
+  /api/files/multiple-upload:
+    post:
+      operationId: FileVaultController_uploadFiles
+      parameters: []
+      responses:
+        "201":
+          description: ""
+      tags: *a2
+  /api/requests:
+    post:
+      operationId: RequestController_create
+      summary: Add new training request
+      parameters: []
+      responses:
+        "201":
+          description: Request has been successfully created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreateRequestRDO"
+      tags: &a3
+        - requests
+  /api/requests/{requestId}:
+    patch:
+      operationId: RequestController_update
+      summary: Update request info
+      parameters:
+        - name: requestId
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        "201":
+          description: Request has bees successfully updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreateRequestRDO"
+        "400":
+          description: "Can`t update request. Possible reason: Object with fields to
+            update are empty"
+      tags: *a3
+    delete:
+      operationId: RequestController_delete
+      summary: Delete request
+      parameters:
+        - name: requestId
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Request has been successfully deleted
+      tags: *a3
+  /api/requests/by-target/{targetUserId}:
+    get:
+      operationId: RequestController_getAllRequestsToTarget
+      summary: Get all requests to target user
+      parameters:
+        - name: targetUserId
+          required: true
+          in: path
+          schema:
+            type: string
+        - name: sortDirection
+          required: false
+          in: query
+          description: "Sorting direction. Default direction: desc"
+          example: " desc"
+          schema:
+            enum:
+              - asc
+              - desc
+            type: string
+        - name: sortType
+          required: false
+          in: query
+          description: "Sorting type. Default sort type: createdAt"
+          example: createdAt
+          schema:
+            enum:
+              - createdAt
+            type: string
+        - name: page
+          required: false
+          in: query
+          description: 'Current page in pagination (if items count more than "limit").
+            Default page: 1'
+          example: "1"
+          schema: {}
+        - name: limit
+          required: false
+          in: query
+          description: "Items per page (pagination). Max limit: 50"
+          example: "50"
+          schema: {}
+        - name: createdAt
+          required: false
+          in: query
+          description: Item's creation date
+          example: 2024-05-29
+          schema: {}
+      responses:
+        "201":
+          description: Requests found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RequestsWithPaginationRDO"
+      tags: *a3
+  /api/requests/by-initiator/{initiatorUserId}:
+    get:
+      operationId: RequestController_getAllRequestsByInitiator
+      summary: Get all requests from initiator user
+      parameters:
+        - name: initiatorUserId
+          required: true
+          in: path
+          schema:
+            type: string
+        - name: sortDirection
+          required: false
+          in: query
+          description: "Sorting direction. Default direction: desc"
+          example: " desc"
+          schema:
+            enum:
+              - asc
+              - desc
+            type: string
+        - name: sortType
+          required: false
+          in: query
+          description: "Sorting type. Default sort type: createdAt"
+          example: createdAt
+          schema:
+            enum:
+              - createdAt
+            type: string
+        - name: page
+          required: false
+          in: query
+          description: 'Current page in pagination (if items count more than "limit").
+            Default page: 1'
+          example: "1"
+          schema: {}
+        - name: limit
+          required: false
+          in: query
+          description: "Items per page (pagination). Max limit: 50"
+          example: "50"
+          schema: {}
+        - name: createdAt
+          required: false
+          in: query
+          description: Item's creation date
+          example: 2024-05-29
+          schema: {}
+      responses:
+        "201":
+          description: Requests found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RequestsWithPaginationRDO"
+      tags: *a3
+  /api/requests/by-users:
+    get:
+      operationId: RequestController_findByInitiatorAndTargetUsers
+      summary: Get request by user and trainer
+      parameters: []
+      responses:
+        "201":
+          description: Request has been successfully created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreateRequestRDO"
+      tags: *a3
+  /api/requests/search:
+    get:
+      operationId: RequestController_search
+      summary: Search by requests
+      parameters:
+        - name: sortDirection
+          required: false
+          in: query
+          description: "Sorting direction. Default direction: desc"
+          example: " desc"
+          schema:
+            enum:
+              - asc
+              - desc
+            type: string
+        - name: sortType
+          required: false
+          in: query
+          description: "Sorting type. Default sort type: createdAt"
+          example: createdAt
+          schema:
+            enum:
+              - createdAt
+            type: string
+        - name: page
+          required: false
+          in: query
+          description: 'Current page in pagination (if items count more than "limit").
+            Default page: 1'
+          example: "1"
+          schema: {}
+        - name: limit
+          required: false
+          in: query
+          description: "Items per page (pagination). Max limit: 50"
+          example: "50"
+          schema: {}
+        - name: createdAt
+          required: false
+          in: query
+          description: Item's creation date
+          example: 2024-05-29
+          schema: {}
+      responses:
+        "200":
+          description: Requests found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RequestsWithPaginationRDO"
+        "404":
+          description: Request not found
+      tags: *a3
+  /api/requests/all-user-requests:
+    get:
+      operationId: RequestController_getAllUserRequests
+      summary: Get all user requests, where he either initiator or target
+      parameters:
+        - name: requestType
+          required: false
+          in: query
+          description: Request type
+          example: training
+          schema:
+            type: string
+      responses:
+        "201":
+          description: Requests found
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/CreateRequestRDO"
+      tags: *a3
   /api/trainings:
     post:
       operationId: TrainingController_create
@@ -188,7 +631,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/CreateTrainingDTO"
-      tags: &a2
+      tags: &a4
         - trainings
     get:
       operationId: TrainingController_index
@@ -319,7 +762,7 @@ paths:
                 $ref: "#/components/schemas/TrainingsWithPaginationRDO"
         "404":
           description: Training not found
-      tags: *a2
+      tags: *a4
   /api/trainings/convenient-trainings:
     get:
       operationId: TrainingController_getTrainingsForUser
@@ -334,7 +777,7 @@ paths:
                 $ref: "#/components/schemas/TrainingsWithPaginationRDO"
         "404":
           description: Training not found
-      tags: *a2
+      tags: *a4
   /api/trainings/with-discount:
     get:
       operationId: TrainingController_getTrainigsWithDiscount
@@ -349,7 +792,7 @@ paths:
                 $ref: "#/components/schemas/TrainingsWithPaginationRDO"
         "404":
           description: Training not found
-      tags: *a2
+      tags: *a4
   /api/trainings/with-rating:
     get:
       operationId: TrainingController_getTrainigsWithRating
@@ -364,7 +807,7 @@ paths:
                 $ref: "#/components/schemas/TrainingsWithPaginationRDO"
         "404":
           description: Training not found
-      tags: *a2
+      tags: *a4
   /api/trainings/filter-params:
     get:
       operationId: TrainingController_getTrainingFIlterParams
@@ -379,7 +822,7 @@ paths:
                 $ref: "#/components/schemas/TrainingFilterParamsRDO"
         "404":
           description: Training not found
-      tags: *a2
+      tags: *a4
   /api/trainings/{trainingId}:
     get:
       operationId: TrainingController_show
@@ -399,7 +842,7 @@ paths:
                 $ref: "#/components/schemas/CreateTrainingRDO"
         "404":
           description: Training not found
-      tags: *a2
+      tags: *a4
     patch:
       operationId: TrainingController_updateTraining
       summary: Update training info
@@ -425,7 +868,7 @@ paths:
         "400":
           description: "Can`t update Training. Possible reason: Object with fields to
             update are empty"
-      tags: *a2
+      tags: *a4
     delete:
       operationId: TrainingController_deleteTraining
       summary: Delete training
@@ -438,7 +881,7 @@ paths:
       responses:
         "200":
           description: Training has been successfully deleted
-      tags: *a2
+      tags: *a4
   /api/training-reviews/{trainingId}:
     get:
       operationId: TrainingReviewController_index
@@ -485,7 +928,7 @@ paths:
       responses:
         "200":
           description: ""
-      tags: &a3
+      tags: &a5
         - training-reviews
     post:
       operationId: TrainingReviewController_create
@@ -510,7 +953,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/CreateTrainingReviewRDO"
-      tags: *a3
+      tags: *a5
   /api/training-reviews/{trainingId}/{reviewId}:
     patch:
       operationId: TrainingReviewController_update
@@ -537,7 +980,7 @@ paths:
         "400":
           description: "Can`t update review. Possible reason: Object with fields to update
             are empty"
-      tags: *a3
+      tags: *a5
     delete:
       operationId: TrainingReviewController_delete
       summary: Delete training review
@@ -550,7 +993,7 @@ paths:
       responses:
         "200":
           description: Review has been successfully deleted
-      tags: *a3
+      tags: *a5
   /api/orders:
     post:
       operationId: OrderController_create
@@ -569,7 +1012,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/CreateOrderDTO"
-      tags: &a4
+      tags: &a6
         - orders
     get:
       operationId: OrderController_index
@@ -634,7 +1077,7 @@ paths:
       responses:
         "200":
           description: ""
-      tags: *a4
+      tags: *a6
   /api/orders/{orderId}:
     get:
       operationId: OrderController_show
@@ -654,7 +1097,7 @@ paths:
                 $ref: "#/components/schemas/CreateOrderRDO"
         "404":
           description: Orders not found
-      tags: *a4
+      tags: *a6
     patch:
       operationId: OrderController_updateTraining
       summary: Update order info
@@ -680,7 +1123,7 @@ paths:
         "400":
           description: "Can`t update order. Possible reason: Object with fields to update
             are empty"
-      tags: *a4
+      tags: *a6
     delete:
       operationId: OrderController_deleteOrder
       summary: Delete order
@@ -693,7 +1136,7 @@ paths:
       responses:
         "200":
           description: Order has been successfully deleted
-      tags: *a4
+      tags: *a6
   /api/balance:
     post:
       operationId: BalanceController_create
@@ -711,8 +1154,8 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/CreateBalanceDTO"
-      tags: &a5
+                $ref: "#/components/schemas/CreateBalanceRDO"
+      tags: &a7
         - balance
     get:
       operationId: BalanceController_index
@@ -762,12 +1205,10 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/CreateBalanceRDO"
+                $ref: "#/components/schemas/BalancesWithPaginationRDO"
         "404":
           description: Balance not found
-      tags: *a5
+      tags: *a7
   /api/balance/by-training/{trainingId}:
     get:
       operationId: BalanceController_getUserBalance
@@ -785,7 +1226,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/CreateBalanceDTO"
-      tags: *a5
+      tags: *a7
   /api/balance/count:
     get:
       operationId: BalanceController_countBalance
@@ -800,7 +1241,7 @@ paths:
                 type: number
         "404":
           description: Balance not found
-      tags: *a5
+      tags: *a7
   /api/balance/increase:
     patch:
       operationId: BalanceController_increaseBalance
@@ -821,7 +1262,7 @@ paths:
                 $ref: "#/components/schemas/CreateBalanceRDO"
         "404":
           description: Balance not found
-      tags: *a5
+      tags: *a7
   /api/balance/decrease:
     patch:
       operationId: BalanceController_decreaseBalance
@@ -842,7 +1283,7 @@ paths:
                 $ref: "#/components/schemas/CreateBalanceRDO"
         "404":
           description: Balance not found
-      tags: *a5
+      tags: *a7
   /api/balance/{balanceId}:
     patch:
       operationId: BalanceController_update
@@ -869,7 +1310,7 @@ paths:
         "400":
           description: "Can`t update order. Possible reason: Object with fields to update
             are empty"
-      tags: *a5
+      tags: *a7
     delete:
       operationId: BalanceController_deleteOrder
       summary: Delete balance
@@ -882,16 +1323,192 @@ paths:
       responses:
         "200":
           description: Balance has been successfully deleted
-      tags: *a5
+      tags: *a7
 info:
   title: The "Fit-Friends" service
-  description: '"FIt-Friends" service API'
+  description: '"Fit-Friends" service API'
   version: "1.0"
   contact: {}
 tags: []
 servers: []
 components:
   schemas:
+    UserRDO:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Uniq user ID
+          example: g83h4y0943-nv934819843-jv934h8t-n923g48n9438
+        createdAt:
+          format: date-time
+          type: string
+          description: Created at date
+          example: 2024-04-26 13:02:24.847
+        updatedAt:
+          format: date-time
+          type: string
+          description: Updated at date
+          example: 2024-04-26 13:02:24.847
+        name:
+          type: string
+          description: User name
+          example: Tony
+          minimum: 1
+          maximum: 15
+        email:
+          type: string
+          description: User email
+          example: iron-man@starkindustries.it
+        avatar:
+          type: string
+          description: User avatar
+          example: some/interesting/avatar.jpg
+        role:
+          type: string
+          description: User role
+          example: admin
+        gender:
+          type: string
+          description: User gender
+          example: мужской
+          enum: &a8
+            - мужской
+            - женский
+            - неважно
+        birthDate:
+          format: date-time
+          type: string
+          description: User birth date
+          example: 26.09.1993
+        description:
+          type: string
+          description: User profile description
+          example: Some interesting profile description
+        location:
+          type: string
+          description: User metro station
+          example: звездная
+          enum: &a9
+            - пионерская
+            - петроградская
+            - удельная
+            - звездная
+            - спортивная
+        pageBackground:
+          type: string
+          description: User profile background. If not passed = User avatar
+          example: some/interesting/avatar.jpg
+        level:
+          type: string
+          description: User training level
+          example: новичок
+          enum: &a10
+            - новичок
+            - любитель
+            - профессионал
+        trainingType:
+          type: string
+          description: User trainings type
+          example: '["box", "crossfit", "running"]'
+          enum: &a11
+            - йога
+            - бег
+            - бокс
+            - стретчинг
+            - кроссфит
+            - аэробика
+            - пилатес
+        trainingDuration:
+          type: string
+          description: User training time periods (in minutes)
+          example: 10-30
+          enum: &a12
+            - 10-30
+            - 30-50
+            - 50-80
+            - 80-100
+        loseCaloriesLimit:
+          type: number
+          description: User lose calories aim
+          example: "1000"
+          minimum: 1000
+          maximum: 5000
+        dayCaloriesLimit:
+          type: number
+          description: User calories per day limit
+          example: "5000"
+          minimum: 1000
+          maximum: 5000
+        isReadyToTraining:
+          type: boolean
+          description: Is user ready to training
+          example: "true"
+        certificates:
+          description: User certificates (for trainers only)
+          example: '["/static/2024/09/03/224297181810-6.pdf",
+            "/static/2024/09/03/224297181810-1.pdf",
+            "/static/2024/09/03/224297181810-3.pdf"]'
+          type: array
+          items:
+            type: string
+        friendsList:
+          description: User friends list
+          example: '["8c132bfa-b758-40ab-9663-b1f637848d04",
+            "fe302885-fb20-4b7f-a381-862d9f1eb0c2"]'
+          type: array
+          items:
+            type: string
+      required:
+        - id
+        - createdAt
+        - updatedAt
+        - name
+        - email
+        - avatar
+        - role
+        - gender
+        - birthDate
+        - description
+        - location
+        - pageBackground
+        - level
+        - trainingType
+        - trainingDuration
+        - loseCaloriesLimit
+        - dayCaloriesLimit
+        - isReadyToTraining
+        - certificates
+        - friendsList
+    UsersWithPaginationRDO:
+      type: object
+      properties:
+        totalPages:
+          type: number
+          description: Paginated item pages count
+          example: 2
+        totalItems:
+          type: number
+          description: Total items count
+          example: 23
+        currentPage:
+          type: number
+          description: Current page number in pagination
+          example: 1
+        itemsPerPage:
+          type: number
+          description: items per page
+          example: 7
+        entities:
+          description: Item entities array
+          allOf:
+            - $ref: "#/components/schemas/UserRDO"
+      required:
+        - totalPages
+        - totalItems
+        - currentPage
+        - itemsPerPage
+        - entities
     AdditionalInfoRDO:
       type: object
       properties: {}
@@ -1003,6 +1620,21 @@ components:
           type: boolean
           description: Is user ready to training
           example: "true"
+        certificates:
+          description: User certificates (for trainers only)
+          example: '["/static/2024/09/03/224297181810-6.pdf",
+            "/static/2024/09/03/224297181810-1.pdf",
+            "/static/2024/09/03/224297181810-3.pdf"]'
+          type: array
+          items:
+            type: string
+        friendsList:
+          description: User friends list
+          example: '["8c132bfa-b758-40ab-9663-b1f637848d04",
+            "fe302885-fb20-4b7f-a381-862d9f1eb0c2"]'
+          type: array
+          items:
+            type: string
       required:
         - name
         - email
@@ -1020,136 +1652,8 @@ components:
         - loseCaloriesLimit
         - dayCaloriesLimit
         - isReadyToTraining
-    UserRDO:
-      type: object
-      properties:
-        id:
-          type: string
-          description: Uniq user ID
-          example: g83h4y0943-nv934819843-jv934h8t-n923g48n9438
-        createdAt:
-          format: date-time
-          type: string
-          description: Created at date
-          example: 2024-04-26 13:02:24.847
-        updatedAt:
-          format: date-time
-          type: string
-          description: Updated at date
-          example: 2024-04-26 13:02:24.847
-        name:
-          type: string
-          description: User name
-          example: Tony
-          minimum: 1
-          maximum: 15
-        email:
-          type: string
-          description: User email
-          example: iron-man@starkindustries.it
-        avatar:
-          type: string
-          description: User avatar
-          example: some/interesting/avatar.jpg
-        role:
-          type: string
-          description: User role
-          example: admin
-        gender:
-          type: string
-          description: User gender
-          example: мужской
-          enum: &a6
-            - мужской
-            - женский
-            - неважно
-        birthDate:
-          format: date-time
-          type: string
-          description: User birth date
-          example: 26.09.1993
-        description:
-          type: string
-          description: User profile description
-          example: Some interesting profile description
-        location:
-          type: string
-          description: User metro station
-          example: звездная
-          enum: &a7
-            - пионерская
-            - петроградская
-            - удельная
-            - звездная
-            - спортивная
-        pageBackground:
-          type: string
-          description: User profile background. If not passed = User avatar
-          example: some/interesting/avatar.jpg
-        level:
-          type: string
-          description: User training level
-          example: новичок
-          enum: &a8
-            - новичок
-            - любитель
-            - профессионал
-        trainingType:
-          type: string
-          description: User trainings type
-          example: '["box", "crossfit", "running"]'
-          enum: &a9
-            - йога
-            - бег
-            - бокс
-            - стретчинг
-            - кроссфит
-            - аэробика
-            - пилатес
-        trainingDuration:
-          type: string
-          description: User training time periods (in minutes)
-          example: 10-30
-          enum: &a10
-            - 10-30
-            - 30-50
-            - 50-80
-            - 80-100
-        loseCaloriesLimit:
-          type: number
-          description: User lose calories aim
-          example: "1000"
-          minimum: 1000
-          maximum: 5000
-        dayCaloriesLimit:
-          type: number
-          description: User calories per day limit
-          example: "5000"
-          minimum: 1000
-          maximum: 5000
-        isReadyToTraining:
-          type: boolean
-          description: Is user ready to training
-          example: "true"
-      required:
-        - id
-        - createdAt
-        - updatedAt
-        - name
-        - email
-        - avatar
-        - role
-        - gender
-        - birthDate
-        - description
-        - location
-        - pageBackground
-        - level
-        - trainingType
-        - trainingDuration
-        - loseCaloriesLimit
-        - dayCaloriesLimit
-        - isReadyToTraining
+        - certificates
+        - friendsList
     LoginUserDTO:
       type: object
       properties:
@@ -1205,7 +1709,7 @@ components:
           type: string
           description: User gender
           example: мужской
-          enum: *a6
+          enum: *a8
         birthDate:
           format: date-time
           type: string
@@ -1219,7 +1723,7 @@ components:
           type: string
           description: User metro station
           example: звездная
-          enum: *a7
+          enum: *a9
         pageBackground:
           type: string
           description: User profile background. If not passed = User avatar
@@ -1228,17 +1732,17 @@ components:
           type: string
           description: User training level
           example: новичок
-          enum: *a8
+          enum: *a10
         trainingType:
           type: string
           description: User trainings type
           example: '["box", "crossfit", "running"]'
-          enum: *a9
+          enum: *a11
         trainingDuration:
           type: string
           description: User training time periods (in minutes)
           example: 10-30
-          enum: *a10
+          enum: *a12
         loseCaloriesLimit:
           type: number
           description: User lose calories aim
@@ -1255,6 +1759,21 @@ components:
           type: boolean
           description: Is user ready to training
           example: "true"
+        certificates:
+          description: User certificates (for trainers only)
+          example: '["/static/2024/09/03/224297181810-6.pdf",
+            "/static/2024/09/03/224297181810-1.pdf",
+            "/static/2024/09/03/224297181810-3.pdf"]'
+          type: array
+          items:
+            type: string
+        friendsList:
+          description: User friends list
+          example: '["8c132bfa-b758-40ab-9663-b1f637848d04",
+            "fe302885-fb20-4b7f-a381-862d9f1eb0c2"]'
+          type: array
+          items:
+            type: string
         accessToken:
           type: string
           description: User JWT Token
@@ -1282,8 +1801,97 @@ components:
         - loseCaloriesLimit
         - dayCaloriesLimit
         - isReadyToTraining
+        - certificates
+        - friendsList
         - accessToken
         - refreshToken
+    CreateRequestRDO:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Uniq request ID
+          example: g83h4y0943-nv934819843-jv934h8t-n923g48n9438
+        createdAt:
+          format: date-time
+          type: string
+          description: Created at date
+          example: 2024-04-26 13:02:24.847
+        updatedAt:
+          format: date-time
+          type: string
+          description: Updated at date
+          example: 2024-04-26 13:02:24.847
+        requestType:
+          type: string
+          description: Request type
+          example: friendship
+          enum:
+            - friendship
+            - training
+        initiatorUserId:
+          type: object
+          description: Request initiator user id
+          example: g83h4y0943-nv934819843-jv934h8t-n923g48n9438
+        targetUserId:
+          type: object
+          description: Request target user id
+          example: g83h4y0943-nv934819843-jv934h8t-n923g48n9438
+        status:
+          type: string
+          description: Request status
+          example: На рассмотрении
+          enum:
+            - на рассмотрении
+            - принят
+            - отклонен
+        initiatorUserInfo:
+          description: Request`s initiator additional info
+          allOf:
+            - $ref: "#/components/schemas/UserRDO"
+        trainerUserInfo:
+          description: Request`s trainer additional info
+          allOf:
+            - $ref: "#/components/schemas/UserRDO"
+      required:
+        - id
+        - createdAt
+        - updatedAt
+        - requestType
+        - initiatorUserId
+        - targetUserId
+        - status
+        - initiatorUserInfo
+        - trainerUserInfo
+    RequestsWithPaginationRDO:
+      type: object
+      properties:
+        totalPages:
+          type: number
+          description: Paginated item pages count
+          example: 2
+        totalItems:
+          type: number
+          description: Total items count
+          example: 23
+        currentPage:
+          type: number
+          description: Current page number in pagination
+          example: 1
+        itemsPerPage:
+          type: number
+          description: items per page
+          example: 7
+        entities:
+          description: Item entities array
+          allOf:
+            - $ref: "#/components/schemas/CreateRequestRDO"
+      required:
+        - totalPages
+        - totalItems
+        - currentPage
+        - itemsPerPage
+        - entities
     CreateTrainingDTO:
       type: object
       properties:
@@ -1988,6 +2596,35 @@ components:
         - remainingTrainingsCount
         - hasTrainingStarted
         - trainingInfo
+    BalancesWithPaginationRDO:
+      type: object
+      properties:
+        totalPages:
+          type: number
+          description: Paginated item pages count
+          example: 2
+        totalItems:
+          type: number
+          description: Total items count
+          example: 23
+        currentPage:
+          type: number
+          description: Current page number in pagination
+          example: 1
+        itemsPerPage:
+          type: number
+          description: items per page
+          example: 7
+        entities:
+          description: Item entities array
+          allOf:
+            - $ref: "#/components/schemas/CreateBalanceRDO"
+      required:
+        - totalPages
+        - totalItems
+        - currentPage
+        - itemsPerPage
+        - entities
     ChangeBalanceDTO:
       type: object
       properties:

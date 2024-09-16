@@ -25,7 +25,7 @@ export class BalanceController {
   @Post('')
   @ApiOperation({ summary: 'Add new balance' })
   @ApiResponse({
-    type: CreateBalanceDTO,
+    type: CreateBalanceRDO,
     status: HttpStatus.CREATED,
     description: BalanceMessage.SUCCESS.CREATED
   })
@@ -70,7 +70,7 @@ export class BalanceController {
     required: false
   })
   @ApiResponse({
-    type: [CreateBalanceRDO],
+    type: BalancesWithPaginationRDO,
     status: HttpStatus.OK,
     description: BalanceMessage.SUCCESS.FOUND
   })

@@ -1,3 +1,6 @@
+import { DEFAULT_AVATAR_URL } from '../const';
+import { BASE_URL } from '../services/api';
+
 const DEBOUNCE_TIMEOUT = 800;
 
 export function upperCaseFirst(value: string) {
@@ -8,10 +11,10 @@ export function areArraysEqual(arrayA: unknown[], arrayB: unknown[]) {
   return arrayA.toString() === arrayB.toString();
 }
 
-export function getImgPreviewLink(img: File, onLoad?: Function) {
+export function getFilePreviewLink(file: File, onLoad?: Function) {
   const fileReader = new FileReader();
 
-    fileReader.readAsDataURL(img);
+    fileReader.readAsDataURL(file);
 
     fileReader.addEventListener('loadend', () => {
       if(!onLoad) {
@@ -22,6 +25,15 @@ export function getImgPreviewLink(img: File, onLoad?: Function) {
     })
 }
 
+export function getAvatarByUrl(avatarImg: string | undefined) {
+  const userAvatar = avatarImg
+    ? avatarImg.startsWith('/static') // Путь к загруженным на сервер аватаркам начинается с /static
+      ? `${BASE_URL}${avatarImg}` // Для аватарок, загруженных на сервер юзерами
+      : avatarImg // Для моковых изображений, которые "захардкожены" в сидировании
+    : DEFAULT_AVATAR_URL; // Если аватарки нет
+
+  return userAvatar;
+}
 
 export function setBodyScrollAvailable(isScrollAvailable: boolean) {
   if(isScrollAvailable) {

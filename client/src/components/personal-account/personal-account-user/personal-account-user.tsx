@@ -18,18 +18,14 @@ export default function PersonalAccountUser({ userInfo }: PersonalAccountUserPro
       <PersonalAccountUserCalories userInfo={userInfo} />
 
       <div className="personal-account-user__additional-info">
-        {/*
-          <a className="thumbnail-link thumbnail-link--theme-light" href="#">
-            <div className="thumbnail-link__icon thumbnail-link__icon--theme-light">
-              <svg width={30} height={26} aria-hidden="true">
-                <use xlinkHref="#icon-friends" />
-              </svg>
-            </div>
-            <span className="thumbnail-link__text">Мои друзья</span>
-          </a>
-        */}
-
-        <Stub />
+        <Link className="thumbnail-link thumbnail-link--theme-light" to={AppRoute.FRIENDS}>
+          <div className="thumbnail-link__icon thumbnail-link__icon--theme-light">
+            <svg width={30} height={26} aria-hidden="true">
+              <use xlinkHref="#icon-friends" />
+            </svg>
+          </div>
+          <span className="thumbnail-link__text">Мои друзья</span>
+        </Link>
 
         <Link className="thumbnail-link thumbnail-link--theme-light" to={AppRoute.PURCHASES}>
           <div className="thumbnail-link__icon thumbnail-link__icon--theme-light">
@@ -39,6 +35,8 @@ export default function PersonalAccountUser({ userInfo }: PersonalAccountUserPro
           </div>
           <span className="thumbnail-link__text">Мои покупки</span>
         </Link>
+
+        <Stub />
       </div>
     </div>
   )

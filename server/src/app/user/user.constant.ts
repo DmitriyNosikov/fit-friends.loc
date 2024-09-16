@@ -54,7 +54,10 @@ export const UserMessage: MessagesType = {
     CREATED: 'User has been successfully created',
     NEW_TOKENS: 'Successfully get a new access/refresh tokens',
 
-    FOUND: 'User found',
+    FRIEND_ADDED: 'Friend has been successfully added',
+    FRIEND_REMOVED: 'Friend has been successfully removed',
+
+    FOUND: 'Users found',
     DELETED: 'User has been successfully deleted',
     ADDITIONAL: 'Additional info found'
   },

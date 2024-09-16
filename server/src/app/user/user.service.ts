@@ -1,6 +1,7 @@
 import {
   BadRequestException,
   ConflictException,
+  forwardRef,
   HttpException,
   HttpStatus,
   Inject,
@@ -18,7 +19,7 @@ import { ConfigType } from '@nestjs/config';
 import { RefreshTokenService } from '../refresh-token/refresh-token.service';
 import { GenderEnum, RequestWithUserId } from '@server/libs/types';
 
-import { CreateUserDTO, LoginUserDTO, UpdateUserDTO } from '@shared/user'; 
+import { CreateUserDTO, LoginUserDTO, UpdateUserDTO, UserSearchQuery } from '@shared/user'; 
 
 import { USER_DEFAULT, UserMessage } from './user.constant';
 import { AuthUserInterface, UserInterface } from './interfaces';
@@ -26,6 +27,9 @@ import { AuthUserInterface, UserInterface } from './interfaces';
 import { UserEntity } from './user.entity';
 import { UserFactory } from './user.factory';
 import { UserRepository } from './user.repository';
+import { RequestService } from '../request/request.service';
+import { CreateRequestDTO, RequestTypeEnum } from '@shared/request';
+import { BaseSearchQuery, UserIdPayload } from '@shared/types';
 
 
 
@@ -36,6 +40,9 @@ export class UserService {
   constructor(
     private readonly userRepository: UserRepository,
     private readonly userFactory: UserFactory,
+
+    @Inject(forwardRef(() => RequestService))
+    private readonly requestService: RequestService,
 
     @Inject('Hasher')
     private readonly hasher: BCryptHasher,
@@ -65,6 +72,16 @@ export class UserService {
     }
 
     return existUser;
+  }
+
+  public async search(query?: UserSearchQuery) {
+    const users = await this.userRepository.search(query);
+
+    if (!users && query) {
+      throw new NotFoundException(`Can't find users by passed params " ${query}"`);
+    }
+
+    return users;
   }
 
   public async register(dto: CreateUserDTO): Promise<UserEntity> {
@@ -154,6 +171,105 @@ export class UserService {
     return await this.userRepository.deleteById(userId);
   }
 
+  public async getUserFriends(query?: BaseSearchQuery & UserIdPayload) {
+    const currentUserInfo = await this.userRepository.findById(query.userId);
+
+    if(!currentUserInfo) {
+      throw new BadRequestException(`User (${currentUserInfo}) doesn't exist`);
+    }
+
+    const userFriends = await this.userRepository.getUserFriends(query);
+
+    return userFriends;
+  }
+
+  public async addFriendToUser(currentUserId: string, addingUserId: string) {
+    if(!currentUserId || !addingUserId) {
+      throw new BadRequestException('To add new friend you have to pass current and adding user ids.');
+    }
+
+    const currentUserInfo = await this.userRepository.findById(currentUserId);
+
+    if(!currentUserInfo) {
+      throw new BadRequestException(`Friendship initiator (${currentUserId}) doesn't exist`);
+    }
+
+    const addingUserInfo = await this.userRepository.findById(addingUserId);
+
+    if(!addingUserInfo) {
+      throw new BadRequestException(`Adding user (${addingUserId}) doesn't exist`);
+    }
+
+    if(currentUserInfo.friendsList.includes(addingUserId)) {
+      return currentUserInfo;
+    }
+
+    currentUserInfo.friendsList.push(addingUserId);
+    addingUserInfo.friendsList.push(currentUserId);
+
+    // Добавляемся в друзья обоим пользователям
+    await this.userRepository.addFriendToUser(currentUserId, addingUserId); // Текущему юзеру
+    await this.userRepository.addFriendToUser(addingUserId, currentUserId); // Целевому юзеру
+
+    // Обновляем список друзей пользователя currentUserId
+    const updatedUser = await this.userRepository.updateById(currentUserId, { friendsList: currentUserInfo.friendsList });
+    
+    // Обновляем список друзей пользователя targetUserId
+    await this.userRepository.updateById(addingUserId, { friendsList: addingUserInfo.friendsList });
+
+    // Добавляем соответствующий запрос в таблицу запросов
+    const requestData: CreateRequestDTO & UserIdPayload = {
+      requestType: RequestTypeEnum.FRIENDSHIP,
+      userId: currentUserId,
+      targetUserId: addingUserId
+    };
+
+    await this.requestService.create(requestData);
+
+    return updatedUser;
+  }
+
+  public async removeFriendFromUser(currentUserId: string, removingUserId: string) {
+    if(!currentUserId || !removingUserId) {
+      throw new BadRequestException('To remove friend you have to pass current and removing user ids.');
+    }
+
+    const currentUserInfo = await this.userRepository.findById(currentUserId);
+   
+    if(!currentUserInfo) {
+      throw new BadRequestException(`Initiator user (${currentUserId}) doesn't exist`);
+    }
+
+    const removingUserInfo = await this.userRepository.findById(removingUserId);
+
+    if(!removingUserInfo) {
+      throw new BadRequestException(`Removing user (${removingUserId}) doesn't exist`);
+    }
+
+    if(!currentUserInfo.friendsList.includes(removingUserId)) {
+      return currentUserInfo;
+    }
+
+    const currentUserUpdatedFriendsList = currentUserInfo.friendsList.filter((userId) => userId !== removingUserId);
+    const removingUserUpdatedFriendsList = removingUserInfo.friendsList.filter((userId) => userId !== currentUserId);
+
+    // Удаляемся из друзей у обоих пользователей
+    await this.userRepository.removeFriendFromUser(currentUserId, removingUserId); // У текущего юзера
+    await this.userRepository.removeFriendFromUser(removingUserId, currentUserId); // У целевого юзера
+
+    // Обновляем список друзей пользователя currentUserId
+    const updatedUser = await this.userRepository.updateById(currentUserId, { friendsList: currentUserUpdatedFriendsList });
+    
+    // Обновляем список друзей пользователя targetUserId
+    await this.userRepository.updateById(removingUserId, { friendsList: removingUserUpdatedFriendsList });
+
+    // Удаляем все совместные запросы
+    await this.requestService.deleteAllByUsers(currentUserId, removingUserId);
+    
+
+    return updatedUser;
+  }
+
   public async verify(dto: LoginUserDTO): Promise<UserEntity> {
     const { email, password } = dto;
     const user = await this.userRepository.findByEmail(email);
@@ -191,5 +307,11 @@ export class UserService {
 
       throw new HttpException('Can`t create JWT Token.', HttpStatus.INTERNAL_SERVER_ERROR);
     }
+  }
+
+  public async exists(userId: string): Promise<boolean> {
+    const isUserExists = await this.userRepository.exists(userId);
+
+    return isUserExists;
   }
 }

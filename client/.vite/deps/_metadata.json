@@ -1,0 +1,101 @@
+{
+  "hash": "baf600d0",
+  "browserHash": "83d9540c",
+  "optimized": {
+    "react": {
+      "src": "../../../node_modules/react/index.js",
+      "file": "react.js",
+      "fileHash": "ed4e21ac",
+      "needsInterop": true
+    },
+    "react-dom/client": {
+      "src": "../../../node_modules/react-dom/client.js",
+      "file": "react-dom_client.js",
+      "fileHash": "5f9f638d",
+      "needsInterop": true
+    },
+    "react-redux": {
+      "src": "../../../node_modules/react-redux/es/index.js",
+      "file": "react-redux.js",
+      "fileHash": "d48c019d",
+      "needsInterop": false
+    },
+    "react-toastify": {
+      "src": "../../../node_modules/react-toastify/dist/react-toastify.esm.mjs",
+      "file": "react-toastify.js",
+      "fileHash": "89a23c85",
+      "needsInterop": false
+    },
+    "history": {
+      "src": "../../../node_modules/history/index.js",
+      "file": "history.js",
+      "fileHash": "e7b440f6",
+      "needsInterop": false
+    },
+    "@reduxjs/toolkit": {
+      "src": "../../../node_modules/@reduxjs/toolkit/dist/redux-toolkit.esm.js",
+      "file": "@reduxjs_toolkit.js",
+      "fileHash": "7e10d54b",
+      "needsInterop": false
+    },
+    "react-router-dom": {
+      "src": "../../../node_modules/react-router-dom/dist/index.js",
+      "file": "react-router-dom.js",
+      "fileHash": "dc283dd9",
+      "needsInterop": false
+    },
+    "axios": {
+      "src": "../../../node_modules/axios/index.js",
+      "file": "axios.js",
+      "fileHash": "ccf43665",
+      "needsInterop": true
+    },
+    "http-status-codes": {
+      "src": "../../../node_modules/http-status-codes/build/es/index.js",
+      "file": "http-status-codes.js",
+      "fileHash": "4fa4e8b0",
+      "needsInterop": false
+    },
+    "classnames": {
+      "src": "../../../node_modules/classnames/index.js",
+      "file": "classnames.js",
+      "fileHash": "324c7d45",
+      "needsInterop": true
+    },
+    "simplebar-react": {
+      "src": "../../../node_modules/simplebar-react/dist/index.mjs",
+      "file": "simplebar-react.js",
+      "fileHash": "e482cb52",
+      "needsInterop": false
+    },
+    "swiper/react": {
+      "src": "../../../node_modules/swiper/swiper-react.mjs",
+      "file": "swiper_react.js",
+      "fileHash": "95ad351a",
+      "needsInterop": false
+    },
+    "swiper/modules": {
+      "src": "../../../node_modules/swiper/modules/index.mjs",
+      "file": "swiper_modules.js",
+      "fileHash": "e46c06c8",
+      "needsInterop": false
+    }
+  },
+  "chunks": {
+    "chunk-MIO3TJIW": {
+      "file": "chunk-MIO3TJIW.js"
+    },
+    "chunk-UURAGJLO": {
+      "file": "chunk-UURAGJLO.js"
+    },
+    "chunk-7AXJYPVH": {
+      "file": "chunk-7AXJYPVH.js"
+    },
+    "chunk-BAPWNYM7": {
+      "file": "chunk-BAPWNYM7.js"
+    },
+    "chunk-DFKQJ226": {
+      "file": "chunk-DFKQJ226.js"
+    }
+  }
+}

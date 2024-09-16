@@ -8,7 +8,9 @@ import {
   TrainingTypeEnum,
   trainingTypeList,
   UserLevelEnum,
-  UserRoleEnum
+  UserRoleEnum,
+  RequestStatusEnum,
+  RequestTypeEnum
 } from '../../types';
 import { TrainingInterface } from '../../../training/interfaces';
 import { AuthUserInterface } from '../../../user/interfaces';
@@ -31,7 +33,9 @@ export async function getAdminUser(): Promise<AuthUserInterface> {
     level: UserLevelEnum.PRO,
     dayCaloriesLimit: 3300,
     loseCaloriesLimit: 7800,
-    trainingType: trainingTypeList
+    trainingType: trainingTypeList,
+    certificates: [],
+    friendsList: []
   };
 }
 
@@ -41,6 +45,28 @@ export async function getUsers(): Promise<AuthUserInterface[]> {
   const passwordHash = await hasher.getHash(password);
   const users = [
     await getAdminUser(),
+
+    {
+      id: randomUUID(),
+      email: "test0@test.ru",
+      name: "Dwain",
+      passwordHash,
+      avatar: "/img/content/avatars/users/photo-1.png",
+      gender: GenderEnum.MALE,
+      location: LocationEnum.SPORTIVNAYA,
+      role: UserRoleEnum.TRAINER,
+      level: UserLevelEnum.PRO,
+      dayCaloriesLimit: 3200,
+      loseCaloriesLimit: 4800,
+      trainingType: trainingTypeList.slice(1, 3),
+      certificates: [
+        '/img/content/certificates/1.pdf',
+        '/img/content/certificates/2.pdf',
+        '/img/content/certificates/3.pdf',
+        '/img/content/certificates/4.pdf'
+      ],
+      friendsList: []
+    },
 
     {
       id: randomUUID(),
@@ -54,7 +80,9 @@ export async function getUsers(): Promise<AuthUserInterface[]> {
       level: UserLevelEnum.REGULAR,
       dayCaloriesLimit: 2500,
       loseCaloriesLimit: 3800,
-      trainingType: trainingTypeList.slice(2)
+      trainingType: trainingTypeList.slice(2, 3),
+      certificates: [],
+      friendsList: []
     },
     {
       id: randomUUID(),
@@ -68,7 +96,9 @@ export async function getUsers(): Promise<AuthUserInterface[]> {
       level: UserLevelEnum.NEWBIE,
       dayCaloriesLimit: 1200,
       loseCaloriesLimit: 5000,
-      trainingType: trainingTypeList.slice(3)
+      trainingType: trainingTypeList.slice(3, 3),
+      certificates: [],
+      friendsList: []
     },
     {
       id: randomUUID(),
@@ -82,7 +112,9 @@ export async function getUsers(): Promise<AuthUserInterface[]> {
       level: UserLevelEnum.PRO,
       dayCaloriesLimit: 4800,
       loseCaloriesLimit: 3000,
-      trainingType: trainingTypeList
+      trainingType: trainingTypeList.slice(4, 3),
+      certificates: [],
+      friendsList: []
     },
     {
       id: randomUUID(),
@@ -96,7 +128,9 @@ export async function getUsers(): Promise<AuthUserInterface[]> {
       level: UserLevelEnum.REGULAR,
       dayCaloriesLimit: 2300,
       loseCaloriesLimit: 4800,
-      trainingType: trainingTypeList.slice(4)
+      trainingType: trainingTypeList.slice(4, 3),
+      certificates: [],
+      friendsList: []
     },
   ];
 
@@ -218,6 +252,38 @@ export function getOrders(usersList: AuthUserInterface[], trainingsList: Trainin
   });
 
   return orders;
+}
+
+export function getTrainingRequests(usersList: AuthUserInterface[]) {
+  const requests = {};
+  const clients: AuthUserInterface[] = [];
+  const trainers: AuthUserInterface[] = [];
+
+  let result = [];
+
+  usersList.forEach((user) =>
+      (user.role === UserRoleEnum.CLIENT)
+      ? clients.push(user)
+      : trainers.push(user)
+  );
+
+  trainers.forEach((trainer) => {
+    const randomUserIdIndex = getRandomIntInclusive(0, clients.length - 1);
+    const randomUserId = clients[randomUserIdIndex].id;
+
+    if(!Object.keys(requests).includes(trainer.id) || requests[trainer.id].initiatorId !== randomUserId) {
+      requests[trainer.id] = {
+        requestType: RequestTypeEnum.TRAINING,
+        initiatorUserId: randomUserId,
+        targetUserId: trainer.id,
+        status: RequestStatusEnum.PROCESSING
+      }
+    }
+
+    result = Object.values(requests);
+  });
+
+  return result;
 }
 
 const loremText = "Lorem Ipsum is simply dummy text of the printing and typesetting industry. \

@@ -1,7 +1,5 @@
 import { ReactElement } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
-import { toast } from 'react-toastify';
-import { AppRoute } from '@client/src/const';
+import { useParams } from 'react-router-dom';
 
 import { UserRoleEnum } from '@shared/types/user-roles.enum';
 
@@ -12,14 +10,10 @@ import Spinner from '@client/src/components/tools/spinner/spinner';
 import useFetchUserById from '@client/src/hooks/useFetchUserById';
 
 
-// TODO: Доработать персональные карточки (пока готова только разметка)
-// FIXME: При переходе на карточку, нужно получать роль конкретного пользователя
-// на которого мы перешли, а не того, пот кем мы сейчас залогинены
-
 export default function PersonalCard(): ReactElement {
   const param = useParams<{ userId: string }>();
   const userId = param.userId as string;
-  const userInfo = useFetchUserById(userId)
+  const userInfo = useFetchUserById(userId);
 
   if (!userInfo) {
     return <Spinner />

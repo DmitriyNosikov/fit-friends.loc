@@ -396,7 +396,7 @@ export const searchTrainingsAction = createAsyncThunk<TrainingsWithPaginationRDO
       // состоянию, а не заменить им все состояние, т.е.
       // в данном случае, к текущему списку тренировок добавить
       // полученные от сервера (для возможности дозагрузить
-      // тренить тренировки по кнопке "Показать еще")
+      // тренировки по кнопке "Показать еще")
       dispatch(appendTrainingsAction(data));
 
       dispatch(setDataLoadingStatus(false));

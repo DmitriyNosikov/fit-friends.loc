@@ -39,9 +39,12 @@ export const fetchBalanceAction = createAsyncThunk<void, void, AsyncOptions>(
     dispatch(setDataLoadingStatus(true));
 
     try {
-      const { data } = await api.get<BalancesWithPaginationRDO>(ApiRoute.BALANCE_API);
+      const result = await api.get<BalancesWithPaginationRDO>(ApiRoute.BALANCE_API);
 
-      dispatch(setBalanceAction(data));
+      if(result?.data) {
+        dispatch(setBalanceAction(result.data));
+      }
+
       dispatch(setDataLoadingStatus(false));
 
     } catch(err) {
@@ -54,7 +57,7 @@ export const fetchBalanceAction = createAsyncThunk<void, void, AsyncOptions>(
   }
 );
 
-export const fetchCurrentTrainingBalance = createAsyncThunk<CreateBalanceRDO, TrainingId, AsyncOptions>(
+export const fetchCurrentTrainingBalance = createAsyncThunk<CreateBalanceRDO | null, TrainingId, AsyncOptions>(
   APIAction.BALANCE_BY_TRAINING,
   async (
     { trainingId },
@@ -63,12 +66,17 @@ export const fetchCurrentTrainingBalance = createAsyncThunk<CreateBalanceRDO, Tr
     dispatch(setDataLoadingStatus(true));
 
     try {
-      const { data } = await api.get<CreateBalanceRDO>(`${ApiRoute.BALANCE_API}/by-training/${trainingId}`);
+      const result = await api.get<CreateBalanceRDO>(`${ApiRoute.BALANCE_API}/by-training/${trainingId}`);
 
-      dispatch(setCurrentTrainingBalanceAction(data));
+      if(result?.data) {
+        dispatch(setCurrentTrainingBalanceAction(result.data));
+        dispatch(setDataLoadingStatus(false));
+        return result.data;
+      }
+
       dispatch(setDataLoadingStatus(false));
 
-      return data;
+      return null;
     } catch(err) {
       toast.info('Can`t find your training balance. Possibly you haven`t bought it yet')
 

@@ -1,0 +1,51 @@
+@host = 127.0.0.1
+@port = 8000
+@baseUrl = http://{{host}}:{{port}}/api/requests
+
+@requestId = 354dd173-8091-4094-8c65-04feda38e423
+@initiatorUserId = 5c12b057-6ed6-401b-8681-62e18cef4589
+@targetUserId = 5c12b057-6ed6-401b-8681-62e18cef4589
+@authorization = Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI1YzEyYjA1Ny02ZWQ2LTQwMWItODY4MS02MmUxOGNlZjQ1ODkiLCJlbWFpbCI6Imlyb24tbWFuQHN0YXJraW5kdXN0cmllcy5pdCIsIm5hbWUiOiJUb255Iiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzI2NDc3NTk2LCJleHAiOjE3MjY0Nzg0OTZ9.lCAN7OFWkt_yRnk5OOGQ_dEpr9Be87FwRP6ppzw6Iqc
+
+
+# Create new request
+POST {{baseUrl}}/ HTTP/1.1
+Content-Type: application/json
+{{authorization}}
+
+{
+  "requestType": "friendship",
+  "targetUserId": "88e22b85-1e96-4425-b9c7-a3f36e921617"
+}
+###
+
+# Update request
+PATCH {{baseUrl}}/{{requestId}} HTTP/1.1
+Content-Type: application/json
+{{authorization}}
+
+{
+  "status": "Принят"
+}
+###
+
+# Delete request
+DELETE {{baseUrl}}/{{requestId}} HTTP/1.1
+Content-Type: application/json
+{{authorization}}
+###
+
+# (Service method) Get all user requests, where he either initiator or target
+GET {{baseUrl}}/all-user-requests HTTP/1.1
+{{authorization}}
+###
+
+# Get all requests to target user
+GET {{baseUrl}}/by-target/{{targetUserId}} HTTP/1.1
+{{authorization}}
+###
+
+# Get all requests by initiator user
+GET {{baseUrl}}/by-initiator/{{initiatorUserId}} HTTP/1.1
+{{authorization}}
+###

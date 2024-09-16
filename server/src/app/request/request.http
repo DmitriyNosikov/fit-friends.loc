@@ -5,7 +5,7 @@
 @requestId = 354dd173-8091-4094-8c65-04feda38e423
 @initiatorUserId = 5c12b057-6ed6-401b-8681-62e18cef4589
 @targetUserId = 5c12b057-6ed6-401b-8681-62e18cef4589
-@authorization = Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI1YzEyYjA1Ny02ZWQ2LTQwMWItODY4MS02MmUxOGNlZjQ1ODkiLCJlbWFpbCI6Imlyb24tbWFuQHN0YXJraW5kdXN0cmllcy5pdCIsIm5hbWUiOiJUb255Iiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzI2NDY5ODg2LCJleHAiOjE3MjY0NzA3ODZ9.ODA4U4Qtg_I4HWynOEpso2oruT9Vbb6cxKdaijpakjc
+@authorization = Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI1YzEyYjA1Ny02ZWQ2LTQwMWItODY4MS02MmUxOGNlZjQ1ODkiLCJlbWFpbCI6Imlyb24tbWFuQHN0YXJraW5kdXN0cmllcy5pdCIsIm5hbWUiOiJUb255Iiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzI2NDc3NTk2LCJleHAiOjE3MjY0Nzg0OTZ9.lCAN7OFWkt_yRnk5OOGQ_dEpr9Be87FwRP6ppzw6Iqc
 
 
 # Create new request
@@ -35,8 +35,8 @@ Content-Type: application/json
 {{authorization}}
 ###
 
-# Get all user requests, where he either initiator or target
-GET {{baseUrl}}/ HTTP/1.1
+# (Service method) Get all user requests, where he either initiator or target
+GET {{baseUrl}}/all-user-requests HTTP/1.1
 {{authorization}}
 ###
 

@@ -1,24 +1,70 @@
 import { ReactElement } from 'react';
-
-import { UserRDO } from '@shared/user';
-import { getAvatarByUrl, upperCaseFirst } from '@client/src/utils/common';
 import classNames from 'classnames';
-import { UserRoleEnum } from '@shared/types/user-roles.enum';
 import { toast } from 'react-toastify';
 import { Link } from 'react-router-dom';
+
 import { AppRoute } from '@client/src/const';
+import { UserRDO } from '@shared/user';
+import { CreateRequestDTO, CreateRequestRDO } from '@shared/request';
+import { RequestTypeEnum } from '@shared/request/types/request-type.enum';
+import { UserRoleEnum } from '@shared/types/user-roles.enum';
+
+import { getAvatarByUrl, upperCaseFirst } from '@client/src/utils/common';
+
+import { useAppDispatch, useAppSelector } from '@client/src/hooks';
+import { createRequestAction } from '@client/src/store/actions/api-request-action';
+import { getCurrentUserInfo } from '@client/src/store/slices/user-process/user-process.selectors';
+
+import { RequestStatusEnum } from '@shared/request/types/request-status.enum';
 
 type FriendsListItemProps = {
-  user: UserRDO
+  user: UserRDO,
+  userRequests?: CreateRequestRDO[] | null
 }
 
-export default function FriendsListItem({ user }: FriendsListItemProps): ReactElement {
+export default function FriendsListItem({ user, userRequests }: FriendsListItemProps): ReactElement {
+  const dispatch = useAppDispatch();
+  const currentLoggedUserInfo = useAppSelector(getCurrentUserInfo);
+
   const { id, name, avatar, location, trainingType, isReadyToTraining, role } = user;
   const userAvatar = getAvatarByUrl(avatar);
+
   const readyToTrainingStatusText = isReadyToTraining ? 'Готов к тренировке' : 'Не готов к тренировке';
   const isTrainer = (role === UserRoleEnum.TRAINER);
 
+  // Исходящие и входящие запросы пользователя на тренировки
+  const outgoingRequests: CreateRequestRDO[] = [];
+  const incomingRequests: CreateRequestRDO[] = [];
+
+  if (currentLoggedUserInfo && userRequests && userRequests.length > 0) {
+    userRequests.forEach((request) => {
+      // Собираем все исходящие запросы (от текущего юзера к цели)
+      if (request.initiatorUserId === currentLoggedUserInfo.id && request.targetUserId === id) {
+        outgoingRequests.push(request);
+      }
+
+      // Собираем все входящие запросы (от цели к текущему юзеру)
+      if (request.initiatorUserId === id && request.targetUserId === currentLoggedUserInfo.id) {
+        incomingRequests.push(request);
+      }
+    });
+  }
+
+  const incomingTrainingRequest = currentLoggedUserInfo ? incomingRequests.find((request) => request.targetUserId === currentLoggedUserInfo.id) : undefined;
+  const outTrainingRequest = currentLoggedUserInfo ? outgoingRequests.find((request) => request.initiatorUserId === currentLoggedUserInfo.id) : undefined;
+  const isTrainingRequestSended = outTrainingRequest && outTrainingRequest.status === RequestStatusEnum.PROCESSING;
+
+  // Сюда можно добавлять условия отображения блока уведомлений под карточкой пользователя
+  const isNotificationBlockVisible = isTrainingRequestSended || incomingTrainingRequest;
+
   function handleSendRequestToTraining() {
+    const requestData: CreateRequestDTO = {
+      requestType: RequestTypeEnum.TRAINING,
+      targetUserId: id
+    };
+
+    dispatch(createRequestAction(requestData));
+
     toast.info('Sorry, sending requests to you friends for training has not implemented yet');
   }
 
@@ -75,8 +121,8 @@ export default function FriendsListItem({ user }: FriendsListItemProps): ReactEl
             </div>
 
             {
-              !isTrainer &&
-              <button className="thumbnail-friend__invite-button" type="button" onClick={handleSendRequestToTraining}>
+              !isTrainer && !isTrainingRequestSended && !incomingTrainingRequest &&
+              <button className="thumbnail-friend__invite-button" type="button" disabled={!isReadyToTraining} onClick={handleSendRequestToTraining}>
                 <svg width={43} height={46} aria-hidden="true" focusable="false">
                   <use xlinkHref="#icon-invite" />
                 </svg><span className="visually-hidden">Пригласить друга на совместную тренировку</span>
@@ -84,6 +130,32 @@ export default function FriendsListItem({ user }: FriendsListItemProps): ReactEl
             }
           </div>
         </div>
+
+        {
+          isNotificationBlockVisible &&
+          <div className="thumbnail-friend__request-status thumbnail-friend__request-status--role-user">
+            { // Входящий запрос на тренировку
+              incomingTrainingRequest && incomingTrainingRequest.status === RequestStatusEnum.PROCESSING &&
+              <>
+                <p className="thumbnail-friend__request-text">Запрос на&nbsp;совместную тренировку</p>
+                <div className="thumbnail-friend__button-wrapper">
+                  <button className="btn btn--medium btn--dark-bg thumbnail-friend__button" type="button">Принять</button>
+                  <button className="btn btn--medium btn--outlined btn--dark-bg thumbnail-friend__button" type="button">Отклонить</button>
+                </div>
+              </>
+            }
+
+            { // Исходящие запросы
+              isTrainingRequestSended && outTrainingRequest.status === RequestStatusEnum.PROCESSING &&
+              <p className="thumbnail-friend__request-text">Запрос на&nbsp;совместную тренировку отправлен</p>
+            }
+
+            {
+              isTrainingRequestSended && outTrainingRequest.status === RequestStatusEnum.DECLINED &&
+              <p className="thumbnail-friend__request-text">Запрос на&nbsp;совместную тренировку отклонён</p>
+            }
+          </div>
+        }
 
         {/* <div className="thumbnail-friend__request-status thumbnail-friend__request-status--role-user">
           <p className="thumbnail-friend__request-text">Запрос на&nbsp;совместную тренировку</p>

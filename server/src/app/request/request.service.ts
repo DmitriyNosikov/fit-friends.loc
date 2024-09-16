@@ -9,6 +9,7 @@ import { BaseSearchQuery, RequestStatusEnum, UserIdPayload } from '@shared/types
 import { RequestEntity } from './request.entity';
 import { UserService } from '@server/user/user.service';
 import { RequestInterface } from './interfaces/request.interface';
+import { RequestType } from '@server/libs/types';
 
 @Injectable()
 export class RequestService {
@@ -38,8 +39,11 @@ export class RequestService {
     }
 
     const existsRequest = await this.requestRepository
-      .findByInitiatorAndTargetUserId(initiatorUser, targetUserId);
+      .findByInitiatorAndTargetUserId(initiatorUser, targetUserId, dto.requestType);
 
+    // Можно делать только по одному запросу каждого типа
+    console.log('User request: ', dto);
+    console.log('Exist request: ', existsRequest);
     if(existsRequest) {
       throw new BadRequestException(RequestMessage.ERROR.ALREADY_EXISTS);
     }
@@ -104,12 +108,8 @@ export class RequestService {
     return requests;
   }
 
-  public async getAllUserRequests(query?: BaseSearchQuery & UserIdPayload) {
-    const requests = await this.requestRepository.getAllUserRequests(query);
-
-    if (!requests && query) {
-      throw new NotFoundException(`Can't find requests by passed params " ${query}"`);
-    }
+  public async getAllUserRequests(userId: string, requestType?: RequestType) {
+    const requests = await this.requestRepository.getAllUserRequests(userId, requestType);
 
     return requests;
   }

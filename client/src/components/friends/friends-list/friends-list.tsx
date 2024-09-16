@@ -1,16 +1,18 @@
 import { ReactElement } from 'react';
 
-import FriendsListItem from '../friends-list-item/friends-list-item';
 import Spinner from '@client/src/components/tools/spinner/spinner';
+import Stub from '../../tools/stub/stub';
+import FriendsListItem from '../friends-list-item/friends-list-item';
 
 import { ITEMS_PER_PAGE } from '@client/src/const';
-
-import { useAppDispatch, useAppSelector } from '@client/src/hooks';
 import { BaseSearchQuery } from '@shared/types';
+import { RequestTypeEnum } from '@shared/request/types/request-type.enum';
+
 import {  getUserFriendsLoadingStatus } from '@client/src/store/slices/user-process/user-process.selectors';
-import useFetchUserFriends from '@client/src/hooks/useFetchUserFriends';
 import { fetchUserFriendsAction } from '@client/src/store/actions/api-user-action';
-import Stub from '../../tools/stub/stub';
+import { useAppDispatch, useAppSelector } from '@client/src/hooks';
+import useFetchUserFriends from '@client/src/hooks/useFetchUserFriends';
+import useFetchCurrentUserRequests from '@client/src/hooks/useFetchUserRequests';
 
 const START_PAGE = 1;
 
@@ -24,6 +26,8 @@ export default function FriendsList(): ReactElement {
 
   const friendsList = useFetchUserFriends({ searchQuery });
   const isUserFriendsLoading = useAppSelector(getUserFriendsLoadingStatus);
+
+  const userRequests  = useFetchCurrentUserRequests({ requestType: RequestTypeEnum.TRAINING });
 
   const isShowMoreBtnVisible = Boolean(
     friendsList?.totalPages
@@ -54,6 +58,7 @@ export default function FriendsList(): ReactElement {
 
     dispatch(fetchUserFriendsAction({ searchQuery }));
   }
+
   return (
     <>
       {
@@ -70,7 +75,7 @@ export default function FriendsList(): ReactElement {
         friendsList?.entities && friendsList.entities.length > 0 &&
         <ul className="friends-list__list">
           {
-            friendsList.entities.map((friend) => <FriendsListItem user={friend} key={friend.id}/>)
+            friendsList.entities.map((friend) => <FriendsListItem user={friend} userRequests={userRequests} key={friend.id}/>)
           }
         </ul>
       }

@@ -1,16 +1,18 @@
 import { Namespace } from '@client/src/const';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { CreateRequestRDO, RequestsWithPaginationRDO } from '@shared/request';
-import { fetchUserRequests } from '../../actions/api-request-action';
+import { fetchAllCurrentUserRequests } from '../../actions/api-request-action';
 
 export type RequestProcess = {
-  paginatedRequests: RequestsWithPaginationRDO | null,
+  allUserRequests: CreateRequestRDO[] | null,
+  paginatedTargetRequests: RequestsWithPaginationRDO | null,
 
   isRequestsLoading: boolean
 }
 
 const initialState: RequestProcess = {
-  paginatedRequests: null,
+  allUserRequests: null,
+  paginatedTargetRequests: null,
 
   isRequestsLoading: false
 }
@@ -19,18 +21,22 @@ export const requestProcess = createSlice({
   name: Namespace.REQUEST,
   initialState,
   reducers: {
-    setUserRequestsAction: (state, action: PayloadAction<RequestsWithPaginationRDO | null>) => {
-      state.paginatedRequests = action.payload;
+    setUserRequestsAction: (state, action: PayloadAction<CreateRequestRDO[] | null>) => {
+      state.allUserRequests = action.payload;
+    },
+
+    setTargetRequestsAction: (state, action: PayloadAction<RequestsWithPaginationRDO | null>) => {
+      state.paginatedTargetRequests = action.payload;
     },
 
     updateUserRequestsAction: (state, action: PayloadAction<CreateRequestRDO>) => {
       const updatedRequest = action.payload;
 
-      if (!state.paginatedRequests) {
+      if (!state.allUserRequests) {
         return;
       }
 
-      state.paginatedRequests.entities
+      state.allUserRequests
         .map((request) => (request.id === updatedRequest.id)
           ? updatedRequest
           : request)
@@ -39,8 +45,8 @@ export const requestProcess = createSlice({
     deleteUserRequestAction: (state, action: PayloadAction<string>) => {
       const deleteRequestId =  action.payload;
 
-      if(state.paginatedRequests) {
-        state.paginatedRequests.entities = state.paginatedRequests.entities
+      if(state.allUserRequests) {
+        state.allUserRequests = state.allUserRequests
           .filter((request) => request.id !== deleteRequestId);
       }
     },
@@ -48,14 +54,14 @@ export const requestProcess = createSlice({
 
   extraReducers(builder) {
     builder
-      // Requests list
-      .addCase(fetchUserRequests.pending, (state) => {
+      // Requests to target list
+      .addCase(fetchAllCurrentUserRequests.pending, (state) => {
         state.isRequestsLoading = true;
       })
-      .addCase(fetchUserRequests.fulfilled, (state) => {
+      .addCase(fetchAllCurrentUserRequests.fulfilled, (state) => {
         state.isRequestsLoading = false;
       })
-      .addCase(fetchUserRequests.rejected, (state) => {
+      .addCase(fetchAllCurrentUserRequests.rejected, (state) => {
         state.isRequestsLoading = false;
       })
   }
@@ -64,6 +70,7 @@ export const requestProcess = createSlice({
 
 export const {
   setUserRequestsAction,
+  setTargetRequestsAction,
   updateUserRequestsAction,
   deleteUserRequestAction,
 } = requestProcess.actions;

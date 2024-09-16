@@ -11,6 +11,7 @@ import { BaseSearchQuery, DefaultSearchParam } from '@shared/types/search/base-s
 
 import { CreateRequestDTO, CreateRequestRDO, RequestsWithPaginationRDO, UpdateRequestDTO, UserAndTargetUserIdsPayload } from '@shared/request';
 import { fillDTO } from '@server/libs/helpers';
+import { RequestType } from '@server/libs/types';
 
 @ApiTags('requests')
 @Controller('requests')
@@ -251,58 +252,28 @@ export class RequestController {
     return result;
   }
 
-  @Get('/')
+  @Get('/all-user-requests')
   @ApiOperation({ summary: 'Get all user requests, where he either initiator or target' })
   @ApiQuery({
-    name: "createdAt",
-    description: `Item's creation date`,
-    example: "2024-05-29",
-    required: false
-  })
-  @ApiQuery({
-    name: "limit",
-    description: `Items per page (pagination). Max limit: ${DefaultSearchParam.MAX_ITEMS_PER_PAGE}`,
-    example: "50",
-    required: false
-  })
-  @ApiQuery({
-    name: "page",
-    description: `Current page in pagination (if items count more than "limit"). Default page: ${DefaultSearchParam.PAGE}`,
-    example: "1",
-    required: false
-  })
-  @ApiQuery({
-    name: "sortType",
-    description: `Sorting type. Default sort type: ${DefaultSearchParam.SORT.TYPE}`,
-    enum: SortTypeEnum,
-    example: "createdAt",
-    required: false
-  })
-  @ApiQuery({
-    name: "sortDirection",
-    description: `Sorting direction. Default direction: ${DefaultSearchParam.SORT.DIRECTION}`,
-    enum: SortDirectionEnum,
-    example: " desc",
+    name: "requestType",
+    description: `Request type`,
+    example: "training",
     required: false
   })
   @ApiResponse({
-    type: RequestsWithPaginationRDO,
+    type: [CreateRequestRDO],
     status: HttpStatus.CREATED,
     description: RequestMessage.SUCCESS.FOUND
   })
   public async getAllUserRequests(
-    @Query() query: BaseSearchQuery,
+    @Query('requestType') requestType: RequestType,
     @Body('userId') userId: string
   ) {
-    const preparedQuery = { ...query, userId };
-    const requests = await this.requestService.getAllUserRequests(preparedQuery);
+    const requests = await this.requestService.getAllUserRequests(userId, requestType);
 
-    const result = {
-      ...requests,
-      entities:  requests.entities.map((request) => fillDTO(CreateRequestRDO, request.toPOJO()))
-    };
+    requests.map((request) => fillDTO(CreateRequestRDO, request.toPOJO()));
 
-    return result;
+    return requests;
   }
 
 }

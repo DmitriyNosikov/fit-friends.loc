@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { PrismaClientService } from '../prisma-client/prisma-client.service';
 
-import { BaseSearchQuery, SortDirection, SortType, SortTypeEnum, UserIdPayload } from '@shared/types';
+import { BaseSearchQuery, SortDirection, SortType, SortTypeEnum } from '@shared/types';
 import { DefaultSearchParam } from '@shared/types/search/base-search-query.type';
 import { PaginationResult } from '@server/libs/interfaces';
 import { RequestSearchFilters, UserAndTargetUserIdsPayload } from '@shared/request';
@@ -11,6 +11,7 @@ import { BasePostgresRepository } from '@server/libs/data-access';
 import { RequestInterface } from './interfaces/request.interface';
 import { RequestEntity } from './request.entity';
 import { RequestFactory } from './request.factory';
+import { RequestType } from '@server/libs/types';
 
 @Injectable()
 export class RequestRepository extends BasePostgresRepository<RequestEntity, RequestInterface> {
@@ -71,19 +72,16 @@ export class RequestRepository extends BasePostgresRepository<RequestEntity, Req
       }
     };
 
-    console.log('Query: ', preparedQuery);
-
     const paginatedResult = await this.getPaginatedResult(preparedQuery, itemsPerPage, page);
 
     return paginatedResult;
   }
 
   // TODO: Унифицировать метод поиска
-  public async getAllUserRequests(query?: BaseSearchQuery & UserIdPayload): Promise<PaginationResult<RequestEntity>> {
-    const itemsPerPage = query?.limit;
-    const page = query?.page;
+  public async getAllUserRequests(userId: string, requestType?: RequestType): Promise<RequestEntity[]> {
+    console.log('User id: ', userId, ' Request type: ', requestType);
+    
     const where: Prisma.RequestWhereInput = {};
-    const userId = query.userId;
 
     // Все запросы пользователя, где он либо инициатор
     // либо цель запроса
@@ -91,6 +89,10 @@ export class RequestRepository extends BasePostgresRepository<RequestEntity, Req
       { initiatorUserId: userId },
       { targetUserId: userId }
     ]
+
+    if(requestType) {
+      where.requestType = requestType;
+    }
 
     // Запрос на получение результата поиска
     const preparedQuery = {
@@ -102,11 +104,10 @@ export class RequestRepository extends BasePostgresRepository<RequestEntity, Req
       }
     };
 
-    console.log('Query: ', preparedQuery);
+    const requests = await this.dbClient.request.findMany(preparedQuery)
+    const requestEntities = requests.map((request) => this.createEntityFromDocument(request as unknown as RequestInterface));
 
-    const paginatedResult = await this.getPaginatedResult(preparedQuery, itemsPerPage, page);
-
-    return paginatedResult;
+    return requestEntities;
   }
 
   public async findById(requestId: string): Promise<RequestEntity | null> {
@@ -123,10 +124,15 @@ export class RequestRepository extends BasePostgresRepository<RequestEntity, Req
 
   public async findByInitiatorAndTargetUserId(
     initiatorUserId: string,
-    targetUserId: string
+    targetUserId: string,
+    requestType?: string
   ): Promise<RequestEntity | null> {
     const request = await this.dbClient.request.findFirst({
-      where: { initiatorUserId, targetUserId }
+      where: {
+        initiatorUserId,
+        targetUserId,
+        requestType
+      }
     })
 
     if (!request) {
@@ -181,14 +187,16 @@ export class RequestRepository extends BasePostgresRepository<RequestEntity, Req
       : itemsPerPage;
 
     // Запрос на получение результата поиска
-    const [items, totalItemsCount] = await Promise.all([
-      this.dbClient.request.findMany({
-        ...query,
+    const searchQuery = {
+      ...query,
 
-        // Pagination
-        take,
-        skip,
-      }),
+      // Pagination
+      take,
+      skip,
+    };
+
+    const [items, totalItemsCount] = await Promise.all([
+      this.dbClient.request.findMany(searchQuery),
       this.getItemsCount(query.where)
     ]);
 

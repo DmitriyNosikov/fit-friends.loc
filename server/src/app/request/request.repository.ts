@@ -182,7 +182,12 @@ export class RequestRepository extends BasePostgresRepository<RequestEntity, Req
   // Сервисные методы
   public async checkAccess(requestId: string, userId: string) {
     const request = await this.dbClient.request.findFirst({
-      where: { id: requestId, initiatorUserId: userId },
+      where: {
+        OR: [
+          { id: requestId, initiatorUserId: userId },
+          { id: requestId, targetUserId: userId }
+        ]
+      }
     });
 
     if (!request) {

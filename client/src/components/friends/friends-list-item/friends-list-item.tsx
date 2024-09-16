@@ -1,18 +1,17 @@
 import { ReactElement } from 'react';
 import classNames from 'classnames';
-import { toast } from 'react-toastify';
 import { Link } from 'react-router-dom';
 
 import { AppRoute } from '@client/src/const';
 import { UserRDO } from '@shared/user';
-import { CreateRequestDTO, CreateRequestRDO } from '@shared/request';
+import { CreateRequestDTO, CreateRequestRDO, UpdateRequestDTO } from '@shared/request';
 import { RequestTypeEnum } from '@shared/request/types/request-type.enum';
 import { UserRoleEnum } from '@shared/types/user-roles.enum';
 
 import { getAvatarByUrl, upperCaseFirst } from '@client/src/utils/common';
 
 import { useAppDispatch, useAppSelector } from '@client/src/hooks';
-import { createRequestAction } from '@client/src/store/actions/api-request-action';
+import { createRequestAction, RequestIdPayload, updateRequestAction } from '@client/src/store/actions/api-request-action';
 import { getCurrentUserInfo } from '@client/src/store/slices/user-process/user-process.selectors';
 
 import { RequestStatusEnum } from '@shared/request/types/request-status.enum';
@@ -64,8 +63,32 @@ export default function FriendsListItem({ user, userRequests }: FriendsListItemP
     };
 
     dispatch(createRequestAction(requestData));
+  }
 
-    toast.info('Sorry, sending requests to you friends for training has not implemented yet');
+  function handleAcceptRequestBtnClick() {
+    if(!incomingTrainingRequest) {
+      return;
+    }
+
+    const updateRequestData: UpdateRequestDTO  & RequestIdPayload = {
+      requestId: incomingTrainingRequest.id as string,
+      status: RequestStatusEnum.ACCEPTED
+    };
+
+    dispatch(updateRequestAction(updateRequestData));
+  }
+
+  function handleDeclineRequestBtnClick() {
+    if(!incomingTrainingRequest) {
+      return;
+    }
+
+    const updateRequestData: UpdateRequestDTO  & RequestIdPayload = {
+      requestId: incomingTrainingRequest.id as string,
+      status: RequestStatusEnum.DECLINED
+    }
+
+    dispatch(updateRequestAction(updateRequestData));
   }
 
   return (
@@ -139,19 +162,26 @@ export default function FriendsListItem({ user, userRequests }: FriendsListItemP
               <>
                 <p className="thumbnail-friend__request-text">Запрос на&nbsp;совместную тренировку</p>
                 <div className="thumbnail-friend__button-wrapper">
-                  <button className="btn btn--medium btn--dark-bg thumbnail-friend__button" type="button">Принять</button>
-                  <button className="btn btn--medium btn--outlined btn--dark-bg thumbnail-friend__button" type="button">Отклонить</button>
+                  <button className="btn btn--medium btn--dark-bg thumbnail-friend__button" type="button" onClick={handleAcceptRequestBtnClick}>Принять</button>
+                  <button className="btn btn--medium btn--outlined btn--dark-bg thumbnail-friend__button" type="button" onClick={handleDeclineRequestBtnClick}>Отклонить</button>
                 </div>
               </>
             }
 
-            { // Исходящие запросы
+            {
               isTrainingRequestSended && outTrainingRequest.status === RequestStatusEnum.PROCESSING &&
               <p className="thumbnail-friend__request-text">Запрос на&nbsp;совместную тренировку отправлен</p>
             }
 
-            {
-              isTrainingRequestSended && outTrainingRequest.status === RequestStatusEnum.DECLINED &&
+            { // Запрос принят, если: 1) Мы отправили запрос и его приняли 2)  Нам отправили запрос и мы его приняли
+               (isTrainingRequestSended && outTrainingRequest.status === RequestStatusEnum.ACCEPTED) ||
+               (incomingTrainingRequest && incomingTrainingRequest.status === RequestStatusEnum.ACCEPTED) &&
+              <p className="thumbnail-friend__request-text">Запрос на&nbsp;совместную тренировку принят</p>
+            }
+
+            { //  Запрос принят, если: 1) Мы отправили запрос и его отклонили 2)  Нам отправили запрос и мы его отклонили
+              (isTrainingRequestSended && outTrainingRequest.status === RequestStatusEnum.DECLINED) ||
+              (incomingTrainingRequest && incomingTrainingRequest.status === RequestStatusEnum.DECLINED) &&
               <p className="thumbnail-friend__request-text">Запрос на&nbsp;совместную тренировку отклонён</p>
             }
           </div>

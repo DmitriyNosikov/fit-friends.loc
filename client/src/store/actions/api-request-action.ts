@@ -58,7 +58,7 @@ export const createRequestAction = createAsyncThunk<CreateRequestRDO | null, Cre
   }
 );
 
-type RequestIdPayload = {
+export type RequestIdPayload = {
   requestId: string
 }
 
@@ -73,9 +73,9 @@ export const updateRequestAction = createAsyncThunk<CreateRequestRDO, UpdateRequ
     try {
       const { data } = await api.patch<CreateRequestRDO>(`${ApiRoute.REQUEST_API}/${requestId}`, updateRequestData);
 
-      toast.success(`Request ${requestId} has been successfully updated`);
-
       dispatch(updateUserRequestsAction(data));
+
+      toast.success(`Request ${requestId} has been successfully updated`);
 
       return data;
     } catch(error) {

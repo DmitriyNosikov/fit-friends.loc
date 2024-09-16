@@ -18,7 +18,7 @@ export class UpdateRequestDTO {
   @IsIn(requestTypeList)
   @IsString()
   @IsOptional()
-  requestType: RequestType
+  requestType?: RequestType
 
   @ApiProperty({
     description: 'Request initiator user id',

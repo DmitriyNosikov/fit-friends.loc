@@ -49,6 +49,7 @@ export class RequestController {
     @Param('requestId') requestId: string,
     @Body() dto: UpdateRequestDTO & UserIdPayload
   ): Promise<CreateRequestRDO | null> {
+    console.log('Request id: ', requestId, ' DTO: ', dto);
     const updatedRequest = await this.requestService.updateById(requestId, dto);
 
     return fillDTO(CreateRequestRDO, updatedRequest.toPOJO());
@@ -271,9 +272,9 @@ export class RequestController {
   ) {
     const requests = await this.requestService.getAllUserRequests(userId, requestType);
 
-    requests.map((request) => fillDTO(CreateRequestRDO, request.toPOJO()));
+    const result = requests.map((request) => fillDTO(CreateRequestRDO, request.toPOJO()));
 
-    return requests;
+    return result;
   }
 
 }

@@ -35,10 +35,6 @@ export const requestProcess = createSlice({
       state.allUserRequests?.push(newRequest);
     },
 
-    setTargetRequestsAction: (state, action: PayloadAction<RequestsWithPaginationRDO | null>) => {
-      state.paginatedTargetRequests = action.payload;
-    },
-
     updateUserRequestsAction: (state, action: PayloadAction<CreateRequestRDO>) => {
       const updatedRequest = action.payload;
 
@@ -46,7 +42,7 @@ export const requestProcess = createSlice({
         return;
       }
 
-      state.allUserRequests
+      state.allUserRequests = state.allUserRequests
         .map((request) => (request.id === updatedRequest.id)
           ? updatedRequest
           : request)
@@ -59,6 +55,10 @@ export const requestProcess = createSlice({
         state.allUserRequests = state.allUserRequests
           .filter((request) => request.id !== deleteRequestId);
       }
+    },
+
+    setTargetRequestsAction: (state, action: PayloadAction<RequestsWithPaginationRDO | null>) => {
+      state.paginatedTargetRequests = action.payload;
     },
   },
 

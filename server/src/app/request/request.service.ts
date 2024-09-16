@@ -1,4 +1,4 @@
-import { BadRequestException, forwardRef, Inject, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, forwardRef, Inject, Injectable, NotFoundException } from '@nestjs/common';
 
 import { RequestFactory } from './request.factory';
 import { RequestRepository } from './request.repository';
@@ -63,29 +63,27 @@ export class RequestService {
   }
 
   public async updateById(requestId: string, fieldsToUpdate: UpdateRequestDTO & UserIdPayload) {
-    const { userId } = fieldsToUpdate;
+    const { userId, ...updatedFields } = fieldsToUpdate;
 
     await this.checkAccess(requestId, userId);
 
-    fieldsToUpdate.userId = undefined;
-
-    if(fieldsToUpdate.initiatorUserId) {
-      const isInitiatorUserExists = await this.userService.exists(fieldsToUpdate.initiatorUserId);
+    if(updatedFields.initiatorUserId) {
+      const isInitiatorUserExists = await this.userService.exists(updatedFields.initiatorUserId);
   
       if(!isInitiatorUserExists) {
-        throw new BadRequestException(`User ${fieldsToUpdate.initiatorUserId} doesn't exist`);
+        throw new BadRequestException(`User ${updatedFields.initiatorUserId} doesn't exist`);
       }
     }
 
-    if(fieldsToUpdate.targetUserId) {
-      const isTargetUserExists = await this.userService.exists(fieldsToUpdate.targetUserId);
+    if(updatedFields.targetUserId) {
+      const isTargetUserExists = await this.userService.exists(updatedFields.targetUserId);
   
       if(!isTargetUserExists) {
-        throw new BadRequestException(`User ${fieldsToUpdate.targetUserId} doesn't exist`);
+        throw new BadRequestException(`User ${updatedFields.targetUserId} doesn't exist`);
       }
     }
 
-    const updatedRequest = await this.requestRepository.updateById(requestId, fieldsToUpdate);
+    const updatedRequest = await this.requestRepository.updateById(requestId, updatedFields);
 
     return updatedRequest;
   }
@@ -141,7 +139,7 @@ export class RequestService {
     const isUserHaveAccessToRequest = await this.requestRepository.checkAccess(requestId, userId);
 
     if (!isUserHaveAccessToRequest) {
-      throw new UnauthorizedException(`${RequestMessage.ERROR.HAVENT_ACCESS}. Request id: ${requestId}`);
+      throw new BadRequestException(`${RequestMessage.ERROR.HAVENT_ACCESS}. Request id: ${requestId}`);
     }
 
     return true;

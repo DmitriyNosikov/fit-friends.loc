@@ -29,7 +29,7 @@ export class JWTConfigSchema implements JWTConfigInterface {
   refreshTokenExpiresIn: string;
 
   async validate() {
-    return await validateOrReject(this).catch(errors => {
+    return await validateOrReject(this).catch((errors) => {
       console.log(JWTConfigMessage.ERROR.VALIDATION, errors);
 
       throw new ValidationError();

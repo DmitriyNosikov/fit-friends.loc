@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 
-import { appConfig, jwtConfig } from '../config';
+import { appConfig, jwtConfig, pgConfig } from '../config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 
@@ -19,7 +19,7 @@ import { RequestModule } from './request/request.module';
       isGlobal: true,
       cache: true,
       envFilePath: '.env',
-      load: [appConfig, jwtConfig]
+      load: [appConfig, jwtConfig, pgConfig]
     }),
 
     UserModule,

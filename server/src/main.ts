@@ -22,10 +22,10 @@ async function bootstrap() {
 
   // Генерация Swagger-документации
   const swaggerConfig = new DocumentBuilder() // Настраиваем Swagger для формирования документации
-  .setTitle('The "Fit-Friends" service')
-  .setDescription('"Fit-Friends" service API')
-  .setVersion('1.0')
-  .build();
+    .setTitle('The "Fit-Friends" service')
+    .setDescription('"Fit-Friends" service API')
+    .setVersion('1.0')
+    .build();
   const swaggerDocument = SwaggerModule.createDocument(app, swaggerConfig);
 
   SwaggerModule.setup('spec', app, swaggerDocument);
@@ -51,7 +51,7 @@ async function bootstrap() {
   app.enableCors();
 
   // Увеличиваем лимиты на загрузку файлов
-  app.use(bodyParser.json({limit: FILES_UPLOADING_LIMIT}));
+  app.use(bodyParser.json({ limit: FILES_UPLOADING_LIMIT }));
   app.use(bodyParser.urlencoded({
     limit: FILES_UPLOADING_LIMIT,
     extended: true

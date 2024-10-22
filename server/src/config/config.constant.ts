@@ -6,4 +6,5 @@ export const PORT = {
 export const ConfigEnvironment = {
   APP: 'app',
   JWT: 'jwt',
+  PG: 'pg',
 } as const;

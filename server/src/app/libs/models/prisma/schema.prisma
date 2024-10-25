@@ -111,7 +111,7 @@ model Training {
   gender            String
   video             String
   rating            Int?
-  trainersName      String?    @map("trainers_name")
+  trainersName      String?   @map("trainers_name")
   isSpecial         Boolean?  @map("is_special")
   userId            String    @map("user_id")
 
@@ -153,7 +153,7 @@ model Balance {
   userId                  String      @map("user_id")
   remainingTrainingsCount Int         @map("remaining_trainings_count")
 
-  hasTrainingStarted      Boolean?     @map("has_training_started")
+  hasTrainingStarted      Boolean?    @map("has_training_started")
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
   training Training @relation(fields: [trainingId], references: [id], onDelete: Cascade)

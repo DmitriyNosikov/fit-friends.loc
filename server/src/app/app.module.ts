@@ -5,6 +5,7 @@ import { appConfig, jwtConfig, pgConfig } from '../config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 
+import { PrismaClientModule } from './prisma-client/prisma-client.module';
 import { UserModule } from './user/user.module';
 import { TrainingModule } from './training/training.module';
 import { OrderModule } from './order/order.module';
@@ -22,6 +23,7 @@ import { RequestModule } from './request/request.module';
       load: [appConfig, jwtConfig, pgConfig]
     }),
 
+    PrismaClientModule,
     UserModule,
     TrainingModule,
     TrainingReviewModule,

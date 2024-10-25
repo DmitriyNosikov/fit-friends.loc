@@ -28,7 +28,7 @@ export class BaseSearchQuery {
   @Expose()
   @IsIn(Object.values(SortTypeEnum))
   @IsOptional()
-  public sortType?: SortType = DefaultSearchParam.SORT.TYPE;
+  public sortType? = DefaultSearchParam.SORT.TYPE;
 
   @Expose()
   @IsIn(Object.values(SortDirectionEnum))

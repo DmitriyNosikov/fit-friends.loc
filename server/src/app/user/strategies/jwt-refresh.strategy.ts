@@ -6,7 +6,7 @@ import { ExtractJwt, Strategy } from 'passport-jwt';
 import { jwtConfig } from '../../../config';
 import { UserService } from '../user.service';
 import { RefreshTokenService } from '../../refresh-token/refresh-token.service';
-import { TokenNotExistsException } from '../../refresh-token/exceprions/token-not-exists.exception';
+import { TokenNotExistsException } from '../../refresh-token/exceptions/token-not-exists.exception';
 import { RefreshTokenPayloadInterface } from '../../libs/interfaces/token/refresh-token-payload.interface';
 
 
